@@ -1,0 +1,126 @@
+{
+    "cards": {
+        "10": [
+            "Revenge",
+            "Hellfire",
+            "Pandemic",
+            "Relic",
+            "Seed"
+        ],
+        "7": [
+            "Sacrifice",
+            "Lightning Bolt",
+            "Execration",
+            "Trample",
+            "Spikes Bomb",
+            "Ice Breaker",
+            "Reckless Assault",
+            "Soul Drain",
+            "Crush"
+        ],
+        "4": [
+            "Absorb",
+            "Explode",
+            "Fireball",
+            "Aid",
+            "Cocktail",
+            "Bees Swarm",
+            "Fury Slashes",
+            "Bats Swarm",
+            "Ice Spike",
+            "Quick Shot",
+            "Heavy Shield",
+            "Cache",
+            "Beatdown",
+            "Coup De Grace"
+        ],
+        "1": [
+            "Stab",
+            "Shield",
+            "Strike",
+            "Zap",
+            "Heal",
+            "Multi Punches",
+            "Punch",
+            "Insult",
+            "Aim",
+            "Butterflies",
+            "Slash",
+            "Ignite",
+            "Sting",
+            "Snowball",
+            "Meditate",
+            "Terminate",
+            "Incapacitate",
+            "Immobilize"
+        ]
+    },
+    "fire": {
+        "10": [
+            "Hellfire"
+        ],
+        "4": [
+            "Fireball",
+            "Cocktail"
+        ],
+        "1": [
+            "Ignite"
+        ]
+    },
+    "evil": {
+        "10": [
+            "Hellfire",
+            "Pandemic"
+        ],
+        "7": [
+            "Sacrifice",
+            "Execration"
+        ],
+        "1": [
+            "Insult"
+        ]
+    },
+    "electric": {
+        "7": [
+            "Lightning Bolt"
+        ],
+        "1": [
+            "Zap"
+        ]
+    },
+    "defensive": {
+        "10": [
+            "Relic",
+            "Seed"
+        ],
+        "4": [
+            "Absorb",
+            "Aid",
+            "Heavy Shield"
+        ],
+        "1": [
+            "Shield",
+            "Heal",
+            "Aim"
+        ]
+    },
+    "monster": {
+        "1": [
+            "Loot",
+            "Steal",
+            "Smash",
+            "Battle Cry",
+            "Enrage",
+            "Paranoid",
+            "Demonic Ritual",
+            "Devour",
+            "Reform",
+            "Harden Scales",
+            "Prideful Flight",
+            "Combust",
+            "Rejuvenate",
+            "Smite",
+            "Regenerate"
+        ]
+    }
+}

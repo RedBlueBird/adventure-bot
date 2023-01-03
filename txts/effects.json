@@ -1,0 +1,50 @@
+{
+    "burn": {
+        "name": "Burn",
+        "description": "Blockable. Decreases by 1 every turn. \nThe user loses 4% of their health for each turn this is active. \nNullified out by chill effects."
+    },
+    "stun": {
+        "name": "Stun",
+        "description": "Blockable. Decreases by 1 every turn. \nThe user's attack's accuracy will decrease by 20% while active."
+    },
+    "poison": {
+        "name": "Poison",
+        "description": "Blockable. Decreases by 1 every turn. \nDrains 1 stamina from the user each turn."
+    },
+    "recover": {
+        "name": "Recover",
+        "description": "Blockable. Decreases by 1 every turn. \nThe user gains 4% of their max health per turn."
+    },
+    "curse": {
+        "name": "Curse",
+        "description": "Unblockable. Never decreases. \nStays on the user, though it doesn't do anything by itself."
+    },
+    "bullseye": {
+        "name": "Bullseye",
+        "description": "Blockable. Decreases by 1 every turn. \nThe user's attack's accuracy will increase by 30% while active."
+    },
+    "berserk": {
+        "name": "Berserk",
+        "description": "Blockable. Decreases by 1 every turn. \nThe users regular damage will increase 15% for every Berserk effect they have while active."
+    },
+    "chill": {
+        "name": "Chill",
+        "description": "Blockable. Decreases by 1 every turn. \nDoesn't do anything by itself. If a user has 7 or more Chill effects at the end of a turn, they will turn into 1 Freeze effect. \nCancelled out by burn effects."
+    },
+    "freeze": { 
+        "name": "Freeze",
+        "description": "Unblockable. Decreases by 1 every turn. \nForce the user to skip a turn while active. \nFrozen users are immune to chill effects while this lasts."
+    },
+    "restore": {
+        "name": "Restore",
+        "description": "Blockable. Decreases by 1 every turn. \nGenerates 1 extra energy for the user each turn."
+    },
+    "seriate": {
+        "name": "Seriate",
+        "description": "Unblockable. Never decreases. \nIf the user is carrying this effect, for every neutral card they play, they will gain 1 extra Seriate effect. The neutral cards' stats will increase by 2% for every Seriate effect they have."
+    },
+    "feeble": {
+        "name": "Feeble",
+        "description": "Blockable. Decreases by 1 every turn. \nThe user's damage is reduced by 1.1^-(amount of Feeble effects)*100% while active."
+    }
+}

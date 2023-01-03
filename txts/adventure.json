@@ -1,0 +1,2164 @@
+{
+    "experimental": {
+        "spawn rate": {
+            "0": {
+                "monster": 10000,
+                "trader": 0,
+                "spirit": 0,
+                "item": 0,
+                "event": 0,
+                "thief": 0
+            }
+        },
+        "monster": [
+            {
+                "description": "You are invited to fight a dangerous experimental monster! Be warned!",
+                "spawn rate": 5000,
+                "encounters": {
+                    "Lich Lord": [
+                        1,
+                        1,
+                        0
+                    ]
+                },
+                "choices": {
+                    "Fight the Monster": [
+                        "encounters",
+                        "duel"
+                    ]
+                }
+            }
+        ]
+    },
+    "boss raid": {
+        "main": {
+            "start": [
+                {
+                    "description": "You walk towards the Gate of Terror. You feel a chill at the mere sight of it.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "choices": {
+                        "Adventure Forward": [
+                            "boss",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "boss": [
+                {
+                    "description": "You notice a large shadow sweep across the ground as a figure flies through the sky. In a flash, the wind unleashes its power as a monstrous claw hits the ground. The creature waves its strong wings while arcing its head back to let out a roar. The Red Wyvern shoots a burst of flame, ready to turn you to ash with its legendary power.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Red Wyvern": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Red Wyvern": [
+                            "end",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                },
+                {
+                    "description": "You walk through the gate, expecting to see a wyvern, or perhaps a lich lord, but are instead greeted by an absolutely majestic being. It's beautiful form takes your breath away, and the gracefulness of its legs as they scuttle across the ground are like that of a skilled dancer. But you DO get pretty good loot for killing it, though it would be a shame to end the life of such a perfect being.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            0
+                        ]
+                    ],
+                    "encounters": {
+                        "Spider Fish": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Spider Fish": [
+                            "encounters",
+                            "duel"
+                        ]
+                    }
+                }
+            ],
+            "end": [
+                {
+                    "description": "At last! You have conquered your adversary! However, there will be more terrors to come.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ]
+                }
+            ]
+        }
+    },
+    "enchanted forest": {
+        "main": {
+            "start": [
+                {
+                    "description": "What to do next?",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "choices": {
+                        "Adventure Forward": [
+                            "adventure",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "adventure": [
+                {
+                    "description": "Shrine of Life!",
+                    "spawn rate": [
+                        [
+                            5000,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "start",
+                            "shrine of life",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Boss!",
+                    "spawn rate": [
+                        [
+                            900,
+                            1100,
+                            4000
+                        ],
+                        [
+                            1900,
+                            2100,
+                            4000
+                        ],
+                        [
+                            2900,
+                            3100,
+                            4000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "boss",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Monsters!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            4000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "monster",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Items!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "item",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Traders!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "trader",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Thieves!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "thief",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Traps!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "trap",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "River!",
+                    "spawn rate": [
+                        [
+                            500,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "start",
+                            "river crossing",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Cave!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "start",
+                            "dark cave",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "monster": [
+                {
+                    "description": "A tribe of goblins leap out of the undergrowth, weapons at the ready.",
+                    "spawn rate": [
+                        [
+                            0,
+                            500,
+                            5000
+                        ],
+                        [
+                            501,
+                            1000,
+                            1000
+                        ]
+                    ],
+                    "encounters": {
+                        "Goblin": [
+                            2,
+                            3,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the goblins": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Order the goblins to stay away - 1 Goblin Staff": [
+                            "start",
+                            "main",
+                            "none",
+                            {
+                                "req": {
+                                    "item": {
+                                        "Goblin Staff": [
+                                            1,
+                                            "keep"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "description": "A pack of goblins spots you from their campfire. You have a feeling that you would become their dinner if you don't fight.",
+                    "spawn rate": [
+                        [
+                            501,
+                            1500,
+                            4000
+                        ],
+                        [
+                            1501,
+                            2500,
+                            1000
+                        ]
+                    ],
+                    "encounters": {
+                        "Goblin": [
+                            1,
+                            1,
+                            1500
+                        ],
+                        "Goblin Soldier": [
+                            1,
+                            1,
+                            500
+                        ],
+                        "Goblin Bomber": [
+                            1,
+                            1,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the goblins": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Order the goblins to stay away - 1 Goblin Staff": [
+                            "start",
+                            "main",
+                            "none",
+                            {
+                                "req": {
+                                    "item": {
+                                        "Goblin Staff": [
+                                            1,
+                                            "keep"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "description": "Armed goblin soldiers drop down from ropes and you find yourself completely surrounded!",
+                    "spawn rate": [
+                        [
+                            1501,
+                            3000,
+                            3000
+                        ],
+                        [
+                            3001,
+                            7000,
+                            2500
+                        ]
+                    ],
+                    "encounters": {
+                        "Goblin Chief": [
+                            1,
+                            1,
+                            0
+                        ],
+                        "Goblin Soldier": [
+                            2,
+                            2,
+                            2500
+                        ]
+                    },
+                    "choices": {
+                        "Fight the goblins": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                },
+                {
+                    "description": "Living slimes ooze out of a nearby puddle!",
+                    "spawn rate": [
+                        [
+                            250,
+                            1000,
+                            2000
+                        ],
+                        [
+                            1001,
+                            2000,
+                            1000
+                        ]
+                    ],
+                    "encounters": {
+                        "Slime": [
+                            1,
+                            3,
+                            3000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the slimes": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                },
+                {
+                    "description": "The ground trembles as the trees infront of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
+                    "spawn rate": [
+                        [
+                            501,
+                            1500,
+                            1000
+                        ],
+                        [
+                            1501,
+                            2500,
+                            2500
+                        ]
+                    ],
+                    "encounters": {
+                        "Tree Giant": [
+                            2,
+                            3,
+                            2500
+                        ]
+                    },
+                    "choices": {
+                        "Fight the tree giants": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Torch them - 1 Torch": [
+                            "start",
+                            "main",
+                            "none",
+                            {
+                                "req": {
+                                    "item": {
+                                        "Torch": [
+                                            1,
+                                            "taken"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "description": "Oh no! You realize you've crossed into an Ogre's territory...",
+                    "spawn rate": [
+                        [
+                            1001,
+                            2000,
+                            1500
+                        ],
+                        [
+                            2001,
+                            4000,
+                            3000
+                        ],
+                        [
+                            4001,
+                            7000,
+                            1500
+                        ]
+                    ],
+                    "encounters": {
+                        "Ogre Gladiator": [
+                            1,
+                            3,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the ogre gladiators": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                }
+            ],
+            "item": [
+                {
+                    "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
+                    "spawn rate": [
+                        [
+                            0,
+                            7000,
+                            2000
+                        ]
+                    ],
+                    "items": {
+                        "weird mushroom": {
+                            "items": [
+                                1,
+                                1
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Pick up the mushroom": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore it and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You see some strange looking leaves. No, upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
+                    "spawn rate": [
+                        [
+                            250,
+                            7000,
+                            500
+                        ]
+                    ],
+                    "items": {
+                        "herb": {
+                            "items": [
+                                1,
+                                1
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Pick up the herb": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore it and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You see some red fruits hanging on a tree. These fruits can come in handy, able to replenish your energy when you are in need of it",
+                    "spawn rate": [
+                        [
+                            0,
+                            1000,
+                            1000
+                        ],
+                        [
+                            1001,
+                            2000,
+                            500
+                        ]
+                    ],
+                    "items": {
+                        "forest fruit": {
+                            "items": [
+                                3,
+                                4
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Collect some forest fruits": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
+                    "spawn rate": [
+                        [
+                            0,
+                            1000,
+                            1500
+                        ],
+                        [
+                            1001,
+                            2000,
+                            1000
+                        ],
+                        [
+                            2001,
+                            3000,
+                            500
+                        ]
+                    ],
+                    "items": {
+                        "wood": {
+                            "items": [
+                                3,
+                                4
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Cut down a few trees for wood": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
+                    "spawn rate": [
+                        [
+                            1001,
+                            2000,
+                            1500
+                        ],
+                        [
+                            2001,
+                            3000,
+                            1000
+                        ]
+                    ],
+                    "items": {
+                        "stone": {
+                            "items": [
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Mine some stones": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
+                    "spawn rate": [
+                        [
+                            2001,
+                            3000,
+                            1500
+                        ],
+                        [
+                            3001,
+                            7000,
+                            1000
+                        ]
+                    ],
+                    "items": {
+                        "iron ore": {
+                            "items": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Mine some iron ores": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "arrow trap": [
+                {
+                    "description": "A lone elf jumped out of the bushes and ambushed you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            7000,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Archer Elf": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Elf": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                }
+            ],
+            "trap": [
+                {
+                    "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            2000,
+                            3000
+                        ],
+                        [
+                            2001,
+                            7000,
+                            1000
+                        ]
+                    ],
+                    "trap": "reaction",
+                    "damage": [
+                        5,
+                        10
+                    ],
+                    "time": [
+                        3,
+                        5
+                    ],
+                    "to": [
+                        "arrow trap",
+                        "main",
+                        "none"
+                    ]
+                },
+                {
+                    "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
+                    "spawn rate": [
+                        [
+                            0,
+                            2000,
+                            2000
+                        ],
+                        [
+                            2001,
+                            7000,
+                            1500
+                        ]
+                    ],
+                    "trap": "memorize",
+                    "damage": [
+                        10,
+                        15
+                    ],
+                    "length": [
+                        6,
+                        8
+                    ],
+                    "time": [
+                        3,
+                        4
+                    ],
+                    "to": [
+                        "start",
+                        "main",
+                        "none"
+                    ]
+                }
+            ],
+            "trader": [
+                {
+                    "description": "You meet a skilled potioneer. They may have some helpful supplies you can use on your journeys.",
+                    "spawn rate": [
+                        [
+                            250,
+                            1000,
+                            4000
+                        ],
+                        [
+                            1001,
+                            2000,
+                            5000
+                        ],
+                        [
+                            2001,
+                            7000,
+                            6000
+                        ]
+                    ],
+                    "encounters": {
+                        "Potioneer": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "name": "potioneer",
+                    "choices": {
+                        "Ask what this person has to offer": [
+                            "start",
+                            "main",
+                            "trade"
+                        ],
+                        "Kill them and take their loot": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Leave this person alone": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
+                    "spawn rate": [
+                        [
+                            500,
+                            1000,
+                            5000
+                        ],
+                        [
+                            1001,
+                            2000,
+                            4000
+                        ],
+                        [
+                            2001,
+                            7000,
+                            3000
+                        ]
+                    ],
+                    "encounters": {
+                        "Craftsman": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "name": "craftsman",
+                    "choices": {
+                        "Ask what this person can craft": [
+                            "start",
+                            "main",
+                            "trade"
+                        ],
+                        "Kill them and take their loot": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Leave this person alone": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "thief": [
+                {
+                    "description": "A horde of goblin thieves leaps out of the bushes. The leader points at your backpack and then draws a line across his neck. He seems to be demanding your posessions in exchange for your life!",
+                    "spawn rate": [
+                        [
+                            0,
+                            7000,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Goblin Thief": [
+                            1,
+                            2,
+                            2000
+                        ],
+                        "Goblin Bomber": [
+                            1,
+                            1,
+                            1500
+                        ]
+                    },
+                    "choices": {
+                        "Fight the thieves": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Give away some loot and flee": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "boss": [
+                {
+                    "description": "You see a huge lumbering ogre that's much larger than the others. Wearing animal pelts, and covering its face with black and white war paint, it carries two huge metal blades covered with blood stains. You're nearly paralyzed with fear!",
+                    "spawn rate": [
+                        [
+                            0,
+                            1999,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Ogre Berserker": [
+                            1,
+                            1,
+                            0
+                        ],
+                        "Ogre Gladiator": [
+                            2,
+                            2,
+                            0
+                        ]
+                    },
+                    "choices": {
+                        "Fight on!": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                },
+                {
+                    "description": "The earth *TREMBLES* as the all mighty Golem awakens from its shell. The guardian of the Holy Shrine, the ultimate barrier between adventurers and treasures. You can either try to get past it or mark your last step upon this forbidden part of the forest and leave.",
+                    "spawn rate": [
+                        [
+                            2000,
+                            7000,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Temple Guardian": [
+                            1,
+                            1,
+                            0
+                        ],
+                        "Crystal Golem": [
+                            2,
+                            2,
+                            0
+                        ]
+                    },
+                    "choices": {
+                        "Fight on!": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                }
+            ],
+            "end": [
+                {
+                    "description": "You... did it?! YOU DID IT!!! You have conquered the Enchanted Forest! You can always come back for resources another time.",
+                    "spawn rate": [
+                        0,
+                        10000,
+                        10000
+                    ],
+                    "choices": {
+                        "Return to Hometown and tell your tale": [
+                            "end",
+                            "main",
+                            "exit"
+                        ]
+                    }
+                }
+            ]
+        },
+        "river crossing": {
+            "start": [
+                {
+                    "description": "A river blocks your path. The water flows quickly, and the river is very wide. You could try to wade across, or use/craft a temporary raft to sail over.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            3000
+                        ]
+                    ],
+                    "choices": {
+                        "Wading across the river": [
+                            "legs",
+                            "river crossing",
+                            "none"
+                        ],
+                        "Sail over by raft - 1 Raft": [
+                            "raft",
+                            "river crossing",
+                            "none",
+                            {
+                                "req": {
+                                    "item": {
+                                        "Raft": [
+                                            1,
+                                            "taken"
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        "Craft a raft and sail over - 8 Wood": [
+                            "craft",
+                            "river crossing",
+                            "none",
+                            {
+                                "req": {
+                                    "item": {
+                                        "Wood": [
+                                            8,
+                                            "taken"
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "legs": [
+                {
+                    "description": "You to cross the river, but you may have lost some items in the process. Check your backpack just to be sure.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "item lose": [
+                        10000,
+                        5
+                    ],
+                    "choices": {
+                        "Continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "raft": [
+                {
+                    "description": "You nearly make it to the other side of the river when your raft starts to sink.  Thinking fast, you manage to jump out and manage to reach the other side, though you no longer have your raft.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "craft": [
+                {
+                    "description": "You made a raft of your own with the resources you carried. Your \"masterpiece\" managed to help you cross over this river. Too bad it broke apart right after you landed on the other side",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ]
+        },
+        "dark cave": {
+            "start": [
+                {
+                    "description": "You find yourself in front of a dark cave on your journey. Chilling winds come from deep inside. There could be treasures hidden inside, but enemies may also be lurking within.  You should probably use a torch to be safe.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "choices": {
+                        "Explore inside - 1 torch": [
+                            "explore",
+                            "dark cave",
+                            "none",
+                            {
+                                "req": {
+                                    "item": {
+                                        "Torch": [
+                                            1,
+                                            "taken"
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        "Continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "explore": [
+                {
+                    "description": "You kept walking. Nothing surprising has happened so far.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            4000
+                        ]
+                    ],
+                    "choices": {
+                        "Keep exploring": [
+                            "explore",
+                            "dark cave",
+                            "none"
+                        ],
+                        "Turn back and leave the cave": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You reached a dead end. Guess there wasn't anything in this cave...",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1000
+                        ]
+                    ],
+                    "choices": {
+                        "Turn back and leave the cave": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "While walking through the cave, you noticed some mushrooms beneath you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2000
+                        ]
+                    ],
+                    "items": {
+                        "weird mushroom": {
+                            "items": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Pick up up the mushrooms": [
+                            "explore",
+                            "dark cave",
+                            "item"
+                        ],
+                        "Ignore and keep exploring": [
+                            "explore",
+                            "dark cave",
+                            "none"
+                        ],
+                        "Turn back and leave the cave": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ]
+        },
+        "shrine of life": {
+            "start": [
+                {
+                    "description": "BE HOLD! The mythical Shrine of Life. The rumors had it this is the heart of this Enchanted Forest, full of unknowns and dangers. No one has come back alive to tell the tale.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "choices": {
+                        "Step into the Shrine of Life": [
+                            "explore",
+                            "shrine of life",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "explore": [
+                {
+                    "description": "You kept walking... The shrine is a long, dark, and ancient hallway. The only light source is the shimmering green lanterns hanging under the ceiling.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            4000
+                        ]
+                    ],
+                    "choices": {
+                        "Keep exploring": [
+                            "explore",
+                            "shrine of life",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "The end of this long hall way brings you to a large room with filled with a pool of blue liquid with a ginormous tree rooted in the center. Those are no blue water, as you take a closer at them, what should be your face's reflection is now replaced by videos of other entities. Its almost as if the liquid has taken the souls of past creatures who came near and caged them inside. Suddenly the room shook as the holy tree in the center morphing into a humanoid form. ",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2000
+                        ]
+                    ],
+                    "encounters": {
+                        "Shiniminsus": [
+                            1,
+                            1,
+                            10000
+                        ],
+                        "Temple Guardian": [
+                            1,
+                            1,
+                            5000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the God of the Nature": [
+                            "end",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                },
+                {
+                    "description": "Just as you thought you walked into a dead end, the rocky boulders infront of you reanimated themselves and start attacking you by surprise!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2000
+                        ]
+                    ],
+                   "encounters": {
+                        "Crystal Golem": [
+                            1,
+                            2,
+                            5500
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Crystal Golems": [
+                            "explore",
+                            "shrine of life",
+                            "fight"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "cemetery": {
+        "main": {
+            "start": [
+                {
+                    "description": "What to do next?",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "choices": {
+                        "Adventure Forward": [
+                            "adventure",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "adventure": [
+                {
+                    "description": "Boss!",
+                    "spawn rate": [
+                        [
+                            900,
+                            1100,
+                            4000
+                        ],
+                        [
+                            1900,
+                            2100,
+                            4000
+                        ],
+                        [
+                            2900,
+                            3100,
+                            4000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "boss",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Monsters!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            4000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "monster",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Items!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "item",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Traders!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "trader",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Thieves!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1000
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "thief",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Traps!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            1500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "trap",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Tombstone!",
+                    "spawn rate": [
+                        [
+                            500,
+                            10000,
+                            500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue": [
+                            "start",
+                            "tombstone",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "monster": [
+                {
+                    "description": "Arghh!! Bony hands clawing their way out of a grave were followed by a skeleton's body, threatening your life!",
+                    "spawn rate": [
+                        [
+                            0,
+                            1000,
+                            5000
+                        ],
+                        [
+                            1001,
+                            3000,
+                            1000
+                        ]
+                    ],
+                    "encounters": {
+                        "Skeleton": [
+                            2,
+                            3,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Skeleton!": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Quickly escape away from its sight": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "\"Rauuughhh!\" . You hear something moving behind a tree. Peeking around, you see the undead eyes of zombies!",
+                    "spawn rate": [
+                        [
+                            0,
+                            1500,
+                            5000
+                        ],
+                        [
+                            1501,
+                            4000,
+                            2000
+                        ]
+                    ],
+                    "encounters":  {
+                        "Zombie": [
+                            2,
+                            3,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Zombie": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Quickly escape away from its sight": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "A ghost wielding a shimmering battle axe glides towards you. Despite whoever this person was in their previous life, they now only want one thing: human flesh! ",
+                    "spawn rate": [
+                        [
+                            1000,
+                            3000,
+                            5000
+                        ],
+                        [
+                            3001,
+                            7000,
+                            2000
+                        ]
+                    ],
+                    "encounters":  {
+                        "Phantom": [
+                            1,
+                            2,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Pantom": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                },
+                {
+                    "description": "As a strong wave of heat surrounds you, a swirling pillar of flame suddenly appears. When the fire dies, you realize a demon had appeared right before your eyes!",
+                    "spawn rate": [
+                        [
+                            2000,
+                            4000,
+                            3000
+                        ],
+                        [
+                            4001,
+                            7000,
+                            4000
+                        ]
+                    ],
+                    "encounters":  {
+                        "Demon": [
+                            1,
+                            2,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Demon": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                }
+            ],
+            "item": [
+                {
+                    "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2000
+                        ]
+                    ],
+                    "items": {
+                        "weird mushroom": {
+                            "items": [
+                                1,
+                                1
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Pick up the mushroom": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore it and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
+                    "spawn rate": [
+                        [
+                            0,
+                            1000,
+                            1500
+                        ],
+                        [
+                            1001,
+                            2000,
+                            1000
+                        ],
+                        [
+                            2001,
+                            3000,
+                            500
+                        ]
+                    ],
+                    "items": {
+                        "wood": {
+                            "items": [
+                                3,
+                                4
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Cut down a few trees for wood": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
+                    "spawn rate": [
+                        [
+                            1001,
+                            2000,
+                            1500
+                        ],
+                        [
+                            2001,
+                            3000,
+                            1000
+                        ]
+                    ],
+                    "items": {
+                        "stone": {
+                            "items": [
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Mine some stones": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
+                    "spawn rate": [
+                        [
+                            2001,
+                            3000,
+                            1500
+                        ],
+                        [
+                            3001,
+                            10000,
+                            1000
+                        ]
+                    ],
+                    "items": {
+                        "iron ore": {
+                            "items": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "choices": {
+                        "Mine some iron ores": [
+                            "start",
+                            "main",
+                            "item"
+                        ],
+                        "Ignore them and walk away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "arrow trap": [
+                {
+                    "description": "A lone elf jumped out of the bushes and ambushed you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Archer Elf": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Elf": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                }
+            ],
+            "trap": [
+                {
+                    "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            2000,
+                            0
+                        ],
+                        [
+                            2001,
+                            7000,
+                            0
+                        ]
+                    ],
+                    "trap": "reaction",
+                    "damage": [
+                        5,
+                        10
+                    ],
+                    "time": [
+                        3,
+                        5
+                    ],
+                    "to": [
+                        "arrow trap",
+                        "main",
+                        "none"
+                    ]
+                },
+                {
+                    "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
+                    "spawn rate": [
+                        [
+                            0,
+                            2000,
+                            2000
+                        ],
+                        [
+                            2001,
+                            7000,
+                            1500
+                        ]
+                    ],
+                    "trap": "memorize",
+                    "damage": [
+                        10,
+                        15
+                    ],
+                    "length": [
+                        6,
+                        8
+                    ],
+                    "time": [
+                        3,
+                        4
+                    ],
+                    "to": [
+                        "start",
+                        "main",
+                        "none"
+                    ]
+                }
+            ],
+            "trader": [
+                {
+                    "description": "You meet a skilled potioneer. They may have some helpful supplies you can use on your journeys.",
+                    "spawn rate": [
+                        [
+                            250,
+                            1000,
+                            4000
+                        ],
+                        [
+                            1001,
+                            2000,
+                            5000
+                        ],
+                        [
+                            2001,
+                            10000,
+                            6000
+                        ]
+                    ],
+                    "encounters": {
+                        "Potioneer": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "name": "potioneer",
+                    "choices": {
+                        "Ask what this person has to offer": [
+                            "start",
+                            "main",
+                            "trade"
+                        ],
+                        "Kill them and take their loot": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Leave this person alone": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
+                    "spawn rate": [
+                        [
+                            500,
+                            1000,
+                            5000
+                        ],
+                        [
+                            1001,
+                            2000,
+                            4000
+                        ],
+                        [
+                            2001,
+                            10000,
+                            3000
+                        ]
+                    ],
+                    "encounters": {
+                        "Craftsman": [
+                            1,
+                            1,
+                            0
+                        ]
+                    },
+                    "name": "craftsman",
+                    "choices": {
+                        "Ask what this person can craft": [
+                            "start",
+                            "main",
+                            "trade"
+                        ],
+                        "Kill them and take their loot": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Leave this person alone": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "thief": [
+               {
+                "description": "You suddenly feel a pang of paranoia. Looking back, you realize that a vicious ghost is looming over your head!",
+                "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                "encounters": {
+                        "Ghost": [
+                            2,
+                            3,
+                            2000
+                        ]
+                    },
+                "choices": {
+                    "Fight the thief": [
+                        "start",
+                        "main",
+                        "fight"
+                    ],
+                    "Give away some loot and flee": [
+                        "start",
+                        "main",
+                        "none"
+                    ]
+                }
+                }
+            ],
+            "boss": [
+                {
+                    "description": "In the distance, you see a knight galloping towards you. However, as it gets closer, you realize that where a shiny helmet should be, there is now only a bright blue flame!",
+                    "spawn rate": [
+                        [
+                            0,
+                            7000,
+                            10000
+                        ]
+                    ],
+                    "encounters": {
+                        "Headless Knight": [
+                            1,
+                            1,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight on!": [
+                            "start",
+                            "main",
+                            "fight"
+                        ]
+                    }
+                }
+
+            ],
+            "end": [
+                {
+                    "description": "You have conquered the Enchanted Forest! You can always come back for resources another time.",
+                    "spawn rate": [
+                        0,
+                        10000,
+                        10000
+                    ]
+                }
+            ]
+        },
+        "tombstone": {
+            "start": [
+                {
+                    "description": "As you adventure forward, you nearly trip over a tombstone. This paticular tombstone is more decorative than the others, what if you dig down through it...",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            10000
+                        ]
+                    ],
+                    "choices": {
+                        "Escavate the Tombstone": [
+                            "tombstone",
+                            "tombstone",
+                            "none"
+                        ],
+                        "Continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ],
+            "tombstone": [
+                {
+                    "description": "Wow! As you escavate the tombstone, shiny treasures gradually revealed themselves in front of your eyes!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2500
+                        ]
+                    ],
+                    "choices": {
+                        "Continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "Unfortunately, the more you dug through the tombstone, the more dirt you found. Guess it's just a regular tombstone afterall.",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2500
+                        ]
+                    ],
+                    "choices": {
+                        "Keep digging": [
+                            "tombstone",
+                            "tombstone",
+                            "none"
+                        ],
+                        "Give up and continue your adventure": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "SURPRISE! As you were digging down the tombstone, a zombie popped up right in front of you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2500
+                        ]
+                    ],
+                    "encounters":  {
+                        "Zombie": [
+                            1,
+                            1,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Zombie": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Stop digging the tombstone and run away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                },
+                {
+                    "description": "SURPRISE! As you were digging down the tombstone, a skeleton popped up right in front of you!",
+                    "spawn rate": [
+                        [
+                            0,
+                            10000,
+                            2500
+                        ]
+                    ],
+                    "encounters":  {
+                        "Skeleton": [
+                            1,
+                            1,
+                            2000
+                        ]
+                    },
+                    "choices": {
+                        "Fight the Skeleton": [
+                            "start",
+                            "main",
+                            "fight"
+                        ],
+                        "Stop digging the tombstone and run away": [
+                            "start",
+                            "main",
+                            "none"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

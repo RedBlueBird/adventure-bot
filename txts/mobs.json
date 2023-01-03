@@ -1,0 +1,1031 @@
+{
+    "goblin thief": {
+        "name": "Goblin Thief",
+        "rarity": "C",
+        "health": 20,
+        "energy_lag": 7,
+        "stamina": 20,
+        "death reward": {
+            "coins": [
+                20,
+                30
+            ],
+            "exps": [
+                5,
+                10
+            ]
+        },
+        "deck": [
+            "Steal",
+            "Steal",
+            "Steal",
+            "Loot",
+            "Loot",
+            "Loot",
+            "Shield",
+            "Shield",
+            "Stab",
+            "Stab",
+            "Stab",
+            "Stab"
+        ],
+        "brief": "Goblin outcasts that like to steal from adventurers and merchants."
+    },
+    "goblin bomber": {
+        "name": "Goblin Bomber",
+        "rarity": "C",
+        "health": 10,
+        "energy_lag": 7,
+        "stamina": 20,
+        "death reward": {
+            "coins": [
+                20,
+                30
+            ],
+            "exps": [
+                10,
+                15
+            ]
+        },
+        "deck": [
+            "Sacrifice",
+            "Sacrifice",
+            "Sacrifice",
+            "Explode",
+            "Explode",
+            "Explode",
+            "Spikes Bomb",
+            "Spikes Bomb",
+            "Loot",
+            "Loot",
+            "Steal",
+            "Steal"
+        ],
+        "brief": "Suicidal goblins carrying large explosives on their backs."
+    },
+    "goblin": {
+        "name": "Goblin",
+        "rarity": "C",
+        "health": 15,
+        "energy_lag": 8,
+        "stamina": 15,
+        "death reward": {
+            "coins": [
+                2,
+                5
+            ],
+            "exps": [
+                5,
+                10
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Stab",
+            "Stab",
+            "Stab",
+            "Aim",
+            "Aim",
+            "Aid",
+            "Aid",
+            "Strike",
+            "Strike",
+            "Strike"
+        ],
+        "brief": "Green humanoid creatures that are smaller than average humans. Individually, they don't pose much of a threat, but a group of them can be dangerous."
+    },
+    "goblin soldier": {
+        "name": "Goblin Soldier",
+        "rarity": "R",
+        "health": 30,
+        "energy_lag": 6,
+        "stamina": 20,
+        "death reward": {
+            "coins": [
+                5,
+                10
+            ],
+            "exps": [
+                10,
+                15
+            ]
+        },
+        "deck": [
+            "Heavy Shield",
+            "Shield",
+            "Stab",
+            "Stab",
+            "Slash",
+            "Slash",
+            "Aim",
+            "Aim",
+            "Heal",
+            "Aid",
+            "Quick Shot",
+            "Strike"
+        ],
+        "brief": "Goblin soldiers are a stronger version of normal goblins trained specifically for battles."
+    },
+    "goblin chief": {
+        "name": "Goblin Chief",
+        "rarity": "E",
+        "health": 60,
+        "energy_lag": 5,
+        "stamina": 30,
+        "death reward": {
+            "coins": [
+                20,
+                30
+            ],
+            "exps": [
+                20,
+                30
+            ],
+            "Goblin Staff": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Absorb",
+            "Heal",
+            "Aid",
+            "Battle Cry",
+            "Battle Cry",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Cocktail",
+            "Ignite",
+            "Ignite"
+        ],
+        "brief": "Only the wisest goblins can become chiefs. They usually carry a long enchanted staff as a symbol of their status."
+    },
+    "archer elf": {
+        "name": "Archer Elf",
+        "rarity": "R",
+        "health": 25,
+        "energy_lag": 4,
+        "stamina": 25,
+        "death reward": {
+            "coins": [
+                10,
+                15
+            ],
+            "exps": [
+                15,
+                20
+            ]
+        },
+        "deck": [
+            "Aim",
+            "Aim",
+            "Quick Shot",
+            "Quick Shot",
+            "Cache",
+            "Incapacitate",
+            "Incapacitate",
+            "Incapacitate",
+            "Heal",
+            "Heal",
+            "Strike",
+            "Strike"
+        ],
+        "brief": "Lightweight, fast, and evasive, these archer elves often live in the forests hunting animals by themselves."
+    },
+    "tree giant": {
+        "name": "Tree Giant",
+        "rarity": "C",
+        "health": 25,
+        "energy_lag": 8,
+        "stamina": 40,
+        "death reward": {
+            "coins": [
+                5,
+                10
+            ],
+            "exps": [
+                10,
+                15
+            ],
+            "Wood": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ]
+        },
+        "deck": [
+            "Absorb",
+            "Absorb",
+            "Heal",
+            "Heal",
+            "Bees Swarm",
+            "Bees Swarm",
+            "Fury Slashes",
+            "Fury Slashes",
+            "Slash",
+            "Slash",
+            "Sting",
+            "Sting"
+        ],
+        "brief": "When they sleep, they appear to be normal trees. When they awaken, they will extend their branches, becoming large and imposing. The ground trembles when they lift their roots up from the ground."
+    },
+    "ogre gladiator": {
+        "name": "Ogre Gladiator",
+        "rarity": "R",
+        "health": 70,
+        "energy_lag": 6,
+        "stamina": 35,
+        "death reward": {
+            "coins": [
+                10,
+                15
+            ],
+            "exps": [
+                15,
+                20
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Stab",
+            "Stab",
+            "Punch",
+            "Punch",
+            "Smash",
+            "Smash",
+            "Absorb",
+            "Absorb",
+            "Battle Cry",
+            "Battle Cry"
+        ],
+        "brief": "These muscular and heavily armored ogre gladiators usually carry a spiky bat as their weapon. Fear their strong attacks!"
+    },
+    "crystal golem": {
+        "name": "Crystal Golem",
+        "rarity": "E",
+        "health": 100,
+        "energy_lag": 6,
+        "stamina": 25,
+        "death reward": {
+            "coins": [
+                15,
+                25
+            ],
+            "exps": [
+                20,
+                30
+            ],
+            "Stone": [
+                [
+                    0,
+                    3
+                ],
+                10000
+            ],
+            "Crystal": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Shield",
+            "Heavy Shield",
+            "Heavy Shield",
+            "Crush",
+            "Crush",
+            "Smash",
+            "Smash",
+            "Heal",
+            "Terminate",
+            "Terminate"
+        ],
+        "brief": "It has a hard shell, formed by crystals bonded by ancient magic. Harnessing the power of the magic crystals, this golem is one of the most terrifying foes in the Enchanted Forest."
+    },
+    "ogre berserker": {
+        "name": "Ogre Berserker",
+        "rarity": "L",
+        "health": 200,
+        "energy_lag": 4,
+        "stamina": 50,
+        "death reward": {
+            "coins": [
+                100,
+                200
+            ],
+            "exps": [
+                25,
+                50
+            ],
+            "Health Potion": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ],
+            "Power Potion": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ],
+            "Berserker Axe": [
+                [
+                    1,
+                    1
+                ],
+                5000
+            ]
+        },
+        "deck": [
+            "Fury Slashes",
+            "Fury Slashes",
+            "Fury Slashes",
+            "Enrage",
+            "Enrage",
+            "Enrage",
+            "Heavy Shield",
+            "Heavy Shield",
+            "Heal",
+            "Aid",
+            "Quick Shot",
+            "Quick Shot"
+        ],
+        "brief": "Ogres that are significantly larger and stronger than other Ogres. Wearing animal pelts and painting their skins with black and white war paint, they appear quite ferocious. They usually carry large swords or axes covered in the blood of their enemies."
+    },
+    "temple guardian": {
+        "name": "Temple Guardian",
+        "rarity": "L",
+        "health": 2400,
+        "energy_lag": 4,
+        "stamina": 35,
+        "death reward": {
+            "coins": [
+                150,
+                250
+            ],
+            "exps": [
+                25,
+                50
+            ],
+            "Health Potion": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ],
+            "Power Potion": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ]
+        },
+        "deck": [
+            "Relic",
+            "Relic",
+            "Seed",
+            "Smite",
+            "Seed",
+            "Cache",
+            "Smite",
+            "Seed",
+            "Reform",
+            "Reform",
+            "Reform"
+        ],
+        "brief": "A titan among titans. Only the most worthy can defeat this Golem that guards the gate leading to the legendary Shrine of Life."
+    },
+    "shiniminsus": {
+        "name": "Shiniminsus",
+        "rarity": "L",
+        "health": 600,
+        "energy_lag": 2,
+        "stamina": 100,
+        "death reward": {
+            "coins": [
+                1000,
+                2000
+            ],
+            "exps": [
+                500,
+                1000
+            ]
+        },
+        "deck": [
+            "Relic",
+            "Seed",
+            "Seed",
+            "Cache",
+            "Regenerate",
+            "Regenerate",
+            "Immobilize",
+            "Immobilize",
+            "Immobilize",
+            "Lightning Bolt",
+            "Lightning Bolt"
+        ],
+        "brief": "The God of Nature, one of the primordial entities of the Earth. A tree figurine who hibernates in the Shrine of Life in the sacred Enchanted Forest while its roots quietly spread across the world."
+    },
+    "ghost": {
+        "name": "Ghost",
+        "rarity": "C",
+        "health": 20,
+        "energy_lag": 7,
+        "stamina": 30,
+        "death reward": {
+            "coins": [
+                20,
+                30
+            ],
+            "exps": [
+                5,
+                10
+            ]
+        },
+        "deck": [
+            "Steal",
+            "Steal",
+            "Steal",
+            "Loot",
+            "Loot",
+            "Loot",
+            "Execration",
+            "Paranoid",
+            "Paranoid",
+            "Insult",
+            "Insult",
+            "Insult"
+        ],
+        "brief": "A malicious ghost. Devours the life force of adventurers who pass by."
+    },
+    "skeleton": {
+        "name": "Skeleton",
+        "rarity": "C",
+        "health": 25,
+        "energy_lag": 6,
+        "stamina": 20,
+        "death reward": {
+            "coins": [
+                2,
+                5
+            ],
+            "exps": [
+                5,
+                10
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Shield",
+            "Stab",
+            "Stab",
+            "Stab",
+            "Slash",
+            "Slash",
+            "Slash",
+            "Paranoid",
+            "Paranoid",
+            "Paranoid"
+        ],
+        "brief": "Hollow white figures, the skeletons of dead creatures. Enchanted by spells, they rise from the grave."
+    },
+    "zombie": {
+        "name": "Zombie",
+        "rarity": "C",
+        "health": 35,
+        "energy_lag": 9,
+        "stamina": 35,
+        "death reward": {
+            "coins": [
+                5,
+                10
+            ],
+            "exps": [
+                10,
+                15
+            ]
+        },
+        "deck": [
+            "Heavy Shield",
+            "Shield",
+            "Absorb",
+            "Absorb",
+            "Absorb",
+            "Stab",
+            "Stab",
+            "Paranoid",
+            "Paranoid",
+            "Paranoid",
+            "Insult",
+            "Insult"
+        ],
+        "brief": "Reanimated dead creatures that have been awakened before they decomposed into skeletons."
+    },
+    "slime": {
+        "name": "Slime",
+        "rarity": "R",
+        "health": 30,
+        "energy_lag": 8,
+        "stamina": 25,
+        "death reward": {
+            "coins": [
+                5,
+                10
+            ],
+            "exps": [
+                10,
+                15
+            ]
+        },
+        "deck": [
+            "Absorb",
+            "Absorb",
+            "Absorb",
+            "Devour",
+            "Devour",
+            "Devour",
+            "Reform",
+            "Reform",
+            "Reform",
+            "Sacrifice",
+            "Sacrifice",
+            "Revenge"
+        ],
+        "brief": "Seemingly harmless squishy slimes... that can grow into a giant mass, devouring you in a second."
+    },
+    "phantom": {
+        "name": "Phantom",
+        "rarity": "R",
+        "health": 40,
+        "energy_lag": 6,
+        "stamina": 40,
+        "death reward": {
+            "coins": [
+                10,
+                20
+            ],
+            "exps": [
+                15,
+                20
+            ]
+        },
+        "deck": [
+            "Heavy Shield",
+            "Shield",
+            "Enrage",
+            "Enrage",
+            "Lightning Bolt",
+            "Lightning Bolt",
+            "Zap",
+            "Zap",
+            "Quick Shot",
+            "Quick Shot",
+            "Slash",
+            "Slash"
+        ],
+        "brief": "Half transparent armored creatures that glide instead of walk. The books say that they are mutations of ghosts and zombies."
+    },
+    "demon": {
+        "name": "Demon",
+        "rarity": "E",
+        "health": 70,
+        "energy_lag": 5,
+        "stamina": 35,
+        "death reward": {
+            "coins": [
+                20,
+                30
+            ],
+            "exps": [
+                20,
+                30
+            ]
+        },
+        "deck": [
+            "Cocktail",
+            "Cocktail",
+            "Enrage",
+            "Enrage",
+            "Hellfire",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Ignite",
+            "Ignite",
+            "Paranoid",
+            "Paranoid"
+        ],
+        "brief": "Black and red figures radiating fiery energy. These powerful beings are said to originate in the underworld."
+    },
+    "headless knight": {
+        "name": "Headless Knight",
+        "rarity": "L",
+        "health": 150,
+        "energy_lag": 4,
+        "stamina": 50,
+        "death reward": {
+            "coins": [
+                100,
+                200
+            ],
+            "exps": [
+                25,
+                50
+            ],
+            "Large Power Potion": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ],
+            "Resurrection Amulet": [
+                1,
+                10000
+            ]
+        },
+        "deck": [
+            "Heavy Shield",
+            "Heavy Shield",
+            "Hellfire",
+            "Enrage",
+            "Sacrifice",
+            "Pandemic",
+            "Demonic Ritual",
+            "Demonic Ritual",
+            "Demonic Ritual",
+            "Execration",
+            "Insult",
+            "Insult"
+        ],
+        "brief": "Courageous royal knights who became undead knights when they died. Riding on skeleton horses, they attack with gleaming lances. Where their heads once were, there are now only fierce blue flames."
+    },
+    "red wyvern": {
+        "name": "Red Wyvern",
+        "rarity": "L",
+        "health": 240,
+        "energy_lag": 3,
+        "stamina": 100,
+        "death reward": {
+            "coins": [
+                500,
+                1000
+            ],
+            "exps": [
+                75,
+                150
+            ],
+            "gems": [
+                0,
+                49
+            ]
+        },
+        "deck": [
+            "Harden Scales",
+            "Harden Scales",
+            "Harden Scales",
+            "Harden Scales",
+            "Harden Scales",
+            "Prideful Flight",
+            "Prideful Flight",
+            "Prideful Flight",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Hellfire",
+            "Hellfire",
+            "Rapid Burst",
+            "Rapid Burst",
+            "Combust",
+            "Combust",
+            "Harden Scales",
+            "Harden Scales",
+            "Harden Scales",
+            "Harden Scales",
+            "Harden Scales",
+            "Prideful Flight",
+            "Prideful Flight",
+            "Prideful Flight",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Fireball",
+            "Harden Scales",
+            "Harden Scales",
+            "Rapid Burst",
+            "Rapid Burst",
+            "Combust",
+            "Combust"
+        ],
+        "brief": "A close relative of dragons, though not nearly as lethal. Be wary of their tough hides and rapid flame-based attacks.",
+        "tip:": "Make sure not to have many burn effects on you or the Wyvern's combust attack will deal massive damage! You can prevent it by frequent shielding or by casting chill effects on yourself.\n Many of the Wyvern's attack have low accuracy, meaning that keeping it stunned will greatly decrease its average damage. However, be aware that they can clear their effects with Prideful Flight."
+    },
+    "lich": {
+        "name": "Lich",
+        "rarity": "R",
+        "health": 50,
+        "energy_lag": 4,
+        "stamina": 30,
+        "death reward": {
+            "coins": 0,
+            "exps": 0
+        },
+        "deck": [
+            "Insult",
+            "Insult",
+            "Skeletal Slay",
+            "Skeletal Slay",
+            "Sacrifice",
+            "Sacrifice",
+            "Regenerate",
+            "Regenerate",
+            "Regenerate",
+            "Terminate",
+            "Terminate",
+            "Terminate"
+        ],
+        "brief": "A wizard who lost their power attempting to defy death. Now, they wander aimlessly."
+    },
+    "lich lord": {
+        "name": "Lich Lord",
+        "rarity": "L",
+        "health": 500,
+        "energy_lag": 2,
+        "stamina": 75,
+        "death reward": {
+            "coins": [
+                500,
+                1000
+            ],
+            "exps": [
+                75,
+                150
+            ],
+            "gems": [
+                0,
+                49
+            ],
+            "crystal": [
+                [
+                    1,
+                    1
+                ],
+                10000
+            ]
+        },
+        "deck": [
+            "Rejuvenate",
+            "Smite",
+            "Execration",
+            "Skeletal Slay",
+            "Skeletal Slay",
+            "Skeletal Slay",
+            "Terminate",
+            "Terminate",
+            "Terminate",
+            "Terminate",
+            "Insult",
+            "Insult",
+            "Skeletal Slay",
+            "Insult",
+            "Skeletal Slay"
+        ],
+        "brief": "A powerful wizard who seeks to overcome death itself. They are stronger than an average lich, and with an arsenal of powerful healing spells, they are nearly unstoppable.",
+        "_comment": "what healing spells there's literally only one rejuvenate"
+    },
+    "potioneer": {
+        "name": "Potioneer",
+        "rarity": "R",
+        "health": 80,
+        "energy_lag": 4,
+        "stamina": 45,
+        "death reward": {
+            "coins": [
+                30,
+                50
+            ],
+            "exps": [
+                5,
+                10
+            ],
+            "Health Potion": [
+                [
+                    1,
+                    1
+                ],
+                5000
+            ],
+            "Power Potion": [
+                [
+                    1,
+                    1
+                ],
+                5000
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Absorb",
+            "Absorb",
+            "Heal",
+            "Heal",
+            "Aid",
+            "Aid",
+            "Bees Swarm",
+            "Bees Swarm",
+            "Bees Swarm",
+            "Meditate"
+        ],
+        "brief": "A specialist in various kinds of potions and medicines.",
+        "offers": {
+            "6000": "Health Potion",
+            "6001": "Power Potion",
+            "1000": "Large Health Potion",
+            "1001": "Large Power Potion"
+        },
+        "recipe": {
+            "Health Potion": [
+                [
+                    "Herb",
+                    1
+                ],
+                [
+                    "Forest Fruit",
+                    2
+                ]
+            ],
+            "Power Potion": [
+                [
+                    "Herb",
+                    1
+                ],
+                [
+                    "Forest Fruit",
+                    2
+                ]
+            ],
+            "Large Health Potion": [
+                [
+                    "Health Potion",
+                    2
+                ]
+            ],
+            "Large Power Potion": [
+                [
+                    "Power Potion",
+                    2
+                ]
+            ]
+        }
+    },
+    "craftsman": {
+        "name": "Craftsman",
+        "rarity": "R",
+        "health": 90,
+        "energy_lag": 4,
+        "stamina": 40,
+        "death reward": {
+            "coins": [
+                20,
+                30
+            ],
+            "exps": [
+                5,
+                10
+            ],
+            "Wood": [
+                [
+                    3,
+                    3
+                ],
+                10000
+            ],
+            "Stone": [
+                [
+                    3,
+                    3
+                ],
+                5000
+            ]
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Slash",
+            "Slash",
+            "Stab",
+            "Stab",
+            "Explode",
+            "Explode",
+            "Aim",
+            "Aim",
+            "Heavy Shield",
+            "Quick Shot"
+        ],
+        "brief": "Skilled craftsmen who are experienced with working in the forges to craft new items.",
+        "offers": {
+            "6000": "Raft",
+            "6001": "Wooden Sword",
+            "5000": "Wooden Bow",
+            "2000": "Stone Sword",
+            "600": "Iron Sword",
+            "500": "Iron Crossbow",
+            "100": "Crystal Sword"
+        },
+        "recipe": {
+            "Raft": [
+                [
+                    "Wood",
+                    5
+                ]
+            ],
+            "Wooden Sword": [
+                [
+                    "Wood",
+                    10
+                ]
+            ],
+            "Wooden Bow": [
+                [
+                    "Wood",
+                    10
+                ]
+            ],
+            "Stone Sword": [
+                [
+                    "Stone",
+                    10
+                ]
+            ],
+            "Iron Sword": [
+                [
+                    "Iron Ore",
+                    10
+                ]
+            ],
+            "Iron Crossbow": [
+                [
+                    "Iron Ore",
+                    10
+                ]
+            ],
+            "Crystal Sword": [
+                [
+                    "Crystal",
+                    10
+                ]
+            ]
+        }
+    },
+    "dummy": {
+        "name": "Dummy",
+        "rarity": "L",
+        "health": 25,
+        "energy_lag": 4,
+        "stamina": 20,
+        "death reward": {
+            "coins": 0,
+            "exps": 5
+        },
+        "deck": [
+            "Shield",
+            "Shield",
+            "Shield",
+            "Stab",
+            "Stab",
+            "Stab",
+            "Aid",
+            "Aid",
+            "Zap",
+            "Absorb",
+            "Absorb",
+            "Terminate"
+        ],
+        "brief": "Training dummy enchanted with MAGIC! Mainly used to help new adventurers get comfortable fighting."
+    }
+}

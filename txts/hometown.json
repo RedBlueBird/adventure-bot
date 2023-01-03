@@ -1,0 +1,254 @@
+{
+    "home": {
+        "description": "Home sweet home! This is the place you rest and depend upon the most. After countless journeys, you always end up in your soft relaxing bed.",
+        "coordinate": [
+            5,
+            4
+        ],
+        "choices": {
+            "Lay on your bed": [
+                "bed",
+                "self"
+            ],
+            "Explore around your house": [
+                "explore home",
+                "self"
+            ],
+            "Go outside": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "bed": {
+        "description": "Laying on your bed is very relaxing, and all your worries simply go away. There is a wooden chest sitting next to your bed, keeping your items safe. However, you know you have to get up from your bed sometime, as sleeping alone in your bed all day makes it look like you're just a lazy bum.",
+        "coordinate": [
+            5,
+            4
+        ],
+        "choices": {
+            "Check out your treasure chest": [
+                "chest",
+                "chest"
+            ],
+            "Explore around your house": [
+                "explore home",
+                "self"
+            ],
+            "Go outside": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "explore home": {
+        "description": "Your home doesn't really have anything worth exploring. It's just a giant mess, with items scattered everywhere.",
+        "coordinate": [
+            5,
+            4
+        ],
+        "choices": {
+            "Lay on your bed": [
+                "bed",
+                "self"
+            ],
+            "Go outside": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "south street": {
+        "description": "You look around. There are many houses, for both adventurers and normal townspeople. To the west, there is a bridge leading to the Enchanted Forest. To the southwest, there is a passage way leading out of the hometown. To the southeast, there is a locked gate blocking the entrance to an open plateau. Finally, there is the bar famous for its games and cocktails is to the east. You can also go to the north side of the town.",
+        "coordinate": [
+            5,
+            5
+        ],
+        "choices": {
+            "Head to the Enchanted Forest - adventure": [
+                "enchanted forest",
+                "self"
+            ],
+            "Walk to the passage way - adventure": [
+                "cemetery",
+                "self"
+            ],
+            "Walk through the gate - boss raid": [
+                "boss raid",
+                "self"
+            ],
+            "Go to the bar - minigames & cocktails": [
+                "bar",
+                "self"
+            ],
+            "Check out the north side of town": [
+                "north street",
+                "self"
+            ],
+            "Go back to your home": [
+                "home",
+                "self"
+            ]
+        }
+    },
+    "north street": {
+        "description": "You head north. To the west, there are a few shops open for trading. You can also see a wooden boat floating up and down on the river. To the north, there is a bridge leading to the ocean. To the east, there's a hidden passage way between the trees leading to who knows where.",
+        "coordinate": [
+            6,
+            3
+        ],
+        "choices": {
+            "Head to the ocean - adventure": [
+                "maze island",
+                "self"
+            ],
+            "Check out the shops - shop": [
+                "shop",
+                "self"
+            ],
+            "Walk to the boat - minigame": [
+                "boat",
+                "self"
+            ],
+            "Explore the hidden pathway - adventure": [
+                "city of mirage",
+                "self"
+            ],
+            "Go to the bottom part of the hometown": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "shop": {
+        "description": "This is the trading center of the town! Open 24/7, it's filled with a wide variety of supplies and basic tools. You can buy and sell items here!",
+        "coordinate": [
+            5,
+            2
+        ],
+        "choices": {
+            "Buy items": [
+                "buying",
+                "buying"
+            ],
+            "Sell items": [
+                "selling",
+                "selling"
+            ],
+            "Exit the marketplace": [
+                "north street",
+                "self"
+            ]
+        }
+    },
+    "boat": {
+        "description": "This is a public wooden boat used mostly for fishing. It's pretty old, but still looks new and undamaged. Maybe you can do some fishing?",
+        "coordinate": [
+            4,
+            1
+        ],
+        "choices": {
+            "Go fishing - minigame": [
+                "fishing",
+                "mini game"
+            ],
+            "Leave the boat": [
+                "north street",
+                "self"
+            ]
+        }
+    },
+    "bar": {
+        "description": "You entered Sammy's Bar, the best (and only) bar in town! It's not only famous for its cocktails, but also its mini casino as well (You must be 18 or older to play. Please play responsibly).",
+        "coordinate": [
+            8,
+            5
+        ],
+        "choices": {
+            "Buy a cocktail": [
+                "cocktail",
+                "self"
+            ],
+            "Play coin flip - minigame": [
+                "coin flip",
+                "mini game"
+            ],
+            "Play blackjack - minigame": [
+                "blackjack",
+                "mini game"
+            ],
+            "Leave the Bar": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "enchanted forest": {
+        "description": "This is an ancient forest teeming with magic. Many adventurers have attempted to explore here, but had given up partway through due to its mysterious, unpredictable, and dangerous environment. Legends say that this area contains a mythical power inside a holy shrine, but no one had ever seen it with their own eyes and gotten back out alive.",
+        "coordinate": [
+            0,
+            5
+        ],
+        "choices": {
+            "Start the adventure": [
+                "enchanted forest",
+                "adventure"
+            ],
+            "Go back": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "cemetery": {
+        "description": "When you made it to the end of the narrow passage, you find yourself in a cemetery! You recall that this place is a terrifying ghost-filled path to the underworld!",
+        "coordinate": [
+            1,
+            7
+        ],
+        "choices": {
+            "Start the adventure": [
+                "cemetery",
+                "adventure"
+            ],
+            "Retreat and go back": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "boss raid": {
+        "description": "You walk up to the largest gate you have ever seen, built to prevent people from accidentally going down this path which leads to an open plateau. What could be waiting for those who venture past the safety of the village?",
+        "coordinate": [
+            6,
+            7
+        ],
+        "choices": {
+            "Start the raid - 1 Raid Ticket": [
+                "boss raid",
+                "adventure"
+            ],
+            "Leave and comeback another time": [
+                "south street",
+                "self"
+            ]
+        }
+    },
+    "easter egg": {
+        "description": "You have been teleported to an Easter Egg location! Please pay attention to what you do next, as there's no guarantee you will ever be brought here again!",
+        "coordinate": [
+            8,
+            8
+        ],
+        "choices": {
+            "Prepare to meet your fate": [
+                "experimental",
+                "adventure"
+            ],
+            "Teleport back to your home and pretend nothing happened": [
+                "home",
+                "self"
+            ]
+        }
+    }
+}

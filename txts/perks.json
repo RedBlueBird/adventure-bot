@@ -1,0 +1,97 @@
+{
+  "sharpened blade": {
+    "name": "Sharpened Blade",
+    "description": "Receive a 40% damage buff",
+    "multiplier": [0.4, 0, 0, 0, 0]
+  },
+  "solidified shield": {
+    "name": "Solidified Shield",
+    "description": "Receive a 40% defense buff",
+    "multiplier": [0, 0.4, 0, 0, 0]
+  },
+  "lethal aim": {
+    "name": "Lethal Aim",
+    "description": "Receive a 10% accuracy buff",
+    "multiplier": [0, 0, 10, 0, 0]
+  },
+  "infuriated strength": {
+    "name": "Infuriated Strength",
+    "description": "Your crit chance increases by 10%",
+    "multiplier": [0, 0, 0, 10, 0]
+  },
+  "gifted alchemist": {
+    "name": "Gifted Alchemist",
+    "description": "Your effect accuracy increases by 10%",
+    "multiplier": [0, 0, 0, 0, 10]
+  },
+  "hysterical maniac": {
+    "name": "Hysterical Maniac",
+    "description": "Use a card from your hand for 0 energy every turn",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "vigorous endurance": {
+    "name": "Vigorous Endurance",
+    "description": "Receive a 20% max health buff",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "hot spring": {
+    "name": "Hot Spring",
+    "description": "Your stamina increases by 40",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "mechanical heart": {
+    "name": "Mechanical Heart",
+    "description": "Every turn, you gain 1% of your max health automatically",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "soul of fire": {
+    "name": "Soul of Fire",
+    "description": "Each card automatically applies 1 Burn effect to the target.",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "devil's core": {
+    "name": "Devil's Core",
+    "description": "Each card automatically applies 1 Curse effect to the target.",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "essence of venom": {
+    "name": "Essence of Venom",
+    "description": "Each card automatically applies 1 Poison effect to the target",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "unblemished prime crystal": {
+    "name": "Unblemished Prime Crystal",
+    "description": "Each card automatically applies 1 Chill effect to the target",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "energized charge": {
+    "name": "Energized Charge",
+    "description": "Receive a 2 max energy limit increase",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "golden greed": {
+    "name": "Golden Greed",
+    "description": "Receive 100% more gold from defeated enemies",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "feathered shoe": {
+    "name": "Feathered Shoe",
+    "description": "Receive a 40% travel distance increase",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "chunk of gold": {
+    "name": "Chunk of Gold",
+    "description": "Receive 250 Golden Coins",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "book of knowledge": {
+    "name": "Book of Knowledge",
+    "description": "Receive 150 Experience Points",
+    "multiplier": [0, 0, 0, 0, 0]
+  },
+  "hidden gem": {
+    "name": "Hidden Gem",
+    "description": "Receive 1 Shiny Gem",
+    "multiplier": [0, 0, 0, 0, 0]
+  }
+}

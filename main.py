@@ -18,6 +18,8 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
 
+from helpers import db_manager, asset_manager
+
 import exceptions
 
 if not os.path.isfile(f"{os.path.realpath(os.path.dirname(__file__))}/config.json"):
@@ -60,14 +62,7 @@ intents.presences = True
 """
 
 intents = discord.Intents.default()
-
-"""
-Uncomment this if you want to use prefix (normal) commands.
-It is recommended to use slash commands and therefore not use prefix commands.
-
-If you want to use prefix commands, make sure to also enable the intent below in the Discord developer portal.
-"""
-# intents.message_content = True
+intents.message_content = True
 
 bot = Bot(command_prefix=commands.when_mentioned_or(
     config["prefix"]), intents=intents, help_command=None)
@@ -80,13 +75,6 @@ async def init_db():
         await db.commit()
 
 
-"""
-Create a bot variable to access the config file in cogs so that you don't need to import it every time.
-
-The config is available using the following code:
-- bot.config # In this file
-- self.bot.config # In cogs
-"""
 bot.config = config
 
 
@@ -223,7 +211,9 @@ async def load_cogs() -> None:
                 exception = f"{type(e).__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exception}")
 
-
-asyncio.run(init_db())
-asyncio.run(load_cogs())
-bot.run(config["token"])
+if __name__ == '__main__':
+    db_manager.init()
+    asset_manager.init(bot)
+    asyncio.run(init_db())
+    asyncio.run(load_cogs())
+    bot.run(config["token"])
