@@ -216,14 +216,14 @@ def quest_str_rep(quest_type: Union[str, int], amt: Union[str, int]):
 
 
 def log_quest(quest_type: int, value: int, userid):
-    dm.mycursor.execute(f"select quests from playersinfo where userid = {userid}")
-    quests = dm.mycursor.fetchall()[0][0].split(",")
+    dm.cur.execute(f"select quests from playersinfo where userid = {userid}")
+    quests = dm.cur.fetchall()[0][0].split(",")
     for x in range(len(quests) - 1):
         if quests[x].split(".")[1] == str(quest_type):
             quests[x] = ".".join(quests[x].split(".")[0:2]) + "." + str(int(quests[x].split(".")[2]) + value)
             break
-    dm.mycursor.execute(f"update playersinfo set quests = '{','.join(quests[:])}' where userid = {userid}")
-    dm.mydb.commit()
+    dm.cur.execute(f"update playersinfo set quests = '{','.join(quests[:])}' where userid = {userid}")
+    dm.db.commit()
 
 
 # =========================== Special Card Functions ===========================
@@ -397,16 +397,16 @@ def remain_time():
 
 
 def is_registered(author_id):
-    dm.mycursor.execute("select userid from playersinfo")
-    registered_users = dm.mycursor.fetchall()
+    dm.cur.execute("select userid from playersinfo")
+    registered_users = dm.cur.fetchall()
     for x in registered_users:
         if x[0] == author_id:
-            dm.mycursor.execute(f"select cooldown from playersinfo where userid = {author_id}")
-            result = dm.mycursor.fetchall()
+            dm.cur.execute(f"select cooldown from playersinfo where userid = {author_id}")
+            result = dm.cur.fetchall()
             if result[0][0] == 0:
                 sql = "update playersinfo set cooldown = %s where userid = %s"
                 value = (0, str(author_id))
-                dm.mycursor.execute(sql, value)
+                dm.cur.execute(sql, value)
                 return True
             else:
                 return f"You have to wait {time_converter(result[0][0])} before you can send another command!"

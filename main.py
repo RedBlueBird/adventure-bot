@@ -41,9 +41,6 @@ bot.config = config
 
 @bot.event
 async def on_ready() -> None:
-    """
-    The code in this even is executed when the bot is ready
-    """
     print(f"Logged in as {bot.user.name}")
     print(f"discord.py API version: {discord.__version__}")
     print(f"Python version: {platform.python_version()}")
@@ -156,9 +153,6 @@ async def on_command_error(context: Context, error) -> None:
 
 
 async def load_cogs() -> None:
-    """
-    The code in this function is executed whenever the bot will start.
-    """
     for file in os.listdir(f"{os.path.realpath(os.path.dirname(__file__))}/cogs"):
         if file.endswith(".py"):
             extension = file[:-3]

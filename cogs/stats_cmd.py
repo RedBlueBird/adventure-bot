@@ -31,16 +31,16 @@ class StatsCmd(commands.Cog, name="informational"):
             user = ctx.message.author
         member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
         
-        dm.mycursor.execute(f"select * from playersinfo where userid = '{member.id}'")
-        profile_info = dm.mycursor.fetchall()
+        dm.cur.execute(f"select * from playersinfo where userid = '{member.id}'")
+        profile_info = dm.cur.fetchall()
 
         if not profile_info:
             await ctx.send(f"{ctx.message.author.mention}, that's an invalid user id!")
             return
         else:
             profile_info = profile_info[0]
-            dm.mycursor.execute(f"select * from playersachivements where userid = '{member.id}'")
-            achivement_info = dm.mycursor.fetchall()[0]
+            dm.cur.execute(f"select * from playersachivements where userid = '{member.id}'")
+            achivement_info = dm.cur.fetchall()[0]
 
         if profile_info[14].split(",")[0] == "1":
             description_msg = f"14 \n{am.icon['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {am.time_converter(int(profile_info[14].split(',')[1]) - int(times.time()))} \n"
