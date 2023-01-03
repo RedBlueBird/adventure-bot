@@ -170,7 +170,7 @@ async def load_cogs() -> None:
                 print(f"Failed to load extension {extension}\n{exception}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     db_manager.init()
     asset_manager.init(bot)
     asyncio.run(init_db())

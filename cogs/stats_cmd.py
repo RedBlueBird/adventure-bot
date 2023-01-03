@@ -1,4 +1,3 @@
-import random
 import math
 import time as times
 import datetime as dt
@@ -54,24 +53,27 @@ class StatsCmd(commands.Cog, name="informational"):
         if profile_info[3] >= 4:
             tick_msg = f"{am.icon['tick']}**Raid Tickets: **{profile_info[9]}/{tickets}"
 
-        if str(member.id) not in am.queues:
-            embed = discord.Embed(title=member.display_name + "'s profile:", description=None,
-                                  color=discord.Color.gold())
-        else:
-            embed = discord.Embed(title=member.display_name + "'s profile:",
-                                  description=f"```{am.queues[str(member.id)]}``` \n",
-                                  color=discord.Color.gold())
+        embed_descr = f"```{am.queues[str(member.id)]}``` \n" if str(member.id) in am.queues else None
+        embed = discord.Embed(
+            title=member.display_name + "'s profile:",
+            description=embed_descr,
+            color=discord.Color.gold()
+        )
         embed.set_thumbnail(url=member.avatar.url)
 
         if int(profile_info[3]) < 30:
-            embed.add_field(name=f"Current Level: {profile_info[3]}",
-                            value=f"{am.icon['exp']} {profile_info[4]}/{math.floor(int((profile_info[3] ** 2) * 40 + 60))} \n"
-                                  f"{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
-                            inline=False)
+            embed.add_field(
+                name=f"Current Level: {profile_info[3]}",
+                value=f"{am.icon['exp']} {profile_info[4]}/{math.floor(int((profile_info[3] ** 2) * 40 + 60))} \n"
+                        f"{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
+                inline=False
+            )
         else:
-            embed.add_field(name=f"Max Level: {profile_info[3]}",
-                            value=f"{am.icon['exp']} {profile_info[4]} \n{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
-                            inline=False)
+            embed.add_field(
+                name=f"Max Level: {profile_info[3]}",
+                value=f"{am.icon['exp']} {profile_info[4]} \n{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
+                inline=False
+            )
 
         if profile_info[10] != str(dt.date.today()):
             dts = "Right Now!"
@@ -79,17 +81,23 @@ class StatsCmd(commands.Cog, name="informational"):
             pass
             # dts = cmd_tools.remain_time()
         
-        embed.add_field(name="Currency: ", value=f"{am.icon['coin']}**Golden Coins: **{profile_info[5]} \n"
-                                                 f"{am.icon['gem']}**Shiny Gems: **{profile_info[6]} \n"
-                                                 f"{am.icon['token']}**Confetti: **{profile_info[7]} \n"
-                                                 f"{am.icon['medal']}**Medals: **{profile_info[8]} \n"
-                                                 f"{tick_msg}", inline=False)
-        embed.add_field(name="Times: ",
-                        value=f"{am.icon['streak']}**Current daily streak: **{int(profile_info[13])}/" +
-                              description_msg + f"{am.icon['timer']}**Next daily: **{dts} \n"
-                                                f"{am.icon['timer']}**Next quest: "
-                                                f"**{am.time_converter(int(profile_info[15].split(',')[-1]) - int(times.time()))}",
-                        inline=False)
+        embed.add_field(
+            name="Currency: ",
+            value=f"{am.icon['coin']}**Golden Coins: **{profile_info[5]} \n"
+                  f"{am.icon['gem']}**Shiny Gems: **{profile_info[6]} \n"
+                  f"{am.icon['token']}**Confetti: **{profile_info[7]} \n"
+                  f"{am.icon['medal']}**Medals: **{profile_info[8]} \n"
+                  f"{tick_msg}",
+            inline=False
+        )
+        embed.add_field(
+            name="Times: ",
+            value=f"{am.icon['streak']}**Current daily streak: **{int(profile_info[13])}/" +
+                  description_msg + f"{am.icon['timer']}**Next daily: **{dts} \n"
+                  f"{am.icon['timer']}**Next quest: "
+                  f"**{am.time_converter(int(profile_info[15].split(',')[-1]) - int(times.time()))}",
+            inline=False
+        )
 
         if achivement_info[3] != "0000000000000000000000000000000000000000":
             badges = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
