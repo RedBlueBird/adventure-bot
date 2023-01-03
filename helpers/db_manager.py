@@ -18,23 +18,11 @@ def init():
     global db, cur
 
     try:
-        # print(
-        #     f"db_host: {repr(config['db_host'])}\n"
-        #     f"db_user: {repr(config['db_user'])}\n"
-        #     f"db_pw: {repr(config['db_pw'])}\n"
-        #     f"db_db: {repr(config['db_db'])}"
-        # )
-        # db = mysql.connector.connect(
-        #     host=config["db_host"],
-        #     user=config["db_user"],
-        #     passwd=config["db_pw"],
-        #     database=config["db_db"]
-        # )
         db = mysql.connector.connect(
-            host="10.0.0.214",
-            user="SansPapyrus683",
-            passwd="megalovania",
-            database="DiscordAdventurersBotDB"
+            host=config["db_host"],
+            user=config["db_user"],
+            passwd=config["db_pw"],
+            database=config["db_db"]
         )
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
