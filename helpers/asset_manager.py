@@ -196,7 +196,7 @@ def quest_index(index: str) -> List[Union[str, int]]:
             all_rarities[indices[0][0]], reward_units[indices[0][1]], exp_rewards[indices[0][0]]]
 
 
-def quest_str_rep(quest_type: Union[str, int], amount: Union[str, int]):
+def quest_str_rep(quest_type: Union[str, int], amt: Union[str, int]):
     """
     Gives a string representation of a quest given the type and the extend to do it to.
     :param quest_type: The type of quest. (types can be found in quest_index's docstring)
@@ -204,14 +204,14 @@ def quest_str_rep(quest_type: Union[str, int], amount: Union[str, int]):
     :return: A string representation of the quest.
     """
     return {
-        1: f"Kill {amount} opponents while adventuring",
-        2: f"Accumulate enough items that they have a total weight of {amount} while adventuring",
-        3: f"Travel {amount} meters while adventuring",
-        4: f"Win {amount} non-friendly PvP battles",
-        5: f"Earn {amount} golden coins while adventuring",
-        6: f"Earn {amount} medals in PvP battles",
-        7: f"Merge {amount} pairs of cards",
-        8: f"Catch {amount} fish in the fishing mini-game"
+        1: f"Kill {amt} opponents while adventuring",
+        2: f"Accumulate enough items that they have a total weight of {amt} while adventuring",
+        3: f"Travel {amt} meters while adventuring",
+        4: f"Win {amt} non-friendly PvP battles",
+        5: f"Earn {amt} golden coins while adventuring",
+        6: f"Earn {amt} medals in PvP battles",
+        7: f"Merge {amt} pairs of cards",
+        8: f"Catch {amt} fish in the fishing mini-game"
     }[int(quest_type)]
 
 
@@ -232,13 +232,18 @@ with open("txts/card_list.json") as json_file:
 
 
 def fill_args(card, level):
-    all_param = ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush",
-                 "revenge", "lich_revenge", "eff_app", "inverse_damage", "on_hand_block",
-                 "on_hand_absorb", "on_hand_heal", "on_hand_tramp", "on_hand_damage",
-                 "on_hand_self_damage", "on_hand_crush", "on_hand_revenge",
-                 "on_hand_lich_revenge", "on_hand_eff_app", "on_hand_inverse_damage"]
-    param = ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge", "eff_app",
-             "inverse_damage"]
+    all_param = [
+        "block", "absorb", "heal", "tramp", "damage", "self_damage", "crush",
+        "revenge", "lich_revenge", "eff_app", "inverse_damage", "on_hand_block",
+        "on_hand_absorb", "on_hand_heal", "on_hand_tramp", "on_hand_damage",
+        "on_hand_self_damage", "on_hand_crush", "on_hand_revenge",
+        "on_hand_lich_revenge", "on_hand_eff_app", "on_hand_inverse_damage"
+    ]
+    param = [
+        "block", "absorb", "heal", "tramp", "damage", "self_damage",
+        "crush", "revenge", "lich_revenge", "eff_app",
+        "inverse_damage"
+    ]
 
     args = {"level": level}
     for i in card:
@@ -256,8 +261,11 @@ def fill_args(card, level):
 
 
 def add_a_card(player_lvl, userid=None):
-    if userid != "344292024486330371-":
-        energy_cost = log_level_gen(random.randint(2 ** (max(0, 5 - (player_lvl // 4))), 2 ** (10 - math.floor(player_lvl / 10))))
+    if userid != "344292024486330371":
+        energy_cost = log_level_gen(
+            random.randint(2 ** (max(0, 5 - (player_lvl // 4))),
+            2 ** (10 - math.floor(player_lvl / 10)))
+        )
         return f"{energy_cost}.{random_card(energy_cost, 'normal')}"
     else:
         return f"{random.randint(3, 10)}.Snowball"
@@ -474,15 +482,15 @@ def fulfill_requirement(i, p_inv):
     req_items_to_take = {}
     pre_message = None
     if len(i) == 4:
-        for x in i[3]['req']:
+        for x in i[3]["req"]:
             if not req_fulfill:
                 break
             if x == "item":
-                for y in i[3]['req'][x]:
+                for y in i[3]["req"][x]:
                     if y.lower() in p_inv:
-                        if i[3]['req'][x][y][0] <= p_inv[y.lower()]["items"] and req_fulfill:
-                            if i[3]['req'][x][y][1] == "taken":
-                                req_items_to_take[y.lower()] = i[3]['req'][x][y][0]
+                        if i[3]["req"][x][y][0] <= p_inv[y.lower()]["items"] and req_fulfill:
+                            if i[3]["req"][x][y][1] == "taken":
+                                req_items_to_take[y.lower()] = i[3]["req"][x][y][0]
                         else:
                             req_fulfill = False
                             break

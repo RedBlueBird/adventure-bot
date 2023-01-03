@@ -1,17 +1,8 @@
-
-""""
-Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
-Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
-
-Version: 5.4.1
-"""
 import random
 import math
 import time as times
 import datetime as dt
 
-import aiohttp
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -85,7 +76,9 @@ class StatsCmd(commands.Cog, name="informational"):
         if profile_info[10] != str(dt.date.today()):
             dts = "Right Now!"
         else:
-            dts = cmd_tools.remain_time()
+            pass
+            # dts = cmd_tools.remain_time()
+        
         embed.add_field(name="Currency: ", value=f"{am.icon['coin']}**Golden Coins: **{profile_info[5]} \n"
                                                  f"{am.icon['gem']}**Shiny Gems: **{profile_info[6]} \n"
                                                  f"{am.icon['token']}**Confetti: **{profile_info[7]} \n"

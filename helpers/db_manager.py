@@ -18,12 +18,12 @@ def init():
             database="DiscordAdventurersBotDB"
         )
 
-        mydb = mysql.connector.connect(
-            host="na01-sql.pebblehost.com",
-            user="customer_136977_adventurersdb",
-            passwd="soaZREUDBH24jNkFP9B!",
-            database="customer_136977_adventurersdb"
-        )
+        # mydb = mysql.connector.connect(
+        #     host="na01-sql.pebblehost.com",
+        #     user="customer_136977_adventurersdb",
+        #     passwd="soaZREUDBH24jNkFP9B!",
+        #     database="customer_136977_adventurersdb"
+        # )
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Invalid username/password!")

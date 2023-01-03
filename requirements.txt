@@ -1,4 +1,3 @@
-aiohttp
 aiosqlite
 discord
 mysql-connector

@@ -13,50 +13,20 @@ from helpers import db_manager, asset_manager
 
 import exceptions
 
-if not os.path.isfile(f"{os.path.realpath(os.path.dirname(__file__))}/config.json"):
+config_path = f"{os.path.realpath(os.path.dirname(__file__))}/config.json"
+if not os.path.isfile(config_path):
     sys.exit("'config.json' not found! Please add it and try again.")
 else:
-    with open(f"{os.path.realpath(os.path.dirname(__file__))}/config.json") as file:
-        config = json.load(file)
-
-"""	
-Setup bot intents (events restrictions)
-For more information about intents, please go to the following websites:
-https://discordpy.readthedocs.io/en/latest/intents.html
-https://discordpy.readthedocs.io/en/latest/intents.html#privileged-intents
-
-
-Default Intents:
-intents.bans = True
-intents.dm_messages = True
-intents.dm_reactions = True
-intents.dm_typing = True
-intents.emojis = True
-intents.emojis_and_stickers = True
-intents.guild_messages = True
-intents.guild_reactions = True
-intents.guild_scheduled_events = True
-intents.guild_typing = True
-intents.guilds = True
-intents.integrations = True
-intents.invites = True
-intents.messages = True # `message_content` is required to get the content of the messages
-intents.reactions = True
-intents.typing = True
-intents.voice_states = True
-intents.webhooks = True
-
-Privileged Intents (Needs to be enabled on developer portal of Discord), please use them only if you need them:
-intents.members = True
-intents.message_content = True
-intents.presences = True
-"""
+    with open(config_path) as config_file:
+        config = json.load(config_file)
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = Bot(command_prefix=commands.when_mentioned_or(
-    config["prefix"]), intents=intents, help_command=None)
+bot = Bot(
+    command_prefix=commands.when_mentioned_or(config["prefix"]),
+    intents=intents, help_command=None
+)
 
 
 async def init_db():
@@ -87,7 +57,8 @@ async def on_ready() -> None:
 @bot.event
 async def on_message(message: discord.Message) -> None:
     """
-    The code in this event is executed every time someone sends a message, with or without the prefix
+    The code in this event is executed every time someone sends
+    a message, with or without the prefix
 
     :param message: The message that was sent.
     """
@@ -97,20 +68,25 @@ async def on_message(message: discord.Message) -> None:
 
 
 @bot.event
-async def on_command_completion(context: Context) -> None:
+async def on_command_completion(ctx: Context) -> None:
     """
-    The code in this event is executed every time a normal command has been *successfully* executed
+    The code in this event is executed every time a normal command has
+    been *successfully* executed
     :param context: The context of the command that has been executed.
     """
-    full_command_name = context.command.qualified_name
+    full_command_name = ctx.command.qualified_name
     split = full_command_name.split(" ")
     executed_command = str(split[0])
-    if context.guild is not None:
+    if ctx.guild is not None:
         print(
-            f"Executed {executed_command} command in {context.guild.name} (ID: {context.guild.id}) by {context.author} (ID: {context.author.id})")
+            f"Executed {executed_command} command in {ctx.guild.name} "
+            f"(ID: {ctx.guild.id}) by {ctx.author} (ID: {ctx.author.id})"
+        )
     else:
         print(
-            f"Executed {executed_command} command by {context.author} (ID: {context.author.id}) in DMs")
+            f"Executed {executed_command} command by {ctx.author} "
+            f"(ID: {ctx.author.id}) in DMs"
+        )
 
 
 @bot.event
@@ -132,8 +108,9 @@ async def on_command_error(context: Context, error) -> None:
         await context.send(embed=embed)
     elif isinstance(error, exceptions.UserBlacklisted):
         """
-        The code here will only execute if the error is an instance of 'UserBlacklisted', which can occur when using
-        the @checks.not_blacklisted() check in your command, or you can raise the error by yourself.
+        The code here will only execute if the error is an instance of
+        'UserBlacklisted', which can occur when using the @checks.not_blacklisted()
+        check in your command, or you can raise the error by yourself.
         """
         embed = discord.Embed(
             title="Error!",
@@ -191,6 +168,7 @@ async def load_cogs() -> None:
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exception}")
+
 
 if __name__ == '__main__':
     db_manager.init()
