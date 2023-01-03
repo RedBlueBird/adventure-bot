@@ -31,16 +31,15 @@ class StatsCmd(commands.Cog, name="informational"):
         description="Check player's general information."
     )
     @checks.not_blacklisted()
-    async def profile(self, context: Context, user: discord.User = None) -> None:
+    async def profile(self, ctx: Context, user: discord.User = None) -> None:
         """
         Check player's general information
-
-        :param context: The hybrid command context.
         :param user: The user the information is obtained from
         """
-        if user == None:
-            user = context.message.author
-        member = context.guild.get_member(user.id) or await context.guild.fetch_member(user.id)
+
+        if user is None:
+            user = ctx.message.author
+        member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
         
         dm.mycursor.execute(f"select * from playersinfo where userid = '{member.id}'")
         profile_info = dm.mycursor.fetchall()
@@ -108,7 +107,7 @@ class StatsCmd(commands.Cog, name="informational"):
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
         # embed.add_field(name="Personal Best: ", value="Traveled " + str(profile_info[10]) + " Meters in one Adventure.", inline=False)
         embed.set_footer(text="PlayerID: " + str(profile_info[0]) + ", RegisterDate: " + str(achivement_info[2]))
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
 async def setup(bot):

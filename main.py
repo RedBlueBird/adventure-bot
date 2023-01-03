@@ -1,16 +1,7 @@
-"""
-Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
-Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
-
-Version: 5.4.1
-"""
-
 import asyncio
 import json
 import os
 import platform
-import random
 import sys
 
 import aiosqlite
@@ -88,19 +79,9 @@ async def on_ready() -> None:
     print(f"Python version: {platform.python_version()}")
     print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
     print("-------------------")
-    status_task.start()
     if config["sync_commands_globally"]:
         print("Syncing commands globally...")
         await bot.tree.sync()
-
-
-@tasks.loop(minutes=1.0)
-async def status_task() -> None:
-    """
-    Setup the game status task of the bot
-    """
-    statuses = ["with you!", "with Krypton!", "with humans!"]
-    await bot.change_presence(activity=discord.Game(random.choice(statuses)))
 
 
 @bot.event
