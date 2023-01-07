@@ -1,5 +1,4 @@
-aiohttp
-aiosqlite
-discord.py
-mysql-connector
-mysql-connector-python
+aiosqlite~=0.18
+discord.py~=2.1
+mysql-connector-python~=8.0
+Pillow~=9.4

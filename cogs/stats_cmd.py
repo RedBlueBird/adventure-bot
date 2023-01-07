@@ -1,17 +1,7 @@
-
-""""
-Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
-Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
-
-Version: 5.4.1
-"""
-import random
 import math
 import time as times
 import datetime as dt
 
-import aiohttp
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -32,27 +22,26 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["p", "pro"]
     )
     @checks.not_blacklisted()
-    async def profile(self, context: Context, user: discord.User = None) -> None:
+    async def profile(self, ctx: Context, user: discord.User = None) -> None:
         """
         Check player's general information
-
-        :param context: The hybrid command context.
         :param user: The user the information is obtained from
         """
-        if user == None:
-            user = context.message.author
-        member = context.guild.get_member(user.id) or await context.guild.fetch_member(user.id)
+
+        if user is None:
+            user = ctx.message.author
+        member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
         
-        dm.mycursor.execute(f"select * from playersinfo where userid = '{member.id}'")
-        profile_info = dm.mycursor.fetchall()
+        dm.cur.execute(f"select * from playersinfo where userid = '{member.id}'")
+        profile_info = dm.cur.fetchall()
 
         if not profile_info:
             await context.send(f"{context.message.author.mention}, that's an invalid user id!")
             return
         else:
             profile_info = profile_info[0]
-            dm.mycursor.execute(f"select * from playersachivements where userid = '{member.id}'")
-            achivement_info = dm.mycursor.fetchall()[0]
+            dm.cur.execute(f"select * from playersachivements where userid = '{member.id}'")
+            achivement_info = dm.cur.fetchall()[0]
 
         if profile_info[14].split(",")[0] == "1":
             description_msg = f"14 \n{am.icon['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {am.time_converter(int(profile_info[14].split(',')[1]) - int(times.time()))} \n"
@@ -65,24 +54,27 @@ class StatsCmd(commands.Cog, name="informational"):
         if profile_info[3] >= 4:
             tick_msg = f"{am.icon['tick']}**Raid Tickets: **{profile_info[9]}/{tickets}"
 
-        if str(member.id) not in am.queues:
-            embed = discord.Embed(title=member.display_name + "'s profile:", description=None,
-                                  color=discord.Color.gold())
-        else:
-            embed = discord.Embed(title=member.display_name + "'s profile:",
-                                  description=f"```{am.queues[str(member.id)]}``` \n",
-                                  color=discord.Color.gold())
+        embed_descr = f"```{am.queues[str(member.id)]}``` \n" if str(member.id) in am.queues else None
+        embed = discord.Embed(
+            title=member.display_name + "'s profile:",
+            description=embed_descr,
+            color=discord.Color.gold()
+        )
         embed.set_thumbnail(url=member.avatar.url)
 
         if int(profile_info[3]) < 30:
-            embed.add_field(name=f"Current Level: {profile_info[3]}",
-                            value=f"{am.icon['exp']} {profile_info[4]}/{math.floor(int((profile_info[3] ** 2) * 40 + 60))} \n"
-                                  f"{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
-                            inline=False)
+            embed.add_field(
+                name=f"Current Level: {profile_info[3]}",
+                value=f"{am.icon['exp']} {profile_info[4]}/{math.floor(int((profile_info[3] ** 2) * 40 + 60))} \n"
+                        f"{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
+                inline=False
+            )
         else:
-            embed.add_field(name=f"Max Level: {profile_info[3]}",
-                            value=f"{am.icon['exp']} {profile_info[4]} \n{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
-                            inline=False)
+            embed.add_field(
+                name=f"Max Level: {profile_info[3]}",
+                value=f"{am.icon['exp']} {profile_info[4]} \n{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
+                inline=False
+            )
 
         if profile_info[10] != str(dt.date.today()):
             dts = "Right Now!"

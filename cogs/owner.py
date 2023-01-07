@@ -1,11 +1,3 @@
-""""
-Copyright © Krypton 2019-2022 - https://github.com/kkrypt0nn (https://krypton.ninja)
-Description:
-🐍 A simple template to start to code your own and personalized discord bot in Python programming language.
-
-Version: 5.4.1
-"""
-
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -27,8 +19,6 @@ class Owner(commands.Cog, name="owner"):
     async def sync(self, context: Context, scope: str) -> None:
         """
         Synchonizes the slash commands.
-
-        :param context: The command context.
         :param scope: The scope of the sync. Can be `global` or `guild`.
         """
 
@@ -67,8 +57,6 @@ class Owner(commands.Cog, name="owner"):
     async def unsync(self, context: Context, scope: str) -> None:
         """
         Unsynchonizes the slash commands.
-
-        :param context: The command context.
         :param scope: The scope of the sync. Can be `global`, `current_guild` or `guild`.
         """
 
@@ -108,8 +96,6 @@ class Owner(commands.Cog, name="owner"):
     async def load(self, context: Context, cog: str) -> None:
         """
         The bot will load the given cog.
-
-        :param context: The hybrid command context.
         :param cog: The name of the cog to load.
         """
         try:
@@ -138,8 +124,6 @@ class Owner(commands.Cog, name="owner"):
     async def unload(self, context: Context, cog: str) -> None:
         """
         The bot will unload the given cog.
-
-        :param context: The hybrid command context.
         :param cog: The name of the cog to unload.
         """
         try:
@@ -168,8 +152,6 @@ class Owner(commands.Cog, name="owner"):
     async def reload(self, context: Context, cog: str) -> None:
         """
         The bot will reload the given cog.
-
-        :param context: The hybrid command context.
         :param cog: The name of the cog to reload.
         """
         try:
@@ -195,11 +177,7 @@ class Owner(commands.Cog, name="owner"):
     )
     @checks.is_owner()
     async def shutdown(self, context: Context) -> None:
-        """
-        Shuts down the bot.
-
-        :param context: The hybrid command context.
-        """
+        """Shuts down the bot."""
         embed = discord.Embed(
             description="Shutting down. Bye! :wave:",
             color=0x9C84EF
@@ -216,8 +194,6 @@ class Owner(commands.Cog, name="owner"):
     async def say(self, context: Context, *, message: str) -> None:
         """
         The bot will say anything you want.
-
-        :param context: The hybrid command context.
         :param message: The message that should be repeated by the bot.
         """
         await context.send(message)
@@ -231,8 +207,6 @@ class Owner(commands.Cog, name="owner"):
     async def embed(self, context: Context, *, message: str) -> None:
         """
         The bot will say anything you want, but using embeds.
-
-        :param context: The hybrid command context.
         :param message: The message that should be repeated by the bot.
         """
         embed = discord.Embed(
@@ -247,11 +221,7 @@ class Owner(commands.Cog, name="owner"):
     )
     @checks.is_owner()
     async def blacklist(self, context: Context) -> None:
-        """
-        Lets you add or remove a user from not being able to use the bot.
-
-        :param context: The hybrid command context.
-        """
+        """Lets you add or remove a user from not being able to use the bot."""
         if context.invoked_subcommand is None:
             embed = discord.Embed(
                 title="Blacklist",
@@ -270,8 +240,6 @@ class Owner(commands.Cog, name="owner"):
     async def blacklist_add(self, context: Context, user: discord.User) -> None:
         """
         Lets you add a user from not being able to use the bot.
-
-        :param context: The hybrid command context.
         :param user: The user that should be added to the blacklist.
         """
         user_id = user.id
@@ -304,8 +272,6 @@ class Owner(commands.Cog, name="owner"):
     async def blacklist_remove(self, context: Context, user: discord.User) -> None:
         """
         Lets you remove a user from not being able to use the bot.
-
-        :param context: The hybrid command context.
         :param user: The user that should be removed from the blacklist.
         """
         user_id = user.id

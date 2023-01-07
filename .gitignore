@@ -137,8 +137,13 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# PyCharm IDEA
+# IDE Folders
 .idea/*
+.vscode/
+.vs/
 
 # SQLITE database
 *.db
+
+# Secret file
+config.json
