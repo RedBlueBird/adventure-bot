@@ -33,6 +33,3 @@ def init():
             print(err)
 
     cur = db.cursor()
-
-
-init()

@@ -37,15 +37,11 @@ class General(commands.Cog, name="general"):
 
     @commands.hybrid_command(
         name="botinfo",
-        description="Get some useful (or not) information about the bot.",
+        description="Get some info about the bot.",
     )
     @checks.not_blacklisted()
     async def botinfo(self, context: Context) -> None:
-        """
-        Get some useful (or not) information about the bot.
-
-        :param context: The hybrid command context.
-        """
+        """Get some info about the bot."""
         embed = discord.Embed(
             description="Used [Krypton's](https://krypton.ninja) template",
             color=0x9C84EF
@@ -71,13 +67,11 @@ class General(commands.Cog, name="general"):
 
     @commands.hybrid_command(
         name="serverinfo",
-        description="Get some useful (or not) information about the server.",
+        description="Get some info about the server.",
     )
     @checks.not_blacklisted()
     async def serverinfo(self, context: Context) -> None:
-        """
-        Get some useful (or not) information about the server.
-        """
+        """Get some info about the server."""
         roles = [role.name for role in context.guild.roles]
         if len(roles) > 50:
             roles = roles[:50]
@@ -126,7 +120,7 @@ class General(commands.Cog, name="general"):
 
     @commands.hybrid_command(
         name="invite",
-        description="Get the invite link of the bot to be able to invite it.",
+        description="Get the invite link of the bot.",
     )
     @checks.not_blacklisted()
     async def invite(self, context: Context) -> None:
@@ -144,15 +138,13 @@ class General(commands.Cog, name="general"):
 
     @commands.hybrid_command(
         name="server",
-        description="Get the invite link of the discord server of the bot for some support.",
+        description="Get the invite link of the discord server of the bot.",
     )
     @checks.not_blacklisted()
     async def server(self, context: Context) -> None:
-        """
-        Get the invite link of the discord server of the bot for some support.
-        """
+        """Get the invite link of the discord server of the bot."""
         embed = discord.Embed(
-            description=f"Join the support server for the bot by clicking [here](https://discord.gg/w2CkRtkj57).",
+            description=f"Bot server link [here](https://discord.gg/w2CkRtkj57).",
             color=0xD75BF4
         )
         try:
