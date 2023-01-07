@@ -22,6 +22,7 @@ class Sys(commands.Cog):
     )
     @checks.not_blacklisted()
     async def register(self, ctx: Context):
+        """Registers the author of the bot."""
         author_id = str(ctx.message.author.id)
 
         dm.cur.execute(f"SELECT cooldown FROM playersinfo WHERE userid = {author_id}")
