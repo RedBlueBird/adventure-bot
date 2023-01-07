@@ -141,6 +141,8 @@ cython_debug/
 .idea/*
 .vscode/
 .vs/
+*.pyproj
+*.sln
 
 # SQLITE database
 *.db

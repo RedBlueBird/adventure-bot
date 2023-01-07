@@ -36,7 +36,7 @@ class StatsCmd(commands.Cog, name="informational"):
         profile_info = dm.cur.fetchall()
 
         if not profile_info:
-            await context.send(f"{context.message.author.mention}, that's an invalid user id!")
+            await ctx.send(f"{ctx.message.author.mention}, that's an invalid user id!")
             return
         else:
             profile_info = profile_info[0]
@@ -101,7 +101,7 @@ class StatsCmd(commands.Cog, name="informational"):
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
         # embed.add_field(name="Personal Best: ", value="Traveled " + str(profile_info[10]) + " Meters in one Adventure.", inline=False)
         embed.set_footer(text="PlayerID: " + str(profile_info[0]) + ", RegisterDate: " + str(achivement_info[2]))
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
     @commands.hybrid_command(
@@ -110,17 +110,17 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["quest", "que", "qu"]
     )
     @checks.not_blacklisted()
-    async def quests(self, context: Context, user: discord.User = None) -> None:
+    async def quests(self, ctx: Context, user: discord.User = None) -> None:
         """
         Displays all current quests of a given member.
 
-        :param context: Context.
+        :param ctx: Context.
         :param user: The user whose quests to display.
         """
 
         if user == None:
-            user = context.message.author
-        member = context.guild.get_member(user.id) or await context.guild.fetch_member(user.id)
+            user = ctx.message.author
+        member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
 
 
         dm.mycursor.execute(f"select quests, user_identity from playersinfo where userid = '{member.id}'")
@@ -187,7 +187,7 @@ class StatsCmd(commands.Cog, name="informational"):
         elif is_premium == 1:
             embed.set_footer(
                 text=f"There's {am.time_converter(int(quests[-1]) - int(times.time()))} left till a new quest")
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
     @commands.hybrid_command(
@@ -196,31 +196,31 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["card", "i", "inv"]
     )
     @checks.not_blacklisted()
-    async def inventory(self, context: Context, page: str = "1", user: discord.User = None) -> None:
+    async def inventory(self, ctx: Context, page: str = "1", user: discord.User = None) -> None:
         """
         Displays all the cards in a member's inventory in the form of an embed.
 
-        :param context: Context.
+        :param ctx: Context.
         :param page: The page of cards to display
         :param user: The user whose cards to display
         """
         page = max(math.floor(int(page) + 1 - 1), 1) if page.isdigit() else 1
 
         if user == None:
-            user = context.message.author
-        member = context.guild.get_member(user.id) or await context.guild.fetch_member(user.id)
+            user = ctx.message.author
+        member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
 
         dm.mycursor.execute(f"select id from playersinfo where userid = '{member.id}'")
         if not dm.mycursor.fetchall():
-            await context.send(f"{context.message.author.mention}, the user id is invalid!")
+            await ctx.send(f"{ctx.message.author.mention}, the user id is invalid!")
             return
 
         dm.mycursor.execute(
-            f"select inventory_order, deck_slot from playersinfo where userid = '{context.message.author.id}'")
+            f"select inventory_order, deck_slot from playersinfo where userid = '{ctx.message.author.id}'")
         result = dm.mycursor.fetchall()[0]
         order = result[0]
         deck_slot = result[1]
-        dm.mycursor.execute(f"select deck{deck_slot} from playersachivements where userid = '{context.message.author.id}'")
+        dm.mycursor.execute(f"select deck{deck_slot} from playersachivements where userid = '{ctx.message.author.id}'")
         decks = dm.mycursor.fetchall()[0]
         decks = [int(k) for i in decks for k in i.split(",")]
 
@@ -247,7 +247,7 @@ class StatsCmd(commands.Cog, name="informational"):
             result = am.order_by_rarity(result, order - 9)
 
         if len(result) < (page - 1) * 15:
-            await context.send(f"{context.message.author.mention}, there is no cards in this page!")
+            await ctx.send(f"{ctx.message.author.mention}, there is no cards in this page!")
             return
 
         result = result[(page - 1) * 15:(page - 1) * 15 + 15]
@@ -278,11 +278,11 @@ class StatsCmd(commands.Cog, name="informational"):
             else:
                 embed.set_footer(text=str((page - 1) * 15 + 1) + "-" + str(page * 15) + "/" + str(
                     total_cards) + " cards displayed in page " + str(page))
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         else:
-            await context.send(
-                context.message.author.mention + f", you don't have any cards on page {page}!")
+            await ctx.send(
+                ctx.message.author.mention + f", you don't have any cards on page {page}!")
 
 
     @commands.hybrid_command(
@@ -291,11 +291,11 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["lb", "leaderboards", "lbs"]
     )
     @checks.not_blacklisted()
-    async def leaderboard(self, context: Context, leaderboard_type="None") -> None:
+    async def leaderboard(self, ctx: Context, leaderboard_type="None") -> None:
         """
         Displays the world's top players.
         
-        :param context: Context.
+        :param ctx: Context.
         :param leaderboard_type: The type of leaderboard to display
         """
         selected_players = []
@@ -304,7 +304,7 @@ class StatsCmd(commands.Cog, name="informational"):
             all_players = dm.mycursor.fetchall()
             for x in range(10):
                 y = await self.bot.fetch_user(str(all_players[x][1]))
-                if not str(all_players[x][1]) == str(context.message.author.id):
+                if not str(all_players[x][1]) == str(ctx.message.author.id):
                     selected_players.insert(len(selected_players),
                                             "**[" + str(x + 1) + "]**. **" + str(y) + "** \n• Level: " + str(
                                                 all_players[x][2]) + ", Experience Points: " + str(
@@ -317,14 +317,14 @@ class StatsCmd(commands.Cog, name="informational"):
             embed = discord.Embed(title="Leaderboard - most experience points",
                                   description=" ".join(selected_players),
                                   color=discord.Color.gold())
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif leaderboard_type.lower() in ["coins", "golden_coins", "goldencoins", "goldencoins", "coin", "gc", "c"]:
             dm.mycursor.execute("select id, userid, coins, gems from playersinfo order by coins desc, gems desc limit 10")
             all_players = dm.mycursor.fetchall()
             for x in range(10):
                 y = await self.bot.fetch_user(str(all_players[x][1]))
-                if not str(all_players[x][1]) == str(context.message.author.id):
+                if not str(all_players[x][1]) == str(ctx.message.author.id):
                     selected_players.insert(len(selected_players), "**[" + str(x + 1) + "]**. **" + str(
                         y) + "** \n• Golden Coins: " + str(all_players[x][2]) + ", Shiny Gems: " + str(
                         all_players[x][3]) + " \n")
@@ -335,7 +335,7 @@ class StatsCmd(commands.Cog, name="informational"):
             embed = discord.Embed(title="Leaderboard - most golden coins",
                                   description=" ".join(selected_players),
                                   color=discord.Color.gold())
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif leaderboard_type.lower() in ["shiny_gems", "shinygems", "shiny_gem", "shinygem", "gems", "gem", "g", "sg"]:
             dm.mycursor.execute(
@@ -343,7 +343,7 @@ class StatsCmd(commands.Cog, name="informational"):
             all_players = dm.mycursor.fetchall()
             for x in range(10):
                 y = await self.bot.fetch_user(str(all_players[x][1]))
-                if not str(all_players[x][1]) == str(context.message.author.id):
+                if not str(all_players[x][1]) == str(ctx.message.author.id):
                     selected_players.insert(len(selected_players), "**[" + str(x + 1) + "]**. **" + str(
                         y) + "** \n• Shiny gems: " + str(all_players[x][2]) + ", Golden Coins: " + str(
                         all_players[x][3]) + " \n")
@@ -354,14 +354,14 @@ class StatsCmd(commands.Cog, name="informational"):
             embed = discord.Embed(title="Leaderboard - most shiny gems",
                                   description=" ".join(selected_players),
                                   color=discord.Color.gold())
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif leaderboard_type.lower() in ["medals", "medal", "m"]:
             dm.mycursor.execute("select id, userid, medals from playersinfo order by medals desc limit 10")
             all_players = dm.mycursor.fetchall()
             for x in range(10):
                 y = await self.bot.fetch_user(str(all_players[x][1]))
-                if not str(all_players[x][1]) == str(context.message.author.id):
+                if not str(all_players[x][1]) == str(ctx.message.author.id):
                     selected_players.insert(len(selected_players),
                                             "**[" + str(x + 1) + "]**. **" + str(y) + "** \n• Medals: " + str(
                                                 all_players[x][2]) + " \n")
@@ -370,7 +370,7 @@ class StatsCmd(commands.Cog, name="informational"):
                                             "**[" + str(x + 1) + "]**. **" + str(y) + "** __\n• Medals: " + str(
                                                 all_players[x][2]) + "__ \n")
             embed = discord.Embed(title="Leaderboard - most medals", description=" ".join(selected_players), color=discord.Color.gold())
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif leaderboard_type.lower() in ["tokens", "t", "event_tokens", "token"]:
             dm.mycursor.execute(
@@ -378,7 +378,7 @@ class StatsCmd(commands.Cog, name="informational"):
             all_players = dm.mycursor.fetchall()
             for x in range(10):
                 y = await self.bot.fetch_user(str(all_players[x][1]))
-                if not str(all_players[x][1]) == str(context.message.author.id):
+                if not str(all_players[x][1]) == str(ctx.message.author.id):
                     selected_players.insert(len(selected_players),
                                             "**[" + str(x + 1) + "]**. **" + str(y) + "** \n• Tokens: " + str(
                                                 all_players[x][2]) + " \n")
@@ -387,7 +387,7 @@ class StatsCmd(commands.Cog, name="informational"):
                                             "**[" + str(x + 1) + "]**. **" + str(y) + "** __\n• Tokens: " + str(
                                                 all_players[x][2]) + "__ \n")
             embed = discord.Embed(title="Leaderboard - most tokens", description=" ".join(selected_players), color=discord.Color.gold())
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         else:
             embed = discord.Embed(title="Here is a list of leaderboards the bot can show",
@@ -404,8 +404,8 @@ class StatsCmd(commands.Cog, name="informational"):
             embed.add_field(name="Most tokens players", value=f"`{am.prefix}leaderbord tokens`",
                             inline=False)
             embed.set_footer(text="Showing top 10 players only")
-            embed.set_thumbnail(url=context.message.author.avatar.url)
-            await context.send(embed=embed)
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            await ctx.send(embed=embed)
 
 
     @commands.hybrid_command(
@@ -414,29 +414,29 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["decks"]
     )
     @checks.not_blacklisted()
-    async def deck(self, context: Context, deck_slot=None, user: discord.User = None) ->  None:
+    async def deck(self, ctx: Context, deck_slot=None, user: discord.User = None) ->  None:
         """
         Displays the deck in the memeber's current deck slot
 
-        :param context: Context.
+        :param ctx: Context.
         :param deck_slot: The deck slot to search.
         :param user: The user whose deck slots to search.
         """
         if user == None:
-            user = context.message.author
-        member = context.guild.get_member(user.id) or await context.guild.fetch_member(user.id)
+            user = ctx.message.author
+        member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
 
         try:
             deck_slot = round(int(deck_slot))
             if deck_slot < 1 or deck_slot > 6:
-                await context.send("The deck slot number must between 1-6!")
+                await ctx.send("The deck slot number must between 1-6!")
                 return
         except (TypeError, ValueError):
             if deck_slot is not None and deck_slot.lower() in ["list", "li"]:
                 deck_slot = "list"
             deck_slot = 0 if deck_slot != "list" else "list"
 
-        dm.mycursor.execute(f"select inventory_order from playersinfo where userid = '{context.message.author.id}'")
+        dm.mycursor.execute(f"select inventory_order from playersinfo where userid = '{ctx.message.author.id}'")
         order = dm.mycursor.fetchall()[0][0]
         dm.mycursor.execute(f"select level, deck_slot from playersinfo where userid = '{member.id}'")
         result = dm.mycursor.fetchall()[0]
@@ -467,11 +467,11 @@ class StatsCmd(commands.Cog, name="informational"):
                     embed.add_field(name=f"**Deck {i + 1}**", value=f"{all_decks[i]}/12 cards", inline=False)
 
             embed.set_thumbnail(url=member.avatar.url)
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
             return
 
         if level < deck_slots[deck_slot]:
-            await context.send("The deck slot you selected is currently locked!")
+            await ctx.send("The deck slot you selected is currently locked!")
             return
 
         dm.mycursor.execute(f"select deck{deck_slot} from playersachivements where userid = '{member.id}'")
@@ -503,7 +503,7 @@ class StatsCmd(commands.Cog, name="informational"):
         if not result:
             dm.mycursor.execute(f"select * from cardsinfo where owned_user = '{member.id}'")
             if not dm.mycursor.fetchall():
-                await context.send(f"{context.message.author.mention}, the user id you put in is invalid!")
+                await ctx.send(f"{ctx.message.author.mention}, the user id you put in is invalid!")
                 return
 
         all_cards = []
@@ -538,7 +538,7 @@ class StatsCmd(commands.Cog, name="informational"):
             embed.set_footer(text="You need " + str(12 - len(result)) + " more cards needed to complete this deck!")
         else:
             embed.set_footer(text="Average energy cost: " + str(round(total_energy_cost * 100 / 12) / 100))
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
     @commands.hybrid_command(
@@ -547,17 +547,17 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["in", "ins", "ifs", "informations", "check"]
     )
     @checks.not_blacklisted()
-    async def info(self, context: Context, dictionary_name=None, name=None, level: str = "bruh moment") -> None:
+    async def info(self, ctx: Context, dictionary_name=None, name=None, level: str = "bruh moment") -> None:
         """
         Looks up entities, from effects to mobs and displays an embed containing info about it.
 
-        :param context: Context.
+        :param ctx: Context.
         :param dictionary_name: The type of the thing which to look up (can be a card, mob, item, or effect)
         :param name: The name of the thing to look up
         :param level: The level of the thing for number crunching
         """
         if name is None or dictionary_name is None:
-            await context.send(f"{context.message.author.mention}, the correct format for this command is `" +
+            await ctx.send(f"{ctx.message.author.mention}, the correct format for this command is `" +
                            am.prefix + "info (card/mob/item/effect) (name) (level)`!")
             return
 
@@ -591,9 +591,9 @@ class StatsCmd(commands.Cog, name="informational"):
             """
             if "journal" in card_info:
                 embed.add_field(name="Scout's Journal: ", value="*" + card_info["journal"] + "*", inline=False)
-            embed.set_thumbnail(url=context.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif dictionary_name in ["monster", "mon", "mob", "mobs", "m"]:
             mob_info = am.mobs_dict(level, " ".join(name.lower().split("_")))
@@ -612,9 +612,9 @@ class StatsCmd(commands.Cog, name="informational"):
                 embed.add_field(name="Fighting Tips: ", value="*" + mob_info["tip"] + "*", inline=False)
             if "journal" in mob_info:
                 embed.add_field(name="Scout's Journal: ", value="*" + mob_info["journal"] + "*", inline=False)
-            embed.set_thumbnail(url=context.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif dictionary_name in ["item", "items", "ite", "it", "i", "object", "objects", "obj", "objec", "o"]:
             item_info = am.items_dict(" ".join(name.lower().split("_")))
@@ -636,11 +636,11 @@ class StatsCmd(commands.Cog, name="informational"):
             """
             if "journal" in item_info:
                 embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
-            embed.set_thumbnail(url=context.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
             embed.set_image(url=f"https://cdn.discordapp.com/emojis/{am.icon[item_info['name'].lower()][len(''.join(item_info['name'].split(' '))) + 3:-1]}.png")
 
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif dictionary_name in ["effect", "effects", "eff", "ef", "e"]:
             effect_info = am.effs_dict(" ".join(name.lower().split("_")))
@@ -648,13 +648,13 @@ class StatsCmd(commands.Cog, name="informational"):
             embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
             embed.add_field(name="Description: ", value="%s" % ("\n".join(eff_information)), inline=False)
             embed.add_field(name="Uses: ", value=effect_info["description"], inline=False)
-            embed.set_thumbnail(url=context.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
             embed.set_image(url=f"https://cdn.discordapp.com/emojis/"
                                 f"{am.converter[effect_info['name'].lower()][4:-1]}.png")
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         else:
-            await context.send(f"{context.message.author.mention}, the correct format for this command is "
+            await ctx.send(f"{ctx.message.author.mention}, the correct format for this command is "
                            f"`{am.prefix}info (card/mob/item/effect) (name) (level)`!")
 
 
@@ -664,41 +664,41 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["shops"]
     )
     @checks.not_blacklisted()
-    async def shop(self, context: Context, page = None) -> None:
+    async def shop(self, ctx: Context, page = None) -> None:
         """
         The player can buy cards and other things here.
 
-        :param context: Context.
+        :param ctx: Context.
         :param page: The page of the stop to display.
                      1- Daily deals
                      2- Card packs
                      3- Gem shop (coins, raid tickets, etc.)
         """
-        dm.mycursor.execute("select level from playersinfo where userid = " + str(context.message.author.id))
+        dm.mycursor.execute("select level from playersinfo where userid = " + str(ctx.message.author.id))
         player_level = int(dm.mycursor.fetchall()[0][0])
         if player_level < 3:
-            await context.send(f"{context.message.author.mention}, you have to be at least level 3 to unlock the shop!")
+            await ctx.send(f"{ctx.message.author.mention}, you have to be at least level 3 to unlock the shop!")
 
         if page is not None:
             if page.isdigit():
                 page = abs(int(page))
                 if not 1 <= page <= 3:
-                    await context.send(f"{context.message.author.mention}, the page number has to be between 1 and 3!")
+                    await ctx.send(f"{ctx.message.author.mention}, the page number has to be between 1 and 3!")
                     return
             else:
-                await context.send(f"{context.message.author.mention}, the page number has to be a number!")
+                await ctx.send(f"{ctx.message.author.mention}, the page number has to be a number!")
                 return
         else:
             page = 0
 
         dm.mycursor.execute(
-            "select coins, gems, event_token from playersinfo where userid = " + str(context.message.author.id))
+            "select coins, gems, event_token from playersinfo where userid = " + str(ctx.message.author.id))
         currencies = dm.mycursor.fetchall()
         coins = currencies[0][0]
         gems = currencies[0][1]
         tokens = currencies[0][2]
         if page == 1:
-            dm.mycursor.execute("select deals from playersinfo where userid = " + str(context.message.author.id))
+            dm.mycursor.execute("select deals from playersinfo where userid = " + str(ctx.message.author.id))
             the_deals = dm.mycursor.fetchall()[0][0].split(",")
             embed = discord.Embed(title="Shop - Daily Deals:",
                                   description=f"{am.icon['coin']} **{coins}** {am.icon['gem']} **{gems}**",
@@ -716,7 +716,7 @@ class StatsCmd(commands.Cog, name="informational"):
             for x in range(len(the_deals)):
                 card_deal(the_deals[x], x + 1)
             embed.set_footer(text=f"Wait {am.remain_time()} or {am.prefix}buy r to refresh shop")
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif page == 2:
             embed = discord.Embed(title="Shop - Card Packs:",
@@ -757,7 +757,7 @@ class StatsCmd(commands.Cog, name="informational"):
             for p in packs:
                 embed.add_field(**p)
             embed.set_footer(text="Let the buyers beware")
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         elif page == 3:
             embed = discord.Embed(title="Shop - Currencies:",
@@ -774,7 +774,7 @@ class StatsCmd(commands.Cog, name="informational"):
             ]
             for field in currency_offers:
                 embed.add_field(**field)
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         else:
             embed = discord.Embed(title="Cards Shop", description=None, color=discord.Color.gold())
@@ -782,7 +782,7 @@ class StatsCmd(commands.Cog, name="informational"):
             embed.add_field(name="Card Packs", value="**»** page 2", inline=False)
             embed.add_field(name="Currencies", value="**»** page 3", inline=False)
             embed.set_footer(text=am.prefix + "shop (page_number)")
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
 
     @commands.hybrid_command(
@@ -791,11 +791,11 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["cardsearch", "cs", "search"]
     )
     @checks.not_blacklisted()
-    async def card_search(self, context: Context, search_type="nothing", filter_="nothing", page: str = "bruh moment") -> None:
+    async def card_search(self, ctx: Context, search_type="nothing", filter_="nothing", page: str = "bruh moment") -> None:
         """
         Searches for a specific type of card and returns an embed containing the cards that fulfill the query.
 
-        :param context: Context.
+        :param ctx: Context.
         :param search_type: What to search by
         :param filter_: The actual search query that the bot will search by
         :param page: The page of the card results to go to.
@@ -804,13 +804,13 @@ class StatsCmd(commands.Cog, name="informational"):
         page = int(page) if page.isdigit() else 1
         page = 1 if page <= 0 else page
 
-        a_id = str(context.message.author.id)
+        a_id = str(ctx.message.author.id)
         dm.mycursor.execute(
-            f"select inventory_order, deck_slot from playersinfo where userid = '{context.message.author.id}'")
+            f"select inventory_order, deck_slot from playersinfo where userid = '{ctx.message.author.id}'")
         result = list(dm.mycursor.fetchall())[0]
         order = result[0]
         deck_slot = result[1]
-        dm.mycursor.execute(f"select deck{deck_slot} from playersachivements where userid = '{context.message.author.id}'")
+        dm.mycursor.execute(f"select deck{deck_slot} from playersachivements where userid = '{ctx.message.author.id}'")
         decks = [int(k) for i in dm.mycursor.fetchall()[0] for k in i.split(",")]
 
         if order == 1:
@@ -862,13 +862,13 @@ class StatsCmd(commands.Cog, name="informational"):
                     total_cards.append(x)
 
         else:
-            await context.send(f"{context.message.author.mention}, your search was invalid! "
+            await ctx.send(f"{ctx.message.author.mention}, your search was invalid! "
                            f"Do `{am.prefix}card_search "
                            f"(level/name/rarity/cost) (the level number/card name)` instead!")
             return
 
         if not total_cards:
-            await context.send(f"{context.message.author.mention}, nothing matched your search!")
+            await ctx.send(f"{ctx.message.author.mention}, nothing matched your search!")
 
         elif len(total_cards) > (page - 1) * 15:
             if order in [7, 8]:
@@ -897,10 +897,10 @@ class StatsCmd(commands.Cog, name="informational"):
             else:
                 embed.set_footer(text=f"{(page - 1) * 15 + 1}-{page * 15}/" +
                                       f"{len(total_cards)} cards displayed in page {page}")
-            await context.send(embed=embed)
+            await ctx.send(embed=embed)
 
         else:
-            await context.send(f"{context.message.author.mention}, you don't have any cards on page {page}!")
+            await ctx.send(f"{ctx.message.author.mention}, you don't have any cards on page {page}!")
 
 
     @commands.hybrid_command(
@@ -909,12 +909,12 @@ class StatsCmd(commands.Cog, name="informational"):
         aliases=["invite", "support", "guild", "supports", "link", "join"]
     )
     @checks.not_blacklisted()
-    async def links(self, context: Context) -> None:
+    async def links(self, ctx: Context) -> None:
         """
         Displays an embed containing some official bot info.
         :param ctx: Context.
         """
-        if context.message.author.bot:
+        if ctx.message.author.bot:
             return
         embed = discord.Embed(title="[SUPPORT]", description=None, color=discord.Color.green())
         embed.add_field(name="Bot Invite",
@@ -926,7 +926,7 @@ class StatsCmd(commands.Cog, name="informational"):
         embed.add_field(name="Offical Bot Wiki",
                         value="[Wiki link here](https://discord-adventurers-bot.fandom.com/wiki/Discord_Adventurers_Bot_Wiki)",
                         inline=False)
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(StatsCmd(bot))
