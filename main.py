@@ -4,7 +4,6 @@ import os
 import platform
 import sys
 
-import aiosqlite
 import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
@@ -23,19 +22,12 @@ else:
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = Bot(command_prefix=commands.when_mentioned_or(config["prefix"]), 
-          intents=intents, 
-          help_command=None,
-          case_insensitive=True)
-
-
-async def init_db():
-    async with aiosqlite.connect(f"{os.path.realpath(os.path.dirname(__file__))}/database/database.db") as db:
-        with open(f"{os.path.realpath(os.path.dirname(__file__))}/database/schema.sql") as file:
-            await db.executescript(file.read())
-        await db.commit()
-
-
+bot = Bot(
+    command_prefix=commands.when_mentioned_or(config["prefix"]),
+    intents=intents,
+    help_command=None,
+    case_insensitive=True
+)
 bot.config = config
 
 
@@ -55,7 +47,6 @@ async def on_ready() -> None:
 async def on_message(message: discord.Message) -> None:
     if message.author == bot.user or message.author.bot:
         return
-    print('called main')
     await bot.process_commands(message)
 
 
@@ -81,7 +72,6 @@ async def on_command_completion(ctx: Context) -> None:
 async def on_command_error(ctx: Context, error) -> None:
     """
     The code in this event is executed every time a normal valid command catches an error
-    :param ctx: The context of the normal command that failed executing.
     :param error: The error that has been faced.
     """
     if isinstance(error, commands.CommandOnCooldown):
@@ -90,7 +80,10 @@ async def on_command_error(ctx: Context, error) -> None:
         hours = hours % 24
         embed = discord.Embed(
             title="Hey, please slow down!",
-            description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
+            description=f"You can use this command again in "
+                        f"{f'{round(hours)} hours' if round(hours) > 0 else ''} "
+                        f"{f'{round(minutes)} minutes' if round(minutes) > 0 else ''} "
+                        f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
             color=0xE02B2B
         )
         await ctx.send(embed=embed)
@@ -158,6 +151,5 @@ async def load_cogs() -> None:
 if __name__ == "__main__":
     db_manager.init()
     asset_manager.init(bot)
-    asyncio.run(init_db())
     asyncio.run(load_cogs())
     bot.run(config["token"])

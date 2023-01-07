@@ -23,11 +23,10 @@ class General(commands.Cog, name="general"):
         )
         for i in self.bot.cogs:
             cog = self.bot.get_cog(i.lower())
-            commands = cog.get_commands()
             data = []
-            for command in commands:
-                description = command.description.partition('\n')[0]
-                data.append(f"{prefix}{command.name} - {description}")
+            for cmd in cog.get_commands():
+                description = cmd.description.partition('\n')[0]
+                data.append(f"{prefix}{cmd.name} - {description}")
             help_text = "\n".join(data)
             embed.add_field(
                 name=i.capitalize(), value=f'```{help_text}```', inline=False
@@ -116,10 +115,6 @@ class General(commands.Cog, name="general"):
             color=0x9C84EF
         )
         await ctx.send(embed=embed)
-
-    @commands.hybrid_command(
-        except discord.Forbidden:
-            await context.send(embed=embed)
 
     @commands.hybrid_command(
         name="server",

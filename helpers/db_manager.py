@@ -18,12 +18,12 @@ def init():
     global db, cur
 
     try:
-        #for jeff's local bot hosting
-        mydb = mysql.connector.connect(host="192.9.147.237", user="BlueBird", passwd="73FFr3y2h@^9",
-                                       database="DiscordAdventurersBotDB")
-        
-        # mydb = mysql.connector.connect(host="na01-sql.pebblehost.com", user="customer_136977_adventurersdb", passwd="soaZREUDBH24jNkFP9B!",
-        #                                database="customer_136977_adventurersdb")
+        db = mysql.connector.connect(
+            host=config["db_host"],
+            user=config["db_user"],
+            passwd=config["db_pw"],
+            database=config["db_db"]
+        )
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             print("Invalid username/password!")
