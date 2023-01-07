@@ -9,43 +9,43 @@ import discord
 
 from helpers import db_manager as dm
 
-with open('txts/icons.json') as json_file:
+with open("txts/icons.json") as json_file:
     icon = json.load(json_file)
-with open('txts/admins.json') as json_file:
+with open("txts/admins.json") as json_file:
     admins = json.load(json_file)
 
-
 converter = {
-    "burn": icon['burn'],
-    "poison": icon['pois'],
-    "recover": icon['rec'],
-    "curse": icon['curs'],
-    "stun": icon['stun'],
-    "bullseye": icon['eye'],
-    "berserk": icon['bers'],
-    "freeze": icon['frez'],
-    "chill": icon['chil'],
+    "burn": icon["burn"],
+    "poison": icon["pois"],
+    "recover": icon["rec"],
+    "curse": icon["curs"],
+    "stun": icon["stun"],
+    "bullseye": icon["eye"],
+    "berserk": icon["bers"],
+    "freeze": icon["frez"],
+    "chill": icon["chil"],
     "restore": icon["rest"],
-    "seriate": icon['seri'],
-    "feeble": icon['feeb']
+    "seriate": icon["seri"],
+    "feeble": icon["feeb"]
 }
 
 deck = {
-    '[♠ Ace]': 11, '[♠ Two]': 2, '[♠ Three]': 3, '[♠ Four]': 4, '[♠ Five]': 5,
-    '[♠ Six]': 6, '[♠ Seven]': 7, '[♠ Eight]': 8, '[♠ Nine]': 9, '[♠ Ten]': 10,
-    '[♠ Jack]': 10, '[♠ Queen]': 10, '[♠ King]': 10, '[♥ Ace]': 11, '[♥ Two]': 2,
-    '[♥ Three]': 3, '[♥ Four]': 4, '[♥ Five]': 5, '[♥ Six]': 6, '[♥ Seven]': 7,
-    '[♥ Eight]': 8, '[♥ Nine]': 9, '[♥ Ten]': 10, '[♥ Jack]': 10, '[♥ Queen]': 10,
-    '[♥ King]': 10, '[♦ Ace]': 11, '[♦ Two]': 2, '[♦ Three]': 3, '[♦ Four]': 4,
-    '[♦ Five]': 5, '[♦ Six]': 6, '[♦ Seven]': 7, '[♦ Eight]': 8, '[♦ Nine]': 9,
-    '[♦ Ten]': 10, '[♦ Jack]': 10, '[♦ Queen]': 10, '[♦ King]': 10, '[♣ Ace]': 11,
-    '[♣ Two]': 2, '[♣ Three]': 3, '[♣ Four]': 4, '[♣ Five]': 5, '[♣ Six]': 6,
-    '[♣ Seven]': 7, '[♣ Eight]': 8, '[♣ Nine]': 9, '[♣ Ten]': 10, '[♣ Jack]': 10,
-    '[♣ Queen]': 10, '[♣ King]': 10
+    "[♠ Ace]": 11, "[♠ Two]": 2, "[♠ Three]": 3, "[♠ Four]": 4, "[♠ Five]": 5,
+    "[♠ Six]": 6, "[♠ Seven]": 7, "[♠ Eight]": 8, "[♠ Nine]": 9, "[♠ Ten]": 10,
+    "[♠ Jack]": 10, "[♠ Queen]": 10, "[♠ King]": 10, "[♥ Ace]": 11, "[♥ Two]": 2,
+    "[♥ Three]": 3, "[♥ Four]": 4, "[♥ Five]": 5, "[♥ Six]": 6, "[♥ Seven]": 7,
+    "[♥ Eight]": 8, "[♥ Nine]": 9, "[♥ Ten]": 10, "[♥ Jack]": 10, "[♥ Queen]": 10,
+    "[♥ King]": 10, "[♦ Ace]": 11, "[♦ Two]": 2, "[♦ Three]": 3, "[♦ Four]": 4,
+    "[♦ Five]": 5, "[♦ Six]": 6, "[♦ Seven]": 7, "[♦ Eight]": 8, "[♦ Nine]": 9,
+    "[♦ Ten]": 10, "[♦ Jack]": 10, "[♦ Queen]": 10, "[♦ King]": 10, "[♣ Ace]": 11,
+    "[♣ Two]": 2, "[♣ Three]": 3, "[♣ Four]": 4, "[♣ Five]": 5, "[♣ Six]": 6,
+    "[♣ Seven]": 7, "[♣ Eight]": 8, "[♣ Nine]": 9, "[♣ Ten]": 10, "[♣ Jack]": 10,
+    "[♣ Queen]": 10, "[♣ King]": 10
 }
-aces = [f'[{s} Ace]' for s in ['♠', '♥', '♦', '♣']]
+aces = [f"[{s} Ace]" for s in ["♠", "♥", "♦", "♣"]]
 
 queues, scale, prefix = {}, [50, 1.05], "a."
+
 
 def init(bot):
     global queues, scale
@@ -59,7 +59,7 @@ def reply_check(valid_replies: List[str],
             return False
         if msg.author not in valid_authors:
             return False
-        return any(msg.content.lower().startswith(f'a.{s}') for s in valid_replies)
+        return any(msg.content.lower().startswith(f"a.{s}") for s in valid_replies)
 
     return _reaction_check
 
@@ -77,17 +77,17 @@ def reaction_check(valid_reactions: List[str],
     return _reaction_check
 
 
-# =========================== Dictionary functions ===========================
+# region Dictionary Functions
 # Loads in all the necessary json files as dictionaries
-with open('txts/cards.json') as json_file:
+with open("txts/cards.json") as json_file:
     all_cards = json.load(json_file)
-with open('txts/item_abbreviations.json') as json_file:
+with open("txts/item_abbreviations.json") as json_file:
     all_items_abb = json.load(json_file)
-with open('txts/items.json') as json_file:
+with open("txts/items.json") as json_file:
     all_items = json.load(json_file)
-with open('txts/mobs.json') as json_file:
+with open("txts/mobs.json") as json_file:
     all_mobs = json.load(json_file)
-with open('txts/effects.json') as json_file:
+with open("txts/effects.json") as json_file:
     all_eff = json.load(json_file)
 
 
@@ -140,11 +140,12 @@ def mobs_dict(mob_level: Union[str, int], mob_name: str):
     mob_level = scale[1] ** (int(mob_level) - 1) * scale[0]
 
     if mob_name.lower() not in all_mobs:
-        return {"name": "Glitcher", "rarity": "NA", "health": -1, "energy_lag": 0, "stamina": -1,
-                "death reward": {"coins": 0, "exps": 0},
-                "deck": ["Glitched", "Glitched", "Glitched", "Glitched", "Glitched", "Glitched", "Glitched", "Glitched",
-                         "Glitched", "Glitched"],
-                "brief": "A man in a big white van."}
+        return {
+            "name": "Glitcher", "rarity": "NA", "health": -1, "energy_lag": 0, "stamina": -1,
+            "death reward": {"coins": 0, "exps": 0},
+            "deck": ["Glitched" for _ in range(10)],
+            "brief": "A man in a big white van."
+        }
     mob = copy.deepcopy(all_mobs[mob_name.lower()])
     mob["health"] = round(mob["health"] * mob_level)
     return mob
@@ -200,7 +201,7 @@ def quest_str_rep(quest_type: Union[str, int], amt: Union[str, int]):
     """
     Gives a string representation of a quest given the type and the extend to do it to.
     :param quest_type: The type of quest. (types can be found in quest_index's docstring)
-    :param amount: The extent to do it to
+    :param amt: The extent to do it to
     :return: A string representation of the quest.
     """
     return {
@@ -224,9 +225,10 @@ def log_quest(quest_type: int, value: int, userid):
             break
     dm.cur.execute(f"update playersinfo set quests = '{','.join(quests[:])}' where userid = {userid}")
     dm.db.commit()
+# endregion
 
 
-# =========================== Special Card Functions ===========================
+# region Special Card Functions
 with open("txts/card_list.json") as json_file:
     card_list = json.load(json_file)
 
@@ -257,14 +259,14 @@ def fill_args(card, level):
                     args[all_param[param.index(k) + 11]] = card[i][k]
                     if k == "eff_app":
                         args[all_param[param.index(k) + 11]] = card[i][k][0]
-    return Template(card['description']).safe_substitute(args)
+    return Template(card["description"]).safe_substitute(args)
 
 
 def add_a_card(player_lvl, userid=None):
     if userid != "344292024486330371":
         energy_cost = log_level_gen(
             random.randint(2 ** (max(0, 5 - (player_lvl // 4))),
-            2 ** (10 - math.floor(player_lvl / 10)))
+                           2 ** (10 - math.floor(player_lvl / 10)))
         )
         return f"{energy_cost}.{random_card(energy_cost, 'normal')}"
     else:
@@ -304,7 +306,7 @@ def random_card(energy: int, edition: str) -> str:
                 return random.choice(defensive[x])
     elif edition == "monster":
         return random.choice(monster["1"])
-    
+
     for x in cards:
         if not finished and random.randint(1, 4) == 1 and energy >= int(x):
             return random.choice(cards[x])
@@ -351,6 +353,7 @@ def price_factor(card_name):
     return {
         r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])
     }.get(cards_dict(1, card_name)["rarity"], 1)
+# endregion
 
 
 def log_level_gen(i: int) -> int:
@@ -364,7 +367,7 @@ def log_level_gen(i: int) -> int:
     return min(10, max(1, (10 - math.floor(math.log(i - 1) / math.log(2))))) if i > 1 else 10
 
 
-# =========================== Utilities ===========================
+# region Utilities
 def time_converter(seconds: Union[str, int]) -> str:
     """
     Returns a string representation of the amount of time given in seconds.
@@ -430,7 +433,6 @@ def userid_converter(username):
 
 
 def get_user(user, msg: discord.Message):
-    
     if user is not None:
         if "@<" not in str(user) and ">" not in str(user):
             author_id = str(user)
@@ -456,9 +458,10 @@ def get_user(user, msg: discord.Message):
             return mem
 
     return msg.author
+# endregion
 
 
-# =========================== Backpack functions ===========================
+# region Backpack Functions
 def get_bp_weight(i):  # bp will stand for backpack
     storage = 0
     for x in i:
@@ -525,17 +528,22 @@ def display_backpack(store: dict, user: discord.User, container: str, padding=No
     else:
         for x in store:
             if store[x]["items"] != "x":
-                inventory.insert(len(inventory), f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - {store[x]['items']} ")
+                inventory.append(
+                    f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - {store[x]['items']} "
+                )
             else:
-                inventory.insert(len(inventory), f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - ∞ ")
+                inventory.append(
+                    f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - ∞ "
+                )
 
     inventory.insert(len(inventory), "------------------------------")
     inventory.insert(len(inventory), f"{container} Storage used - {get_bp_weight(store)}/{capacity}")
     inventory.insert(len(inventory), "******************************")
     embed = discord.Embed(title=f"Your {container}:", description="```" + "\n".join(inventory) + "```")
-    embed.set_thumbnail(url=user.avatar_url)
+    embed.set_thumbnail(url=user.avatar.url)
 
     if padding is None:
         return embed
     else:
         return "\n".join(inventory[padding[0]: padding[1]])
+# endregion

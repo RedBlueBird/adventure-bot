@@ -1,8 +1,7 @@
-import random
-import math
 import datetime as dt
 import time as times
 
+import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Context
 
@@ -59,7 +58,7 @@ class Sys(commands.Cog):
         dm.cur.execute(sql, val)
 
         sql = "INSERT INTO adventuredatas (userid, position, inventory, show_map, storage) VALUES (%s, %s, %s, %s, %s)"
-        val = (author_id, "home", '{}', 'true', '{}')
+        val = (author_id, "home", "{}", "true", "{}")
         dm.cur.execute(sql, val)
 
         dm.db.commit()
@@ -83,9 +82,18 @@ class Sys(commands.Cog):
         )
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         if message.author.bot:
             return
+
+        content = message.content.lower()
+        if (content.startswith(f"{am.prefix}ping")
+                or content.startswith(f"{am.prefix}pong")
+                or content.startswith("<@521056196380065802>")
+                or content.startswith("<@!521056196380065802>")):
+            ms = int(self.bot.latency * 1000)
+            await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{am.prefix}`!')
+
         # no need for bot.process bc the one in main already handled that
 
     @tasks.loop(seconds=10.0)
