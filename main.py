@@ -53,24 +53,15 @@ async def on_ready() -> None:
 
 @bot.event
 async def on_message(message: discord.Message) -> None:
-    """
-    The code in this event is executed every time someone sends
-    a message, with or without the prefix
-
-    :param message: The message that was sent.
-    """
     if message.author == bot.user or message.author.bot:
         return
+    print('called main')
     await bot.process_commands(message)
 
 
 @bot.event
 async def on_command_completion(ctx: Context) -> None:
-    """
-    The code in this event is executed every time a normal command has
-    been *successfully* executed
-    :param ctx: The context of the command that has been executed.
-    """
+    """Executed every time a normal command has been *successfully* executed"""
     full_command_name = ctx.command.qualified_name
     split = full_command_name.split(" ")
     executed_command = str(split[0])
