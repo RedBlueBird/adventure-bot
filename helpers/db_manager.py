@@ -19,7 +19,7 @@ def init():
 
     try:
         #for jeff's local bot hosting
-        mydb = mysql.connector.connect(host="localhost", user="DiscordAdventurersBot", passwd="1226JeffreyZhang",
+        mydb = mysql.connector.connect(host="192.9.147.237", user="BlueBird", passwd="73FFr3y2h@^9",
                                        database="DiscordAdventurersBotDB")
         
         # mydb = mysql.connector.connect(host="na01-sql.pebblehost.com", user="customer_136977_adventurersdb", passwd="soaZREUDBH24jNkFP9B!",

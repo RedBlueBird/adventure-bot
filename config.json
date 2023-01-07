@@ -1,10 +1,10 @@
 {
-  "prefix": "a.",
-  "token": "NTIxMDU2MTk2MzgwMDY1ODAy.Xro8bg.ZAPflMqFuyjogrP6VCj3nvyyT5c",
-  "permissions": "8",
-  "application_id": "521056196380065802",
-  "sync_commands_globally": false,
-  "owners": [
-    344292024486330371
-  ]
+    "prefix": "a.",
+    "token": "NTY5NDA3NDQ0MzI1NzYxMDI2.XLwMAQ.HzVk4xsAOg9AVF4Z7BbAlAZ8Fuc",
+    "permissions": "8",
+    "application_id": "521056196380065802",
+    "sync_commands_globally": false,
+    "owners": [
+        344292024486330371
+    ]
 }

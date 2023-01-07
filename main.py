@@ -64,8 +64,10 @@ intents.presences = True
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = Bot(command_prefix=commands.when_mentioned_or(
-    config["prefix"]), intents=intents, help_command=None)
+bot = Bot(command_prefix=commands.when_mentioned_or(config["prefix"]), 
+          intents=intents, 
+          help_command=None,
+          case_insensitive=True)
 
 
 async def init_db():
