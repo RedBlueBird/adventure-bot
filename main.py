@@ -69,7 +69,7 @@ async def on_command_completion(ctx: Context) -> None:
     """
     The code in this event is executed every time a normal command has
     been *successfully* executed
-    :param context: The context of the command that has been executed.
+    :param ctx: The context of the command that has been executed.
     """
     full_command_name = ctx.command.qualified_name
     split = full_command_name.split(" ")
@@ -87,10 +87,10 @@ async def on_command_completion(ctx: Context) -> None:
 
 
 @bot.event
-async def on_command_error(context: Context, error) -> None:
+async def on_command_error(ctx: Context, error) -> None:
     """
     The code in this event is executed every time a normal valid command catches an error
-    :param context: The context of the normal command that failed executing.
+    :param ctx: The context of the normal command that failed executing.
     :param error: The error that has been faced.
     """
     if isinstance(error, commands.CommandOnCooldown):
@@ -102,7 +102,7 @@ async def on_command_error(context: Context, error) -> None:
             description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
     elif isinstance(error, exceptions.UserBlacklisted):
         """
         The code here will only execute if the error is an instance of
@@ -114,7 +114,7 @@ async def on_command_error(context: Context, error) -> None:
             description="You are blacklisted from using the bot.",
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
     elif isinstance(error, exceptions.UserNotOwner):
         """
         Same as above, just for the @checks.is_owner() check.
@@ -124,7 +124,7 @@ async def on_command_error(context: Context, error) -> None:
             description="You are not the owner of the bot!",
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",
@@ -132,7 +132,7 @@ async def on_command_error(context: Context, error) -> None:
                 error.missing_permissions) + "` to execute this command!",
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
     elif isinstance(error, commands.BotMissingPermissions):
         embed = discord.Embed(
             title="Error!",
@@ -140,7 +140,7 @@ async def on_command_error(context: Context, error) -> None:
                 error.missing_permissions) + "` to fully perform this command!",
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
             title="Error!",
@@ -148,7 +148,7 @@ async def on_command_error(context: Context, error) -> None:
             description=str(error).capitalize(),
             color=0xE02B2B
         )
-        await context.send(embed=embed)
+        await ctx.send(embed=embed)
     raise error
 
 
