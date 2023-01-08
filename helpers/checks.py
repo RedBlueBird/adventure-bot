@@ -26,7 +26,7 @@ def not_blacklisted() -> Callable[[T], T]:
     """Checks to see if the user is blacklisted."""
 
     async def predicate(context: commands.Context) -> bool:
-        if await dm.is_blacklisted(context.author.id):
+        if dm.is_blacklisted(context.author.id):
             raise UserBlacklisted
         return True
 
