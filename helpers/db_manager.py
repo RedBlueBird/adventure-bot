@@ -3,9 +3,11 @@ import sys
 import json
 
 import mysql.connector
+import mysql.connector.cursor_cext
 from mysql.connector import errorcode
 
-db, cur = None, None
+db: mysql.connector.connection_cext.CMySQLConnection | None = None
+cur: mysql.connector.cursor_cext.CMySQLCursor | None = None
 config_path = f"{os.path.realpath(os.path.dirname(__file__))}/../config.json"
 if not os.path.isfile(config_path):
     sys.exit("'config.json' not found! Please add it and try again.")
@@ -35,5 +37,15 @@ def init():
     cur = db.cursor()
 
 
-async def is_blacklisted(author_id: int) -> bool:
+def is_blacklisted(a_id: int) -> bool:
     return False
+
+
+def is_registered(a_id: int) -> bool:
+    cur.execute(f"SELECT * FROM playersinfo WHERE userid = {a_id}")
+    return bool(cur.fetchall())
+
+
+def get_user_level(a_id: int) -> int:
+    cur.execute(f"SELECT level FROM playersinfo WHERE userid = {a_id}")
+    return cur.fetchall()[0][0]

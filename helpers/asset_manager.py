@@ -12,7 +12,7 @@ from helpers import db_manager as dm
 with open("txts/icons.json") as json_file:
     icon = json.load(json_file)
 with open("txts/admins.json") as json_file:
-    admins = json.load(json_file)
+    admins = set(json.load(json_file))
 
 converter = {
     "burn": icon["burn"],

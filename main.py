@@ -74,7 +74,7 @@ async def on_command_error(ctx: Context, error) -> None:
     The code in this event is executed every time a normal valid command catches an error
     :param error: The error that has been faced.
     """
-    embed = discord.Embed(title="An unexpected error occurred!")
+    embed = discord.Embed(title="Error!", color=0xE02B2B)
     if isinstance(error, commands.CommandOnCooldown):
         minutes, seconds = divmod(error.retry_after, 60)
         hours, minutes = divmod(minutes, 60)
@@ -89,18 +89,15 @@ async def on_command_error(ctx: Context, error) -> None:
         )
     elif isinstance(error, exceptions.UserBlacklisted):
         # UserBlacklisted happens with @checks.not_blacklisted() (or you can manually raise it)
-        embed = discord.Embed(
-            title="Error!",
-            description="You are blacklisted from using the bot.",
-            color=0xE02B2B
-        )
+        embed.description = "You are blacklisted from using the bot."
     elif isinstance(error, exceptions.UserNotOwner):
         # Same as above, just for the @checks.is_owner() check.
-        embed = discord.Embed(
-            title="Error!",
-            description="You are not the owner of the bot!",
-            color=0xE02B2B
-        )
+        embed.description = "You're not an owner of the bot!"
+    elif isinstance(error, exceptions.UserPreoccupied):
+        embed.description = f"You're still {error.action}!" \
+                            "If you think this is a bug, please report it [here](https://discord.gg/w2CkRtkj57)!"
+    elif isinstance(error, exceptions.UserSkillIssue):
+        embed.description = f"You need to be at least level {error.req_lvl} to unlock this command!"
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",

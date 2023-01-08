@@ -147,7 +147,7 @@ class Sys(commands.Cog):
                 f"",
                 f"Deck slot +1!",
                 f"Daily shop max card level +1!",
-                f"Received 1 week of Free Premium!",
+                f"Received 1 week of Premium!",
                 f"",
                 f"Adventure Hometown chest storage +25!",
                 f"Daily shop min card level +1!\n"
@@ -158,13 +158,14 @@ class Sys(commands.Cog):
                 f"",
                 f"Adventure Hometown chest storage +25!",
                 f"",
-                f"Received 1 week of Free Premium!",
+                f"Received 1 week of Premium!",
                 f"",
                 f"Deck slot +1!",
                 f"Daily shop min card level +1!\n"
                 f"Adventure Hometown chest storage +25!"
             ]
 
+            # At levels 17 and 27, the user gets a week of free premium.
             if profile[3] + 1 in [17, 27]:
                 dm.cur.execute(f"SELECT user_identity FROM playersinfo WHERE userid = '{a.id}'")
                 u_id = int(dm.cur.fetchall()[0][0].split(',')[1])

@@ -5,19 +5,17 @@ from typing import List, Callable, TypeVar
 import discord
 
 from exceptions import *
-from helpers import db_manager
+from helpers import db_manager as dm
+from helpers import asset_manager as am
 
 T = TypeVar("T")
 
 
 def is_owner() -> Callable[[T], T]:
-    """
-    This is a custom check to see if the user executing the command is an owner of the bot.
-    """
+    """Checks if the calling user is an owner of the bot"""
+
     async def predicate(context: commands.Context) -> bool:
-        with open(f"{os.path.realpath(os.path.dirname(__file__))}/../config.json") as file:
-            data = json.load(file)
-        if context.author.id not in data["owners"]:
+        if context.author.id not in am.admins:
             raise UserNotOwner
         return True
 
@@ -25,12 +23,38 @@ def is_owner() -> Callable[[T], T]:
 
 
 def not_blacklisted() -> Callable[[T], T]:
-    """
-    This is a custom check to see if the user executing the command is blacklisted.
-    """
+    """Checks to see if the user is blacklisted."""
+
     async def predicate(context: commands.Context) -> bool:
-        if await db_manager.is_blacklisted(context.author.id):
+        if await dm.is_blacklisted(context.author.id):
             raise UserBlacklisted
+        return True
+
+    return commands.check(predicate)
+
+
+def not_preoccupied():
+    async def predicate(ctx: commands.Context) -> bool:
+        if str(ctx.message.author.id) in am.queues:
+            raise UserBlacklisted
+        return True
+
+    return commands.check(predicate)
+
+
+def is_registered():
+    async def predicate(ctx: commands.Context) -> bool:
+        if not dm.is_registered(ctx.author.id):
+            raise UserNotRegistered
+        return True
+
+    return commands.check(predicate)
+
+
+def is_good_enough(lvl: int):
+    async def predicate(ctx: commands.Context) -> bool:
+        if dm.get_user_level(ctx.author.id) < lvl:
+            raise UserSkillIssue(lvl)
         return True
 
     return commands.check(predicate)
