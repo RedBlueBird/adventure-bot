@@ -1,5 +1,8 @@
+import random
+import math
 import datetime as dt
 import time as times
+import asyncio
 
 import discord
 from discord.ext import commands, tasks
@@ -77,7 +80,7 @@ class Sys(commands.Cog):
 
         await ctx.send(
             "__FREE PREMIUM MEMBERSHIP__ for 2 weeks obtained!\n"
-            f"*Registered {ctx.message.author.mention} into this bot!* " +
+            f"*Registered {ctx.message.author.mention} into this bot!* "
             f"Do `{am.prefix}help` and `{am.prefix}tutorial` to get started!"
         )
 
@@ -93,6 +96,196 @@ class Sys(commands.Cog):
                 or content.startswith("<@!521056196380065802>")):
             ms = int(self.bot.latency * 1000)
             await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{am.prefix}`!')
+
+        a = message.author  # shorthand
+        dm.cur.execute("select * from playersinfo where userid = " + str(a.id))
+        profile = dm.cur.fetchall()
+
+        if not profile:
+            return
+
+        profile = profile[0]
+        current_exp = profile[4]
+
+        if (current_exp < math.floor(int((profile[3] ** 2) * 40 + 60)) and
+                int(profile[3]) < 30 or int(profile[3]) == 30):
+            if profile[16] > 0:
+                sql = "update playersinfo set exps = %s, msg_exp = msg_exp - 1 where userid = %s"
+                value = (current_exp + 1 + int(profile[14].split(",")[0]), str(a.id))
+                dm.cur.execute(sql, value)
+                dm.db.commit()
+        else:
+            level_msg = []
+            if (profile[3] + 1) % 2 == 0:
+                add_hp = round(
+                    (am.scale[1] ** math.floor((profile[3] + 1) / 2) -
+                     am.scale[1] ** math.floor(profile[3] / 2)) * 100 * am.scale[0]
+                )
+                level_msg.append(f"Max health +{add_hp}!")
+
+            """
+            Each element of this list corresponds to what will be unlocked when a player levels up.
+            The first element is when level 2 is reached, and then it increments by 1 so on.
+            Empty strings signify that no particular special thing is unlocked.
+            """
+            level_chart = [
+                f"{am.prefix}Quest is unlocked!",
+                f"{am.prefix}Shop is unlocked!",
+                f"{am.prefix}Coop is unlocked! \n"
+                f"Daily shop max card level +1!",
+                f"{am.prefix}Battle for PvP is unlocked!",
+                f"Deck slot +1!",
+                f"{am.prefix}Trade is unlocked! \n"
+                f"Adventure Chest Storage +50!",
+                f"Daily shop max card level +1!",
+                f"Adventure Boss Raids is unlocked! \n"
+                f"Raid Tickets is unlocked!",
+                f"Daily shop min card level +1!",
+                f"Adventure Cemetery Map unlocked!",
+                f"Daily shop max card level +1!",
+                f"Adventure Hometown chest storage +25!",
+                f"",
+                f"Deck slot +1!",
+                f"Daily shop max card level +1!",
+                f"Received 1 week of Free Premium!",
+                f"",
+                f"Adventure Hometown chest storage +25!",
+                f"Daily shop min card level +1!\n"
+                f"Daily shop max card level +1!",
+                f"Deck slot +1!",
+                f"",
+                f"New Adventure Map unlocked!",
+                f"",
+                f"Adventure Hometown chest storage +25!",
+                f"",
+                f"Received 1 week of Free Premium!",
+                f"",
+                f"Deck slot +1!",
+                f"Daily shop min card level +1!\n"
+                f"Adventure Hometown chest storage +25!"
+            ]
+
+            if profile[3] + 1 in [17, 27]:
+                dm.cur.execute(f"SELECT user_identity FROM playersinfo WHERE userid = '{a.id}'")
+                u_id = int(dm.cur.fetchall()[0][0].split(',')[1])
+                if u_id == 0:
+                    u_id = int(times.time())
+                dm.cur.execute(
+                    f"UPDATE playersinfo SET user_identity = '{'1,' + str(u_id + 604800)}' WHERE userid = '{a.id}'"
+                )
+                dm.db.commit()
+
+            if level_chart[profile[3] - 1]:
+                level_msg.extend(level_chart[profile[3] - 1].split("\n"))
+
+            embed = discord.Embed(
+                title=f"CONGRATULATIONS {am.author_username(str(a))}!",
+                description=None,
+                color=discord.Color.green()
+            )
+            embed.add_field(
+                name="You're now level " + str(profile[3] + 1) + "!",
+                value=f"+{profile[3] * 50} {am.icon['coin']} \n"
+                      f"+{math.ceil((profile[3] + 1) / 5) + 1} {am.icon['gem']} \n"
+                      "```» " + "\n\n» ".join(level_msg[:]) + "```"
+            )
+            embed.set_thumbnail(url=a.avatar.url)
+            await message.channel.send(embed=embed)
+
+            sql = "UPDATE playersinfo " \
+                  "SET exps = %s, level = level + %s, coins = coins + %s, gems = gems + %s " \
+                  "WHERE userid = %s"
+            value = (
+                current_exp - int((profile[3] ** 2) * 40 + 60), 1, profile[3] * 50,
+                math.ceil((profile[3] + 1) / 5) + 1, str(a.id)
+            )
+            dm.cur.execute(sql, value)
+            dm.db.commit()
+
+        quests = profile[15].split(",")
+        if len(quests) > 1:
+            quest_com = [
+                math.floor(int(quests[x].split(".")[2]) / am.quest_index(quests[x])[0] * 100)
+                for x in range(len(quests) - 1)
+            ]
+            for x in range(len(quests) - 1):
+                if quest_com[x] >= 100:
+                    quest = am.quest_index(quests[x])
+                    embed = discord.Embed(
+                        title=f"QUEST COMPLETE {am.author_username(str(a))}!",
+                        description=None,
+                        color=discord.Color.green()
+                    )
+                    embed.add_field(
+                        name=f"**{quest[2]} {am.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
+                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {am.icon['exp']}**",
+                        # " +1{am.icon['token']}**",
+                        inline=False
+                    )
+                    embed.set_thumbnail(url=a.avatar.url)
+                    await message.channel.send(embed=embed)
+
+                    gained = [0, 0, quest[4]]  # coin, gem, exp
+                    if quest[3] == am.icon["coin"]:
+                        gained[0] += int(quest[1])
+                    elif quest[3] == am.icon["gem"]:
+                        gained[1] += int(quest[1])
+
+                    quests.remove(quests[x])
+                    dm.cur.execute(
+                        f"UPDATE playersinfo "
+                        f"SET coins = coins + {gained[0]}, gems = gems + {gained[1]}, exps = exps + {gained[2]}, "
+                        f"event_token = event_token + 1, quests = '{','.join(quests)}' "
+                        f"WHERE userid = {a.id}"
+                    )
+                    dm.db.commit()
+                    break
+
+        by_jeff = message.content == "Spawn" and str(a.id) == "344292024486330371"
+        if random.randint(1, 250) == 1 or by_jeff:
+            if random.randint(1, 30) == 1:
+                amt = random.randint(250, 500)
+            else:
+                amt = random.randint(50, 100)
+
+            spawn_msg = await message.channel.send(embed=discord.Embed(
+                title=f"A bag of gold showed up out of nowhere!",
+                description=f"Quick! Type `{am.prefix}collect {amt} coins` to collect them! \n"
+                            f"They'll be gone in 10 minutes!",
+                color=discord.Color.green()
+            ))
+
+            if by_jeff:
+                await message.delete()
+
+            try:
+                rep = await self.bot.wait_for(
+                    "message", timeout=600.0,
+                    check=lambda m: m.content.lower().startswith(f"{am.prefix}collect {amt} coins") and
+                                    m.channel == spawn_msg.channel
+                )
+                mention = rep.author.mention
+                ra_id = rep.author.id
+                
+                dm.cur.execute("SELECT * FROM playersinfo WHERE userid = " + str(ra_id))
+                profile = dm.cur.fetchall()
+                if profile:
+                    if random.randint(1, 100) == 1:
+                        dm.cur.execute(
+                            f"UPDATE playersinfo SET coins = coins + {amt}, gems = gems + 1 WHERE userid = {ra_id}"
+                        )
+                        msg = f"{mention}, you collected {amt} {am.icon['coin']} **and** __1 {am.icon['gem']}__!"
+                    else:
+                        dm.cur.execute(f"UPDATE playersinfo SET coins = coins + {amt} WHERE userid = {ra_id}")
+                        msg = f"{mention}, you collected {amt} {am.icon['coin']}!"
+                    dm.db.commit()
+                else:
+                    msg = f"{mention}, you have to register in this bot first! \n" \
+                          f"Type `{am.prefix}register` to register!"
+
+                await rep.channel.send(msg)
+            except asyncio.TimeoutError:
+                print("No one claimed")
 
         # no need for bot.process bc the one in main already handled that
 

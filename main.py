@@ -74,6 +74,7 @@ async def on_command_error(ctx: Context, error) -> None:
     The code in this event is executed every time a normal valid command catches an error
     :param error: The error that has been faced.
     """
+    embed = discord.Embed(title="An unexpected error occurred!")
     if isinstance(error, commands.CommandOnCooldown):
         minutes, seconds = divmod(error.retry_after, 60)
         hours, minutes = divmod(minutes, 60)
@@ -86,53 +87,43 @@ async def on_command_error(ctx: Context, error) -> None:
                         f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
             color=0xE02B2B
         )
-        await ctx.send(embed=embed)
     elif isinstance(error, exceptions.UserBlacklisted):
-        """
-        The code here will only execute if the error is an instance of
-        'UserBlacklisted', which can occur when using the @checks.not_blacklisted()
-        check in your command, or you can raise the error by yourself.
-        """
+        # UserBlacklisted happens with @checks.not_blacklisted() (or you can manually raise it)
         embed = discord.Embed(
             title="Error!",
             description="You are blacklisted from using the bot.",
             color=0xE02B2B
         )
-        await ctx.send(embed=embed)
     elif isinstance(error, exceptions.UserNotOwner):
-        """
-        Same as above, just for the @checks.is_owner() check.
-        """
+        # Same as above, just for the @checks.is_owner() check.
         embed = discord.Embed(
             title="Error!",
             description="You are not the owner of the bot!",
             color=0xE02B2B
         )
-        await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
             title="Error!",
-            description="You are missing the permission(s) `" + ", ".join(
-                error.missing_permissions) + "` to execute this command!",
+            description="You are missing the permission(s) `" +
+                        ", ".join(error.missing_permissions) +
+                        "` to execute this command!",
             color=0xE02B2B
         )
-        await ctx.send(embed=embed)
     elif isinstance(error, commands.BotMissingPermissions):
         embed = discord.Embed(
             title="Error!",
-            description="I am missing the permission(s) `" + ", ".join(
-                error.missing_permissions) + "` to fully perform this command!",
+            description="I am missing the permission(s) `" +
+                        ", ".join(error.missing_permissions) +
+                        "` to fully perform this command!",
             color=0xE02B2B
         )
-        await ctx.send(embed=embed)
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
             title="Error!",
-            # We need to capitalize because the command arguments have no capital letter in the code.
             description=str(error).capitalize(),
             color=0xE02B2B
         )
-        await ctx.send(embed=embed)
+    await ctx.send(embed=embed)
     raise error
 
 
