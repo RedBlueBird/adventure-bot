@@ -913,12 +913,12 @@ class Stats(commands.Cog, name="informational"):
             inline=False
         )
         embed.add_field(
-            name="Offical Server",
+            name="Official Server",
             value="[Link](https://discord.gg/w2CkRtkj57)",
             inline=False
         )
         embed.add_field(
-            name="Offical Wiki",
+            name="Official Wiki",
             value="[Link](https://discord-adventurers-bot.fandom.com)",
             inline=False
         )

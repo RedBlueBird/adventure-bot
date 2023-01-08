@@ -51,32 +51,6 @@ def init(bot):
     global queues, scale
 
 
-def reply_check(valid_replies: List[str],
-                valid_authors: List[discord.User],
-                valid_channels: List[discord.TextChannel]):
-    def _reaction_check(msg: discord.Message):
-        if msg.channel not in valid_channels:
-            return False
-        if msg.author not in valid_authors:
-            return False
-        return any(msg.content.lower().startswith(f"a.{s}") for s in valid_replies)
-
-    return _reaction_check
-
-
-def reaction_check(valid_reactions: List[str],
-                   valid_reactors: List[discord.User],
-                   valid_messages: List[discord.Message]):
-    def _reaction_check(rct: discord.Reaction, author: discord.User):
-        if str(rct.emoji) not in valid_reactions:
-            return False
-        if author not in valid_reactors:
-            return False
-        return rct.message.id in [m.id for m in valid_messages]
-
-    return _reaction_check
-
-
 # region Dictionary Functions
 # Loads in all the necessary json files as dictionaries
 with open("txts/cards.json") as json_file:
@@ -225,6 +199,8 @@ def log_quest(quest_type: int, value: int, userid):
             break
     dm.cur.execute(f"update playersinfo set quests = '{','.join(quests[:])}' where userid = {userid}")
     dm.db.commit()
+
+
 # endregion
 
 
@@ -353,6 +329,8 @@ def price_factor(card_name):
     return {
         r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])
     }.get(cards_dict(1, card_name)["rarity"], 1)
+
+
 # endregion
 
 
@@ -458,6 +436,8 @@ def get_user(user, msg: discord.Message):
             return mem
 
     return msg.author
+
+
 # endregion
 
 

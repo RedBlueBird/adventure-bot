@@ -33,3 +33,7 @@ def init():
             print(err)
 
     cur = db.cursor()
+
+
+async def is_blacklisted(author_id: int) -> bool:
+    return False
