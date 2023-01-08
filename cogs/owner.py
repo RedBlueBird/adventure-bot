@@ -243,7 +243,7 @@ class Owner(commands.Cog, name="owner"):
         :param user: The user that should be added to the blacklist.
         """
         user_id = user.id
-        if await db_manager.is_blacklisted(user_id):
+        if db_manager.is_blacklisted(user_id):
             embed = discord.Embed(
                 title="Error!",
                 description=f"**{user.name}** is not in the blacklist.",
@@ -275,7 +275,7 @@ class Owner(commands.Cog, name="owner"):
         :param user: The user that should be removed from the blacklist.
         """
         user_id = user.id
-        if not await db_manager.is_blacklisted(user_id):
+        if not db_manager.is_blacklisted(user_id):
             embed = discord.Embed(
                 title="Error!",
                 description=f"**{user.name}** is already in the blacklist.",
