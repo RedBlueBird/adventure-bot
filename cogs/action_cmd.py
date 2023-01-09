@@ -141,7 +141,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["buying"], brief="actions")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     @cmd_decos.check_level(3)
     async def buy(self, ctx: commands.Context, to_buy=None):
         """Command for buying items in the shop"""
@@ -447,7 +447,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["dis"], brief="cards")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def discard(self, ctx: commands.Context, *card_id):
         """Remove the existences of the unwanted cards"""
 
@@ -518,7 +518,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["mer"], brief="cards")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def merge(self, ctx: commands.Context, card1_id: str = "bruh moment", card2_id: str = "bruh moment"):
         """Upgrade a card to next level with two cards"""
 
@@ -616,7 +616,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["trades"], brief="actions")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     @cmd_decos.check_level(7)
     async def trade(self, ctx: commands.Context, target=None):
         """Trade with other players for gold and cards"""
@@ -1062,7 +1062,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["clear_deck", "cleardeck"], brief="cards")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def clear(self, ctx):
         """Clear your current deck"""
 
@@ -1107,7 +1107,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, aliases=["black", "bj"], brief="fun")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def blackjack(self, ctx):
         """No risk no rewards practice command"""
 
@@ -1184,7 +1184,7 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, brief="fun")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def reaction(self, ctx: commands.Context, wait_time=None):
         """Test your reflexes and counting ability"""
 
@@ -1211,69 +1211,58 @@ class ActionsCmd(commands.Cog):
 
     @commands.command(pass_context=True, brief="fun")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def say(self, ctx: commands.Context, *stuff):
         """I will agree with anything!"""
-
         a_id = ctx.message.author.id
         if not stuff:
             stuff = ["but u said u are stupid"]
-        img = Image.open("images/crispy_reply.png")
+        img = Image.open("img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("fonts/whitneysemibold.ttf", 24)
         draw.text((323, 82), " ".join(stuff), (170, 172, 171), font=font)
-        img.save(f"images/{a_id}.png")
-        await ctx.send(file=discord.File(f"images/{a_id}.png",
-                                         filename=f"images/{a_id}.png"))
-        os.remove(f"images/{a_id}.png")
+        img.save(f"img/{a_id}.png")
+        await ctx.send(file=discord.File(f"img/{a_id}.png", filename=f"img/{a_id}.png"))
+        os.remove(f"img/{a_id}.png")
         await ctx.message.delete()
-
-    @commands.command(pass_context=True, brief="none")
-    @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
-    async def speak(self, ctx: commands.Context, *stuff):
-        """Bot admin only | Make bot say whatever you want"""
-        if str(ctx.message.author.id) in gv.admins:
-            await ctx.message.delete()
-            await ctx.send("\n".join(" ".join(stuff).split("//")))
 
     @commands.command(pass_context=True, brief="fun")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def birb(self, ctx: commands.Context, *stuff):
         """Mock the bot's creator"""
         a_id = ctx.message.author.id
         if not stuff:
             stuff = ["1 + 1 = 3"]
-        img = Image.open("images/birb_logic.png")
+        img = Image.open("img/birb_logic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("fonts/whitneysemibold.ttf", 12)
         draw.text((64, 28), " ".join(stuff), (200, 200, 200), font=font)
-        img.save(f"images/{a_id}.png")
-        await ctx.send(file=discord.File(f"images/{a_id}.png", filename=f"images/{a_id}.png"))
-        os.remove(f"images/{a_id}.png")
+        img.save(f"img/{a_id}.png")
+        await ctx.send(file=discord.File(f"img/{a_id}.png", filename=f"img/{a_id}.png"))
+        os.remove(f"img/{a_id}.png")
         await ctx.message.delete()
 
     @commands.command(pass_context=True, brief="fun")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def dead(self, ctx: commands.Context, *stuff):
         """Kind of like the 'this is fine' meme, except you can make the dog say whatever you want."""
         a_id = ctx.message.author.id
         if not stuff:
             stuff = ["Should I be scared?"]
-        img = Image.open("images/pandemic.png")
+        img = Image.open("img/pandemic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("fonts/whitneysemibold.ttf", 14)
         draw.text((62, 290), " ".join(stuff), (200, 200, 200), font=font)
-        img.save(f"images/{a_id}.png")
-        await ctx.send(file=discord.File(f"images/{a_id}.png", filename=f"images/{a_id}.png"))
-        os.remove(f"images/{a_id}.png")
+        img.save(f"img/{a_id}.png")
+        await ctx.send(file=discord.File(f"img/{a_id}.png", filename=f"img/{a_id}.png"))
+        os.remove(f"img/{a_id}.png")
         await ctx.message.delete()
 
     @commands.command(pass_context=True, brief="fun")
     @commands.check(cmd_decos.is_registered)
-    @commands.check(cmd_decos.in_queue)
+    @commands.check(cmd_decos.not_preoccupied)
     async def kick(self, ctx: commands.Context, *stuffs):
         """A adventurers themed meme template"""
 
@@ -1297,15 +1286,15 @@ class ActionsCmd(commands.Cog):
                     stuff[1].append(stuffs[i])
                     i += 1
 
-        img = Image.open("images/meme_template.png")
+        img = Image.open("img/meme_template.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("fonts/whitneysemibold.ttf", 17)
         draw.text((80, 25), " ".join(stuff[0]), (256, 256, 256), font=font)
         draw.text((330, 25), " ".join(stuff[1]), (256, 256, 256), font=font)
-        img.save(f"images/{a_id}.png")
+        img.save(f"img/{a_id}.png")
         await ctx.send(
-            file=discord.File(f"images/{a_id}.png", filename=f"images/{a_id}.png"))
-        os.remove(f"images/{a_id}.png")
+            file=discord.File(f"img/{a_id}.png", filename=f"img/{a_id}.png"))
+        os.remove(f"img/{a_id}.png")
         await ctx.message.delete()
 
     @commands.command(pass_context=True, aliases=['find_words', 'findwords', 'findword', 'word', 'fw'], brief="fun")
