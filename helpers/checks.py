@@ -51,7 +51,7 @@ def is_registered():
     return commands.check(predicate)
 
 
-def is_good_enough(lvl: int):
+def level_check(lvl: int):
     async def predicate(ctx: commands.Context) -> bool:
         if dm.get_user_level(ctx.author.id) < lvl:
             raise UserSkillIssue(lvl)

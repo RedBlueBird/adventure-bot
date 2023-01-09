@@ -2,6 +2,7 @@ import math
 import datetime as dt
 import os
 
+import discord
 from discord.ext import commands
 
 from helpers import checks
@@ -19,85 +20,66 @@ class Admin(commands.Cog, name="admin"):
     )
     @checks.is_registered()
     @checks.is_owner()
-    async def redeem(self, ctx: commands.Context, item_type=None, name=None, level=None, *targets):
+    async def redeem(self, ctx: commands.Context, item_type: str, name: str, level: int, target: discord.User):
         """
         Gives users the specified items in the arguments.
         :param item_type: The type of item to give
         :param name: The specific name of the item to give
-        :param level: The level of the item to give
-        :param targets: Who to give the item to
+        :param level: The level/amount of the card/item to give.
+        :param target: Who to give the item to
         """
         mention = ctx.message.author.mention
-        if item_type is None or not targets or level is None:
-            await ctx.message.channel.send(
-                f"{mention}, the correct format for this command is "
-                f"`{am.prefix}redeem (card/item) (name) (level/amount) (user)`!"
-            )
-            return
 
         with open("txts/bot_log.txt", "a") as log:
             log.write(f">>>{ctx.message.content}\n")
             log.write(f"Sender: {ctx.message.author}, Date: {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
 
-        target_mention = []
-        targets = list(targets)
-        for index, user in enumerate(targets):
-            if "@<" not in str(user) and ">" not in str(user):
-                targets[index] = str(user)
-            else:
-                targets[index] = am.userid_converter(str(user))
-            try:
-                target_mention.append(str(await self.bot.fetch_user(targets[index])))
-            except IndexError:
-                target_mention.append(str(user))
-
         item_type = item_type.lower()
-        if item_type in ["cards"] + ["cards"[:-i] for i in range(1, len("cards"))]:
+        if "cards".startswith(item_type):
             card_name = " ".join(name.split("_")).title()
-            for i, target_user in enumerate(targets):
-                try:
-                    mysql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
-                    value = (target_user, card_name, math.floor(int(level)))
-                    dm.cur.execute(mysql, value)
-                    dm.db.commit()
+            try:
+                mysql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
+                value = (target, card_name, math.floor(int(level)))
+                dm.cur.execute(mysql, value)
+                dm.db.commit()
 
-                    await ctx.message.channel.send(
-                        f"{target_mention[i]}, you received a **[{am.rarity_cost(card_name)}] "
-                        f"{card_name} lv: {math.floor(int(level))}** from {mention}"
-                    )
-                except BaseException as error:
-                    await ctx.message.channel.send(mention + ", " + str(error) + ".")
+                await ctx.message.channel.send(
+                    f"{target.mention}, you received a **[{am.rarity_cost(card_name)}] "
+                    f"{card_name} lv: {math.floor(int(level))}** from {mention}"
+                )
+            except BaseException as error:
+                await ctx.message.channel.send(mention + ", " + str(error) + ".")
 
-        elif item_type in ["items"] + ["items"[:-i] for i in range(1, len("items"))]:
+        elif "items".startswith(item_type):
             item_name = am.items_dict(" ".join(name.split("_")))["name"]
-            for i, target_user in enumerate(targets):
-                dm.cur.execute(f"SELECT inventory FROM adventuredatas WHERE userid = {target_user}")
-                inventory_data = eval(dm.cur.fetchall()[0][0])
-                try:
-                    if math.floor(int(level)) > 0 and not item_name.lower() in inventory_data:
-                        inventory_data[item_name.lower()] = {"items": math.floor(int(level))}
-                    else:
-                        inventory_data[item_name.lower()]["items"] += math.floor(int(level))
-                    inv_delete = []
-                    for x in inventory_data:
-                        if not inventory_data[x]["items"] == "x":
-                            if inventory_data[x]["items"] <= 0:
-                                inv_delete.append(x)
-                    for x in inv_delete:
-                        del inventory_data[x]
-                    dm.cur.execute(
-                        f"UPDATE adventuredatas SET inventory = '{inventory_data}' WHERE userid = {target_user}"
-                    )
-                    dm.db.commit()
-                    await ctx.message.channel.send(
-                        f"{target_mention[i]}, you received "
-                        f"**[{am.items_dict(item_name)['rarity']}/"
-                        f"{am.items_dict(item_name)['weight']}] "
-                        f"{item_name}** x{math.floor(int(level))} "
-                        f"from {mention}"
-                    )
-                except BaseException as error:
-                    await ctx.message.channel.send(mention + f", {error}!")
+            dm.cur.execute(f"SELECT inventory FROM adventuredatas WHERE userid = {target.id}")
+            inventory_data = eval(dm.cur.fetchall()[0][0])
+            try:
+                if math.floor(int(level)) > 0 and not item_name.lower() in inventory_data:
+                    inventory_data[item_name.lower()] = {"items": math.floor(int(level))}
+                else:
+                    inventory_data[item_name.lower()]["items"] += math.floor(int(level))
+                inv_delete = []
+                for x in inventory_data:
+                    if not inventory_data[x]["items"] == "x":
+                        if inventory_data[x]["items"] <= 0:
+                            inv_delete.append(x)
+                for x in inv_delete:
+                    del inventory_data[x]
+
+                dm.cur.execute(
+                    f"UPDATE adventuredatas SET inventory = \"{inventory_data}\" WHERE userid = {target.id}"
+                )
+                dm.db.commit()
+                await ctx.message.channel.send(
+                    f"{target.mention}, you received "
+                    f"**[{am.items_dict(item_name)['rarity']}/"
+                    f"{am.items_dict(item_name)['weight']}] "
+                    f"{item_name}** x{math.floor(int(level))} "
+                    f"from {mention}"
+                )
+            except BaseException as error:
+                await ctx.message.channel.send(mention + f", {error}!")
 
         else:
             await ctx.message.channel.send(

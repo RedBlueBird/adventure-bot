@@ -2767,3 +2767,15 @@ Sender: SansPapyrus683#4140, Date: 2023-01-08 17:15:17
 >>>a.redeem item t 1 <@441672776345190421>
 Sender: SansPapyrus683#4140, Date: 2023-01-08 17:15:52
 
+>>>a.redeem item t 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 20:44:16
+
+>>>a.redeem item t 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 20:44:49
+
+>>>a.redeem item t 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 20:46:16
+
+>>>a.redeem item t 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 20:47:02
+

@@ -156,13 +156,14 @@ class Owner(commands.Cog, name="owner"):
         """
         try:
             await self.bot.reload_extension(f"cogs.{cog}")
-        except Exception:
+        except Exception as e:
             embed = discord.Embed(
                 title="Error!",
                 description=f"Could not reload the `{cog}` cog.",
                 color=0xE02B2B
             )
             await ctx.send(embed=embed)
+            print(e)
             return
         embed = discord.Embed(
             title="Reload",
