@@ -19,8 +19,7 @@ class Template(commands.Cog, name="template"):
     async def testcommand(self, ctx: Context):
         """
         This is a testing command that does nothing.
-
-        :param context: The application command context.
+        :param ctx: The application command context.
         """
         await ctx.reply("yeah yeah")
 

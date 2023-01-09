@@ -2743,3 +2743,27 @@ Sender: Blue Bird#0089, Date: 2021-12-25 00:30:47
 ========================================= Bot Restart: 2023-01-02 21:56:44 
 ========================================= Bot Restart: 2023-01-02 22:10:07 
 ========================================= Bot Restart: 2023-01-02 22:10:37 
+>>>a.redeem item zap 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:09:32
+
+>>>a.redeem item zap 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:11:29
+
+>>>a.redeem item zap 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:12:42
+
+>>>a.redeem item Zap 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:13:10
+
+>>>a.redeem item ignite 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:14:10
+
+>>>a.redeem item Ignite 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:14:16
+
+>>>a.redeem card zap 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:15:17
+
+>>>a.redeem item t 1 <@441672776345190421>
+Sender: SansPapyrus683#4140, Date: 2023-01-08 17:15:52
+

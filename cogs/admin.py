@@ -3,23 +3,25 @@ import datetime as dt
 import os
 
 from discord.ext import commands
-from discord.ext.commands import Context
 
 from helpers import checks
 from helpers import asset_manager as am
 from helpers import db_manager as dm
 
 
-class Admin(commands.Cog, name="template"):
+class Admin(commands.Cog, name="admin"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=["red", "deem"], brief="none")
+    @commands.hybrid_command(
+        aliases=["red", "deem"],
+        brief="Gives users the specified items in the arguments."
+    )
     @checks.is_registered()
     @checks.is_owner()
     async def redeem(self, ctx: commands.Context, item_type=None, name=None, level=None, *targets):
         """
-        Gives users the specified items in the arguments
+        Gives users the specified items in the arguments.
         :param item_type: The type of item to give
         :param name: The specific name of the item to give
         :param level: The level of the item to give
@@ -103,13 +105,13 @@ class Admin(commands.Cog, name="template"):
                 f"`{am.prefix}redeem (card/item) (name) (level/amount) (user)`!"
             )
 
-    @commands.command(pass_context=True, aliases=["endseason"], brief="none")
+    @commands.hybrid_command(
+        aliases=["endseason"],
+        brief="Resets the PVP season and gives each player their medals."
+    )
     @commands.is_owner()
     async def end_season(self, ctx: commands.Context):
-        """
-        Only Jeff, the almighty bot creator, can use this.
-        (Resets the pvp season and gives each player their deserved medals)
-        """
+        """Resets the PVP season and gives each player their medals."""
         dm.cur.execute("select userid, medals, user_identity from playersinfo")
         all_datas = dm.cur.fetchall()
         for d in all_datas:
@@ -128,26 +130,28 @@ class Admin(commands.Cog, name="template"):
                     medals = d[1]
 
                 if earned_gems == 0:
-                    await user.send(f"```Season Ended!``` You now have {medals} {am.icon['medal']} (from {d[1]}) "
-                                    f"\n+{earned_coins} {am.icon['coin']}!")
+                    await user.send(
+                        f"```Season Ended!``` You now have {medals} {am.icon['medal']} (from {d[1]}) "
+                        f"\n+{earned_coins} {am.icon['coin']}!"
+                    )
                 else:
-                    await user.send(f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
-                                    f"\n+{earned_coins} {am.icon['coin']} \n+{earned_gems} {am.icon['gem']}!")
-                sql = "update playersinfo set coins = coins + %s, gems = gems + %s, medals = %s where userid = %s"
+                    await user.send(
+                        f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
+                        f"\n+{earned_coins} {am.icon['coin']} \n+{earned_gems} {am.icon['gem']}!"
+                    )
+                sql = "UPDATE playersinfo SET coins = coins + %s, gems = gems + %s, medals = %s WHERE userid = %s"
                 data = (earned_coins, earned_gems, medals, d[0])
                 dm.cur.execute(sql, data)
                 dm.db.commit()
             except:
                 print(all_datas.index(d))
+
         await ctx.message.channel.send("Season Ended!")
 
-    @commands.command(pass_context=True, aliases=["testing"], brief="none")
+    @commands.hybrid_command(aliases=["testing"], brief="Prints some debugging info for the devs.")
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
-        """
-        Only the godly Jeff can execute this holy command.
-        (Prints some debugging info for the devs)
-        """
+        """Prints some debugging info for the devs."""
         loading = await ctx.message.channel.send(str(ctx.message.author) + am.icon['load'])
 
         def print_all(tables_name):
@@ -197,10 +201,8 @@ class Admin(commands.Cog, name="template"):
                 dm.cur.execute(sql, val)
         dm.db.commit()
         """
-        await ctx.message.channel.send("*Database printed!*")
-        await loading.edit(content="Done!")
+        await loading.edit(content="Database printed!")
 
 
-# And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
     await bot.add_cog(Admin(bot))

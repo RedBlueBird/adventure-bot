@@ -41,6 +41,7 @@ async def on_ready() -> None:
     if config["sync_commands_globally"]:
         print("Syncing commands globally...")
         await bot.tree.sync()
+        print("Finished syncing!")
 
 
 @bot.event
