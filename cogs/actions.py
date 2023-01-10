@@ -44,7 +44,6 @@ class Actions(commands.Cog, name="actions"):
         ticket_reward = 1
         max_streak = 7
         max_tickets = 5
-        card_msg = ""
         tick_msg = ""
 
         if int(result[6].split(",")[0]) == 1:
@@ -68,7 +67,7 @@ class Actions(commands.Cog, name="actions"):
             card_level = am.log_level_gen(random.randint(2 ** (max(0, 5 - (result[3] // 4))),
                                                          2 ** (10 - math.floor(result[3] / 10))))
             card = am.random_card(card_level, "normal")
-            sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
+            sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
             val = (a_id, card, card_level)
             dm.cur.execute(sql, val)
             dm.db.commit()
@@ -108,11 +107,9 @@ class Actions(commands.Cog, name="actions"):
 
     @commands.hybrid_command(aliases=["orders"], brief="cards")
     @checks.is_registered()
-    async def order(self, ctx: commands.Context, card_property=None, the_order=None):
+    async def order(self, ctx: commands.Context, card_property: str, order_by: str):
         """Command formatting for the card display order"""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
         level_aliases = ["level", "levels", "card_level", "card_levels", "l"]
         id_aliases = ["id", "ids", "i"]
         name_aliases = ["name", "names", "card_name", "card_names", "n", "nam"]
@@ -120,33 +117,35 @@ class Actions(commands.Cog, name="actions"):
         rarity_aliases = ["rarity", "rare", "ra", "r"]
         ascending_aliases = ["ascending", "ascend", "a", "asc"]
         descending_aliases = ["descending", "descend", "d", "desc", "des"]
+
+        a_id = ctx.message.author.id
+        mention = ctx.message.author.mention
+
         order = [0, None, None]
-        if card_property is None or the_order is None:
-            await ctx.send(f"{mention}, the correct format for this command is "
-                           f"`{am.prefix}order (level/name/id/cost/rarity) (ascending/descending)`!")
+        if order_by in ascending_aliases + descending_aliases:
+            card_property = card_property.lower()
+            if card_property in level_aliases:
+                order = [1, "level", " ascending"]
+            elif card_property in name_aliases:
+                order = [3, "name", " ascending"]
+            elif card_property in id_aliases:
+                order = [5, "id", " ascending"]
+            elif card_property in cost_aliases:
+                order = [7, "cost", " ascending"]
+            elif card_property in rarity_aliases:
+                order = [9, "rarity", " ascending"]
+        if order_by in descending_aliases:
+            order[0] += 1
+            order[2] = " descending"
+        if order_by == [0, None, None]:
+            await ctx.send(
+                f"{mention}, the correct format for this command is "
+                f"`{am.prefix}order (level/name/id/cost/rarity) (ascending/descending)`!"
+            )
         else:
-            if the_order in ascending_aliases + descending_aliases:
-                card_property = card_property.lower()
-                if card_property in level_aliases:
-                    order = [1, "level", " ascending"]
-                elif card_property in name_aliases:
-                    order = [3, "name", " ascending"]
-                elif card_property in id_aliases:
-                    order = [5, "id", " ascending"]
-                elif card_property in cost_aliases:
-                    order = [7, "cost", " ascending"]
-                elif card_property in rarity_aliases:
-                    order = [9, "rarity", " ascending"]
-            if the_order in descending_aliases:
-                order[0] += 1
-                order[2] = " descending"
-            if the_order == [0, None, None]:
-                await ctx.send(f"{mention}, the correct format for this command is "
-                               f"`{am.prefix}order (level/name/id/cost/rarity) (ascending/descending)`!")
-            else:
-                dm.cur.execute(f"UPDATE playersinfo SET inventory_order = {order[0]} WHERE userid = {a_id}")
-                dm.db.commit()
-                await ctx.send(f"{mention}, the order had been set to {order[1]}/{order[2]}.")
+            dm.cur.execute(f"UPDATE playersinfo SET inventory_order = {order[0]} WHERE userid = {a_id}")
+            dm.db.commit()
+            await ctx.send(f"{mention}, the order had been set to {order[1]}/{order[2]}.")
 
     @commands.hybrid_command(aliases=["buying"], brief="actions")
     @checks.is_registered()
@@ -919,22 +918,17 @@ class Actions(commands.Cog, name="actions"):
         del am.queues[str(author.id)]
         del am.queues[str(target.id)]
 
-    @commands.hybrid_command(aliases=["selects", "select_deck", "selectdeck", "sel", "se"], brief="cards")
+    @commands.hybrid_command(aliases=["selectdeck", "sel", "se"], brief="Get a deck from your deck slots.")
     @checks.is_registered()
-    async def select(self, ctx: commands.Context, deck_slot="bruh moment"):
-        """Select a deck from your deck slots"""
+    async def select(self, ctx: commands.Context, deck_slot: int):
+        """Get a deck from your deck slots."""
 
         a_id = ctx.message.author.id
-        if not deck_slot.isdecimal():
-            await ctx.send(f"The correct format for this is `{am.prefix}select (#deck_slot)`!")
+        if not 1 <= deck_slot <= 6:
+            await ctx.send("The deck slot number must between 1-6!")
             return
-        else:
-            deck_slot = int(deck_slot)
-            if not 1 <= deck_slot <= 6:
-                await ctx.send("The deck slot number must between 1-6!")
-                return
 
-        dm.cur.execute("SELECT level FROM playersinfo WHERE userid = " + str(a_id))
+        dm.cur.execute(f"SELECT level FROM playersinfo WHERE userid = {a_id}")
         level = dm.cur.fetchall()[0][0]
         deck_slots = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
 
@@ -946,76 +940,70 @@ class Actions(commands.Cog, name="actions"):
         dm.db.commit()
         await ctx.send(f"Deck #{deck_slot} is now selected!")
 
-    @commands.hybrid_command(brief="cards")
+    @commands.hybrid_command(brief="Returns the card IDs of your current deck.")
     @checks.is_registered()
-    async def paste(self, ctx: commands.Context, deck_slot="bruh moment"):
-        """Returns the card ids of your current selected deck"""
+    async def paste(self, ctx: commands.Context, deck_slot: int = None):
+        """Returns the card IDs of your current deck."""
 
         a_id = ctx.message.author.id
         if deck_slot is None:
             dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
             deck_slot = dm.cur.fetchall()[0][0]
 
-        if not deck_slot.isnumeric():
-            await ctx.send(f"The correct format for this is `{am.prefix}pasta (#deck_slot)`!")
+        if not 1 <= deck_slot <= 6:
+            await ctx.send("The deck slot number must between 1-6!")
             return
-        else:
-            deck_slot = int(deck_slot)
-            if not 1 <= deck_slot <= 6:
-                await ctx.send("The deck slot number must between 1-6!")
-                return
 
-        dm.cur.execute(f"SELECT deck{deck_slot} FROM playersachivements WHERE userid = {a_id}")
+        db_deck = f"deck{deck_slot}"
+        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = {a_id}")
         deck = dm.cur.fetchall()[0][0].split(",")
         deck = [" "] if deck == ['0'] else deck
 
-        await ctx.send(f"All the ids in Deck #{deck_slot}: \n`" + " ".join(deck) + "`")
+        await ctx.send(f"All the card IDs in Deck #{deck_slot}: \n`{' '.join(deck)}`")
 
     @commands.hybrid_command(
         aliases=["replace", "switch", "change", "alter"],
         brief="Swap a card from your deck with another."
     )
     @checks.is_registered()
-    async def swap(self, ctx: commands.Context, new_id=None, old_id=None):
+    @checks.not_preoccupied()
+    async def swap(self, ctx: commands.Context, new_id: int, old_id: int):
         """Swap a card from your deck with another."""
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
-        if new_id is None or old_id is None:
-            await ctx.send(
-                f"{mention}, the correct format for this command is `{am.prefix}swap (new_card_id) (old_card_id)`.")
-            return
-        if not old_id.isnumeric() or not new_id.isnumeric():
-            await ctx.send(f"{mention}, those are invalid card id(s)!")
-            return
 
         dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
         deck_slot = dm.cur.fetchall()[0][0]
-        dm.cur.execute(f"SELECT deck{deck_slot} FROM playersachivements WHERE userid = {a_id}")
+
+        db_deck = f"deck{deck_slot}"
+        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = {a_id}")
         deck = dm.cur.fetchall()[0][0].split(",")
 
-        old_id, new_id = int(old_id), int(new_id)
-        if (not str(old_id) in deck) or (str(new_id) in deck):
-            await ctx.send(f"{mention}, the first id shouldn't exist in your deck #{deck_slot} "
-                           f"but the second id need to exist in your deck #{deck_slot}!")
-        else:
-            dm.cur.execute(
-                f"SELECT card_name, card_level FROM cardsinfo WHERE id = {new_id} AND owned_user = '{a_id}'")
-            new = dm.cur.fetchall()[0]
-            if not new:
-                await ctx.send(f"{mention}, the first id doesn't exist in your card inventory!")
-            else:
-                deck.remove(str(old_id))
-                deck.append(str(new_id))
-                dm.cur.execute(
-                    f"SELECT card_name, card_level FROM cardsinfo WHERE id = {old_id} AND owned_user = '{a_id}'")
-                old = dm.cur.fetchall()[0]
-                dm.cur.execute(
-                    f"UPDATE playersachivements SET deck{deck_slot} = '{','.join(deck)}' WHERE userid = '{a_id}'")
-                dm.db.commit()
-                await ctx.send(
-                    f"You swapped the card **[{am.rarity_cost(old[0])}] {old[0]} lv: {old[1]}** "
-                    f"with the card **[{am.rarity_cost(new[0])}] {new[0]} lv: {new[1]}** in your deck #{deck_slot}!")
+        old_id, new_id = str(old_id), str(new_id)
+        if old_id not in deck or new_id in deck:
+            await ctx.send(
+                f"{mention}, the first card shouldn't exist in your deck #{deck_slot} "
+                f"and the second card needs to exist in your deck #{deck_slot}!"
+            )
+            return
+
+        dm.cur.execute(f"SELECT card_name, card_level FROM cardsinfo WHERE id = {new_id} AND owned_user = '{a_id}'")
+        new = dm.cur.fetchall()[0]
+        if not new:
+            await ctx.send(f"{mention}, the first id doesn't exist in your card inventory.")
+            return
+
+        deck.remove(old_id)
+        deck.append(new_id)
+        dm.cur.execute(f"SELECT card_name, card_level FROM cardsinfo WHERE id = {old_id} AND owned_user = '{a_id}'")
+        old = dm.cur.fetchall()[0]
+        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '{','.join(deck)}' WHERE userid = '{a_id}'")
+        dm.db.commit()
+        await ctx.send(
+            f"You swapped the card **[{am.rarity_cost(old[0])}] {old[0]} lv: {old[1]}** "
+            f"with the card **[{am.rarity_cost(new[0])}] {new[0]} lv: {new[1]}** in your deck #{deck_slot}!"
+        )
 
     @commands.hybrid_command(aliases=["adds", "use", "uses"], brief="Add a card to your deck.")
     @checks.is_registered()
@@ -1268,7 +1256,7 @@ class Actions(commands.Cog, name="actions"):
         img = Image.open("resources/img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 24)
-        draw.text((323, 82), " ".join(statement), (170, 172, 171), font=font)
+        draw.text((323, 82), statement, (170, 172, 171), font=font)
         img.save(f"resources/img/{a_id}.png")
         await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
         os.remove(f"resources/img/{a_id}.png")
@@ -1280,7 +1268,7 @@ class Actions(commands.Cog, name="actions"):
         img = Image.open("resources/img/birb_logic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 12)
-        draw.text((64, 28), " ".join(stuff), (200, 200, 200), font=font)
+        draw.text((64, 28), stuff, (200, 200, 200), font=font)
         img.save(f"resources/img/{a_id}.png")
         await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
         os.remove(f"resources/img/{a_id}.png")

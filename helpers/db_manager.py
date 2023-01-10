@@ -37,15 +37,15 @@ def init():
     cur = db.cursor()
 
 
-def is_blacklisted(a_id: int) -> bool:
+def is_blacklisted(uid: int) -> bool:
     return False
 
 
-def is_registered(a_id: int) -> bool:
-    cur.execute(f"SELECT * FROM playersinfo WHERE userid = {a_id}")
+def is_registered(uid: int) -> bool:
+    cur.execute(f"SELECT * FROM playersinfo WHERE userid = {uid}")
     return bool(cur.fetchall())
 
 
-def get_user_level(a_id: int) -> int:
-    cur.execute(f"SELECT level FROM playersinfo WHERE userid = {a_id}")
+def get_user_level(uid: int) -> int:
+    cur.execute(f"SELECT level FROM playersinfo WHERE userid = {uid}")
     return cur.fetchall()[0][0]
