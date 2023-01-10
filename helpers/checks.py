@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List, Callable, TypeVar
+from typing import Callable, TypeVar
 
 import discord
 
@@ -36,7 +36,7 @@ def not_blacklisted() -> Callable[[T], T]:
 def not_preoccupied():
     async def predicate(ctx: commands.Context) -> bool:
         if str(ctx.message.author.id) in am.queues:
-            raise UserBlacklisted
+            raise UserPreoccupied(am.queues[str(ctx.message.author.id)])
         return True
 
     return commands.check(predicate)
@@ -61,10 +61,17 @@ def level_check(lvl: int):
 
 
 def valid_reply(
-        valid_replies: List[str],
-        valid_authors: List[discord.User],
-        valid_channels: List[discord.TextChannel]
+        valid_replies: list[str] | str,
+        valid_authors: list[discord.Member] | discord.Member,
+        valid_channels: list[discord.TextChannel] | discord.TextChannel
 ):
+    if not isinstance(valid_replies, list):
+        valid_replies = [valid_replies]
+    if not isinstance(valid_authors, list):
+        valid_authors = [valid_authors]
+    if not isinstance(valid_channels, list):
+        valid_channels = [valid_channels]
+
     def _valid_reply(msg: discord.Message):
         if msg.channel not in valid_channels:
             return False
@@ -76,11 +83,18 @@ def valid_reply(
 
 
 def valid_reaction(
-        valid_reactions: List[str],
-        valid_reactors: List[discord.User],
-        valid_messages: List[discord.Message]
+        valid_reactions: list[str] | str,
+        valid_reactors: list[discord.Member] | discord.Member,
+        valid_messages: list[discord.Message] | discord.Message
 ):
-    def _valid_reaction(rct: discord.Reaction, author: discord.User):
+    if not isinstance(valid_reactions, list):
+        valid_reactions = [valid_reactions]
+    if not isinstance(valid_reactors, list):
+        valid_reactors = [valid_reactors]
+    if not isinstance(valid_messages, list):
+        valid_messages = [valid_messages]
+
+    def _valid_reaction(rct: discord.Reaction, author: discord.Member):
         if str(rct.emoji) not in valid_reactions:
             return False
         if author not in valid_reactors:

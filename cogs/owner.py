@@ -18,10 +18,9 @@ class Owner(commands.Cog, name="owner"):
     @checks.is_owner()
     async def sync(self, ctx: Context, scope: str) -> None:
         """
-        Synchonizes the slash commands.
+        Synchronizes the slash commands.
         :param scope: The scope of the sync. Can be `global` or `guild`.
         """
-
         if scope == "global":
             await ctx.bot.tree.sync()
             embed = discord.Embed(
@@ -29,8 +28,6 @@ class Owner(commands.Cog, name="owner"):
                 description="Slash commands have been globally synchronized.",
                 color=0x9C84EF
             )
-            await ctx.send(embed=embed)
-            return
         elif scope == "guild":
             ctx.bot.tree.copy_global_to(guild=ctx.guild)
             await ctx.bot.tree.sync(guild=ctx.guild)
@@ -39,13 +36,12 @@ class Owner(commands.Cog, name="owner"):
                 description="Slash commands have been synchronized in this guild.",
                 color=0x9C84EF
             )
-            await ctx.send(embed=embed)
-            return
-        embed = discord.Embed(
-            title="Invalid Scope",
-            description="The scope must be `global` or `guild`.",
-            color=0xE02B2B
-        )
+        else:
+            embed = discord.Embed(
+                title="Invalid Scope",
+                description="The scope must be `global` or `guild`.",
+                color=0xE02B2B
+            )
         await ctx.send(embed=embed)
 
     @commands.command(

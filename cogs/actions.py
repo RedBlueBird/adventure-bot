@@ -18,20 +18,25 @@ class Actions(commands.Cog, name="actions"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=["d"], brief="actions")
+    @commands.hybrid_command(aliases=["d"], brief="Get your daily rewards!")
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
-        """Give you your daily dose of rewards!"""
+        """Get your daily rewards!"""
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
-        dm.cur.execute(f"select coins, exps, medals, level, daily, streak, user_identity, tickets from playersinfo where userid = {a_id}")
+        dm.cur.execute(
+            f"SELECT coins, exps, medals, level, daily, streak, user_identity, tickets "
+            f"FROM playersinfo WHERE userid = {a_id}"
+        )
         result = dm.cur.fetchall()[0]
 
         if result[4] == str(dt.date.today()):
             dts = dt.datetime.now()
-            await ctx.send(f"{mention}, your next daily is in " +
-                           str(am.time_converter(((24 - dts.hour - 1) * 60 * 60) +
-                                                        ((60 - dts.minute - 1) * 60) + (60 - dts.second))) + "!")
+            time = am.time_converter(
+                ((24 - dts.hour - 1) * 60 * 60) +
+                ((60 - dts.minute - 1) * 60) + (60 - dts.second)
+            )
+            await ctx.send(f"{mention}, your next daily is in {time}!")
             return
 
         streak = int(result[5]) + 1
@@ -56,21 +61,20 @@ class Actions(commands.Cog, name="actions"):
         else:
             tick_msg = f"+{ticket_reward} {am.icon['tick']}"
 
-        dm.cur.execute(f"select id from cardsinfo where owned_user = {a_id}")
+        dm.cur.execute(f"SELECT id FROM cardsinfo WHERE owned_user = {a_id}")
         cards_count = len(dm.cur.fetchall())
 
         if cards_count < 500:
             card_level = am.log_level_gen(random.randint(2 ** (max(0, 5 - (result[3] // 4))),
-                                                                2 ** (10 - math.floor(result[3] / 10))))
+                                                         2 ** (10 - math.floor(result[3] / 10))))
             card = am.random_card(card_level, "normal")
-            sql = "insert into cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
-            val = (str(a_id), card, card_level)
+            sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
+            val = (a_id, card, card_level)
             dm.cur.execute(sql, val)
             dm.db.commit()
             card_msg = f"Obtained **[{am.rarity_cost(card)}] {card} lv: {card_level}**!"
         else:
-            dm.cur.execute(
-                f"update playersinfo set coins = coins + 250 where userid = '{a_id}'")
+            dm.cur.execute(f"UPDATE playersinfo SET coins = coins + 250 WHERE userid = '{a_id}'")
             dm.db.commit()
             card_msg = f"Received extra 250 {am.icon['coin']}!"
 
@@ -78,25 +82,31 @@ class Actions(commands.Cog, name="actions"):
             new_coins = result[0] + 400 + math.floor(result[3] / 5) * 20 + streak * 80
             new_exps = result[1] + 200
             new_medals = result[2] + medal_reward * 4
-            await ctx.send(f"{mention} JACKPOT!!! \n"
-                           f"**+{math.floor(result[3] / 5) * 20 + 400 + streak * 80} "
-                           f"{am.icon['coin']} +200 {am.icon['exp']}"
-                           f" +{medal_reward * 4} {am.icon['medal']} {tick_msg}! \n"
-                           f"Daily streak {streak}/{max_streak} {am.icon['streak']}** \n{card_msg}")
+            await ctx.send(
+                f"{mention} JACKPOT!!! \n"
+                f"**+{math.floor(result[3] / 5) * 20 + 400 + streak * 80} "
+                f"{am.icon['coin']} +200 {am.icon['exp']}"
+                f" +{medal_reward * 4} {am.icon['medal']} {tick_msg}! \n"
+                f"Daily streak {streak}/{max_streak} {am.icon['streak']}** \n{card_msg}"
+            )
         else:
             new_coins = result[0] + 100 + math.floor(result[3] / 5) * 5 + streak * 20
             new_exps = result[1] + 50
             new_medals = result[2] + medal_reward
-            await ctx.send(f"{mention} \n"
-                           f"**+{math.floor(result[3] / 5) * 5 + 100 + streak * 20} {am.icon['coin']} +50 {am.icon['exp']}"
-                           f" +{medal_reward}{am.icon['medal']} {tick_msg}\n"
-                           f"Daily streak {streak}/{max_streak} {am.icon['streak']}** \n{card_msg}")
-        sql = f"update playersinfo set coins = %s, exps = %s, medals = %s, tickets = tickets + %s, daily = %s, streak = %s where userid = %s"
+            await ctx.send(
+                f"{mention} \n"
+                f"**+{math.floor(result[3] / 5) * 5 + 100 + streak * 20} {am.icon['coin']} +50 {am.icon['exp']}"
+                f" +{medal_reward}{am.icon['medal']} {tick_msg}\n"
+                f"Daily streak {streak}/{max_streak} {am.icon['streak']}** \n{card_msg}"
+            )
+
+        sql = f"UPDATE playersinfo SET coins = %s, exps = %s, medals = %s, " \
+              f"tickets = tickets + %s, daily = %s, streak = %s WHERE userid = %s"
         value = (new_coins, new_exps, new_medals, ticket_reward, str(dt.date.today()), streak, a_id)
         dm.cur.execute(sql, value)
         dm.db.commit()
 
-    @commands.command(pass_context=True, aliases=["orders"], brief="cards")
+    @commands.hybrid_command(aliases=["orders"], brief="cards")
     @checks.is_registered()
     async def order(self, ctx: commands.Context, card_property=None, the_order=None):
         """Command formatting for the card display order"""
@@ -134,11 +144,11 @@ class Actions(commands.Cog, name="actions"):
                 await ctx.send(f"{mention}, the correct format for this command is "
                                f"`{am.prefix}order (level/name/id/cost/rarity) (ascending/descending)`!")
             else:
-                dm.cur.execute(f"update playersinfo set inventory_order = {order[0]} where userid = {a_id}")
+                dm.cur.execute(f"UPDATE playersinfo SET inventory_order = {order[0]} WHERE userid = {a_id}")
                 dm.db.commit()
                 await ctx.send(f"{mention}, the order had been set to {order[1]}/{order[2]}.")
 
-    @commands.command(pass_context=True, aliases=["buying"], brief="actions")
+    @commands.hybrid_command(aliases=["buying"], brief="actions")
     @checks.is_registered()
     @checks.not_preoccupied()
     @checks.level_check(3)
@@ -147,7 +157,7 @@ class Actions(commands.Cog, name="actions"):
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
-        dm.cur.execute("select deals from playersinfo where userid = " + str(a_id))
+        dm.cur.execute("SELECT deals FROM playersinfo WHERE userid = " + str(a_id))
         deals = dm.cur.fetchall()[0][0].split(',')
 
         if to_buy is None:
@@ -157,10 +167,11 @@ class Actions(commands.Cog, name="actions"):
 
         am.queues[str(a_id)] = "deciding to purchase something in the shop"
 
-        dm.cur.execute(f"select count(*) from cardsinfo where owned_user = {a_id}")
+        dm.cur.execute(f"SELECT count(*) FROM cardsinfo WHERE owned_user = {a_id}")
         cards_count = dm.cur.fetchall()[0][0]
 
-        dm.cur.execute(f"select coins, gems, event_token, tickets, user_identity, level from playersinfo where userid = '{a_id}'")
+        dm.cur.execute(
+            f"SELECT coins, gems, event_token, tickets, user_identity, level FROM playersinfo WHERE userid = '{a_id}'")
         coins, gems, tokens, tickets, user_identity, player_lvl = dm.cur.fetchall()[0]
         max_tickets = 5 if user_identity.split(",")[0] != "1" else 10
 
@@ -175,14 +186,18 @@ class Actions(commands.Cog, name="actions"):
             def currency_buy(command, gem_cost, reward_currency, reward_amount):
                 if to_buy.lower() == command:
                     if gems >= gem_cost:
-                        if reward_currency != "tick" or (reward_currency == "tick" and tickets + reward_amount <= max_tickets):
+                        if reward_currency != "tick" or (
+                                reward_currency == "tick" and tickets + reward_amount <= max_tickets):
                             deal_started = "currency"
-                            deal_transaction = [gem_cost, {'coin': 'coins', 'tick': 'tickets', 'token': 'event_token'}[reward_currency], reward_amount, reward_currency]
+                            deal_transaction = [gem_cost, {'coin': 'coins', 'tick': 'tickets', 'token': 'event_token'}[
+                                reward_currency], reward_amount, reward_currency]
                             return f"Are you sure you want to buy {reward_amount} {am.icon[reward_currency]} with {gem_cost} {am.icon['gem']}?", deal_started, deal_transaction
                         else:
-                            return f"You can't buy {reward_amount} {am.icon[reward_currency]}, it exceeds the maximum amount of {am.icon['tick']} you can store!", "None", [0, 'coins', 0, 'coin']
+                            return f"You can't buy {reward_amount} {am.icon[reward_currency]}, it exceeds the maximum amount of {am.icon['tick']} you can store!", "None", [
+                                0, 'coins', 0, 'coin']
                     else:
-                        return f"You need least {gem_cost} {am.icon['gem']} to buy {reward_amount} {am.icon[reward_currency]}!", "None", [0, 'coins', 0, 'coin']
+                        return f"You need least {gem_cost} {am.icon['gem']} to buy {reward_amount} {am.icon[reward_currency]}!", "None", [
+                            0, 'coins', 0, 'coin']
                 return "None", "None", [0, 'coins', 0, 'coin']
 
             def card_buy(command, gem_cost, token_cost, cards, levels):
@@ -191,28 +206,32 @@ class Actions(commands.Cog, name="actions"):
                         if cards_count + cards > 500:
                             return "you can only have at most 500 cards!", "None", [0, 0, 'basic', 0, 128]
                         else:
-                            return f"Are you sure you want to purchase a {command.title()} Edition card pack?", "card", [gem_cost, token_cost, command, cards, levels]
+                            return f"Are you sure you want to purchase a {command.title()} Edition card pack?", "card", [
+                                gem_cost, token_cost, command, cards, levels]
                     else:
                         if token_cost == 0:
-                            return f"You need {gem_cost} {am.icon['gem']} in order to buy a {command.title()} Edition card pack!", "None", [0, 0, 'basic', 0, 128]
+                            return f"You need {gem_cost} {am.icon['gem']} in order to buy a {command.title()} Edition card pack!", "None", [
+                                0, 0, 'basic', 0, 128]
                         else:
-                            return f"You need {token_cost} {am.icon['token']} in order to buy a {command.title()} Edition card pack!", "None", [0, 0, 'basic', 0, 128]
+                            return f"You need {token_cost} {am.icon['token']} in order to buy a {command.title()} Edition card pack!", "None", [
+                                0, 0, 'basic', 0, 128]
                 return "None", "None", [0, 0, 'basic', 0, 128]
 
             if to_buy.lower() in ["refresh", "ref", "re", "r"]:
                 if coins >= 200:
                     msg = await ctx.send(f"{mention}, do you want to refresh the shop for 200 {am.icon['coin']}?")
-                    await msg.add_reaction(emoji='✅')
-                    await msg.add_reaction(emoji='❎')
+                    await msg.add_reaction("✅")
+                    await msg.add_reaction("❎")
                     try:
                         reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                                 check=checks.valid_reaction(['❎', '✅'],
-                                                                                      [ctx.message.author], [msg]))
+                                                                 check=checks.valid_reaction(["❎", "✅"],
+                                                                                             [ctx.message.author],
+                                                                                             [msg]))
                     except asyncio.TimeoutError:
                         await msg.edit(content=f"{mention}, purchase cancelled")
                         await msg.clear_reactions()
                     else:
-                        if reaction.emoji == '❎':
+                        if reaction.emoji == "❎":
                             await msg.edit(content=f"{mention}, purchase cancelled")
                             await msg.clear_reactions()
                         else:
@@ -225,7 +244,7 @@ class Actions(commands.Cog, name="actions"):
                             elif int(user_identity.split(",")[0]) == 1:
                                 for x in range(9):
                                     deals_cards.append(am.add_a_card(player_lvl, str(a_id)))
-                            sql = "update playersinfo set deals = %s, coins = coins - 200 where userid = %s"
+                            sql = "UPDATE playersinfo SET deals = %s, coins = coins - 200 WHERE userid = %s"
                             value = (",".join(deals_cards), str(a_id))
                             dm.cur.execute(sql, value)
                             dm.db.commit()
@@ -265,25 +284,26 @@ class Actions(commands.Cog, name="actions"):
                 deal_msg = await ctx.send(deal_msg)
 
             if deal_started != "None":
-                await deal_msg.add_reaction(emoji='✅')
-                await deal_msg.add_reaction(emoji='❎')
+                await deal_msg.add_reaction("✅")
+                await deal_msg.add_reaction("❎")
                 try:
                     reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                             check=checks.valid_reaction(['❎', '✅'],
-                                                                                  [ctx.message.author], [deal_msg]))
+                                                             check=checks.valid_reaction(["❎", "✅"],
+                                                                                         [ctx.message.author],
+                                                                                         [deal_msg]))
                 except asyncio.TimeoutError:
                     await deal_msg.edit(content=f"{mention}, the transaction timed out.")
                     await deal_msg.clear_reactions()
                 else:
-                    if reaction.emoji == '❎':
+                    if reaction.emoji == "❎":
                         await deal_msg.edit(content=f"{mention}, you cancelled the purchase.")
                         await deal_msg.clear_reactions()
                     else:
                         await deal_msg.delete()
                         if deal_started == "currency":
-                            dm.cur.execute(f"update playersinfo set gems = gems - {deal_transaction[0]}, "
-                                                f"{deal_transaction[1]} = {deal_transaction[1]} + {deal_transaction[2]} "
-                                                f"where userid = {a_id}")
+                            dm.cur.execute(f"UPDATE playersinfo SET gems = gems - {deal_transaction[0]}, "
+                                           f"{deal_transaction[1]} = {deal_transaction[1]} + {deal_transaction[2]} "
+                                           f"WHERE userid = {a_id}")
                             dm.db.commit()
                             embed = discord.Embed(title="You got:",
                                                   description=f"**{deal_transaction[2]}** {am.icon[deal_transaction[3]]}!",
@@ -293,8 +313,8 @@ class Actions(commands.Cog, name="actions"):
                             await ctx.send(embed=embed)
 
                         elif deal_started == "card":
-                            dm.cur.execute(f"update playersinfo set gems = gems - {deal_cards[0]}, "
-                                                f"event_token = event_token - {deal_cards[1]} where userid = {a_id}")
+                            dm.cur.execute(f"UPDATE playersinfo SET gems = gems - {deal_cards[0]}, "
+                                           f"event_token = event_token - {deal_cards[1]} WHERE userid = {a_id}")
                             dm.db.commit()
                             if deal_cards[0] > 0:
                                 deals_cards = []
@@ -303,21 +323,24 @@ class Actions(commands.Cog, name="actions"):
                                     deals_cards.append(energy_cost)
                                     deals_cards.append(am.random_card(energy_cost, deal_cards[2]))
 
-                                sql = "insert into cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
-                                val = [(str(a_id), deals_cards[i * 2 + 1], deals_cards[i * 2]) for i in range(deal_cards[3])]
+                                sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
+                                val = [(str(a_id), deals_cards[i * 2 + 1], deals_cards[i * 2]) for i in
+                                       range(deal_cards[3])]
 
                                 dm.cur.executemany(sql, val)
                                 dm.db.commit()
                                 all_cards = []
                                 for x in range(deal_cards[3]):
-                                    all_cards.append(f"[{am.rarity_cost(deals_cards[x * 2 + 1])}] **{deals_cards[x * 2 + 1]}** lv: **{deals_cards[x * 2]}** \n")
+                                    all_cards.append(
+                                        f"[{am.rarity_cost(deals_cards[x * 2 + 1])}] **{deals_cards[x * 2 + 1]}** lv: **{deals_cards[x * 2]}** \n")
 
                                 all_cards.append("=======================\n")
                                 all_cards.append(f"**From {deal_cards[2].title()} Edition card pack**")
-                                embed = discord.Embed(title="You got:", description=" ".join(all_cards), color=discord.Color.gold())
+                                embed = discord.Embed(title="You got:", description=" ".join(all_cards),
+                                                      color=discord.Color.gold())
 
                             elif deal_cards[1] > 0:
-                                sql = "insert into cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
+                                sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
                                 val = (str(a_id), "Confetti Cannon", 10)
                                 dm.cur.execute(sql, val)
                                 dm.db.commit()
@@ -348,14 +371,17 @@ class Actions(commands.Cog, name="actions"):
 
                 elif total_cost > 0:
                     if total_cost > coins:
-                        await ctx.send(f"{mention}, you need {total_cost} {am.icon['coin']} to buy all cards in the shop!")
+                        await ctx.send(
+                            f"{mention}, you need {total_cost} {am.icon['coin']} to buy all cards in the shop!")
                     else:
-                        await ctx.send(f"{mention}, type `{am.prefix}deals confirm` to buy all the cards for {total_cost} {am.icon['coin']}.")
+                        await ctx.send(
+                            f"{mention}, type `{am.prefix}deals confirm` to buy all the cards for {total_cost} {am.icon['coin']}.")
 
                         try:
                             message = await self.bot.wait_for("message", timeout=15.0,
                                                               check=checks.valid_reply(['deals confirm'],
-                                                                                [ctx.message.author], [ctx.message.channel]))
+                                                                                       [ctx.message.author],
+                                                                                       [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             await ctx.send(f"{mention}, deals cancelled")
 
@@ -365,16 +391,17 @@ class Actions(commands.Cog, name="actions"):
 
                             for x in deals:
                                 if total_energy[y] != 0:
-                                    sql = "insert into cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
+                                    sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
                                     val = (str(a_id), x.split(".")[1], total_energy[y])
                                     dm.cur.execute(sql, val)
-                                    cards_bought.append(f"[{am.rarity_cost(x.split('.')[1])}] **{x.split('.')[1]}** lv: **{total_energy[y]}** - "
-                                                        f"**{round(1.6 ** total_energy[y] * 50 * am.price_factor(x.split('.')[1]))}** {am.icon['coin']} \n")
+                                    cards_bought.append(
+                                        f"[{am.rarity_cost(x.split('.')[1])}] **{x.split('.')[1]}** lv: **{total_energy[y]}** - "
+                                        f"**{round(1.6 ** total_energy[y] * 50 * am.price_factor(x.split('.')[1]))}** {am.icon['coin']} \n")
                                     dm.db.commit()
                                     deals[y] = "-" + x
                                 y += 1
 
-                            sql = "update playersinfo set coins = %s, deals = %s where userid = %s"
+                            sql = "UPDATE playersinfo SET coins = %s, deals = %s WHERE userid = %s"
                             value = (coins - total_cost, ",".join(deals), str(a_id))
                             dm.cur.execute(sql, value)
                             dm.db.commit()
@@ -406,18 +433,20 @@ class Actions(commands.Cog, name="actions"):
                 else:
                     msg = await ctx.send(
                         f"{mention}, are you sure you want to purchase **[{am.rarity_cost(card)}] {card} lv: {card_energy_cost}**?")
-                    await msg.add_reaction(emoji='✅')
-                    await msg.add_reaction(emoji='❎')
+                    await msg.add_reaction("✅")
+                    await msg.add_reaction("❎")
                     try:
                         reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                                 check=checks.valid_reaction(['❎', '✅'], [ctx.message.author], [msg]))
+                                                                 check=checks.valid_reaction(["❎", "✅"],
+                                                                                             [ctx.message.author],
+                                                                                             [msg]))
                     except asyncio.TimeoutError:
                         await msg.edit(content=f"{mention}, purchase cancelled")
                     else:
-                        if reaction.emoji == '❎':
+                        if reaction.emoji == "❎":
                             await msg.edit(content=f"{mention}, purchase cancelled")
                         else:
-                            sql = "insert into cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
+                            sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
                             val = (str(a_id), card, card_energy_cost)
                             dm.cur.execute(sql, val)
                             dm.db.commit()
@@ -426,7 +455,7 @@ class Actions(commands.Cog, name="actions"):
                                         f"lv: {card_energy_cost}** with "
                                         f"{round(1.6 ** card_energy_cost * 50 * am.price_factor(card))} {am.icon['coin']}!")
                             deals[to_buy - 1] = "-" + deals[to_buy - 1]
-                            sql = "update playersinfo set coins = coins - %s, deals = %s where userid = %s"
+                            sql = "UPDATE playersinfo SET coins = coins - %s, deals = %s WHERE userid = %s"
                             value = (round(1.6 ** card_energy_cost * 50 * am.price_factor(card)),
                                      ",".join(deals), str(a_id))
                             dm.cur.execute(sql, value)
@@ -437,14 +466,16 @@ class Actions(commands.Cog, name="actions"):
                 if (to_buy.lower() not in ["all", "basic", "fire", "evil", "electric",
                                            "defensive", "pro", "gc1", "gc2", "gc3", "rt1",
                                            "rt2", "rt3", "refresh", "ref", "re", "r", "confetti"]):
-                    await ctx.send(f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
+                    await ctx.send(
+                        f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
             except:
-                await ctx.send(f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
+                await ctx.send(
+                    f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
         del am.queues[str(a_id)]
 
     # await ctx.send(f"{mention}, shop is currently temporarily disabled!")
 
-    @commands.command(pass_context=True, aliases=["dis"], brief="cards")
+    @commands.command(aliases=["dis"], brief="cards")
     @checks.is_registered()
     @checks.not_preoccupied()
     async def discard(self, ctx: commands.Context, *card_id):
@@ -456,14 +487,14 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, the correct format is `{am.prefix}discard (* card_ids)`!")
             return
 
-        dm.cur.execute(f"select deck1,deck2,deck3,deck4,deck5,deck6 from playersachivements where userid = '{a_id}'")
+        dm.cur.execute(f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
         decks = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
         card_ids = list(card_id)
         final_msg = []
 
         for x in card_ids:
             try:
-                dm.cur.execute(f"select card_name, card_level from cardsinfo where id = {x} and owned_user = '{a_id}'")
+                dm.cur.execute(f"SELECT card_name, card_level FROM cardsinfo WHERE id = {x} AND owned_user = '{a_id}'")
                 y = dm.cur.fetchall()[0]
                 if not y:
                     final_msg.append(f"You don't have a card with id `{x}`!")
@@ -479,18 +510,19 @@ class Actions(commands.Cog, name="actions"):
                              " \n".join(final_msg) + "\n"
                                                      f"{am.icon['bers']} *(Discarded cards can't be retrieved!)*")
 
-        await msg.add_reaction(emoji='✅')
-        await msg.add_reaction(emoji='❎')
+        await msg.add_reaction("✅")
+        await msg.add_reaction("❎")
         try:
             reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                     check=checks.valid_reaction(['❎', '✅'], [ctx.message.author], [msg]))
+                                                     check=checks.valid_reaction(["❎", "✅"], [ctx.message.author],
+                                                                                 [msg]))
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, discarding cancelled")
             await msg.clear_reactions()
             del am.queues[str(a_id)]
             return
 
-        if reaction.emoji == '❎':
+        if reaction.emoji == "❎":
             await msg.edit(content=f"{mention}, discarding cancelled")
             await msg.clear_reactions()
             del am.queues[str(a_id)]
@@ -499,14 +531,14 @@ class Actions(commands.Cog, name="actions"):
         for x in card_ids:
             try:
                 dm.cur.execute(
-                    f"select card_name, card_level from cardsinfo where id = {x} and owned_user = '{a_id}'")
+                    f"SELECT card_name, card_level FROM cardsinfo WHERE id = {x} AND owned_user = '{a_id}'")
                 y = dm.cur.fetchall()[0]
                 if not y:
                     continue
                 if str(x) in decks:
                     continue
                 else:
-                    dm.cur.execute(f"delete from cardsinfo where id = {x}")
+                    dm.cur.execute(f"delete FROM cardsinfo WHERE id = {x}")
             except:
                 continue
 
@@ -515,7 +547,7 @@ class Actions(commands.Cog, name="actions"):
 
         await msg.edit(content=f"{mention}, card(s) discarded successfully!")
 
-    @commands.command(pass_context=True, aliases=["mer"], brief="cards")
+    @commands.hybrid_command(aliases=["mer"], brief="cards")
     @checks.is_registered()
     @checks.not_preoccupied()
     async def merge(self, ctx: commands.Context, card1_id: str = "bruh moment", card2_id: str = "bruh moment"):
@@ -524,11 +556,12 @@ class Actions(commands.Cog, name="actions"):
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
         if card1_id is None or card2_id is None:
-            await ctx.send(f"{mention}, the correct format for this command is `{am.prefix}merge (primary_card_id) (supplementary_card_id)`!")
+            await ctx.send(
+                f"{mention}, the correct format for this command is `{am.prefix}merge (primary_card_id) (supplementary_card_id)`!")
             return
 
         dm.cur.execute(
-            f"select deck1,deck2,deck3,deck4,deck5,deck6 from playersachivements where userid = '{a_id}'")
+            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
         decks = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
 
         if not card1_id.isnumeric() or not card2_id.isnumeric():
@@ -536,13 +569,13 @@ class Actions(commands.Cog, name="actions"):
             return
 
         card1_id, card2_id = int(card1_id), int(card2_id)
-        dm.cur.execute(f"select card_name, card_level, owned_user from cardsinfo where id = {card1_id}")
+        dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card1_id}")
         card1 = dm.cur.fetchall()[0]
         if not card1:
             await ctx.send(f"{mention}, you don't have the first card!")
             return
 
-        dm.cur.execute(f"select card_name, card_level, owned_user from cardsinfo where id = {card2_id}")
+        dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card2_id}")
         card2 = dm.cur.fetchall()[0]
         if not card2:
             await ctx.send(f"{mention}, you don't have the second card!")
@@ -567,7 +600,7 @@ class Actions(commands.Cog, name="actions"):
                            f"`{am.prefix}remove (* card_ids)` first before you merge it away!")
             return
 
-        dm.cur.execute("select * from playersinfo where userid = " + str(a_id))
+        dm.cur.execute("SELECT * FROM playersinfo WHERE userid = " + str(a_id))
         player_info = dm.cur.fetchall()
 
         merge_cost = math.floor(((card1[1] + 1) ** 2) * 10)
@@ -580,27 +613,28 @@ class Actions(commands.Cog, name="actions"):
                              f"**[{am.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}**\n"
                              f"**[{am.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}**\n"
                              f"merging cost {merge_cost} {am.icon['coin']}.")
-        await msg.add_reaction(emoji='✅')
-        await msg.add_reaction(emoji='❎')
+        await msg.add_reaction("✅")
+        await msg.add_reaction("❎")
         try:
             reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                     check=checks.valid_reaction(['❎', '✅'], [ctx.message.author], [msg]))
+                                                     check=checks.valid_reaction(["❎", "✅"], [ctx.message.author],
+                                                                                 [msg]))
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, merging timed out")
             await msg.clear_reactions()
         else:
-            if reaction.emoji == '❎':
+            if reaction.emoji == "❎":
                 await msg.edit(content=f"{mention}, merging timed out")
                 await msg.clear_reactions()
             else:
                 await msg.delete()
                 am.log_quest(7, 1, a_id)
-                sql = "update playersinfo set coins = coins - %s, exps = exps + %s where userid = %s"
+                sql = "UPDATE playersinfo SET coins = coins - %s, exps = exps + %s WHERE userid = %s"
                 value = (math.floor(((card1[1] + 1) ** 2) * 10), (card1[1] + 1) * 10, a_id)
                 dm.cur.execute(sql, value)
-                dm.cur.execute("delete from cardsinfo where id = {}".format(card2_id))
+                dm.cur.execute("delete FROM cardsinfo WHERE id = {}".format(card2_id))
                 dm.cur.execute(
-                    "update cardsinfo set card_level = card_level + 1 where id = {}".format(card1_id))
+                    "UPDATE cardsinfo SET card_level = card_level + 1 WHERE id = {}".format(card1_id))
                 dm.db.commit()
                 embed = discord.Embed(title="Cards merged successfully!",
                                       description=f"-{math.floor(((card1[1] + 1) ** 2) * 10)} {am.icon['coin']} +{(card1[1] + 1) * 10} {am.icon['exp']}",
@@ -613,7 +647,7 @@ class Actions(commands.Cog, name="actions"):
                 await ctx.send(embed=embed)
         del am.queues[str(a_id)]
 
-    @commands.command(pass_context=True, aliases=["trades"], brief="actions")
+    @commands.hybrid_command(aliases=["trades"], brief="actions")
     @checks.is_registered()
     @checks.not_preoccupied()
     @checks.level_check(7)
@@ -624,7 +658,7 @@ class Actions(commands.Cog, name="actions"):
         author = ctx.message.author
         mention = author.mention
         a_id = author.id
-        dm.cur.execute(f"select level, coins from playersinfo where userid = '{target.id}'")
+        dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{target.id}'")
         target_info = dm.cur.fetchall()
 
         # do some check to see if the people are all valid
@@ -646,38 +680,44 @@ class Actions(commands.Cog, name="actions"):
         confirmed = [False, False]
 
         deal_msg = await ctx.send(f"{target.mention}. Accept a trade with {mention}?")
-        await deal_msg.add_reaction(emoji='✅')
-        await deal_msg.add_reaction(emoji='❎')
+        await deal_msg.add_reaction("✅")
+        await deal_msg.add_reaction("❎")
 
         while not trade_end:
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=checks.valid_reaction(['❎', '✅'], [target, ctx.message.author], [deal_msg]))
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0,
+                                                         check=checks.valid_reaction(["❎", "✅"],
+                                                                                     [target, ctx.message.author],
+                                                                                     [deal_msg]))
             except asyncio.TimeoutError:
                 await deal_msg.edit(content=f"{mention}, trade cancelled due to afk {am.icon['dead']}")
                 await deal_msg.clear_reactions()
                 del am.queues[str(author.id)]
                 return
 
-            if reaction.emoji == '❎':
+            if reaction.emoji == "❎":
                 await deal_msg.edit(content=f"{mention}, trade cancelled! :weary:")
                 await deal_msg.clear_reactions()
                 del am.queues[str(author.id)]
                 return
 
-            if reaction.emoji == '✅' and user == target:
+            if reaction.emoji == "✅" and user == target:
                 break
 
         if str(target.id) in am.queues:
-            await deal_msg.edit(content=f"{mention}, trade cancelled! The target user is currently {am.queues[str(target.id)]}!")
+            await deal_msg.edit(
+                content=f"{mention}, trade cancelled! The target user is currently {am.queues[str(target.id)]}!")
             await deal_msg.clear_reactions()
             del am.queues[str(author.id)]
             return
 
-        dm.cur.execute(f"select deck1,deck2,deck3,deck4,deck5,deck6 from playersachivements where userid = '{target.id}'")
+        dm.cur.execute(
+            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{target.id}'")
         decks1 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
-        dm.cur.execute(f"select deck1,deck2,deck3,deck4,deck5,deck6 from playersachivements where userid = '{author.id}'")
+        dm.cur.execute(
+            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{author.id}'")
         decks2 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
-        dm.cur.execute(f"select level, coins from playersinfo where userid = '{author.id}'")
+        dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{author.id}'")
         author_info = dm.cur.fetchall()[0]
         am.queues[str(author.id)] = "currently trading"
         am.queues[str(target.id)] = "currently trading"
@@ -730,7 +770,8 @@ class Actions(commands.Cog, name="actions"):
         while not trade_end:
             try:
                 reply_msg = await self.bot.wait_for("message", timeout=120.0,
-                                                    check=checks.valid_reply([''], [target, author], [ctx.message.channel]))
+                                                    check=checks.valid_reply([''], [target, author],
+                                                                             [ctx.message.channel]))
             except asyncio.TimeoutError:
                 await ctx.send(f"Well, no one showed up to the trade, so it was called off.")
                 return
@@ -787,7 +828,8 @@ class Actions(commands.Cog, name="actions"):
                 elif reply_msg[1].lower() in ["card", "ca", "cards"]:
                     try:
                         card_id = int(reply_msg[2])
-                        dm.cur.execute(f"select card_name, card_level from cardsinfo where id = {card_id} and owned_user = '{reply_author.id}'")
+                        dm.cur.execute(
+                            f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{reply_author.id}'")
                         result = dm.cur.fetchall()[0]
                         if len(result) == 0:
                             await ctx.send(f"{reply_author}, you don't have this card id in your inventory!")
@@ -800,7 +842,8 @@ class Actions(commands.Cog, name="actions"):
                                     await ctx.send(f"{ctx.message.author}, you already put this card id in the offer!")
                                     continue
                                 elif card_id in decks1:
-                                    await ctx.send(f"{ctx.message.author}, you can't put a card from your deck into this offer!")
+                                    await ctx.send(
+                                        f"{ctx.message.author}, you can't put a card from your deck into this offer!")
                                 else:
                                     author_cards[card_id] = result
                             else:
@@ -825,7 +868,8 @@ class Actions(commands.Cog, name="actions"):
                             if amount <= author_coins:
                                 author_coins -= amount
                             else:
-                                await ctx.send(f"{ctx.message.author}, you can't drop more coins than what you have in your offer!")
+                                await ctx.send(
+                                    f"{ctx.message.author}, you can't drop more coins than what you have in your offer!")
                                 continue
                         else:
                             if amount <= target_coins:
@@ -860,12 +904,14 @@ class Actions(commands.Cog, name="actions"):
                 trade_msg = await ctx.send(embed=offer())
 
             if confirmed[0] and confirmed[1]:
-                dm.cur.execute(f"update playersinfo set coins = coins + {target_coins} - {author_coins} - {tax()} where userid = '{author.id}'")
-                dm.cur.execute(f"update playersinfo set coins = coins + {author_coins} - {target_coins} - {tax()} where userid = '{target.id}'")
+                dm.cur.execute(
+                    f"UPDATE playersinfo SET coins = coins + {target_coins} - {author_coins} - {tax()} WHERE userid = '{author.id}'")
+                dm.cur.execute(
+                    f"UPDATE playersinfo SET coins = coins + {author_coins} - {target_coins} - {tax()} WHERE userid = '{target.id}'")
                 for card in author_cards:
-                    dm.cur.execute(f"update cardsinfo set owned_user = '{target.id}' where id = {card}")
+                    dm.cur.execute(f"UPDATE cardsinfo SET owned_user = '{target.id}' WHERE id = {card}")
                 for card in target_cards:
-                    dm.cur.execute(f"update cardsinfo set owned_user = '{author.id}' where id = {card}")
+                    dm.cur.execute(f"UPDATE cardsinfo SET owned_user = '{author.id}' WHERE id = {card}")
                 dm.db.commit()
                 trade_end = True
                 await ctx.send(f"Trade between {ctx.message.author} and {target} is now finished!")
@@ -873,7 +919,7 @@ class Actions(commands.Cog, name="actions"):
         del am.queues[str(author.id)]
         del am.queues[str(target.id)]
 
-    @commands.command(pass_context=True, aliases=["selects", "select_deck", "selectdeck", "sel", "se"], brief="cards")
+    @commands.hybrid_command(aliases=["selects", "select_deck", "selectdeck", "sel", "se"], brief="cards")
     @checks.is_registered()
     async def select(self, ctx: commands.Context, deck_slot="bruh moment"):
         """Select a deck from your deck slots"""
@@ -888,7 +934,7 @@ class Actions(commands.Cog, name="actions"):
                 await ctx.send("The deck slot number must between 1-6!")
                 return
 
-        dm.cur.execute("select level from playersinfo where userid = " + str(a_id))
+        dm.cur.execute("SELECT level FROM playersinfo WHERE userid = " + str(a_id))
         level = dm.cur.fetchall()[0][0]
         deck_slots = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
 
@@ -896,18 +942,18 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"Deck #{deck_slot} is unlocked at {deck_slots[deck_slot]}!")
             return
 
-        dm.cur.execute(f"update playersinfo set deck_slot = {deck_slot} where userid = {a_id}")
+        dm.cur.execute(f"UPDATE playersinfo SET deck_slot = {deck_slot} WHERE userid = {a_id}")
         dm.db.commit()
         await ctx.send(f"Deck #{deck_slot} is now selected!")
 
-    @commands.command(pass_context=True, aliases=["paste", "past", "pas", "paste_deck"], brief="cards")
+    @commands.hybrid_command(brief="cards")
     @checks.is_registered()
-    async def pasta(self, ctx: commands.Context, deck_slot="bruh moment"):
+    async def paste(self, ctx: commands.Context, deck_slot="bruh moment"):
         """Returns the card ids of your current selected deck"""
 
         a_id = ctx.message.author.id
         if deck_slot is None:
-            dm.cur.execute(f"select deck_slot from playersinfo where userid = {a_id}")
+            dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
             deck_slot = dm.cur.fetchall()[0][0]
 
         if not deck_slot.isnumeric():
@@ -919,29 +965,33 @@ class Actions(commands.Cog, name="actions"):
                 await ctx.send("The deck slot number must between 1-6!")
                 return
 
-        dm.cur.execute(f"select deck{deck_slot} from playersachivements where userid = {a_id}")
+        dm.cur.execute(f"SELECT deck{deck_slot} FROM playersachivements WHERE userid = {a_id}")
         deck = dm.cur.fetchall()[0][0].split(",")
         deck = [" "] if deck == ['0'] else deck
 
         await ctx.send(f"All the ids in Deck #{deck_slot}: \n`" + " ".join(deck) + "`")
 
-    @commands.command(pass_context=True, aliases=["swaps", "replace", "switch", "change", "alter"], brief="cards")
+    @commands.hybrid_command(
+        aliases=["replace", "switch", "change", "alter"],
+        brief="Swap a card from your deck with another."
+    )
     @checks.is_registered()
     async def swap(self, ctx: commands.Context, new_id=None, old_id=None):
-        """Swap a card from your deck with another"""
+        """Swap a card from your deck with another."""
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
         if new_id is None or old_id is None:
-            await ctx.send(f"{mention}, the correct format for this command is `{am.prefix}swap (new_card_id) (old_card_id)`.")
+            await ctx.send(
+                f"{mention}, the correct format for this command is `{am.prefix}swap (new_card_id) (old_card_id)`.")
             return
         if not old_id.isnumeric() or not new_id.isnumeric():
             await ctx.send(f"{mention}, those are invalid card id(s)!")
             return
 
-        dm.cur.execute(f"select deck_slot from playersinfo where userid = {a_id}")
+        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
         deck_slot = dm.cur.fetchall()[0][0]
-        dm.cur.execute(f"select deck{deck_slot} from playersachivements where userid = {a_id}")
+        dm.cur.execute(f"SELECT deck{deck_slot} FROM playersachivements WHERE userid = {a_id}")
         deck = dm.cur.fetchall()[0][0].split(",")
 
         old_id, new_id = int(old_id), int(new_id)
@@ -950,7 +1000,7 @@ class Actions(commands.Cog, name="actions"):
                            f"but the second id need to exist in your deck #{deck_slot}!")
         else:
             dm.cur.execute(
-                f"select card_name, card_level from cardsinfo where id = {new_id} and owned_user = '{a_id}'")
+                f"SELECT card_name, card_level FROM cardsinfo WHERE id = {new_id} AND owned_user = '{a_id}'")
             new = dm.cur.fetchall()[0]
             if not new:
                 await ctx.send(f"{mention}, the first id doesn't exist in your card inventory!")
@@ -958,19 +1008,20 @@ class Actions(commands.Cog, name="actions"):
                 deck.remove(str(old_id))
                 deck.append(str(new_id))
                 dm.cur.execute(
-                    f"select card_name, card_level from cardsinfo where id = {old_id} and owned_user = '{a_id}'")
+                    f"SELECT card_name, card_level FROM cardsinfo WHERE id = {old_id} AND owned_user = '{a_id}'")
                 old = dm.cur.fetchall()[0]
                 dm.cur.execute(
-                    f"update playersachivements set deck{deck_slot} = '{','.join(deck)}' where userid = '{a_id}'")
+                    f"UPDATE playersachivements SET deck{deck_slot} = '{','.join(deck)}' WHERE userid = '{a_id}'")
                 dm.db.commit()
                 await ctx.send(
                     f"You swapped the card **[{am.rarity_cost(old[0])}] {old[0]} lv: {old[1]}** "
                     f"with the card **[{am.rarity_cost(new[0])}] {new[0]} lv: {new[1]}** in your deck #{deck_slot}!")
 
-    @commands.command(pass_context=True, aliases=["adds", "use", "uses"], brief="cards")
+    @commands.hybrid_command(aliases=["adds", "use", "uses"], brief="Add a card to your deck.")
     @checks.is_registered()
-    async def add(self, ctx: commands.Context, *card_id):
-        """Add a card to your deck"""
+    @checks.not_preoccupied()
+    async def add(self, ctx: commands.Context, card_id: int):
+        """Add a card to your deck."""
 
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
@@ -978,50 +1029,40 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, the correct format is `{am.prefix}add (* card_ids)`!")
             return
 
-        dm.cur.execute(f"select deck_slot from playersinfo where userid = '{a_id}'")
+        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = '{a_id}'")
         deck_slot = dm.cur.fetchall()[0][0]
-        dm.cur.execute(f"select deck{deck_slot} from playersachivements where userid = '{a_id}'")
+
+        db_deck = f"deck{deck_slot}"
+        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = '{a_id}'")
         deck = dm.cur.fetchall()[0][0].split(",")
 
         deck = [] if deck == ['0'] else deck
-        deck_length = 0 if deck else len(deck)
-
-        if deck_length == 12:
-            await ctx.send(f"{mention}, your deck's full - do `" + am.prefix + "swap` instead!")
+        if str(card_id) in deck:
+            await ctx.send(f"{mention}, Card #`{card_id}` is already in your deck.")
             return
-
-        card_ids = list(card_id)
-        if len(card_ids) > 12 - deck_length:
-            await ctx.send(f"{mention}, you can only have at most 12 cards in your deck!")
+        if len(deck) == 12:
+            await ctx.send(f"{mention}, your deck's full - do `{am.prefix}swap` instead!")
             return
-
-        final_msg = []
-        for x in card_ids:
-            try:
-                x = math.floor(int(x) + 1 - 1)
-                if str(x) in deck:
-                    final_msg.append(f"Id `{x}` already in your deck")
-                else:
-                    dm.cur.execute(
-                        f"select card_name, card_level from cardsinfo where id = {x} and owned_user = '{a_id}'")
-                    y = dm.cur.fetchall()[0]
-                    if y:
-                        final_msg.append(f"**[{am.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** » Deck #{deck_slot}")
-                        deck.append(str(x))
-                    else:
-                        final_msg.append(f"Id `{x}` doesn't exist in your inventory")
-            except:
-                final_msg.append(f"`{x}` isn't a valid card id")
 
         dm.cur.execute(
-            f"update playersachivements set deck{deck_slot} = '{','.join(deck)}' where userid = '{a_id}'")
-        dm.db.commit()
-        await ctx.send(f"{mention}\n " + " \n".join(final_msg))
+            f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{a_id}'"
+        )
+        y = dm.cur.fetchall()[0]
+        if y:
+            res_msg = f"**[{am.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** » Deck #{deck_slot}"
+            deck.append(str(card_id))
+        else:
+            res_msg = f"Card #`{card_id}` doesn't exist in your inventory"
 
-    @commands.command(pass_context=True, aliases=["rem"], brief="cards")
+        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '{','.join(deck)}' WHERE userid = '{a_id}'")
+        dm.db.commit()
+        await ctx.send(f"{mention}\n {res_msg}")
+
+    @commands.hybrid_command(aliases=["rem"], brief="Remove a card from your deck.")
     @checks.is_registered()
-    async def remove(self, ctx: commands.Context, *card_id):
-        """Remove a card from your deck"""
+    @checks.not_preoccupied()
+    async def remove(self, ctx: commands.Context, card_id: int):
+        """Remove a card from your deck."""
 
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
@@ -1029,9 +1070,11 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, the correct format is `{am.prefix}remove (* card_ids)`!")
             return
 
-        dm.cur.execute(f"select deck_slot from playersinfo where userid = '{a_id}'")
+        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = '{a_id}'")
         deck_slot = dm.cur.fetchall()[0][0]
-        dm.cur.execute(f"select deck{deck_slot} from playersachivements where userid = '{a_id}'")
+
+        db_deck = f"deck{deck_slot}"
+        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = '{a_id}'")
         deck = dm.cur.fetchall()[0][0].split(",")
         deck_length = 0 if deck == ['0'] else len(deck)
 
@@ -1039,76 +1082,73 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, your deck's empty!")
             return
 
-        card_ids = list(card_id)
-        final_msg = []
-        for x in card_ids:
-            try:
-                x = math.floor(int(x) + 1 - 1)
-                if str(x) in deck:
-                    dm.cur.execute(
-                        f"select card_name, card_level from cardsinfo where id = {x} and owned_user = '{a_id}'")
-                    y = dm.cur.fetchall()[0]
-                    final_msg.append(f"**[{am.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** « Deck #{deck_slot}")
-                    deck.remove(str(x))
-                else:
-                    final_msg.append(f"Id `{x}` doesn't exist in your deck")
-            except:
-                final_msg.append(f"`{x}` isn't a valid card id")
+        if str(card_id) in deck:
+            dm.cur.execute(
+                f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{a_id}'"
+            )
+            y = dm.cur.fetchall()[0]
+            res_msg = f"**[{am.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** « Deck #{deck_slot}"
+            deck.remove(str(card_id))
+        else:
+            res_msg = f"Card #`{card_id}` isn't in your deck."
 
-        dm.cur.execute(f"update playersachivements set deck{deck_slot} = '{','.join(deck)}' where userid = '{a_id}'")
+        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '{','.join(deck)}' WHERE userid = '{a_id}'")
         dm.db.commit()
-        await ctx.send(f"{mention}\n " + " \n".join(final_msg))
+        await ctx.send(f"{mention}\n {res_msg}")
 
-    @commands.command(pass_context=True, aliases=["clear_deck", "cleardeck"], brief="cards")
+    @commands.hybrid_command(aliases=["clear_deck", "cleardeck"], brief="Clear your current deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
-    async def clear(self, ctx):
-        """Clear your current deck"""
+    async def clear(self, ctx: commands.Context):
+        """Clear your current deck."""
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
 
         am.queues[str(a_id)] = "deciding to clear a deck slot"
-        dm.cur.execute("select deck_slot from playersinfo where userid = " + str(a_id))
+        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
         deck_slot = dm.cur.fetchall()[0][0]
-        dm.cur.execute(
-            f"select deck{deck_slot} from playersachivements where userid = " + str(a_id))
+
+        db_deck = f"deck{deck_slot}"
+        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = {a_id}")
         deck = dm.cur.fetchall()[0][0].split(",")
 
-        if deck == ['0']:
+        if deck == ["0"]:
             await ctx.send(f"{mention}, your deck's already empty!")
             del am.queues[str(a_id)]
             return
 
         msg = await ctx.send(f"{mention}, do you really want to clear Deck #{deck_slot}?")
-        await msg.add_reaction(emoji='✅')
-        await msg.add_reaction(emoji='❎')
+        await msg.add_reaction("✅")
+        await msg.add_reaction("❎")
         try:
-            reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                     check=checks.valid_reaction(['❎', '✅'], [ctx.message.author], [msg]))
+            reaction, user = await self.bot.wait_for(
+                "reaction_add", timeout=30.0,
+                check=checks.valid_reaction(["❎", "✅"], ctx.message.author, msg)
+            )
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, clearing deck cancelled")
             del am.queues[str(a_id)]
             return
 
-        if reaction.emoji == '❎':
+        if reaction.emoji == "❎":
             await msg.edit(content=f"{mention}, clearing deck cancelled")
             del am.queues[str(a_id)]
             return
 
-        dm.cur.execute(
-            f"update playersachivements set deck{deck_slot} = '0' where userid = " + str(a_id))
+        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '0' WHERE userid = {a_id}")
         dm.db.commit()
-        await msg.edit(content=f"{mention}, your Deck #{deck_slot} has been cleared! \n"
-                               f"Do `{am.prefix}add (card_id)` command to start add new cards into your deck!")
+        await msg.edit(
+            content=f"{mention}, your Deck #{deck_slot} has been cleared! \n"
+                    f"Do `{am.prefix}add (card_id)` command to add new cards into your deck!"
+        )
         await msg.clear_reactions()
         del am.queues[str(a_id)]
 
-    @commands.command(pass_context=True, aliases=["black", "bj"], brief="fun")
-    @checks.is_registered()
+    @commands.hybrid_command(aliases=["black", "bj"], brief="Practice your blackjack skills!")
     @checks.not_preoccupied()
     async def blackjack(self, ctx):
-        """No risk no rewards practice command"""
+        """Practice your blackjack skills!"""
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
@@ -1119,7 +1159,7 @@ class Actions(commands.Cog, name="actions"):
         cards = [[], []]
         included_aces = [[], []]
         end = False
-        am.queues[str(a_id)] = "practicing in the blackjack game"
+        am.queues[str(a_id)] = "practicing blackjack"
 
         def add_card(card, target):
             if target == "self":
@@ -1133,20 +1173,29 @@ class Actions(commands.Cog, name="actions"):
         add_card(random.choice(list(deck)), "self")
         add_card(random.choice(list(deck)), "self")
         add_card(random.choice(list(deck)), "opponent")
+
+        hit = ["hit", "h"]
+        stand = ["stand", "s"]
         while not end and values[0] < 21:
-            await ctx.send(f"{mention} \nYour total: {values[0]} \n{' '.join(cards[0])}"
-                           f" \n------------------------------ \nDealer's total: {values[1]} + ? \n"
-                           f"{' '.join(cards[1])} [? ? ?] ```\n{am.prefix}hit -draw a card \n"
-                           f"{am.prefix}stand -end your turn```")
+            await ctx.send(
+                f"{mention} \nYour total: {values[0]} \n{' '.join(cards[0])}"
+                f" \n------------------------------ \nDealer's total: {values[1]} + ? \n"
+                f"{' '.join(cards[1])} [? ? ?] ```\n{am.prefix}hit -draw a card \n"
+                f"{am.prefix}stand -end your turn```"
+            )
             try:
-                msg_reply = await self.bot.wait_for("message", timeout=30.0,
-                                                    check=checks.valid_reply(['hit', 'stand', 'h', 's'], [ctx.message.author], [ctx.message.channel]))
+                msg_reply = await self.bot.wait_for(
+                    "message", timeout=30.0,
+                    check=checks.valid_reply(hit + stand, ctx.message.author, ctx.message.channel)
+                )
             except asyncio.TimeoutError:
                 values = [1000, 1000]
                 await ctx.send(f"{mention}, you blanked out and lost the game!")
+                del am.queues[str(a_id)]
+                return
             else:
                 action = msg_reply.content[len(am.prefix):].lower()
-                if action in ['s', 'stand']:
+                if action in stand:
                     end = True
                     add_card(random.choice(list(deck)), "opponent")
                     while values[1] < 17:
@@ -1158,7 +1207,7 @@ class Actions(commands.Cog, name="actions"):
                                     included_aces[1].append(x)
                                     break
 
-                elif action in ['h', 'hit']:
+                elif action in hit:
                     add_card(random.choice(list(deck)), "self")
                     while values[0] > 21 and any(a in cards[0] and a not in included_aces[0] for a in aces):
                         for x in cards[0]:
@@ -1177,131 +1226,109 @@ class Actions(commands.Cog, name="actions"):
         elif (22 > values[0] > values[1]) or (values[1] > 21 and values[0] < values[1]):
             game_state = "won"
 
-        await ctx.send(f"{mention}, **You {game_state}!** \nYour total: {values[0]} \n{''.join(cards[0])}"
-                       f" \n------------------------------ \nDealer's total: {values[1]} \n{''.join(cards[1])}")
+        await ctx.send(
+            f"{mention}, **You {game_state}!** \nYour total: {values[0]} \n{''.join(cards[0])}"
+            f" \n------------------------------ \nDealer's total: {values[1]} \n{''.join(cards[1])}"
+        )
         del am.queues[str(a_id)]
 
-    @commands.command(pass_context=True, brief="fun")
-    @checks.is_registered()
+    @commands.hybrid_command(brief="Test your reflexes and counting ability!")
     @checks.not_preoccupied()
-    async def reaction(self, ctx: commands.Context, wait_time=None):
-        """Test your reflexes and counting ability"""
-
+    async def reaction(self, ctx: commands.Context, wait_time: float = -1.0):
+        """Test your reflexes AND counting ability!"""
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
         am.queues[str(a_id)] = "testing timing accuracy"
+
+        if wait_time <= 0:
+            wait_time = random.randint(6, 30)
+
+        t = await ctx.send(f"{mention}, reply `{am.prefix}` as close as you can to {wait_time} seconds!")
         try:
-            sec = math.floor(abs(round(int(wait_time)))) + 1 - 1
-        except (TypeError, ValueError):
-            sec = random.randint(6, 30)
-        if sec > 60 or sec < 1:
-            sec = random.randint(6, 30)
-        t = await ctx.send(f"{mention}, reply `{am.prefix}` as close as you can to {sec} seconds!")
-        try:
-            message = await self.bot.wait_for("message", timeout=70.0,
-                                              check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+            message = await self.bot.wait_for(
+                "message", timeout=70,
+                check=checks.valid_reply("", ctx.message.author, ctx.message.channel)
+            )
         except asyncio.TimeoutError:
             await ctx.send(f"{mention}, time's up!")
         else:
             recorded = (message.created_at - t.created_at).total_seconds()
-            await ctx.send(f"{mention}, you replied in {recorded} seconds, which "
-                           f"is {round(abs(sec - recorded) * 1000) / 1000} seconds off from {sec} seconds")
+            off = round(abs(wait_time - recorded) * 1000) / 1000
+            await ctx.send(
+                f"{mention}, you replied in {recorded} seconds, which "
+                f"is {off} seconds off from {wait_time} seconds"
+            )
+
         del am.queues[str(a_id)]
 
-    @commands.command(pass_context=True, brief="fun")
-    @checks.is_registered()
-    @checks.not_preoccupied()
-    async def agree(self, ctx: commands.Context, *stuff):
-        """I will agree with anything!"""
+    @commands.hybrid_command(brief="Have Crispy agree with anything!")
+    async def agree(self, ctx: commands.Context, statement: str = "but u said u are stupid"):
+        """Have Crispy agree with anything!"""
         a_id = ctx.message.author.id
-        if not stuff:
-            stuff = ["but u said u are stupid"]
         img = Image.open("resources/img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 24)
-        draw.text((323, 82), " ".join(stuff), (170, 172, 171), font=font)
+        draw.text((323, 82), " ".join(statement), (170, 172, 171), font=font)
         img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png", filename=f"resources/img/{a_id}.png"))
+        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
         os.remove(f"resources/img/{a_id}.png")
-        await ctx.message.delete()
 
-    @commands.command(pass_context=True, brief="fun")
-    @checks.is_registered()
-    @checks.not_preoccupied()
-    async def birb(self, ctx: commands.Context, *stuff):
-        """Mock the bot's creator"""
+    @commands.hybrid_command(brief="Mock the bot's creator.")
+    async def birb(self, ctx: commands.Context, stuff: str = "1 + 1 = 3"):
+        """Mock the bot's creator."""
         a_id = ctx.message.author.id
-        if not stuff:
-            stuff = ["1 + 1 = 3"]
         img = Image.open("resources/img/birb_logic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 12)
         draw.text((64, 28), " ".join(stuff), (200, 200, 200), font=font)
         img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png", filename=f"resources/img/{a_id}.png"))
+        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
         os.remove(f"resources/img/{a_id}.png")
-        await ctx.message.delete()
 
-    @commands.command(pass_context=True, brief="fun")
-    @checks.is_registered()
-    @checks.not_preoccupied()
-    async def dead(self, ctx: commands.Context, *stuff):
+    @commands.hybrid_command(brief="fun")
+    async def dead(self, ctx: commands.Context, msg: str = "Should I be scared?"):
         """Kind of like the 'this is fine' meme, except you can make the dog say whatever you want."""
         a_id = ctx.message.author.id
-        if not stuff:
-            stuff = ["Should I be scared?"]
         img = Image.open("resources/img/pandemic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 14)
-        draw.text((62, 290), " ".join(stuff), (200, 200, 200), font=font)
+        draw.text((62, 290), msg, (200, 200, 200), font=font)
         img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png", filename=f"resources/img/{a_id}.png"))
+        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
         os.remove(f"resources/img/{a_id}.png")
-        await ctx.message.delete()
 
-    @commands.command(pass_context=True, brief="fun")
-    @checks.is_registered()
-    @checks.not_preoccupied()
-    async def kick_meme(self, ctx: commands.Context, text: str):
-        """A adventurers themed meme template"""
-
+    @commands.hybrid_command(brief="A adventurers themed meme generator.")
+    async def kick_meme(
+            self, ctx: commands.Context,
+            kickee: str = "Me duelling someone", kicker: str = "RNG"
+    ):
+        """A adventurers themed meme generator."""
         a_id = ctx.message.author.id
-
-        kickee = "Me duelling someone"
-        kicker = "RNG"
-        if text:
-            kicker = "The bot"
-            cutoff = text.find(",")
-            if cutoff == -1:
-                kickee = text
-            else:
-                kickee = text[:cutoff]
-                kicker = text[cutoff + 1:]
-
         img = Image.open("resources/img/meme_template.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 17)
         draw.text((80, 25), kickee, (256, 256, 256), font=font)
         draw.text((330, 25), kicker, (256, 256, 256), font=font)
         img.save(f"resources/img/{a_id}.png")
-        await ctx.send(
-            file=discord.File(f"resources/img/{a_id}.png", filename=f"resources/img/{a_id}.png"))
+        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
         os.remove(f"resources/img/{a_id}.png")
-        await ctx.message.delete()
 
-    @commands.command(pass_context=True, aliases=['find_words', 'findwords', 'findword', 'word', 'fw'], brief="fun")
-    @checks.is_registered()
-    async def find_word(self, ctx: commands.Context, input_: str, limit=5):
-        """A tool for finding words with given letters"""
-        with open('txts/search.txt') as file:
+    @commands.hybrid_command(aliases=["find_words", "findwords", "fw"], brief="Finds words with given letters.")
+    async def find_word(self, ctx: commands.Context, letters: str, limit: int = 5):
+        """Finds words with given letters."""
+        with open("txts/search.txt") as file:
             valid_words = []
             for line in file:
                 if limit == 0:
                     break
-                if input_ in line:
+                if letters in line:
                     valid_words.append(line)
                     limit -= 1
-            await ctx.send("Words found: \n" + "".join(valid_words))
+
+        if valid_words:
+            await ctx.send(f"Words found: \n{''.join(valid_words)}")
+        else:
+            await ctx.send("No words found! :frown:")
 
 
 async def setup(bot):

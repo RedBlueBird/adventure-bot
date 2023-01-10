@@ -95,7 +95,7 @@ async def on_command_error(ctx: Context, error) -> None:
         # Same as above, just for the @checks.is_owner() check.
         embed.description = "You're not an owner of the bot!"
     elif isinstance(error, exceptions.UserPreoccupied):
-        embed.description = f"You're still {error.action}!" \
+        embed.description = f"You're still {error.action}! " \
                             "If you think this is a bug, please report it [here](https://discord.gg/w2CkRtkj57)!"
     elif isinstance(error, exceptions.UserSkillIssue):
         embed.description = f"You need to be at least level {error.req_lvl} to unlock this command!"
@@ -121,6 +121,9 @@ async def on_command_error(ctx: Context, error) -> None:
             description=str(error).capitalize(),
             color=0xE02B2B
         )
+    elif isinstance(error, commands.CommandNotFound):
+        return
+
     await ctx.send(embed=embed)
     raise error
 
