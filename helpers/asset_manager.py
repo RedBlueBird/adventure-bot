@@ -4,7 +4,6 @@ import math
 import json
 import copy
 from string import Template
-from typing import Union, List
 import discord
 
 from helpers import db_manager as dm
@@ -109,7 +108,7 @@ def items_dict(item_name, max_stat=100 * scale[0]):
     return item
 
 
-def mobs_dict(mob_level: Union[str, int], mob_name: str):
+def mobs_dict(mob_level: str | int, mob_name: str):
     mob_level = int(mob_level)
     mob_level = scale[1] ** (int(mob_level) - 1) * scale[0]
 
@@ -132,7 +131,7 @@ def effs_dict(eff_name):
     return copy.deepcopy(all_eff[eff_name.lower()])
 
 
-def quest_index(index: str) -> List[Union[str, int]]:
+def quest_index(index: str) -> list[str | int]:
     """
     Returns the information for a quest given an index.
     Information for all_indices:
@@ -171,7 +170,7 @@ def quest_index(index: str) -> List[Union[str, int]]:
             all_rarities[indices[0][0]], reward_units[indices[0][1]], exp_rewards[indices[0][0]]]
 
 
-def quest_str_rep(quest_type: Union[str, int], amt: Union[str, int]):
+def quest_str_rep(quest_type: str | int, amt: str | int):
     """
     Gives a string representation of a quest given the type and the extend to do it to.
     :param quest_type: The type of quest. (types can be found in quest_index's docstring)
@@ -346,7 +345,7 @@ def log_level_gen(i: int) -> int:
 
 
 # region Utilities
-def time_converter(seconds: Union[str, int]) -> str:
+def time_converter(seconds: str | int) -> str:
     """
     Returns a string representation of the amount of time given in seconds.
     :param seconds: The amount of seconds to convert.
