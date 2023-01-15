@@ -23,7 +23,7 @@ class Sys(commands.Cog):
     @commands.hybrid_command(
         name="register",
         description="Registers the author of the bot.",
-    )()
+    )
     async def register(self, ctx: Context):
         """Registers the author of the bot."""
         author_id = str(ctx.message.author.id)

@@ -20,7 +20,7 @@ class Stats(commands.Cog, name="informational"):
         name="profile",
         description="Check player's general information.",
         aliases=["p", "pro"]
-    )()
+    )
     async def profile(self, ctx: Context, user: discord.User = None) -> None:
         """
         Check player's general information
@@ -106,7 +106,7 @@ class Stats(commands.Cog, name="informational"):
         name="quests",
         description="Displays all current quests of a given member.",
         aliases=["quest", "que", "qu"]
-    )()
+    )
     async def quests(self, ctx: Context, user: discord.User = None) -> None:
         """
         Displays all current quests of a given member.
@@ -187,7 +187,7 @@ class Stats(commands.Cog, name="informational"):
         name="inventory",
         description="Displays all the cards in a member's inventory in the form of an embed.",
         aliases=["card", "i", "inv"]
-    )()
+    )
     async def inventory(self, ctx: Context, page: str = "1", user: discord.User = None) -> None:
         """
         Displays all the cards in a member's inventory in the form of an embed.
@@ -279,7 +279,7 @@ class Stats(commands.Cog, name="informational"):
         name="leaderboard",
         description="Displays the world's top players.",
         aliases=["lb", "leaderboards", "lbs"]
-    )()
+    )
     async def leaderboard(self, ctx: Context, leaderboard_type="None") -> None:
         """
         Displays the world's top players.
@@ -401,7 +401,7 @@ class Stats(commands.Cog, name="informational"):
         name="deck",
         description="Displays the deck in the memeber's current deck slot",
         aliases=["decks"]
-    )()
+    )
     async def deck(self, ctx: Context, deck_slot=None, user: discord.User = None) -> None:
         """
         Displays the deck in the memeber's current deck slot
@@ -531,7 +531,7 @@ class Stats(commands.Cog, name="informational"):
         name="info",
         description="Looks up entities, from effects to mobs and displays an embed containing info about it.",
         aliases=["in", "ins", "ifs", "informations", "check"]
-    )()
+    )
     async def info(self, ctx: Context, dictionary_name=None, name=None, level: str = "bruh moment") -> None:
         """
         Looks up entities, from effects to mobs and displays an embed containing info about it.
@@ -645,7 +645,7 @@ class Stats(commands.Cog, name="informational"):
         name="shop",
         description="The player can buy cards and other things here.",
         aliases=["shops"]
-    )()
+    )
     async def shop(self, ctx: Context, page=None) -> None:
         """
         The player can buy cards and other things here.
@@ -773,7 +773,7 @@ class Stats(commands.Cog, name="informational"):
         name="card_search",
         description="Searches your cards according to a query.",
         aliases=["cardsearch", "cs", "search"]
-    )()
+    )
     async def card_search(
             self, ctx: Context,
             search_type="nothing", filter_="nothing",
@@ -893,7 +893,7 @@ class Stats(commands.Cog, name="informational"):
         name="links",
         description="Displays an embed containing some official bot info.",
         aliases=["invite", "support", "guild", "supports", "link", "join"]
-    )()
+    )
     async def links(self, ctx: Context) -> None:
         """Displays an embed containing some official bot info."""
         embed = discord.Embed(title="[SUPPORT]", description=None, color=discord.Color.green())
