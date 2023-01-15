@@ -6,14 +6,16 @@ import mysql.connector
 import mysql.connector.cursor_cext
 from mysql.connector import errorcode
 
-db: mysql.connector.connection_cext.CMySQLConnection | None = None
-cur: mysql.connector.cursor_cext.CMySQLCursor | None = None
 config_path = f"{os.path.realpath(os.path.dirname(__file__))}/../config.json"
 if not os.path.isfile(config_path):
     sys.exit("'config.json' not found! Please add it and try again.")
 else:
     with open(config_path) as config_file:
         config = json.load(config_file)
+
+db: mysql.connector.connection_cext.CMySQLConnection | None = None
+cur: mysql.connector.cursor_cext.CMySQLCursor | None = None
+queues = {}
 
 
 def init():

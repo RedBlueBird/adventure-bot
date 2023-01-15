@@ -52,7 +52,7 @@ class Stats(commands.Cog, name="informational"):
 
         tick_msg = "" if prof[3] < 4 else f"{am.ICONS['tick']}**Raid Tickets: **{prof[9]}/{tickets}"
 
-        embed_descr = f"```{am.queues[str(member.id)]}``` \n" if str(member.id) in am.queues else None
+        embed_descr = f"```{dm.queues[str(member.id)]}``` \n" if str(member.id) in dm.queues else None
         embed = discord.Embed(
             title=member.display_name + "'s profile:",
             description=embed_descr,

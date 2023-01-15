@@ -67,9 +67,9 @@ class Admin(commands.Cog, name="admin"):
                 for x in inv_delete:
                     del inventory_data[x]
 
-                # TODO: replace the single quotes w/ double quotes in inventory_data first
+                inv_json = str(inventory_data).replace("'", "\"")
                 dm.cur.execute(
-                    f"UPDATE adventuredatas SET inventory = '{inventory_data}' WHERE userid = {target.id}"
+                    f"UPDATE adventuredatas SET inventory = '{inv_json}' WHERE userid = {target.id}"
                 )
                 dm.db.commit()
                 await ctx.message.channel.send(
@@ -147,7 +147,7 @@ class Admin(commands.Cog, name="admin"):
         print_all("playersinfo")
         print_all("playersachivements")
         print(am.ADMINS)
-        print(am.queues)
+        print(dm.queues)
         guilds = list(self.bot.guilds)
         print("Connected on " + str(len(self.bot.guilds)) + " guilds:")
         for x in range(len(guilds)):

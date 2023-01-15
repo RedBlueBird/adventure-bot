@@ -45,7 +45,8 @@ DECK: t.Final = {
 }
 ACES: t.Final = [f"[{s} Ace]" for s in ["♠", "♥", "♦", "♣"]]
 
-queues, scale, prefix = {}, [50, 1.05], "a."
+scale = [50, 1.05]
+prefix = "a."
 
 # region Dictionary Functions
 # Loads in all the necessary json files as dictionaries

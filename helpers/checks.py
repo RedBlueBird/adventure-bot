@@ -1,5 +1,3 @@
-import json
-import os
 from typing import Callable, TypeVar
 
 import discord
@@ -9,6 +7,7 @@ from helpers import db_manager as dm
 from helpers import asset_manager as am
 
 T = TypeVar("T")
+_queues = {}
 
 
 def is_owner() -> Callable[[T], T]:
@@ -22,10 +21,12 @@ def is_owner() -> Callable[[T], T]:
     return commands.check(predicate)
 
 
-def not_preoccupied():
+def not_preoccupied(action: str = "doing something"):
     async def predicate(ctx: commands.Context) -> bool:
-        if str(ctx.message.author.id) in am.queues:
-            raise UserPreoccupied(am.queues[str(ctx.message.author.id)])
+        a_id = str(ctx.message.author.id)
+        if a_id in dm.queues:
+            raise UserPreoccupied(dm.queues[a_id])
+        dm.queues[a_id] = action
         return True
 
     return commands.check(predicate)

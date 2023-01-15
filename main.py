@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot, Context
 
-from helpers import db_manager, asset_manager
+from helpers import db_manager as dm
 
 import exceptions
 
@@ -67,6 +67,7 @@ async def on_command_completion(ctx: Context) -> None:
             f"Executed {executed_command} command by {ctx.author} "
             f"(ID: {ctx.author.id}) in DMs"
         )
+    dm.queues.pop(str(ctx.author.id), None)
 
 
 @bot.event
@@ -118,6 +119,7 @@ async def on_command_error(ctx: Context, error) -> None:
     elif isinstance(error, commands.CommandNotFound):
         return
 
+    dm.queues.pop(str(ctx.author.id), None)
     await ctx.send(embed=embed)
     raise error
 
@@ -135,6 +137,6 @@ async def load_cogs() -> None:
 
 
 if __name__ == "__main__":
-    db_manager.init()
+    dm.init()
     asyncio.run(load_cogs())
     bot.run(config["token"])

@@ -149,7 +149,7 @@ class Actions(commands.Cog, name="actions"):
 
     @commands.hybrid_command(aliases=["buying"], brief="actions")
     @checks.is_registered()
-    @checks.not_preoccupied()
+    @checks.not_preoccupied("in the shop")
     @checks.level_check(3)
     async def buy(self, ctx: commands.Context, to_buy=None):
         """Command for buying items in the shop"""
@@ -163,8 +163,6 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, the correct format for this command is "
                            f"`{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
             return
-
-        am.queues[str(a_id)] = "deciding to purchase something in the shop"
 
         dm.cur.execute(f"SELECT count(*) FROM cardsinfo WHERE owned_user = {a_id}")
         cards_count = dm.cur.fetchall()[0][0]
@@ -470,13 +468,12 @@ class Actions(commands.Cog, name="actions"):
             except:
                 await ctx.send(
                     f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
-        del am.queues[str(a_id)]
 
     # await ctx.send(f"{mention}, shop is currently temporarily disabled!")
 
     @commands.command(aliases=["dis"], brief="cards")
     @checks.is_registered()
-    @checks.not_preoccupied()
+    @checks.not_preoccupied("discarding cards")
     async def discard(self, ctx: commands.Context, *card_id):
         """Remove the existences of the unwanted cards"""
 
@@ -504,27 +501,27 @@ class Actions(commands.Cog, name="actions"):
             except:
                 final_msg.append(f"`{x}` isn't a valid card id")
 
-        am.queues[str(a_id)] = "discarding cards"
-        msg = await ctx.send(f"{mention}, are you sure you want to discard: \n"
-                             " \n".join(final_msg) + "\n"
-                                                     f"{am.ICONS['bers']} *(Discarded cards can't be retrieved!)*")
+        msg = await ctx.send(
+            f"{mention}, are you sure you want to discard: \n"
+            " \n".join(final_msg) +
+            f"\n{am.ICONS['bers']} *(Discarded cards can't be retrieved!)*"
+        )
 
         await msg.add_reaction("✅")
         await msg.add_reaction("❎")
         try:
-            reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                     check=checks.valid_reaction(["❎", "✅"], [ctx.message.author],
-                                                                                 [msg]))
+            reaction, user = await self.bot.wait_for(
+                "reaction_add", timeout=30.0,
+                check=checks.valid_reaction(["❎", "✅"], ctx.message.author, msg)
+            )
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, discarding cancelled")
             await msg.clear_reactions()
-            del am.queues[str(a_id)]
             return
 
         if reaction.emoji == "❎":
             await msg.edit(content=f"{mention}, discarding cancelled")
             await msg.clear_reactions()
-            del am.queues[str(a_id)]
             return
 
         for x in card_ids:
@@ -542,32 +539,22 @@ class Actions(commands.Cog, name="actions"):
                 continue
 
         dm.db.commit()
-        del am.queues[str(a_id)]
 
         await msg.edit(content=f"{mention}, card(s) discarded successfully!")
 
     @commands.hybrid_command(aliases=["mer"], brief="cards")
     @checks.is_registered()
-    @checks.not_preoccupied()
-    async def merge(self, ctx: commands.Context, card1_id: str = "bruh moment", card2_id: str = "bruh moment"):
+    @checks.not_preoccupied("trying to merge cards")
+    async def merge(self, ctx: commands.Context, card1_id: int, card2_id: int):
         """Upgrade a card to next level with two cards"""
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
-        if card1_id is None or card2_id is None:
-            await ctx.send(
-                f"{mention}, the correct format for this command is `{am.prefix}merge (primary_card_id) (supplementary_card_id)`!")
-            return
 
         dm.cur.execute(
             f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
         decks = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
 
-        if not card1_id.isnumeric() or not card2_id.isnumeric():
-            await ctx.send(f"{mention}, you've given an invalid card id!")
-            return
-
-        card1_id, card2_id = int(card1_id), int(card2_id)
         dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card1_id}")
         card1 = dm.cur.fetchall()[0]
         if not card1:
@@ -593,10 +580,12 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, the card to merge is maxed out!")
             return
 
-        if card2_id in decks:
-            await ctx.send(f"{mention}, the sacrificial card you chose "
-                           "is currently in one of your deck slots- \n"
-                           f"`{am.prefix}remove (* card_ids)` first before you merge it away!")
+        if card2 in decks:
+            await ctx.send(
+                f"{mention}, the sacrificial card you chose "
+                "is currently in one of your deck slots- \n"
+                f"`{am.prefix}remove (* card_ids)` first before you merge it away!"
+            )
             return
 
         dm.cur.execute("SELECT * FROM playersinfo WHERE userid = " + str(a_id))
@@ -607,11 +596,12 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention} You don't have enough coins ({merge_cost} coins) to complete this merge!")
             return
 
-        am.queues[str(a_id)] = "trying to merge cards"
-        msg = await ctx.send(f"{mention}, \n"
-                             f"**[{am.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}**\n"
-                             f"**[{am.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}**\n"
-                             f"merging cost {merge_cost} {am.ICONS['coin']}.")
+        msg = await ctx.send(
+            f"{mention}, \n"
+            f"**[{am.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}**\n"
+            f"**[{am.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}**\n"
+            f"merging cost {merge_cost} {am.ICONS['coin']}."
+        )
         await msg.add_reaction("✅")
         await msg.add_reaction("❎")
         try:
@@ -632,8 +622,8 @@ class Actions(commands.Cog, name="actions"):
                 sql = "UPDATE playersinfo SET coins = coins - %s, exps = exps + %s WHERE userid = %s"
                 value = (math.floor(((card1[1] + 1) ** 2) * 10), (card1[1] + 1) * 10, a_id)
                 dm.cur.execute(sql, value)
-                dm.cur.execute("DELETE FROM cardsinfo WHERE id = {}".format(card2_id))
-                dm.cur.execute("UPDATE cardsinfo SET card_level = card_level + 1 WHERE id = {}".format(card1_id))
+                dm.cur.execute(f"DELETE FROM cardsinfo WHERE id = {card2_id}")
+                dm.cur.execute(f"UPDATE cardsinfo SET card_level = card_level + 1 WHERE id = {card1_id}")
                 dm.db.commit()
 
                 embed = discord.Embed(
@@ -650,19 +640,15 @@ class Actions(commands.Cog, name="actions"):
                 embed.set_thumbnail(url=ctx.message.author.avatar.url)
                 await ctx.send(embed=embed)
 
-        del am.queues[str(a_id)]
-
     @commands.hybrid_command(aliases=["trades"], brief="actions")
     @checks.is_registered()
-    @checks.not_preoccupied()
+    @checks.not_preoccupied("trading")
     @checks.level_check(7)
     async def trade(self, ctx: commands.Context, target=None):
         """Trade with other players for gold and cards"""
-        target_info = []
         target = am.get_user(target, ctx.message)
         author = ctx.message.author
         mention = author.mention
-        a_id = author.id
         dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{target.id}'")
         target_info = dm.cur.fetchall()
 
@@ -680,7 +666,6 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send("Tag a valid user other than yourself!")
             return
 
-        am.queues[str(author.id)] = "offering a trade"
         trade_end = False
         confirmed = [False, False]
 
@@ -690,30 +675,27 @@ class Actions(commands.Cog, name="actions"):
 
         while not trade_end:
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0,
-                                                         check=checks.valid_reaction(["❎", "✅"],
-                                                                                     [target, ctx.message.author],
-                                                                                     [deal_msg]))
+                reaction, user = await self.bot.wait_for(
+                    "reaction_add", timeout=60.0,
+                    check=checks.valid_reaction(["❎", "✅"], [target, ctx.message.author], deal_msg)
+                )
             except asyncio.TimeoutError:
                 await deal_msg.edit(content=f"{mention}, trade cancelled due to afk {am.ICONS['dead']}")
                 await deal_msg.clear_reactions()
-                del am.queues[str(author.id)]
                 return
 
             if reaction.emoji == "❎":
                 await deal_msg.edit(content=f"{mention}, trade cancelled! :weary:")
                 await deal_msg.clear_reactions()
-                del am.queues[str(author.id)]
                 return
 
             if reaction.emoji == "✅" and user == target:
                 break
 
-        if str(target.id) in am.queues:
+        if str(target.id) in dm.queues:
             await deal_msg.edit(
-                content=f"{mention}, trade cancelled! The target user is currently {am.queues[str(target.id)]}!")
+                content=f"{mention}, trade cancelled! The target user is currently {dm.queues[str(target.id)]}!")
             await deal_msg.clear_reactions()
-            del am.queues[str(author.id)]
             return
 
         dm.cur.execute(
@@ -724,48 +706,63 @@ class Actions(commands.Cog, name="actions"):
         decks2 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
         dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{author.id}'")
         author_info = dm.cur.fetchall()[0]
-        am.queues[str(author.id)] = "currently trading"
-        am.queues[str(target.id)] = "currently trading"
+        dm.queues[str(target.id)] = "trading"
         author_coins = 0
         target_coins = 0
         author_cards = {}
         target_cards = {}
 
         def tax():
-            return max(round(author_coins * 0.1) + 150 * len(author_cards),
-                       round(target_coins * 0.1) + 150 * len(target_cards))
+            return max(
+                round(author_coins * 0.1) + 150 * len(author_cards),
+                round(target_coins * 0.1) + 150 * len(target_cards)
+            )
 
         def offer():
-            embed = discord.Embed(title=f"Trade ongoing!",
-                                  description=f"`{am.prefix}(put/drop) (coin/card) (amount/card_id)` \n"
-                                              f"`{am.prefix}(confirm/exit/refresh)` \n"
-                                              f"16 cards at max per side per trade",
-                                  color=discord.Color.gold())
+            embed = discord.Embed(
+                title=f"Trade ongoing!",
+                description=f"`{am.prefix}(put/drop) (coin/card) (amount/card_id)` \n"
+                            f"`{am.prefix}(confirm/exit/refresh)` \n"
+                            f"16 cards at max per side per trade",
+                color=discord.Color.gold()
+            )
             author_offer = []
             target_offer = []
             for c in author_cards:
-                author_offer.append(f"[{am.rarity_cost(author_cards[c][0])}] {author_cards[c][0]}, "
-                                    f"lv: {author_cards[c][1]}, id: {c} ")
+                author_offer.append(
+                    f"[{am.rarity_cost(author_cards[c][0])}] {author_cards[c][0]}, "
+                    f"lv: {author_cards[c][1]}, id: {c} "
+                )
             for c in target_cards:
-                target_offer.append(f"[{am.rarity_cost(target_cards[c][0])}] {target_cards[c][0]}, "
-                                    f"lv: {target_cards[c][1]}, id: {c} ")
+                target_offer.append(
+                    f"[{am.rarity_cost(target_cards[c][0])}] {target_cards[c][0]}, "
+                    f"lv: {target_cards[c][1]}, id: {c} "
+                )
 
             if confirmed[0]:
-                embed.add_field(name=f"{author}: :white_check_mark:",
-                                value=f"```Golden Coins: {author_coins} \n" + "\n".join(author_offer) + "```",
-                                inline=False)
+                embed.add_field(
+                    name=f"{author}: :white_check_mark:",
+                    value=f"```Golden Coins: {author_coins} \n" + "\n".join(author_offer) + "```",
+                    inline=False
+                )
             else:
-                embed.add_field(name=f"{author}:",
-                                value=f"```Golden Coins: {author_coins} \n" + "\n".join(author_offer) + "```",
-                                inline=False)
+                embed.add_field(
+                    name=f"{author}:",
+                    value=f"```Golden Coins: {author_coins} \n" + "\n".join(author_offer) + "```",
+                    inline=False
+                )
             if confirmed[1]:
-                embed.add_field(name=f"{target}: :white_check_mark:",
-                                value=f"```Golden Coins: {target_coins} \n" + "\n".join(target_offer) + "```",
-                                inline=False)
+                embed.add_field(
+                    name=f"{target}: :white_check_mark:",
+                    value=f"```Golden Coins: {target_coins} \n" + "\n".join(target_offer) + "```",
+                    inline=False
+                )
             else:
-                embed.add_field(name=f"{target}:",
-                                value=f"```Golden Coins: {target_coins} \n" + "\n".join(target_offer) + "```",
-                                inline=False)
+                embed.add_field(
+                    name=f"{target}:",
+                    value=f"```Golden Coins: {target_coins} \n" + "\n".join(target_offer) + "```",
+                    inline=False
+                )
 
             embed.set_footer(text=f"Transaction fee: {tax()}")
             return embed
@@ -774,9 +771,10 @@ class Actions(commands.Cog, name="actions"):
 
         while not trade_end:
             try:
-                reply_msg = await self.bot.wait_for("message", timeout=120.0,
-                                                    check=checks.valid_reply([''], [target, author],
-                                                                             [ctx.message.channel]))
+                reply_msg = await self.bot.wait_for(
+                    "message", timeout=120.0,
+                    check=checks.valid_reply('', [target, author], ctx.message.channel)
+                )
             except asyncio.TimeoutError:
                 await ctx.send(f"Well, no one showed up to the trade, so it was called off.")
                 return
@@ -808,7 +806,7 @@ class Actions(commands.Cog, name="actions"):
                         await ctx.send(f"{target}, you can't afford the transaction fee!")
                         continue
 
-            if len(reply_msg) < 3 and reply_msg[0] != 'confirm':
+            if len(reply_msg) < 3 and reply_msg[0] != "confirm":
                 continue
             if reply_msg[0] in ["put", "pu"]:
                 confirmed = [False, False]
@@ -921,8 +919,7 @@ class Actions(commands.Cog, name="actions"):
                 trade_end = True
                 await ctx.send(f"Trade between {ctx.message.author} and {target} is now finished!")
 
-        del am.queues[str(author.id)]
-        del am.queues[str(target.id)]
+        del dm.queues[str(target.id)]
 
     @commands.hybrid_command(aliases=["selectdeck", "sel", "se"], brief="Get a deck from your deck slots.")
     @checks.is_registered()
@@ -1092,14 +1089,13 @@ class Actions(commands.Cog, name="actions"):
 
     @commands.hybrid_command(aliases=["clear_deck", "cleardeck"], brief="Clear your current deck.")
     @checks.is_registered()
-    @checks.not_preoccupied()
+    @checks.not_preoccupied("clearing a deck slot")
     async def clear(self, ctx: commands.Context):
         """Clear your current deck."""
 
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
 
-        am.queues[str(a_id)] = "deciding to clear a deck slot"
         dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
         deck_slot = dm.cur.fetchall()[0][0]
 
@@ -1109,7 +1105,6 @@ class Actions(commands.Cog, name="actions"):
 
         if deck == ["0"]:
             await ctx.send(f"{mention}, your deck's already empty!")
-            del am.queues[str(a_id)]
             return
 
         msg = await ctx.send(f"{mention}, do you really want to clear Deck #{deck_slot}?")
@@ -1122,12 +1117,10 @@ class Actions(commands.Cog, name="actions"):
             )
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, clearing deck cancelled")
-            del am.queues[str(a_id)]
             return
 
         if reaction.emoji == "❎":
             await msg.edit(content=f"{mention}, clearing deck cancelled")
-            del am.queues[str(a_id)]
             return
 
         dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '0' WHERE userid = {a_id}")
@@ -1137,10 +1130,9 @@ class Actions(commands.Cog, name="actions"):
                     f"Do `{am.prefix}add (card_id)` command to add new cards into your deck!"
         )
         await msg.clear_reactions()
-        del am.queues[str(a_id)]
 
     @commands.hybrid_command(aliases=["black", "bj"], brief="Practice your blackjack skills!")
-    @checks.not_preoccupied()
+    @checks.not_preoccupied("practicing blackjack")
     async def blackjack(self, ctx):
         """Practice your blackjack skills!"""
 
@@ -1153,7 +1145,6 @@ class Actions(commands.Cog, name="actions"):
         cards = [[], []]
         included_aces = [[], []]
         end = False
-        am.queues[str(a_id)] = "practicing blackjack"
 
         def add_card(card, target):
             if target == "self":
@@ -1185,7 +1176,6 @@ class Actions(commands.Cog, name="actions"):
             except asyncio.TimeoutError:
                 values = [1000, 1000]
                 await ctx.send(f"{mention}, you blanked out and lost the game!")
-                del am.queues[str(a_id)]
                 return
             else:
                 action = msg_reply.content[len(am.prefix):].lower()
@@ -1224,15 +1214,12 @@ class Actions(commands.Cog, name="actions"):
             f"{mention}, **You {game_state}!** \nYour total: {values[0]} \n{''.join(cards[0])}"
             f" \n------------------------------ \nDealer's total: {values[1]} \n{''.join(cards[1])}"
         )
-        del am.queues[str(a_id)]
 
     @commands.hybrid_command(brief="Test your reflexes and counting ability!")
-    @checks.not_preoccupied()
+    @checks.not_preoccupied("testing timing accuracy")
     async def reaction(self, ctx: commands.Context, wait_time: float = -1.0):
         """Test your reflexes AND counting ability!"""
         mention = ctx.message.author.mention
-        a_id = ctx.message.author.id
-        am.queues[str(a_id)] = "testing timing accuracy"
 
         if wait_time <= 0:
             wait_time = random.randint(6, 30)
@@ -1252,8 +1239,6 @@ class Actions(commands.Cog, name="actions"):
                 f"{mention}, you replied in {recorded} seconds, which "
                 f"is {off} seconds off from {wait_time} seconds"
             )
-
-        del am.queues[str(a_id)]
 
     @commands.hybrid_command(brief="Have Crispy agree with anything!")
     async def agree(self, ctx: commands.Context, statement: str = "but u said u are stupid"):
