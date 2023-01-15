@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from helpers import checks
-from helpers import asset_manager as am
+from helpers import util as u
 from helpers import db_manager as dm
 
 
@@ -44,14 +44,14 @@ class Admin(commands.Cog, name="admin"):
                 dm.db.commit()
 
                 await ctx.message.channel.send(
-                    f"{target.mention}, you received a **[{am.rarity_cost(card_name)}] "
+                    f"{target.mention}, you received a **[{u.rarity_cost(card_name)}] "
                     f"{card_name} lv: {math.floor(int(level))}** from {mention}"
                 )
             except BaseException as error:
                 await ctx.message.channel.send(mention + ", " + str(error) + ".")
 
         elif "items".startswith(item_type):
-            item_name = am.items_dict(" ".join(name.split("_")))["name"]
+            item_name = u.items_dict(" ".join(name.split("_")))["name"]
             dm.cur.execute(f"SELECT inventory FROM adventuredatas WHERE userid = {target.id}")
             inventory_data = eval(dm.cur.fetchall()[0][0])
             try:
@@ -74,8 +74,8 @@ class Admin(commands.Cog, name="admin"):
                 dm.db.commit()
                 await ctx.message.channel.send(
                     f"{target.mention}, you received "
-                    f"**[{am.items_dict(item_name)['rarity']}/"
-                    f"{am.items_dict(item_name)['weight']}] "
+                    f"**[{u.items_dict(item_name)['rarity']}/"
+                    f"{u.items_dict(item_name)['weight']}] "
                     f"{item_name}** x{math.floor(int(level))} "
                     f"from {mention}"
                 )
@@ -85,7 +85,7 @@ class Admin(commands.Cog, name="admin"):
         else:
             await ctx.message.channel.send(
                 f"{mention}, the correct format for this command is "
-                f"`{am.PREF}redeem (card/item) (name) (level/amount) (user)`!"
+                f"`{u.PREF}redeem (card/item) (name) (level/amount) (user)`!"
             )
 
     @commands.hybrid_command(
@@ -114,13 +114,13 @@ class Admin(commands.Cog, name="admin"):
 
                 if earned_gems == 0:
                     await user.send(
-                        f"```Season Ended!``` You now have {medals} {am.ICONS['medal']} (from {d[1]}) "
-                        f"\n+{earned_coins} {am.ICONS['coin']}!"
+                        f"```Season Ended!``` You now have {medals} {u.ICONS['medal']} (from {d[1]}) "
+                        f"\n+{earned_coins} {u.ICONS['coin']}!"
                     )
                 else:
                     await user.send(
                         f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
-                        f"\n+{earned_coins} {am.ICONS['coin']} \n+{earned_gems} {am.ICONS['gem']}!"
+                        f"\n+{earned_coins} {u.ICONS['coin']} \n+{earned_gems} {u.ICONS['gem']}!"
                     )
                 sql = "UPDATE playersinfo SET coins = coins + %s, gems = gems + %s, medals = %s WHERE userid = %s"
                 data = (earned_coins, earned_gems, medals, d[0])
@@ -135,7 +135,7 @@ class Admin(commands.Cog, name="admin"):
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.message.channel.send(str(ctx.message.author) + am.ICONS['load'])
+        loading = await ctx.message.channel.send(str(ctx.message.author) + u.ICONS['load'])
 
         def print_all(tables_name):
             dm.cur.execute("select * from " + tables_name)
@@ -146,7 +146,7 @@ class Admin(commands.Cog, name="admin"):
         print_all("cardsinfo")
         print_all("playersinfo")
         print_all("playersachivements")
-        print(am.ADMINS)
+        print(u.ADMINS)
         print(dm.queues)
         guilds = list(self.bot.guilds)
         print("Connected on " + str(len(self.bot.guilds)) + " guilds:")

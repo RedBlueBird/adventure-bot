@@ -47,3 +47,14 @@ def is_registered(uid: int) -> bool:
 def get_user_level(uid: int) -> int:
     cur.execute(f"SELECT level FROM playersinfo WHERE userid = {uid}")
     return cur.fetchall()[0][0]
+
+
+def log_quest(quest_type: int, value: int, userid):
+    cur.execute(f"select quests from playersinfo where userid = {userid}")
+    quests = cur.fetchall()[0][0].split(",")
+    for x in range(len(quests) - 1):
+        if quests[x].split(".")[1] == str(quest_type):
+            quests[x] = ".".join(quests[x].split(".")[0:2]) + "." + str(int(quests[x].split(".")[2]) + value)
+            break
+    cur.execute(f"update playersinfo set quests = '{','.join(quests[:])}' where userid = {userid}")
+    db.commit()

@@ -8,9 +8,8 @@ import discord
 from discord.ext import commands, tasks
 from discord.ext.commands import Context
 
-from helpers import checks
 from helpers import db_manager as dm
-from helpers import asset_manager as am
+from helpers import util as u
 
 _today = str(dt.date.today() - dt.timedelta(days=1))
 
@@ -36,7 +35,7 @@ class Sys(commands.Cog):
             else:
                 await ctx.send(
                     "You have to wait " +
-                    am.time_converter(result[0][0]) +
+                    u.time_converter(result[0][0]) +
                     " before you can send another command!"
                 )
             return
@@ -72,7 +71,7 @@ class Sys(commands.Cog):
 
         deals_cards = []
         for _ in range(9):
-            deals_cards.append(am.add_a_card(1))
+            deals_cards.append(u.add_a_card(1))
         dm.cur.execute(f"UPDATE playersinfo SET deals = '{','.join(deals_cards)}' WHERE userid = '{author_id}'")
 
         dm.db.commit()
@@ -80,7 +79,7 @@ class Sys(commands.Cog):
         await ctx.send(
             "__FREE PREMIUM MEMBERSHIP__ for 2 weeks obtained!\n"
             f"*Registered {ctx.message.author.mention} into this bot!* "
-            f"Do `{am.PREF}help` and `{am.PREF}tutorial` to get started!"
+            f"Do `{u.PREF}help` and `{u.PREF}tutorial` to get started!"
         )
 
     @commands.Cog.listener()
@@ -89,12 +88,12 @@ class Sys(commands.Cog):
             return
 
         content = message.content.lower()
-        if (content.startswith(f"{am.PREF}ping")
-                or content.startswith(f"{am.PREF}pong")
+        if (content.startswith(f"{u.PREF}ping")
+                or content.startswith(f"{u.PREF}pong")
                 or content.startswith("<@521056196380065802>")
                 or content.startswith("<@!521056196380065802>")):
             ms = int(self.bot.latency * 1000)
-            await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{am.PREF}`!')
+            await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{u.PREF}`!')
 
         a = message.author  # shorthand
         dm.cur.execute("select * from playersinfo where userid = " + str(a.id))
@@ -117,8 +116,8 @@ class Sys(commands.Cog):
             level_msg = []
             if (profile[3] + 1) % 2 == 0:
                 add_hp = round(
-                    (am.SCALE[1] ** math.floor((profile[3] + 1) / 2) -
-                     am.SCALE[1] ** math.floor(profile[3] / 2)) * 100 * am.SCALE[0]
+                    (u.SCALE[1] ** math.floor((profile[3] + 1) / 2) -
+                     u.SCALE[1] ** math.floor(profile[3] / 2)) * 100 * u.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
@@ -128,13 +127,13 @@ class Sys(commands.Cog):
             Empty strings signify that no particular special thing is unlocked.
             """
             level_chart = [
-                f"{am.PREF}Quest is unlocked!",
-                f"{am.PREF}Shop is unlocked!",
-                f"{am.PREF}Coop is unlocked! \n"
+                f"{u.PREF}Quest is unlocked!",
+                f"{u.PREF}Shop is unlocked!",
+                f"{u.PREF}Coop is unlocked! \n"
                 f"Daily shop max card level +1!",
-                f"{am.PREF}Battle for PvP is unlocked!",
+                f"{u.PREF}Battle for PvP is unlocked!",
                 f"Deck slot +1!",
-                f"{am.PREF}Trade is unlocked! \n"
+                f"{u.PREF}Trade is unlocked! \n"
                 f"Adventure Chest Storage +50!",
                 f"Daily shop max card level +1!",
                 f"Adventure Boss Raids is unlocked! \n"
@@ -185,8 +184,8 @@ class Sys(commands.Cog):
             )
             embed.add_field(
                 name="You're now level " + str(profile[3] + 1) + "!",
-                value=f"+{profile[3] * 50} {am.ICONS['coin']} \n"
-                      f"+{math.ceil((profile[3] + 1) / 5) + 1} {am.ICONS['gem']} \n"
+                value=f"+{profile[3] * 50} {u.ICONS['coin']} \n"
+                      f"+{math.ceil((profile[3] + 1) / 5) + 1} {u.ICONS['gem']} \n"
                       "```» " + "\n\n» ".join(level_msg[:]) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
@@ -205,30 +204,30 @@ class Sys(commands.Cog):
         quests = profile[15].split(",")
         if len(quests) > 1:
             quest_com = [
-                math.floor(int(quests[x].split(".")[2]) / am.quest_index(quests[x])[0] * 100)
+                math.floor(int(quests[x].split(".")[2]) / u.quest_index(quests[x])[0] * 100)
                 for x in range(len(quests) - 1)
             ]
             for x in range(len(quests) - 1):
                 if quest_com[x] >= 100:
-                    quest = am.quest_index(quests[x])
+                    quest = u.quest_index(quests[x])
                     embed = discord.Embed(
                         title=f"QUEST COMPLETE {a.name}!",
                         description=None,
                         color=discord.Color.green()
                     )
                     embed.add_field(
-                        name=f"**{quest[2]} {am.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
-                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {am.ICONS['exp']}**",
-                        # " +1{am.icon['token']}**",
+                        name=f"**{quest[2]} {u.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
+                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {u.ICONS['exp']}**",
+                        # " +1{u.icon['token']}**",
                         inline=False
                     )
                     embed.set_thumbnail(url=a.avatar.url)
                     await message.channel.send(embed=embed)
 
                     gained = [0, 0, quest[4]]  # coin, gem, exp
-                    if quest[3] == am.ICONS["coin"]:
+                    if quest[3] == u.ICONS["coin"]:
                         gained[0] += int(quest[1])
-                    elif quest[3] == am.ICONS["gem"]:
+                    elif quest[3] == u.ICONS["gem"]:
                         gained[1] += int(quest[1])
 
                     quests.remove(quests[x])
@@ -250,7 +249,7 @@ class Sys(commands.Cog):
 
             spawn_msg = await message.channel.send(embed=discord.Embed(
                 title=f"A bag of gold showed up out of nowhere!",
-                description=f"Quick! Type `{am.PREF}collect {amt} coins` to collect them! \n"
+                description=f"Quick! Type `{u.PREF}collect {amt} coins` to collect them! \n"
                             f"They'll be gone in 10 minutes!",
                 color=discord.Color.green()
             ))
@@ -261,7 +260,7 @@ class Sys(commands.Cog):
             try:
                 rep = await self.bot.wait_for(
                     "message", timeout=600.0,
-                    check=lambda m: m.content.lower().startswith(f"{am.PREF}collect {amt} coins") and
+                    check=lambda m: m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
                                     m.channel == spawn_msg.channel
                 )
                 mention = rep.author.mention
@@ -274,14 +273,14 @@ class Sys(commands.Cog):
                         dm.cur.execute(
                             f"UPDATE playersinfo SET coins = coins + {amt}, gems = gems + 1 WHERE userid = {ra_id}"
                         )
-                        msg = f"{mention}, you collected {amt} {am.ICONS['coin']} **and** __1 {am.ICONS['gem']}__!"
+                        msg = f"{mention}, you collected {amt} {u.ICONS['coin']} **and** __1 {u.ICONS['gem']}__!"
                     else:
                         dm.cur.execute(f"UPDATE playersinfo SET coins = coins + {amt} WHERE userid = {ra_id}")
-                        msg = f"{mention}, you collected {amt} {am.ICONS['coin']}!"
+                        msg = f"{mention}, you collected {amt} {u.ICONS['coin']}!"
                     dm.db.commit()
                 else:
                     msg = f"{mention}, you have to register in this bot first! \n" \
-                          f"Type `{am.PREF}register` to register!"
+                          f"Type `{u.PREF}register` to register!"
 
                 await rep.channel.send(msg)
             except asyncio.TimeoutError:
@@ -340,10 +339,10 @@ class Sys(commands.Cog):
                 user_identity = result[1]
                 if int(user_identity.split(",")[0]) == 0:
                     for x in range(6):
-                        deals_cards.append(am.add_a_card(player_lvl, all_cooldowns[repeats - 1][2]))
+                        deals_cards.append(u.add_a_card(player_lvl, all_cooldowns[repeats - 1][2]))
                 elif int(user_identity.split(",")[0]) == 1:
                     for x in range(9):
-                        deals_cards.append(am.add_a_card(player_lvl, all_cooldowns[repeats - 1][2]))
+                        deals_cards.append(u.add_a_card(player_lvl, all_cooldowns[repeats - 1][2]))
                 sql = "update playersinfo set deals = %s, msg_exp = 1000 where userid = %s"
                 value = (",".join(deals_cards[:]), all_cooldowns[repeats - 1][2])
                 dm.cur.execute(sql, value)

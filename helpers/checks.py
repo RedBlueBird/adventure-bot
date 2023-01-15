@@ -4,7 +4,7 @@ import discord
 
 from exceptions import *
 from helpers import db_manager as dm
-from helpers import asset_manager as am
+from helpers import util as u
 
 T = TypeVar("T")
 _queues = {}
@@ -14,7 +14,7 @@ def is_owner() -> Callable[[T], T]:
     """Checks if the calling user is an owner of the bot"""
 
     async def predicate(context: commands.Context) -> bool:
-        if context.author.id not in am.ADMINS:
+        if context.author.id not in u.ADMINS:
             raise UserNotOwner
         return True
 
