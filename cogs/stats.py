@@ -112,7 +112,6 @@ class Stats(commands.Cog, name="informational"):
     async def quests(self, ctx: Context, user: discord.User = None) -> None:
         """
         Displays all current quests of a given member.
-
         :param user: The user whose quests to display.
         """
 

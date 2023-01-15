@@ -70,9 +70,11 @@ def cards_dict(card_level, card_name):
     inverse_level = 1.01 ** (level * -1 + 1) * scale[0]
 
     if card_name.lower() not in all_cards:
-        return {"name": "Glitched", "cost": 0, "rarity": "NA", "self_damage": 4500, "eff_acc": 100, "attacks": 10,
-                "acc": 100, "crit": 100, "mod": {}, "description": "None", "requirement": "None",
-                "brief": "Created from this bot's glitches"}
+        return {
+            "name": "Glitched", "cost": 0, "rarity": "NA", "self_damage": 4500, "eff_acc": 100, "attacks": 10,
+            "acc": 100, "crit": 100, "mod": {}, "description": "None", "requirement": "None",
+            "brief": "Created from this bot's glitches"
+        }
 
     card = copy.deepcopy(all_cards[card_name.lower()])
     for i in card:
@@ -377,14 +379,14 @@ def remain_time():
 
 
 def is_registered(author_id):
-    dm.cur.execute("select userid from playersinfo")
+    dm.cur.execute("SELECT userid FROM playersinfo")
     registered_users = dm.cur.fetchall()
     for x in registered_users:
         if x[0] == author_id:
-            dm.cur.execute(f"select cooldown from playersinfo where userid = {author_id}")
+            dm.cur.execute(f"SELECT cooldown FROM playersinfo WHERE userid = {author_id}")
             result = dm.cur.fetchall()
             if result[0][0] == 0:
-                sql = "update playersinfo set cooldown = %s where userid = %s"
+                sql = "UPDATE playersinfo SET cooldown = %s WHERE userid = %s"
                 value = (0, str(author_id))
                 dm.cur.execute(sql, value)
                 return True
@@ -394,19 +396,13 @@ def is_registered(author_id):
     return f"Send `{prefix}register` to play this bot!"
 
 
-def author_username(username):
-    the_username = str(username)
-    username_length = len(the_username) - 5
-    return str(the_username[0:username_length])
-
-
-def userid_converter(username):
-    if len(username) > 10:
-        if username[2] == "!":
-            return username[3: len(username) - 1]
+def uid_converter(name: str) -> str:
+    if len(name) > 10:
+        if name[2] == "!":
+            return name[3: len(name) - 1]
         else:
-            return username[2: len(username) - 1]
-    return username
+            return name[2: len(name) - 1]
+    return name
 
 
 def get_user(user, msg: discord.Message):
@@ -414,7 +410,7 @@ def get_user(user, msg: discord.Message):
         if "@<" not in str(user) and ">" not in str(user):
             author_id = str(user)
         else:
-            author_id = userid_converter(str(user))
+            author_id = uid_converter(str(user))
     else:
         author_id = str(msg.author.id)
 

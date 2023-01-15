@@ -180,7 +180,7 @@ class Sys(commands.Cog):
                 level_msg.extend(level_chart[profile[3] - 1].split("\n"))
 
             embed = discord.Embed(
-                title=f"CONGRATULATIONS {am.author_username(str(a))}!",
+                title=f"Congratulations {a.name}!",
                 description=None,
                 color=discord.Color.green()
             )
@@ -213,7 +213,7 @@ class Sys(commands.Cog):
                 if quest_com[x] >= 100:
                     quest = am.quest_index(quests[x])
                     embed = discord.Embed(
-                        title=f"QUEST COMPLETE {am.author_username(str(a))}!",
+                        title=f"QUEST COMPLETE {a.name}!",
                         description=None,
                         color=discord.Color.green()
                     )
