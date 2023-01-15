@@ -45,8 +45,8 @@ DECK: t.Final = {
 }
 ACES: t.Final = [f"[{s} Ace]" for s in ["♠", "♥", "♦", "♣"]]
 
-scale = [50, 1.05]
-prefix = "a."
+SCALE = [50, 1.05]
+PREF = "a."
 
 # region Dictionary Functions
 # Loads in all the necessary json files as dictionaries
@@ -64,8 +64,8 @@ with open("txts/effects.json") as json_file:
 
 def cards_dict(card_level, card_name):
     level = int(card_level)
-    card_level = scale[1] ** (level - 1) * scale[0]
-    inverse_level = 1.01 ** (level * -1 + 1) * scale[0]
+    card_level = SCALE[1] ** (level - 1) * SCALE[0]
+    inverse_level = 1.01 ** (level * -1 + 1) * SCALE[0]
 
     if card_name.lower() not in CARDS:
         return {
@@ -92,7 +92,7 @@ def cards_dict(card_level, card_name):
     return card
 
 
-def items_dict(item_name, max_stat=100 * scale[0]):
+def items_dict(item_name, max_stat=100 * SCALE[0]):
     item_name = ITEM_ABB.get(item_name.lower(), item_name.lower())
     if item_name not in ITEMS:
         return {
@@ -112,7 +112,7 @@ def items_dict(item_name, max_stat=100 * scale[0]):
 
 def mobs_dict(mob_level: str | int, mob_name: str):
     mob_level = int(mob_level)
-    mob_level = scale[1] ** (int(mob_level) - 1) * scale[0]
+    mob_level = SCALE[1] ** (int(mob_level) - 1) * SCALE[0]
 
     if mob_name.lower() not in MOBS:
         return {
@@ -395,7 +395,7 @@ def is_registered(author_id):
             else:
                 return f"You have to wait {time_converter(result[0][0])} before you can send another command!"
 
-    return f"Send `{prefix}register` to play this bot!"
+    return f"Send `{PREF}register` to play this bot!"
 
 
 def uid_converter(name: str) -> str:

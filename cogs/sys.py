@@ -80,7 +80,7 @@ class Sys(commands.Cog):
         await ctx.send(
             "__FREE PREMIUM MEMBERSHIP__ for 2 weeks obtained!\n"
             f"*Registered {ctx.message.author.mention} into this bot!* "
-            f"Do `{am.prefix}help` and `{am.prefix}tutorial` to get started!"
+            f"Do `{am.PREF}help` and `{am.PREF}tutorial` to get started!"
         )
 
     @commands.Cog.listener()
@@ -89,12 +89,12 @@ class Sys(commands.Cog):
             return
 
         content = message.content.lower()
-        if (content.startswith(f"{am.prefix}ping")
-                or content.startswith(f"{am.prefix}pong")
+        if (content.startswith(f"{am.PREF}ping")
+                or content.startswith(f"{am.PREF}pong")
                 or content.startswith("<@521056196380065802>")
                 or content.startswith("<@!521056196380065802>")):
             ms = int(self.bot.latency * 1000)
-            await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{am.prefix}`!')
+            await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{am.PREF}`!')
 
         a = message.author  # shorthand
         dm.cur.execute("select * from playersinfo where userid = " + str(a.id))
@@ -117,8 +117,8 @@ class Sys(commands.Cog):
             level_msg = []
             if (profile[3] + 1) % 2 == 0:
                 add_hp = round(
-                    (am.scale[1] ** math.floor((profile[3] + 1) / 2) -
-                     am.scale[1] ** math.floor(profile[3] / 2)) * 100 * am.scale[0]
+                    (am.SCALE[1] ** math.floor((profile[3] + 1) / 2) -
+                     am.SCALE[1] ** math.floor(profile[3] / 2)) * 100 * am.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
@@ -128,13 +128,13 @@ class Sys(commands.Cog):
             Empty strings signify that no particular special thing is unlocked.
             """
             level_chart = [
-                f"{am.prefix}Quest is unlocked!",
-                f"{am.prefix}Shop is unlocked!",
-                f"{am.prefix}Coop is unlocked! \n"
+                f"{am.PREF}Quest is unlocked!",
+                f"{am.PREF}Shop is unlocked!",
+                f"{am.PREF}Coop is unlocked! \n"
                 f"Daily shop max card level +1!",
-                f"{am.prefix}Battle for PvP is unlocked!",
+                f"{am.PREF}Battle for PvP is unlocked!",
                 f"Deck slot +1!",
-                f"{am.prefix}Trade is unlocked! \n"
+                f"{am.PREF}Trade is unlocked! \n"
                 f"Adventure Chest Storage +50!",
                 f"Daily shop max card level +1!",
                 f"Adventure Boss Raids is unlocked! \n"
@@ -250,7 +250,7 @@ class Sys(commands.Cog):
 
             spawn_msg = await message.channel.send(embed=discord.Embed(
                 title=f"A bag of gold showed up out of nowhere!",
-                description=f"Quick! Type `{am.prefix}collect {amt} coins` to collect them! \n"
+                description=f"Quick! Type `{am.PREF}collect {amt} coins` to collect them! \n"
                             f"They'll be gone in 10 minutes!",
                 color=discord.Color.green()
             ))
@@ -261,7 +261,7 @@ class Sys(commands.Cog):
             try:
                 rep = await self.bot.wait_for(
                     "message", timeout=600.0,
-                    check=lambda m: m.content.lower().startswith(f"{am.prefix}collect {amt} coins") and
+                    check=lambda m: m.content.lower().startswith(f"{am.PREF}collect {amt} coins") and
                                     m.channel == spawn_msg.channel
                 )
                 mention = rep.author.mention
@@ -281,7 +281,7 @@ class Sys(commands.Cog):
                     dm.db.commit()
                 else:
                     msg = f"{mention}, you have to register in this bot first! \n" \
-                          f"Type `{am.prefix}register` to register!"
+                          f"Type `{am.PREF}register` to register!"
 
                 await rep.channel.send(msg)
             except asyncio.TimeoutError:

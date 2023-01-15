@@ -140,7 +140,7 @@ class Actions(commands.Cog, name="actions"):
         if order_by == [0, None, None]:
             await ctx.send(
                 f"{mention}, the correct format for this command is "
-                f"`{am.prefix}order (level/name/id/cost/rarity) (ascending/descending)`!"
+                f"`{am.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!"
             )
         else:
             dm.cur.execute(f"UPDATE playersinfo SET inventory_order = {order[0]} WHERE userid = {a_id}")
@@ -161,7 +161,7 @@ class Actions(commands.Cog, name="actions"):
 
         if to_buy is None:
             await ctx.send(f"{mention}, the correct format for this command is "
-                           f"`{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
+                           f"`{am.PREF}buy (1-{len(deals)}/all/refresh)`!")
             return
 
         dm.cur.execute(f"SELECT count(*) FROM cardsinfo WHERE owned_user = {a_id}")
@@ -372,7 +372,7 @@ class Actions(commands.Cog, name="actions"):
                             f"{mention}, you need {total_cost} {am.ICONS['coin']} to buy all cards in the shop!")
                     else:
                         await ctx.send(
-                            f"{mention}, type `{am.prefix}deals confirm` to buy all the cards for {total_cost} {am.ICONS['coin']}.")
+                            f"{mention}, type `{am.PREF}deals confirm` to buy all the cards for {total_cost} {am.ICONS['coin']}.")
 
                         try:
                             message = await self.bot.wait_for("message", timeout=15.0,
@@ -464,10 +464,10 @@ class Actions(commands.Cog, name="actions"):
                                            "defensive", "pro", "gc1", "gc2", "gc3", "rt1",
                                            "rt2", "rt3", "refresh", "ref", "re", "r", "confetti"]):
                     await ctx.send(
-                        f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
+                        f"{mention}, the correct format for this command is `{am.PREF}buy (1-{len(deals)}/all/refresh)`!")
             except:
                 await ctx.send(
-                    f"{mention}, the correct format for this command is `{am.prefix}buy (1-{len(deals)}/all/refresh)`!")
+                    f"{mention}, the correct format for this command is `{am.PREF}buy (1-{len(deals)}/all/refresh)`!")
 
     # await ctx.send(f"{mention}, shop is currently temporarily disabled!")
 
@@ -480,7 +480,7 @@ class Actions(commands.Cog, name="actions"):
         a_id = ctx.message.author.id
         mention = ctx.message.author.mention
         if not card_id:
-            await ctx.send(f"{mention}, the correct format is `{am.prefix}discard (* card_ids)`!")
+            await ctx.send(f"{mention}, the correct format is `{am.PREF}discard (* card_ids)`!")
             return
 
         dm.cur.execute(f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
@@ -584,7 +584,7 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(
                 f"{mention}, the sacrificial card you chose "
                 "is currently in one of your deck slots- \n"
-                f"`{am.prefix}remove (* card_ids)` first before you merge it away!"
+                f"`{am.PREF}remove (* card_ids)` first before you merge it away!"
             )
             return
 
@@ -721,8 +721,8 @@ class Actions(commands.Cog, name="actions"):
         def offer():
             embed = discord.Embed(
                 title=f"Trade ongoing!",
-                description=f"`{am.prefix}(put/drop) (coin/card) (amount/card_id)` \n"
-                            f"`{am.prefix}(confirm/exit/refresh)` \n"
+                description=f"`{am.PREF}(put/drop) (coin/card) (amount/card_id)` \n"
+                            f"`{am.PREF}(confirm/exit/refresh)` \n"
                             f"16 cards at max per side per trade",
                 color=discord.Color.gold()
             )
@@ -780,7 +780,7 @@ class Actions(commands.Cog, name="actions"):
                 return
 
             reply_author = reply_msg.author
-            reply_msg = [s.lower() for s in reply_msg.content[len(am.prefix):].split(" ")]
+            reply_msg = [s.lower() for s in reply_msg.content[len(am.PREF):].split(" ")]
             if len(reply_msg) < 1:
                 continue
             if reply_msg[0] in ["refresh", "re", "ref", "r"]:
@@ -1017,7 +1017,7 @@ class Actions(commands.Cog, name="actions"):
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
         if not card_id:
-            await ctx.send(f"{mention}, the correct format is `{am.prefix}add (* card_ids)`!")
+            await ctx.send(f"{mention}, the correct format is `{am.PREF}add (* card_ids)`!")
             return
 
         dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = '{a_id}'")
@@ -1032,7 +1032,7 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"{mention}, Card #`{card_id}` is already in your deck.")
             return
         if len(deck) == 12:
-            await ctx.send(f"{mention}, your deck's full - do `{am.prefix}swap` instead!")
+            await ctx.send(f"{mention}, your deck's full - do `{am.PREF}swap` instead!")
             return
 
         dm.cur.execute(
@@ -1058,7 +1058,7 @@ class Actions(commands.Cog, name="actions"):
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
         if not card_id:
-            await ctx.send(f"{mention}, the correct format is `{am.prefix}remove (* card_ids)`!")
+            await ctx.send(f"{mention}, the correct format is `{am.PREF}remove (* card_ids)`!")
             return
 
         dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = '{a_id}'")
@@ -1127,7 +1127,7 @@ class Actions(commands.Cog, name="actions"):
         dm.db.commit()
         await msg.edit(
             content=f"{mention}, your Deck #{deck_slot} has been cleared! \n"
-                    f"Do `{am.prefix}add (card_id)` command to add new cards into your deck!"
+                    f"Do `{am.PREF}add (card_id)` command to add new cards into your deck!"
         )
         await msg.clear_reactions()
 
@@ -1165,8 +1165,8 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(
                 f"{mention} \nYour total: {values[0]} \n{' '.join(cards[0])}"
                 f" \n------------------------------ \nDealer's total: {values[1]} + ? \n"
-                f"{' '.join(cards[1])} [? ? ?] ```\n{am.prefix}hit -draw a card \n"
-                f"{am.prefix}stand -end your turn```"
+                f"{' '.join(cards[1])} [? ? ?] ```\n{am.PREF}hit -draw a card \n"
+                f"{am.PREF}stand -end your turn```"
             )
             try:
                 msg_reply = await self.bot.wait_for(
@@ -1178,7 +1178,7 @@ class Actions(commands.Cog, name="actions"):
                 await ctx.send(f"{mention}, you blanked out and lost the game!")
                 return
             else:
-                action = msg_reply.content[len(am.prefix):].lower()
+                action = msg_reply.content[len(am.PREF):].lower()
                 if action in stand:
                     end = True
                     add_card(random.choice(list(deck)), "opponent")
@@ -1224,7 +1224,7 @@ class Actions(commands.Cog, name="actions"):
         if wait_time <= 0:
             wait_time = random.randint(6, 30)
 
-        t = await ctx.send(f"{mention}, reply `{am.prefix}` as close as you can to {wait_time} seconds!")
+        t = await ctx.send(f"{mention}, reply `{am.PREF}` as close as you can to {wait_time} seconds!")
         try:
             message = await self.bot.wait_for(
                 "message", timeout=70,

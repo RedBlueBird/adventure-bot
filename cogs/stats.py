@@ -64,14 +64,14 @@ class Stats(commands.Cog, name="informational"):
             embed.add_field(
                 name=f"Current Level: {prof[3]}",
                 value=f"{am.ICONS['exp']} {prof[4]}/{math.floor(int((prof[3] ** 2) * 40 + 60))}\n"
-                      f"{am.ICONS['hp']} {round((100 * am.scale[1] ** math.floor(prof[3] / 2)) * am.scale[0])}",
+                      f"{am.ICONS['hp']} {round((100 * am.SCALE[1] ** math.floor(prof[3] / 2)) * am.SCALE[0])}",
                 inline=False
             )
         else:
             embed.add_field(
                 name=f"Max Level: {prof[3]}",
                 value=f"{am.ICONS['exp']} {prof[4]}\n"
-                      f"{am.ICONS['hp']} {round((100 * am.scale[1] ** math.floor(prof[3] / 2)) * am.scale[0])}",
+                      f"{am.ICONS['hp']} {round((100 * am.SCALE[1] ** math.floor(prof[3] / 2)) * am.SCALE[0])}",
                 inline=False
             )
 
@@ -392,17 +392,17 @@ class Stats(commands.Cog, name="informational"):
 
         else:
             embed = discord.Embed(title="Here is a list of leaderboards the bot can show",
-                                  description="`" + am.prefix + "leaderboard (leaderboard_type)`",
+                                  description="`" + am.PREF + "leaderboard (leaderboard_type)`",
                                   color=discord.Color.gold())
             embed.add_field(name="Most experience points players",
-                            value=f"`{am.prefix}leaderboard levels`", inline=False)
-            embed.add_field(name="Most golden coins players", value=f"`{am.prefix}leaderboard coins`",
+                            value=f"`{am.PREF}leaderboard levels`", inline=False)
+            embed.add_field(name="Most golden coins players", value=f"`{am.PREF}leaderboard coins`",
                             inline=False)
-            embed.add_field(name="Most shiny gems players", value=f"`{am.prefix}leaderboard gems`",
+            embed.add_field(name="Most shiny gems players", value=f"`{am.PREF}leaderboard gems`",
                             inline=False)
-            embed.add_field(name="Most medals players", value=f"`{am.prefix}leaderboard medals`",
+            embed.add_field(name="Most medals players", value=f"`{am.PREF}leaderboard medals`",
                             inline=False)
-            embed.add_field(name="Most tokens players", value=f"`{am.prefix}leaderbord tokens`",
+            embed.add_field(name="Most tokens players", value=f"`{am.PREF}leaderbord tokens`",
                             inline=False)
             embed.set_footer(text="Showing top 10 players only")
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
@@ -451,7 +451,7 @@ class Stats(commands.Cog, name="informational"):
                 all_decks.append(deck_length)
 
             embed = discord.Embed(title=member.display_name + "'s decks",
-                                  description=f"`{am.prefix}deck #` to view a specific deck",
+                                  description=f"`{am.PREF}deck #` to view a specific deck",
                                   color=discord.Color.gold())
 
             for i in range(6):
@@ -521,17 +521,17 @@ class Stats(commands.Cog, name="informational"):
 
         mod_msg = ""
         if deck_slot != selected_slot:
-            mod_msg = f"\n`{am.prefix}select {deck_slot}` to modify this deck"
+            mod_msg = f"\n`{am.PREF}select {deck_slot}` to modify this deck"
 
         embed = discord.Embed(title=member.display_name + f"'s Deck #{deck_slot}:",
-                              description="`" + am.prefix + "deck list` to display all your decks" + mod_msg + "\n\n" + "%s" % (
+                              description="`" + am.PREF + "deck list` to display all your decks" + mod_msg + "\n\n" + "%s" % (
                                   "\n".join(all_cards)),
                               color=discord.Color.gold())
         embed.set_thumbnail(url=member.avatar.url)
 
         if not result:
             embed.add_field(name="You have __NO__ cards in your deck!",
-                            value=f"`{am.prefix}add (card_id)` to start adding cards!")
+                            value=f"`{am.PREF}add (card_id)` to start adding cards!")
         if not len(result) == 12:
             embed.set_footer(text="You need " + str(12 - len(result)) + " more cards needed to complete this deck!")
         else:
@@ -552,7 +552,7 @@ class Stats(commands.Cog, name="informational"):
         """
         if name is None or dictionary_name is None:
             await ctx.send(f"{ctx.message.author.mention}, the correct format for this command is `" +
-                           am.prefix + "info (card/mob/item/effect) (name) (level)`!")
+                           am.PREF + "info (card/mob/item/effect) (name) (level)`!")
             return
 
         level = max(1, math.floor(int(level) + 1 - 1)) if level.isdigit() else 1
@@ -650,7 +650,7 @@ class Stats(commands.Cog, name="informational"):
 
         else:
             await ctx.send(f"{ctx.message.author.mention}, the correct format for this command is "
-                           f"`{am.prefix}info (card/mob/item/effect) (name) (level)`!")
+                           f"`{am.PREF}info (card/mob/item/effect) (name) (level)`!")
 
     @commands.hybrid_command(
         name="shop",
@@ -684,7 +684,7 @@ class Stats(commands.Cog, name="informational"):
             embed.add_field(name="Daily Deals", value="**»** page 1", inline=False)
             embed.add_field(name="Card Packs", value="**»** page 2", inline=False)
             embed.add_field(name="Currencies", value="**»** page 3", inline=False)
-            embed.set_footer(text=am.prefix + "shop (page_number)")
+            embed.set_footer(text=am.PREF + "shop (page_number)")
             await ctx.send(embed=embed)
             return
 
@@ -709,7 +709,7 @@ class Stats(commands.Cog, name="informational"):
                     cost = round(1.6 ** int(card[0]) * 50 * am.price_factor(card[1]))
                     embed.add_field(
                         name=f"**[{am.rarity_cost(card[1])}] {card[1]} lv: {card[0]}**",
-                        value=f"Cost: **{cost}** {am.ICONS['coin']} \n`{am.prefix}buy {place}`"
+                        value=f"Cost: **{cost}** {am.ICONS['coin']} \n`{am.PREF}buy {place}`"
                     )
                 else:
                     embed.add_field(name=f"**[{am.rarity_cost(card[1])}] {card[1]} lv: {card[0][1:]}**",
@@ -717,7 +717,7 @@ class Stats(commands.Cog, name="informational"):
 
             for x in range(len(the_deals)):
                 card_deal(the_deals[x], x + 1)
-            embed.set_footer(text=f"Wait {am.remain_time()} or {am.prefix}buy r to refresh shop")
+            embed.set_footer(text=f"Wait {am.remain_time()} or {am.PREF}buy r to refresh shop")
             await ctx.send(embed=embed)
 
         elif page == 2:
@@ -731,27 +731,27 @@ class Stats(commands.Cog, name="informational"):
                 {'name': "**Basic Pack**",
                  'value': f"Cost: **3** {am.ICONS['gem']} \n"
                           "• contains 3 (lv 4-10) cards \n"
-                          f"`{am.prefix}buy basic`"},
+                          f"`{am.PREF}buy basic`"},
                 {'name': "**Fire Pack**",
                  'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of fire cards \n"
-                          f"`{am.prefix}buy fire`"},
+                          f"`{am.PREF}buy fire`"},
                 {'name': "**Evil Pack**",
                  'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of curse cards \n"
-                          f"`{am.prefix}buy evil`"},
+                          f"`{am.PREF}buy evil`"},
                 {'name': "**Electric Pack**",
                  'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of electric cards \n"
-                          f"`{am.prefix}buy electric`"},
+                          f"`{am.PREF}buy electric`"},
                 {'name': "**Defensive Pack**",
                  'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of defense cards \n"
-                          f"`{am.prefix}buy defensive`"},
+                          f"`{am.PREF}buy defensive`"},
                 {'name': "**Pro Pack**",
                  'value': f"Cost: **24** {am.ICONS['gem']} \n"
                           "• contains 6 (lv 7-10) cards \n"
-                          f"`{am.prefix}buy pro`"},
+                          f"`{am.PREF}buy pro`"},
                 # {'name': "**Anniversary Pack**",
                 # 'value': f"Cost: **40** {am.icon['token']} \n"
                 #          "• contains **[EX/7] Confetti Cannon** \n"
@@ -769,12 +769,12 @@ class Stats(commands.Cog, name="informational"):
                                   color=discord.Color.green())  # {am.icon['token']} **{tokens}**")
 
             currency_offers = [
-                {"name": "**1000 Golden Coins**", "value": f"Cost: **3** {am.ICONS['gem']} \n`{am.prefix}buy gc1`"},
-                {"name": "**2250 Golden Coins**", "value": f"Cost: **6** {am.ICONS['gem']} \n`{am.prefix}buy gc2`"},
-                {"name": "**11000 Golden Coins**", "value": f"Cost: **24** {am.ICONS['gem']} \n`{am.prefix}buy gc3`"},
-                {"name": "**1 Raid Ticket**", "value": f"Cost: **2** {am.ICONS['gem']} \n`{am.prefix}buy rt1`"},
-                {"name": "**2 Raid Ticket**", "value": f"Cost: **4** {am.ICONS['gem']} \n`{am.prefix}buy rt2`"},
-                {"name": "**3 Raid Ticket**", "value": f"Cost: **6** {am.ICONS['gem']} \n`{am.prefix}buy rt3`"}
+                {"name": "**1000 Golden Coins**", "value": f"Cost: **3** {am.ICONS['gem']} \n`{am.PREF}buy gc1`"},
+                {"name": "**2250 Golden Coins**", "value": f"Cost: **6** {am.ICONS['gem']} \n`{am.PREF}buy gc2`"},
+                {"name": "**11000 Golden Coins**", "value": f"Cost: **24** {am.ICONS['gem']} \n`{am.PREF}buy gc3`"},
+                {"name": "**1 Raid Ticket**", "value": f"Cost: **2** {am.ICONS['gem']} \n`{am.PREF}buy rt1`"},
+                {"name": "**2 Raid Ticket**", "value": f"Cost: **4** {am.ICONS['gem']} \n`{am.PREF}buy rt2`"},
+                {"name": "**3 Raid Ticket**", "value": f"Cost: **6** {am.ICONS['gem']} \n`{am.PREF}buy rt3`"}
             ]
             for field in currency_offers:
                 embed.add_field(**field)
@@ -861,7 +861,7 @@ class Stats(commands.Cog, name="informational"):
 
         else:
             await ctx.send(f"{ctx.message.author.mention}, your search was invalid! "
-                           f"Do `{am.prefix}card_search "
+                           f"Do `{am.PREF}card_search "
                            f"(level/name/rarity/cost) (the level number/card name)` instead!")
             return
 

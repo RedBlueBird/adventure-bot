@@ -85,7 +85,7 @@ class Admin(commands.Cog, name="admin"):
         else:
             await ctx.message.channel.send(
                 f"{mention}, the correct format for this command is "
-                f"`{am.prefix}redeem (card/item) (name) (level/amount) (user)`!"
+                f"`{am.PREF}redeem (card/item) (name) (level/amount) (user)`!"
             )
 
     @commands.hybrid_command(
