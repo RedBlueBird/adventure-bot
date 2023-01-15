@@ -452,7 +452,6 @@
         "stay": 75,
         "draw": 2,
         "mod": {},
-        "_comment":  "jeff why did you say there was a 100% chance that they draw 2 more cards",
         "description": "Your target gains ${heal} health and draws 2 more cards. There's a 75% chance that this card will stay on your hand after being used.",
         "brief": "An ancient relic recovered from the ruins of a sacred temple. Legends say that if a user has it for long enough, it can make their hopes and dreams come true."
     },

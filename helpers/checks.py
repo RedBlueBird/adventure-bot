@@ -15,7 +15,7 @@ def is_owner() -> Callable[[T], T]:
     """Checks if the calling user is an owner of the bot"""
 
     async def predicate(context: commands.Context) -> bool:
-        if context.author.id not in am.admins:
+        if context.author.id not in am.ADMINS:
             raise UserNotOwner
         return True
 

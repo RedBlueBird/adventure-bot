@@ -31,27 +31,26 @@ class Stats(commands.Cog, name="informational"):
             user = ctx.message.author
         member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
 
-        dm.cur.execute(f"select * from playersinfo where userid = '{member.id}'")
-        profile_info = dm.cur.fetchall()
+        dm.cur.execute(f"SELECT * FROM playersinfo WHERE userid = '{member.id}'")
+        prof = dm.cur.fetchall()  # short for profile
 
-        if not profile_info:
+        if not prof:
             await ctx.send(f"{ctx.message.author.mention}, that's an invalid user id!")
             return
         else:
-            profile_info = profile_info[0]
-            dm.cur.execute(f"select * from playersachivements where userid = '{member.id}'")
+            prof = prof[0]
+            dm.cur.execute(f"SELECT * from playersachivements WHERE userid = '{member.id}'")
             achivement_info = dm.cur.fetchall()[0]
 
-        if profile_info[14].split(",")[0] == "1":
-            description_msg = f"14 \n{am.icon['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {am.time_converter(int(profile_info[14].split(',')[1]) - int(times.time()))} \n"
+        if prof[14].split(",")[0] == "1":
+            time = am.time_converter(int(prof[14].split(',')[1]) - int(times.time()))
+            description_msg = f"14 \n{am.ICONS['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {time} \n"
             tickets = "10"
         else:
             description_msg = "7 \n"
             tickets = "5"
 
-        tick_msg = ""
-        if profile_info[3] >= 4:
-            tick_msg = f"{am.icon['tick']}**Raid Tickets: **{profile_info[9]}/{tickets}"
+        tick_msg = "" if prof[3] < 4 else f"{am.ICONS['tick']}**Raid Tickets: **{prof[9]}/{tickets}"
 
         embed_descr = f"```{am.queues[str(member.id)]}``` \n" if str(member.id) in am.queues else None
         embed = discord.Embed(
@@ -61,60 +60,72 @@ class Stats(commands.Cog, name="informational"):
         )
         embed.set_thumbnail(url=member.avatar.url)
 
-        if int(profile_info[3]) < 30:
+        if int(prof[3]) < 30:
             embed.add_field(
-                name=f"Current Level: {profile_info[3]}",
-                value=f"{am.icon['exp']} {profile_info[4]}/{math.floor(int((profile_info[3] ** 2) * 40 + 60))} \n"
-                      f"{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
+                name=f"Current Level: {prof[3]}",
+                value=f"{am.ICONS['exp']} {prof[4]}/{math.floor(int((prof[3] ** 2) * 40 + 60))}\n"
+                      f"{am.ICONS['hp']} {round((100 * am.scale[1] ** math.floor(prof[3] / 2)) * am.scale[0])}",
                 inline=False
             )
         else:
             embed.add_field(
-                name=f"Max Level: {profile_info[3]}",
-                value=f"{am.icon['exp']} {profile_info[4]} \n{am.icon['hp']} {round((100 * am.scale[1] ** math.floor(profile_info[3] / 2)) * am.scale[0])}",
+                name=f"Max Level: {prof[3]}",
+                value=f"{am.ICONS['exp']} {prof[4]}\n"
+                      f"{am.ICONS['hp']} {round((100 * am.scale[1] ** math.floor(prof[3] / 2)) * am.scale[0])}",
                 inline=False
             )
 
-        if profile_info[10] != str(dt.date.today()):
+        if prof[10] != str(dt.date.today()):
             dts = "Right Now!"
         else:
             dts = am.remain_time()
-        embed.add_field(name="Currency: ", value=f"{am.icon['coin']}**Golden Coins: **{profile_info[5]} \n"
-                                                 f"{am.icon['gem']}**Shiny Gems: **{profile_info[6]} \n"
-                                                 f"{am.icon['token']}**Confetti: **{profile_info[7]} \n"
-                                                 f"{am.icon['medal']}**Medals: **{profile_info[8]} \n"
-                                                 f"{tick_msg}", inline=False)
-        embed.add_field(name="Times: ",
-                        value=f"{am.icon['streak']}**Current daily streak: **{int(profile_info[13])}/" +
-                              description_msg + f"{am.icon['timer']}**Next daily: **{dts} \n"
-                                                f"{am.icon['timer']}**Next quest: "
-                                                f"**{am.time_converter(int(profile_info[15].split(',')[-1]) - int(times.time()))}",
-                        inline=False)
+        embed.add_field(
+            name="Currency: ",
+            value=f"{am.ICONS['coin']}**Golden Coins: **{prof[5]}\n"
+                  f"{am.ICONS['gem']}**Shiny Gems: **{prof[6]}\n"
+                  f"{am.ICONS['token']}**Confetti: **{prof[7]}\n"
+                  f"{am.ICONS['medal']}**Medals: **{prof[8]}\n"
+                  f"{tick_msg}",
+            inline=False
+        )
+        embed.add_field(
+            name="Times: ",
+            value=f"{am.ICONS['streak']}**Current daily streak: **{int(prof[13])}/" +
+                  description_msg +
+                  f"{am.ICONS['timer']}**Next daily: **{dts} \n"
+                  f"{am.ICONS['timer']}**Next quest: "
+                  f"**{am.time_converter(int(prof[15].split(',')[-1]) - int(times.time()))}",
+            inline=False
+        )
 
         if achivement_info[3] != "0000000000000000000000000000000000000000":
             badges = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
             owned_badges = []
             for i, value in enumerate(achivement_info[3]):
                 if value == "1":
-                    owned_badges.append(am.icon[badges[i]])
+                    owned_badges.append(am.ICONS[badges[i]])
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
-        # embed.add_field(name="Personal Best: ", value="Traveled " + str(profile_info[10]) + " Meters in one Adventure.", inline=False)
-        embed.set_footer(text="PlayerID: " + str(profile_info[0]) + ", RegisterDate: " + str(achivement_info[2]))
+
+        """
+        embed.add_field(
+            name="Personal Best: ",
+            value=f"Traveled {profile_info[10]} Meters in one Adventure.",
+            inline=False
+        )
+        """
+
+        embed.set_footer(text=f"Player ID: {prof[0]}, Register Date: {achivement_info[2]}")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
         name="quests",
-        description="Displays all current quests of a given member.",
+        description="Displays all current quests of a user.",
         aliases=["quest", "que", "qu"]
     )
     async def quests(self, ctx: Context, user: discord.User = None) -> None:
-        """
-        Displays all current quests of a given member.
-        :param user: The user whose quests to display.
-        """
+        """Displays all current quests of a user."""
 
-        if user == None:
-            user = ctx.message.author
+        user = ctx.message.author if user is None else user
         member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
 
         dm.cur.execute(f"select quests, user_identity from playersinfo where userid = '{member.id}'")
@@ -171,7 +182,7 @@ class Stats(commands.Cog, name="informational"):
                 quest = am.quest_index(quests[x])
                 embed.add_field(name=f"**{quest[2]} {am.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
                                 value=f"Finished {math.floor(100 * int(quests[x].split('.')[2]) / quest[0])}% \n"
-                                      f"Reward: **{''.join(quest[1::2])} {quest[4]} {am.icon['exp']}**",
+                                      f"Reward: **{''.join(quest[1::2])} {quest[4]} {am.ICONS['exp']}**",
                                 inline=False)  # **1 {am.icon['token']}**", inline=False)
 
         embed.set_thumbnail(url=member.avatar.url)
@@ -622,7 +633,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
             embed.set_image(
-                url=f"https://cdn.discordapp.com/emojis/{am.icon[item_info['name'].lower()][len(''.join(item_info['name'].split(' '))) + 3:-1]}.png")
+                url=f"https://cdn.discordapp.com/emojis/{am.ICONS[item_info['name'].lower()][len(''.join(item_info['name'].split(' '))) + 3:-1]}.png")
 
             await ctx.send(embed=embed)
 
@@ -634,7 +645,7 @@ class Stats(commands.Cog, name="informational"):
             embed.add_field(name="Uses: ", value=effect_info["description"], inline=False)
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             embed.set_image(url=f"https://cdn.discordapp.com/emojis/"
-                                f"{am.converter[effect_info['name'].lower()][4:-1]}.png")
+                                f"{am.CONVERT[effect_info['name'].lower()][4:-1]}.png")
             await ctx.send(embed=embed)
 
         else:
@@ -688,7 +699,7 @@ class Stats(commands.Cog, name="informational"):
             the_deals = dm.cur.fetchall()[0][0].split(",")
             embed = discord.Embed(
                 title="Shop - Daily Deals:",
-                description=f"{am.icon['coin']} **{coins}** {am.icon['gem']} **{gems}**",
+                description=f"{am.ICONS['coin']} **{coins}** {am.ICONS['gem']} **{gems}**",
                 color=discord.Color.gold()
             )  # {am.icon['token']} **{tokens}**")
 
@@ -698,7 +709,7 @@ class Stats(commands.Cog, name="informational"):
                     cost = round(1.6 ** int(card[0]) * 50 * am.price_factor(card[1]))
                     embed.add_field(
                         name=f"**[{am.rarity_cost(card[1])}] {card[1]} lv: {card[0]}**",
-                        value=f"Cost: **{cost}** {am.icon['coin']} \n`{am.prefix}buy {place}`"
+                        value=f"Cost: **{cost}** {am.ICONS['coin']} \n`{am.prefix}buy {place}`"
                     )
                 else:
                     embed.add_field(name=f"**[{am.rarity_cost(card[1])}] {card[1]} lv: {card[0][1:]}**",
@@ -712,33 +723,33 @@ class Stats(commands.Cog, name="informational"):
         elif page == 2:
             embed = discord.Embed(
                 title="Shop - Card Packs:",
-                description=f"{am.icon['coin']} **{coins}** {am.icon['gem']} **{gems}** {am.icon['token']} **{tokens}**",
+                description=f"{am.ICONS['coin']} **{coins}** {am.ICONS['gem']} **{gems}** {am.ICONS['token']} **{tokens}**",
                 color=discord.Color.green()
             )
 
             packs = [
                 {'name': "**Basic Pack**",
-                 'value': f"Cost: **3** {am.icon['gem']} \n"
+                 'value': f"Cost: **3** {am.ICONS['gem']} \n"
                           "• contains 3 (lv 4-10) cards \n"
                           f"`{am.prefix}buy basic`"},
                 {'name': "**Fire Pack**",
-                 'value': f"Cost: **5** {am.icon['gem']} \n"
+                 'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of fire cards \n"
                           f"`{am.prefix}buy fire`"},
                 {'name': "**Evil Pack**",
-                 'value': f"Cost: **5** {am.icon['gem']} \n"
+                 'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of curse cards \n"
                           f"`{am.prefix}buy evil`"},
                 {'name': "**Electric Pack**",
-                 'value': f"Cost: **5** {am.icon['gem']} \n"
+                 'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of electric cards \n"
                           f"`{am.prefix}buy electric`"},
                 {'name': "**Defensive Pack**",
-                 'value': f"Cost: **5** {am.icon['gem']} \n"
+                 'value': f"Cost: **5** {am.ICONS['gem']} \n"
                           "• contains 4 (lv 4-10) cards with a \nhigher chance of defense cards \n"
                           f"`{am.prefix}buy defensive`"},
                 {'name': "**Pro Pack**",
-                 'value': f"Cost: **24** {am.icon['gem']} \n"
+                 'value': f"Cost: **24** {am.ICONS['gem']} \n"
                           "• contains 6 (lv 7-10) cards \n"
                           f"`{am.prefix}buy pro`"},
                 # {'name': "**Anniversary Pack**",
@@ -754,16 +765,16 @@ class Stats(commands.Cog, name="informational"):
 
         elif page == 3:
             embed = discord.Embed(title="Shop - Currencies:",
-                                  description=f"{am.icon['coin']} **{coins}** {am.icon['gem']} **{gems}**",
+                                  description=f"{am.ICONS['coin']} **{coins}** {am.ICONS['gem']} **{gems}**",
                                   color=discord.Color.green())  # {am.icon['token']} **{tokens}**")
 
             currency_offers = [
-                {"name": "**1000 Golden Coins**", "value": f"Cost: **3** {am.icon['gem']} \n`{am.prefix}buy gc1`"},
-                {"name": "**2250 Golden Coins**", "value": f"Cost: **6** {am.icon['gem']} \n`{am.prefix}buy gc2`"},
-                {"name": "**11000 Golden Coins**", "value": f"Cost: **24** {am.icon['gem']} \n`{am.prefix}buy gc3`"},
-                {"name": "**1 Raid Ticket**", "value": f"Cost: **2** {am.icon['gem']} \n`{am.prefix}buy rt1`"},
-                {"name": "**2 Raid Ticket**", "value": f"Cost: **4** {am.icon['gem']} \n`{am.prefix}buy rt2`"},
-                {"name": "**3 Raid Ticket**", "value": f"Cost: **6** {am.icon['gem']} \n`{am.prefix}buy rt3`"}
+                {"name": "**1000 Golden Coins**", "value": f"Cost: **3** {am.ICONS['gem']} \n`{am.prefix}buy gc1`"},
+                {"name": "**2250 Golden Coins**", "value": f"Cost: **6** {am.ICONS['gem']} \n`{am.prefix}buy gc2`"},
+                {"name": "**11000 Golden Coins**", "value": f"Cost: **24** {am.ICONS['gem']} \n`{am.prefix}buy gc3`"},
+                {"name": "**1 Raid Ticket**", "value": f"Cost: **2** {am.ICONS['gem']} \n`{am.prefix}buy rt1`"},
+                {"name": "**2 Raid Ticket**", "value": f"Cost: **4** {am.ICONS['gem']} \n`{am.prefix}buy rt2`"},
+                {"name": "**3 Raid Ticket**", "value": f"Cost: **6** {am.ICONS['gem']} \n`{am.prefix}buy rt3`"}
             ]
             for field in currency_offers:
                 embed.add_field(**field)

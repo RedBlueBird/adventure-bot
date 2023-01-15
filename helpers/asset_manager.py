@@ -1,34 +1,36 @@
-import datetime as dt
 import random
 import math
+import datetime as dt
 import json
 import copy
 from string import Template
+import typing as t
+
 import discord
 
 from helpers import db_manager as dm
 
 with open("txts/icons.json") as json_file:
-    icon = json.load(json_file)
+    ICONS: t.Final = json.load(json_file)
 with open("txts/admins.json") as json_file:
-    admins = set(json.load(json_file))
+    ADMINS: t.Final = set(json.load(json_file))
 
-converter = {
-    "burn": icon["burn"],
-    "poison": icon["pois"],
-    "recover": icon["rec"],
-    "curse": icon["curs"],
-    "stun": icon["stun"],
-    "bullseye": icon["eye"],
-    "berserk": icon["bers"],
-    "freeze": icon["frez"],
-    "chill": icon["chil"],
-    "restore": icon["rest"],
-    "seriate": icon["seri"],
-    "feeble": icon["feeb"]
+CONVERT: t.Final = {
+    "burn": ICONS["burn"],
+    "poison": ICONS["pois"],
+    "recover": ICONS["rec"],
+    "curse": ICONS["curs"],
+    "stun": ICONS["stun"],
+    "bullseye": ICONS["eye"],
+    "berserk": ICONS["bers"],
+    "freeze": ICONS["frez"],
+    "chill": ICONS["chil"],
+    "restore": ICONS["rest"],
+    "seriate": ICONS["seri"],
+    "feeble": ICONS["feeb"]
 }
 
-deck = {
+DECK: t.Final = {
     "[♠ Ace]": 11, "[♠ Two]": 2, "[♠ Three]": 3, "[♠ Four]": 4, "[♠ Five]": 5,
     "[♠ Six]": 6, "[♠ Seven]": 7, "[♠ Eight]": 8, "[♠ Nine]": 9, "[♠ Ten]": 10,
     "[♠ Jack]": 10, "[♠ Queen]": 10, "[♠ King]": 10, "[♥ Ace]": 11, "[♥ Two]": 2,
@@ -41,27 +43,22 @@ deck = {
     "[♣ Seven]": 7, "[♣ Eight]": 8, "[♣ Nine]": 9, "[♣ Ten]": 10, "[♣ Jack]": 10,
     "[♣ Queen]": 10, "[♣ King]": 10
 }
-aces = [f"[{s} Ace]" for s in ["♠", "♥", "♦", "♣"]]
+ACES: t.Final = [f"[{s} Ace]" for s in ["♠", "♥", "♦", "♣"]]
 
 queues, scale, prefix = {}, [50, 1.05], "a."
-
-
-def init(bot):
-    global queues, scale
-
 
 # region Dictionary Functions
 # Loads in all the necessary json files as dictionaries
 with open("txts/cards.json") as json_file:
-    all_cards = json.load(json_file)
+    CARDS: t.Final = json.load(json_file)
 with open("txts/item_abbreviations.json") as json_file:
-    all_items_abb = json.load(json_file)
+    ITEM_ABB: t.Final = json.load(json_file)
 with open("txts/items.json") as json_file:
-    all_items = json.load(json_file)
+    ITEMS: t.Final = json.load(json_file)
 with open("txts/mobs.json") as json_file:
-    all_mobs = json.load(json_file)
+    MOBS: t.Final = json.load(json_file)
 with open("txts/effects.json") as json_file:
-    all_eff = json.load(json_file)
+    EFFX: t.Final = json.load(json_file)
 
 
 def cards_dict(card_level, card_name):
@@ -69,14 +66,14 @@ def cards_dict(card_level, card_name):
     card_level = scale[1] ** (level - 1) * scale[0]
     inverse_level = 1.01 ** (level * -1 + 1) * scale[0]
 
-    if card_name.lower() not in all_cards:
+    if card_name.lower() not in CARDS:
         return {
             "name": "Glitched", "cost": 0, "rarity": "NA", "self_damage": 4500, "eff_acc": 100, "attacks": 10,
             "acc": 100, "crit": 100, "mod": {}, "description": "None", "requirement": "None",
-            "brief": "Created from this bot's glitches"
+            "brief": "Created from this bot's glitches."
         }
 
-    card = copy.deepcopy(all_cards[card_name.lower()])
+    card = copy.deepcopy(CARDS[card_name.lower()])
     for i in card:
         if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
             card[i] = round(card[i] * card_level)
@@ -95,13 +92,15 @@ def cards_dict(card_level, card_name):
 
 
 def items_dict(item_name, max_stat=100 * scale[0]):
-    item_name = all_items_abb.get(item_name.lower(), item_name.lower())
-    if item_name not in all_items:
-        return {"name": "Glitching", "rarity": "NA", "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
-                "one_use": "False", "in_battle": "False", "abb": "glitching", "sta_gaom": 1, "mod": {},
-                "description": "None", "brief": "Summons a violent wormhole capable of ending all life as we know it."}
+    item_name = ITEM_ABB.get(item_name.lower(), item_name.lower())
+    if item_name not in ITEMS:
+        return {
+            "name": "Glitching", "rarity": "NA", "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
+            "one_use": "False", "in_battle": "False", "abb": "glitching", "sta_gaom": 1, "mod": {},
+            "description": "None", "brief": "Summons a black hole, ending all life on this planet."
+        }
 
-    item = copy.deepcopy(all_items[item_name])
+    item = copy.deepcopy(ITEMS[item_name])
     for i in item:
         if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
             item[i] = round(item[i] * max_stat / 100)
@@ -114,23 +113,25 @@ def mobs_dict(mob_level: str | int, mob_name: str):
     mob_level = int(mob_level)
     mob_level = scale[1] ** (int(mob_level) - 1) * scale[0]
 
-    if mob_name.lower() not in all_mobs:
+    if mob_name.lower() not in MOBS:
         return {
             "name": "Glitcher", "rarity": "NA", "health": -1, "energy_lag": 0, "stamina": -1,
             "death reward": {"coins": 0, "exps": 0},
             "deck": ["Glitched" for _ in range(10)],
-            "brief": "A man in a big white van."
+            "brief": "Oh no. Whatever this is, it's probably bad."
         }
-    mob = copy.deepcopy(all_mobs[mob_name.lower()])
+    mob = copy.deepcopy(MOBS[mob_name.lower()])
     mob["health"] = round(mob["health"] * mob_level)
     return mob
 
 
-def effs_dict(eff_name):
-    if eff_name.lower() not in all_eff:
-        return {"name": "Glitch",
-                "description": "Anyone who ever has this effect immediately dies a horrible death."}
-    return copy.deepcopy(all_eff[eff_name.lower()])
+def effs_dict(eff_name: str):
+    if eff_name.lower() not in EFFX:
+        return {
+            "name": "Glitch",
+            "description": "Anyone who ever has this effect immediately dies a horrible death."
+        }
+    return copy.deepcopy(EFFX[eff_name.lower()])
 
 
 def quest_index(index: str) -> list[str | int]:
@@ -163,7 +164,7 @@ def quest_index(index: str) -> list[str | int]:
         "1": [200, 500, 1000, 2500],
         "2": [0, 1, 2, 4]
     }
-    reward_units = {"1": icon["coin"], "2": icon["gem"]}
+    reward_units = {"1": ICONS["coin"], "2": ICONS["gem"]}
     exp_rewards = {"0": 25, "1": 50, "2": 100, "3": 200, "4": 250}
     all_rarities = {"0": "{C}", "1": "{R}", "2": "{E}", "3": "{L}", "4": "{EX}"}
 

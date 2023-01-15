@@ -71,10 +71,7 @@ async def on_command_completion(ctx: Context) -> None:
 
 @bot.event
 async def on_command_error(ctx: Context, error) -> None:
-    """
-    The code in this event is executed every time a normal valid command catches an error
-    :param error: The error that has been faced.
-    """
+    """Executed every time a normal valid command catches an error."""
     embed = discord.Embed(title="Error!", color=0xE02B2B)
     if isinstance(error, commands.CommandOnCooldown):
         minutes, seconds = divmod(error.retry_after, 60)
@@ -139,6 +136,5 @@ async def load_cogs() -> None:
 
 if __name__ == "__main__":
     db_manager.init()
-    asset_manager.init(bot)
     asyncio.run(load_cogs())
     bot.run(config["token"])

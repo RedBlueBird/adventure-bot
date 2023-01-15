@@ -67,8 +67,9 @@ class Admin(commands.Cog, name="admin"):
                 for x in inv_delete:
                     del inventory_data[x]
 
+                # TODO: replace the single quotes w/ double quotes in inventory_data first
                 dm.cur.execute(
-                    f"UPDATE adventuredatas SET inventory = \"{inventory_data}\" WHERE userid = {target.id}"
+                    f"UPDATE adventuredatas SET inventory = '{inventory_data}' WHERE userid = {target.id}"
                 )
                 dm.db.commit()
                 await ctx.message.channel.send(
@@ -113,13 +114,13 @@ class Admin(commands.Cog, name="admin"):
 
                 if earned_gems == 0:
                     await user.send(
-                        f"```Season Ended!``` You now have {medals} {am.icon['medal']} (from {d[1]}) "
-                        f"\n+{earned_coins} {am.icon['coin']}!"
+                        f"```Season Ended!``` You now have {medals} {am.ICONS['medal']} (from {d[1]}) "
+                        f"\n+{earned_coins} {am.ICONS['coin']}!"
                     )
                 else:
                     await user.send(
                         f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
-                        f"\n+{earned_coins} {am.icon['coin']} \n+{earned_gems} {am.icon['gem']}!"
+                        f"\n+{earned_coins} {am.ICONS['coin']} \n+{earned_gems} {am.ICONS['gem']}!"
                     )
                 sql = "UPDATE playersinfo SET coins = coins + %s, gems = gems + %s, medals = %s WHERE userid = %s"
                 data = (earned_coins, earned_gems, medals, d[0])
@@ -134,7 +135,7 @@ class Admin(commands.Cog, name="admin"):
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.message.channel.send(str(ctx.message.author) + am.icon['load'])
+        loading = await ctx.message.channel.send(str(ctx.message.author) + am.ICONS['load'])
 
         def print_all(tables_name):
             dm.cur.execute("select * from " + tables_name)
@@ -145,7 +146,7 @@ class Admin(commands.Cog, name="admin"):
         print_all("cardsinfo")
         print_all("playersinfo")
         print_all("playersachivements")
-        print(am.admins)
+        print(am.ADMINS)
         print(am.queues)
         guilds = list(self.bot.guilds)
         print("Connected on " + str(len(self.bot.guilds)) + " guilds:")
