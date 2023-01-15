@@ -14,8 +14,7 @@ class General(commands.Cog, name="general"):
     @commands.hybrid_command(
         name="help",
         description="List all commands the bot has loaded."
-    )
-    @checks.not_blacklisted()
+    )()
     async def help(self, ctx: Context) -> None:
         prefix = self.bot.config["prefix"]
         embed = discord.Embed(
@@ -36,8 +35,7 @@ class General(commands.Cog, name="general"):
     @commands.hybrid_command(
         name="botinfo",
         description="Get some info about the bot.",
-    )
-    @checks.not_blacklisted()
+    )()
     async def botinfo(self, ctx: Context) -> None:
         """Get some info about the bot."""
         embed = discord.Embed(
@@ -66,8 +64,7 @@ class General(commands.Cog, name="general"):
     @commands.hybrid_command(
         name="serverinfo",
         description="Get some info about the server.",
-    )
-    @checks.not_blacklisted()
+    )()
     async def serverinfo(self, ctx: Context) -> None:
         """Get some info about the server."""
         roles = [role.name for role in ctx.guild.roles]
@@ -105,8 +102,7 @@ class General(commands.Cog, name="general"):
     @commands.hybrid_command(
         name="ping",
         description="Check if the bot is alive.",
-    )
-    @checks.not_blacklisted()
+    )()
     async def ping(self, ctx: Context) -> None:
         """Check if the bot is alive."""
         embed = discord.Embed(
@@ -119,8 +115,7 @@ class General(commands.Cog, name="general"):
     @commands.hybrid_command(
         name="server",
         description="Get the invite link of the discord server of the bot.",
-    )
-    @checks.not_blacklisted()
+    )()
     async def server(self, ctx: Context) -> None:
         """Get the invite link of the discord server of the bot."""
         embed = discord.Embed(

@@ -88,11 +88,8 @@ async def on_command_error(ctx: Context, error) -> None:
                         f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
             color=0xE02B2B
         )
-    elif isinstance(error, exceptions.UserBlacklisted):
-        # UserBlacklisted happens with @checks.not_blacklisted() (or you can manually raise it)
-        embed.description = "You are blacklisted from using the bot."
     elif isinstance(error, exceptions.UserNotOwner):
-        # Same as above, just for the @checks.is_owner() check.
+        # UserNotOwner happens with @checks.is_owner() (or you can manually raise it)
         embed.description = "You're not an owner of the bot!"
     elif isinstance(error, exceptions.UserPreoccupied):
         embed.description = f"You're still {error.action}! " \

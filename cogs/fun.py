@@ -94,7 +94,6 @@ class Fun(commands.Cog, name="fun"):
         name="randomfact",
         description="Get a random fact."
     )
-    @checks.not_blacklisted()
     async def randomfact(self, context: Context) -> None:
         """
         Get a random fact.
@@ -122,7 +121,6 @@ class Fun(commands.Cog, name="fun"):
         name="coinflip",
         description="Make a coin flip, but give your bet before."
     )
-    @checks.not_blacklisted()
     async def coinflip(self, context: Context) -> None:
         """
         Make a coin flip, but give your bet before.
@@ -153,7 +151,6 @@ class Fun(commands.Cog, name="fun"):
         name="rps",
         description="Play the rock paper scissors game against the bot."
     )
-    @checks.not_blacklisted()
     async def rock_paper_scissors(self, context: Context) -> None:
         """
         Play the rock paper scissors game against the bot.

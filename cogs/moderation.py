@@ -15,8 +15,7 @@ class Moderation(commands.Cog, name="moderation"):
         description="Kick a user out of the server.",
     )
     @commands.has_permissions(kick_members=True)
-    @commands.bot_has_permissions(kick_members=True)
-    @checks.not_blacklisted()
+    @commands.bot_has_permissions(kick_members=True)()
     @app_commands.describe(user="The user that should be kicked.", reason="The reason why the user should be kicked.")
     async def kick(self, ctx: Context, user: discord.User, *, reason: str = "Not specified") -> None:
         """
@@ -66,8 +65,7 @@ class Moderation(commands.Cog, name="moderation"):
         description="Change the nickname of a user on a server.",
     )
     @commands.has_permissions(manage_nicknames=True)
-    @commands.bot_has_permissions(manage_nicknames=True)
-    @checks.not_blacklisted()
+    @commands.bot_has_permissions(manage_nicknames=True)()
     @app_commands.describe(user="The user that should have a new nickname.", nickname="The new nickname.")
     async def nick(self, ctx: Context, user: discord.User, *, nickname: str = None) -> None:
         """
@@ -98,8 +96,7 @@ class Moderation(commands.Cog, name="moderation"):
         description="Bans a user from the server.",
     )
     @commands.has_permissions(ban_members=True)
-    @commands.bot_has_permissions(ban_members=True)
-    @checks.not_blacklisted()
+    @commands.bot_has_permissions(ban_members=True)()
     @app_commands.describe(user="The user that should be banned.", reason="The reason why the user should be banned.")
     async def ban(self, ctx: Context, user: discord.User, *, reason: str = "Not specified") -> None:
         """
@@ -147,8 +144,7 @@ class Moderation(commands.Cog, name="moderation"):
         description="Delete a number of messages.",
     )
     @commands.has_guild_permissions(manage_messages=True)
-    @commands.bot_has_permissions(manage_messages=True)
-    @checks.not_blacklisted()
+    @commands.bot_has_permissions(manage_messages=True)()
     @app_commands.describe(amount="The amount of messages that should be deleted.")
     async def purge(self, ctx: Context, amount: int) -> None:
         """
@@ -170,8 +166,7 @@ class Moderation(commands.Cog, name="moderation"):
         description="Bans a user without the user having to be in the server.",
     )
     @commands.has_permissions(ban_members=True)
-    @commands.bot_has_permissions(ban_members=True)
-    @checks.not_blacklisted()
+    @commands.bot_has_permissions(ban_members=True)()
     @app_commands.describe(user_id="The user ID that should be banned.", reason="The reason why the user should be banned.")
     async def hackban(self, ctx: Context, user_id: str, *, reason: str = "Not specified") -> None:
         """

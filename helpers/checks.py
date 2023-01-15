@@ -22,17 +22,6 @@ def is_owner() -> Callable[[T], T]:
     return commands.check(predicate)
 
 
-def not_blacklisted() -> Callable[[T], T]:
-    """Checks to see if the user is blacklisted."""
-
-    async def predicate(context: commands.Context) -> bool:
-        if dm.is_blacklisted(context.author.id):
-            raise UserBlacklisted
-        return True
-
-    return commands.check(predicate)
-
-
 def not_preoccupied():
     async def predicate(ctx: commands.Context) -> bool:
         if str(ctx.message.author.id) in am.queues:

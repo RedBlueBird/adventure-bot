@@ -37,10 +37,6 @@ def init():
     cur = db.cursor()
 
 
-def is_blacklisted(uid: int) -> bool:
-    return False
-
-
 def is_registered(uid: int) -> bool:
     cur.execute(f"SELECT * FROM playersinfo WHERE userid = {uid}")
     return bool(cur.fetchall())
