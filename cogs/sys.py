@@ -183,8 +183,8 @@ class Sys(commands.Cog):
             )
             embed.add_field(
                 name="You're now level " + str(profile[3] + 1) + "!",
-                value=f"+{profile[3] * 50} {u.ICONS['coin']} \n"
-                      f"+{math.ceil((profile[3] + 1) / 5) + 1} {u.ICONS['gem']} \n"
+                value=f"+{profile[3] * 50} {u.ICON['coin']} \n"
+                      f"+{math.ceil((profile[3] + 1) / 5) + 1} {u.ICON['gem']} \n"
                       "```» " + "\n\n» ".join(level_msg[:]) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
@@ -216,7 +216,7 @@ class Sys(commands.Cog):
                     )
                     embed.add_field(
                         name=f"**{quest[2]} {u.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
-                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {u.ICONS['exp']}**",
+                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {u.ICON['exp']}**",
                         # " +1{u.icon['token']}**",
                         inline=False
                     )
@@ -224,9 +224,9 @@ class Sys(commands.Cog):
                     await message.channel.send(embed=embed)
 
                     gained = [0, 0, quest[4]]  # coin, gem, exp
-                    if quest[3] == u.ICONS["coin"]:
+                    if quest[3] == u.ICON["coin"]:
                         gained[0] += int(quest[1])
-                    elif quest[3] == u.ICONS["gem"]:
+                    elif quest[3] == u.ICON["gem"]:
                         gained[1] += int(quest[1])
 
                     quests.remove(quests[x])
@@ -272,10 +272,10 @@ class Sys(commands.Cog):
                         dm.cur.execute(
                             f"UPDATE playersinfo SET coins = coins + {amt}, gems = gems + 1 WHERE userid = {ra_id}"
                         )
-                        msg = f"{mention}, you collected {amt} {u.ICONS['coin']} **and** __1 {u.ICONS['gem']}__!"
+                        msg = f"{mention}, you collected {amt} {u.ICON['coin']} **and** __1 {u.ICON['gem']}__!"
                     else:
                         dm.cur.execute(f"UPDATE playersinfo SET coins = coins + {amt} WHERE userid = {ra_id}")
-                        msg = f"{mention}, you collected {amt} {u.ICONS['coin']}!"
+                        msg = f"{mention}, you collected {amt} {u.ICON['coin']}!"
                     dm.db.commit()
                 else:
                     msg = f"{mention}, you have to register in this bot first! \n" \

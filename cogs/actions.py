@@ -58,7 +58,7 @@ class Actions(commands.Cog, name="actions"):
         if result[7] >= max_tickets or result[3] < 4:
             ticket_reward = 0
         else:
-            tick_msg = f"+{ticket_reward} {u.ICONS['tick']}"
+            tick_msg = f"+{ticket_reward} {u.ICON['tick']}"
 
         dm.cur.execute(f"SELECT id FROM cardsinfo WHERE owned_user = {a_id}")
         cards_count = len(dm.cur.fetchall())
@@ -75,7 +75,7 @@ class Actions(commands.Cog, name="actions"):
         else:
             dm.cur.execute(f"UPDATE playersinfo SET coins = coins + 250 WHERE userid = '{a_id}'")
             dm.db.commit()
-            card_msg = f"Received extra 250 {u.ICONS['coin']}!"
+            card_msg = f"Received extra 250 {u.ICON['coin']}!"
 
         if random.randint(1, 7) == 1:  # one in 7 change ig
             new_coins = result[0] + 400 + math.floor(result[3] / 5) * 20 + streak * 80
@@ -84,9 +84,9 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(
                 f"{mention} JACKPOT!!! \n"
                 f"**+{math.floor(result[3] / 5) * 20 + 400 + streak * 80} "
-                f"{u.ICONS['coin']} +200 {u.ICONS['exp']}"
-                f" +{medal_reward * 4} {u.ICONS['medal']} {tick_msg}! \n"
-                f"Daily streak {streak}/{max_streak} {u.ICONS['streak']}** \n{card_msg}"
+                f"{u.ICON['coin']} +200 {u.ICON['exp']}"
+                f" +{medal_reward * 4} {u.ICON['medal']} {tick_msg}! \n"
+                f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
             )
         else:
             new_coins = result[0] + 100 + math.floor(result[3] / 5) * 5 + streak * 20
@@ -94,9 +94,9 @@ class Actions(commands.Cog, name="actions"):
             new_medals = result[2] + medal_reward
             await ctx.send(
                 f"{mention} \n"
-                f"**+{math.floor(result[3] / 5) * 5 + 100 + streak * 20} {u.ICONS['coin']} +50 {u.ICONS['exp']}"
-                f" +{medal_reward}{u.ICONS['medal']} {tick_msg}\n"
-                f"Daily streak {streak}/{max_streak} {u.ICONS['streak']}** \n{card_msg}"
+                f"**+{math.floor(result[3] / 5) * 5 + 100 + streak * 20} {u.ICON['coin']} +50 {u.ICON['exp']}"
+                f" +{medal_reward}{u.ICON['medal']} {tick_msg}\n"
+                f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
             )
 
         sql = f"UPDATE playersinfo SET coins = %s, exps = %s, medals = %s, " \
@@ -188,12 +188,12 @@ class Actions(commands.Cog, name="actions"):
                             deal_started = "currency"
                             deal_transaction = [gem_cost, {'coin': 'coins', 'tick': 'tickets', 'token': 'event_token'}[
                                 reward_currency], reward_amount, reward_currency]
-                            return f"Are you sure you want to buy {reward_amount} {u.ICONS[reward_currency]} with {gem_cost} {u.ICONS['gem']}?", deal_started, deal_transaction
+                            return f"Are you sure you want to buy {reward_amount} {u.ICON[reward_currency]} with {gem_cost} {u.ICON['gem']}?", deal_started, deal_transaction
                         else:
-                            return f"You can't buy {reward_amount} {u.ICONS[reward_currency]}, it exceeds the maximum amount of {u.ICONS['tick']} you can store!", "None", [
+                            return f"You can't buy {reward_amount} {u.ICON[reward_currency]}, it exceeds the maximum amount of {u.ICON['tick']} you can store!", "None", [
                                 0, 'coins', 0, 'coin']
                     else:
-                        return f"You need least {gem_cost} {u.ICONS['gem']} to buy {reward_amount} {u.ICONS[reward_currency]}!", "None", [
+                        return f"You need least {gem_cost} {u.ICON['gem']} to buy {reward_amount} {u.ICON[reward_currency]}!", "None", [
                             0, 'coins', 0, 'coin']
                 return "None", "None", [0, 'coins', 0, 'coin']
 
@@ -207,16 +207,16 @@ class Actions(commands.Cog, name="actions"):
                                 gem_cost, token_cost, command, cards, levels]
                     else:
                         if token_cost == 0:
-                            return f"You need {gem_cost} {u.ICONS['gem']} in order to buy a {command.title()} Edition card pack!", "None", [
+                            return f"You need {gem_cost} {u.ICON['gem']} in order to buy a {command.title()} Edition card pack!", "None", [
                                 0, 0, 'basic', 0, 128]
                         else:
-                            return f"You need {token_cost} {u.ICONS['token']} in order to buy a {command.title()} Edition card pack!", "None", [
+                            return f"You need {token_cost} {u.ICON['token']} in order to buy a {command.title()} Edition card pack!", "None", [
                                 0, 0, 'basic', 0, 128]
                 return "None", "None", [0, 0, 'basic', 0, 128]
 
             if to_buy.lower() in ["refresh", "ref", "re", "r"]:
                 if coins >= 200:
-                    msg = await ctx.send(f"{mention}, do you want to refresh the shop for 200 {u.ICONS['coin']}?")
+                    msg = await ctx.send(f"{mention}, do you want to refresh the shop for 200 {u.ICON['coin']}?")
                     await msg.add_reaction("✅")
                     await msg.add_reaction("❎")
                     try:
@@ -245,9 +245,9 @@ class Actions(commands.Cog, name="actions"):
                             value = (",".join(deals_cards), str(a_id))
                             dm.cur.execute(sql, value)
                             dm.db.commit()
-                            await ctx.send(f"{mention}, you refreshed your shop for 200 {u.ICONS['coin']}!")
+                            await ctx.send(f"{mention}, you refreshed your shop for 200 {u.ICON['coin']}!")
                 else:
-                    await ctx.send(f"{mention}, you need least 200 {u.ICONS['coin']} to refresh the shop!")
+                    await ctx.send(f"{mention}, you need least 200 {u.ICON['coin']} to refresh the shop!")
 
             card_packs = [
                 ['basic', 3, 0, 3, 128],
@@ -303,7 +303,7 @@ class Actions(commands.Cog, name="actions"):
                                            f"WHERE userid = {a_id}")
                             dm.db.commit()
                             embed = discord.Embed(title="You got:",
-                                                  description=f"**{deal_transaction[2]}** {u.ICONS[deal_transaction[3]]}!",
+                                                  description=f"**{deal_transaction[2]}** {u.ICON[deal_transaction[3]]}!",
                                                   color=discord.Color.gold())
                             embed.set_thumbnail(url=ctx.message.author.avatar.url)
                             embed.set_footer(text="Gems left: " + str(gems - deal_transaction[0]))
@@ -369,10 +369,10 @@ class Actions(commands.Cog, name="actions"):
                 elif total_cost > 0:
                     if total_cost > coins:
                         await ctx.send(
-                            f"{mention}, you need {total_cost} {u.ICONS['coin']} to buy all cards in the shop!")
+                            f"{mention}, you need {total_cost} {u.ICON['coin']} to buy all cards in the shop!")
                     else:
                         await ctx.send(
-                            f"{mention}, type `{u.PREF}deals confirm` to buy all the cards for {total_cost} {u.ICONS['coin']}.")
+                            f"{mention}, type `{u.PREF}deals confirm` to buy all the cards for {total_cost} {u.ICON['coin']}.")
 
                         try:
                             message = await self.bot.wait_for("message", timeout=15.0,
@@ -393,7 +393,7 @@ class Actions(commands.Cog, name="actions"):
                                     dm.cur.execute(sql, val)
                                     cards_bought.append(
                                         f"[{u.rarity_cost(x.split('.')[1])}] **{x.split('.')[1]}** lv: **{total_energy[y]}** - "
-                                        f"**{round(1.6 ** total_energy[y] * 50 * u.price_factor(x.split('.')[1]))}** {u.ICONS['coin']} \n")
+                                        f"**{round(1.6 ** total_energy[y] * 50 * u.price_factor(x.split('.')[1]))}** {u.ICON['coin']} \n")
                                     dm.db.commit()
                                     deals[y] = "-" + x
                                 y += 1
@@ -404,7 +404,7 @@ class Actions(commands.Cog, name="actions"):
                             dm.db.commit()
 
                             cards_bought.append("=======================\n")
-                            cards_bought.append(f"**Total Cost - {total_cost} {u.ICONS['coin']}**")
+                            cards_bought.append(f"**Total Cost - {total_cost} {u.ICON['coin']}**")
                             embed = discord.Embed(title="You Bought:",
                                                   description=" ".join(cards_bought),
                                                   color=discord.Color.gold())
@@ -450,7 +450,7 @@ class Actions(commands.Cog, name="actions"):
                             await msg.edit(
                                 content=f"{mention}, you successfully bought a **[{u.rarity_cost(card)}] {card} "
                                         f"lv: {card_energy_cost}** with "
-                                        f"{round(1.6 ** card_energy_cost * 50 * u.price_factor(card))} {u.ICONS['coin']}!")
+                                        f"{round(1.6 ** card_energy_cost * 50 * u.price_factor(card))} {u.ICON['coin']}!")
                             deals[to_buy - 1] = "-" + deals[to_buy - 1]
                             sql = "UPDATE playersinfo SET coins = coins - %s, deals = %s WHERE userid = %s"
                             value = (round(1.6 ** card_energy_cost * 50 * u.price_factor(card)),
@@ -504,7 +504,7 @@ class Actions(commands.Cog, name="actions"):
         msg = await ctx.send(
             f"{mention}, are you sure you want to discard: \n"
             " \n".join(final_msg) +
-            f"\n{u.ICONS['bers']} *(Discarded cards can't be retrieved!)*"
+            f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
         )
 
         await msg.add_reaction("✅")
@@ -600,7 +600,7 @@ class Actions(commands.Cog, name="actions"):
             f"{mention}, \n"
             f"**[{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}**\n"
             f"**[{u.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}**\n"
-            f"merging cost {merge_cost} {u.ICONS['coin']}."
+            f"merging cost {merge_cost} {u.ICON['coin']}."
         )
         await msg.add_reaction("✅")
         await msg.add_reaction("❎")
@@ -628,8 +628,8 @@ class Actions(commands.Cog, name="actions"):
 
                 embed = discord.Embed(
                     title="Cards merged successfully!",
-                    description=f"-{math.floor(((card1[1] + 1) ** 2) * 10)} {u.ICONS['coin']} "
-                                f"+{(card1[1] + 1) * 10} {u.ICONS['exp']}",
+                    description=f"-{math.floor(((card1[1] + 1) ** 2) * 10)} {u.ICON['coin']} "
+                                f"+{(card1[1] + 1) * 10} {u.ICON['exp']}",
                     color=discord.Color.green()
                 )
                 embed.add_field(
@@ -680,7 +680,7 @@ class Actions(commands.Cog, name="actions"):
                     check=checks.valid_reaction(["❎", "✅"], [target, ctx.message.author], deal_msg)
                 )
             except asyncio.TimeoutError:
-                await deal_msg.edit(content=f"{mention}, trade cancelled due to afk {u.ICONS['dead']}")
+                await deal_msg.edit(content=f"{mention}, trade cancelled due to afk {u.ICON['dead']}")
                 await deal_msg.clear_reactions()
                 return
 

@@ -114,13 +114,13 @@ class Admin(commands.Cog, name="admin"):
 
                 if earned_gems == 0:
                     await user.send(
-                        f"```Season Ended!``` You now have {medals} {u.ICONS['medal']} (from {d[1]}) "
-                        f"\n+{earned_coins} {u.ICONS['coin']}!"
+                        f"```Season Ended!``` You now have {medals} {u.ICON['medal']} (from {d[1]}) "
+                        f"\n+{earned_coins} {u.ICON['coin']}!"
                     )
                 else:
                     await user.send(
                         f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
-                        f"\n+{earned_coins} {u.ICONS['coin']} \n+{earned_gems} {u.ICONS['gem']}!"
+                        f"\n+{earned_coins} {u.ICON['coin']} \n+{earned_gems} {u.ICON['gem']}!"
                     )
                 sql = "UPDATE playersinfo SET coins = coins + %s, gems = gems + %s, medals = %s WHERE userid = %s"
                 data = (earned_coins, earned_gems, medals, d[0])
@@ -135,7 +135,7 @@ class Admin(commands.Cog, name="admin"):
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.message.channel.send(str(ctx.message.author) + u.ICONS['load'])
+        loading = await ctx.message.channel.send(str(ctx.message.author) + u.ICON['load'])
 
         def print_all(tables_name):
             dm.cur.execute("select * from " + tables_name)

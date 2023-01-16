@@ -106,7 +106,7 @@ def quest_index(index: str) -> list[str | int]:
         "1": [200, 500, 1000, 2500],
         "2": [0, 1, 2, 4]
     }
-    reward_units = {"1": ICONS["coin"], "2": ICONS["gem"]}
+    reward_units = {"1": ICON["coin"], "2": ICON["gem"]}
     exp_rewards = {"0": 25, "1": 50, "2": 100, "3": 200, "4": 250}
     all_rarities = {"0": "{C}", "1": "{R}", "2": "{E}", "3": "{L}", "4": "{EX}"}
 

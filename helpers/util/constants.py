@@ -2,23 +2,23 @@ import json
 import typing as t
 
 with open("txts/icons.json") as json_file:
-    ICONS: t.Final = json.load(json_file)
+    ICON: t.Final = json.load(json_file)
 with open("txts/admins.json") as json_file:
     ADMINS: t.Final = set(json.load(json_file))
 
 CONVERT: t.Final = {
-    "burn": ICONS["burn"],
-    "poison": ICONS["pois"],
-    "recover": ICONS["rec"],
-    "curse": ICONS["curs"],
-    "stun": ICONS["stun"],
-    "bullseye": ICONS["eye"],
-    "berserk": ICONS["bers"],
-    "freeze": ICONS["frez"],
-    "chill": ICONS["chil"],
-    "restore": ICONS["rest"],
-    "seriate": ICONS["seri"],
-    "feeble": ICONS["feeb"]
+    "burn": ICON["burn"],
+    "poison": ICON["pois"],
+    "recover": ICON["rec"],
+    "curse": ICON["curs"],
+    "stun": ICON["stun"],
+    "bullseye": ICON["eye"],
+    "berserk": ICON["bers"],
+    "freeze": ICON["frez"],
+    "chill": ICON["chil"],
+    "restore": ICON["rest"],
+    "seriate": ICON["seri"],
+    "feeble": ICON["feeb"]
 }
 
 DECK: t.Final = {
