@@ -88,8 +88,7 @@ class Sys(commands.Cog):
             return
 
         content = message.content.lower()
-        if (content.startswith(f"{u.PREF}ping")
-                or content.startswith(f"{u.PREF}pong")
+        if (content.startswith(f"{u.PREF}pong")
                 or content.startswith("<@521056196380065802>")
                 or content.startswith("<@!521056196380065802>")):
             ms = int(self.bot.latency * 1000)

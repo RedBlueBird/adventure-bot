@@ -12,16 +12,12 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.command(
         name="sync",
-        description="Synchonizes the slash commands.",
+        description="Synchronizes the slash commands.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
     @checks.is_owner()
     async def sync(self, ctx: Context, scope: str) -> None:
-        """
-        Synchonizes the slash commands.
-        :param ctx: The command context.
-        :param scope: The scope of the sync. Can be `global` or `guild`.
-        """
+        """Synchronizes the slash commands."""
 
         if scope == "global":
             await ctx.bot.tree.sync()
@@ -48,16 +44,12 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.command(
         name="unsync",
-        description="Unsynchonizes the slash commands.",
+        description="Unsynchronizes the slash commands.",
     )
-    @app_commands.describe(scope="The scope of the sync. Can be `global`, `current_guild` or `guild`")
+    @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
     @checks.is_owner()
     async def unsync(self, ctx: Context, scope: str) -> None:
-        """
-        Unsynchonizes the slash commands.
-        :param ctx: The command context.
-        :param scope: The scope of the sync. Can be `global`, `current_guild` or `guild`.
-        """
+        """Unsynchronizes the slash commands."""
 
         if scope == "global":
             ctx.bot.tree.clear_commands(guild=None)

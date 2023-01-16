@@ -67,7 +67,7 @@ def mobs_dict(mob_level: str | int, mob_name: str):
     return mob
 
 
-def effs_dict(eff_name: str):
+def fx_dict(eff_name: str):
     if eff_name.lower() not in EFFX:
         return {
             "name": "Glitch",
