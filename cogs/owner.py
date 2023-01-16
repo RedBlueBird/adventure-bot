@@ -12,33 +12,76 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.command(
         name="sync",
-        description="Synchronizes the slash commands.",
+        description="Synchonizes the slash commands.",
     )
+    @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
     @checks.is_owner()
-    async def sync(self, ctx: Context) -> None:
-        """Synchronizes the slash commands."""
-        await ctx.bot.tree.sync()
-        await ctx.send(embed=discord.Embed(
-            title="Slash Commands Sync",
-            description="Slash commands have been globally synchronized.",
-            color=0x9C84EF
-        ))
+    async def sync(self, ctx: Context, scope: str) -> None:
+        """
+        Synchonizes the slash commands.
+        :param ctx: The command context.
+        :param scope: The scope of the sync. Can be `global` or `guild`.
+        """
+
+        if scope == "global":
+            await ctx.bot.tree.sync()
+            embed = discord.Embed(
+                description="Slash commands have been globally synchronized.",
+                color=0x9C84EF
+            )
+            await ctx.send(embed=embed)
+            return
+        elif scope == "guild":
+            ctx.bot.tree.copy_global_to(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            embed = discord.Embed(
+                description="Slash commands have been synchronized in this guild.",
+                color=0x9C84EF
+            )
+            await ctx.send(embed=embed)
+            return
+        embed = discord.Embed(
+            description="The scope must be `global` or `guild`.",
+            color=0xE02B2B
+        )
+        await ctx.send(embed=embed)
 
     @commands.command(
         name="unsync",
         description="Unsynchonizes the slash commands.",
     )
+    @app_commands.describe(scope="The scope of the sync. Can be `global`, `current_guild` or `guild`")
     @checks.is_owner()
-    async def unsync(self, ctx: Context) -> None:
-        """Unsyncs the slash commands."""
+    async def unsync(self, ctx: Context, scope: str) -> None:
+        """
+        Unsynchonizes the slash commands.
+        :param ctx: The command context.
+        :param scope: The scope of the sync. Can be `global`, `current_guild` or `guild`.
+        """
 
-        ctx.bot.tree.clear_commands(guild=ctx.guild)
-        await ctx.bot.tree.sync()
-        await ctx.send(embed=discord.Embed(
-            title="Slash Commands Unsync",
-            description="Slash commands have been globally unsynchronized.",
-            color=0x9C84EF
-        ))
+        if scope == "global":
+            ctx.bot.tree.clear_commands(guild=None)
+            await ctx.bot.tree.sync()
+            embed = discord.Embed(
+                description="Slash commands have been globally unsynchronized.",
+                color=0x9C84EF
+            )
+            await ctx.send(embed=embed)
+            return
+        elif scope == "guild":
+            ctx.bot.tree.clear_commands(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            embed = discord.Embed(
+                description="Slash commands have been unsynchronized in this guild.",
+                color=0x9C84EF
+            )
+            await ctx.send(embed=embed)
+            return
+        embed = discord.Embed(
+            description="The scope must be `global` or `guild`.",
+            color=0xE02B2B
+        )
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(
         name="load",
