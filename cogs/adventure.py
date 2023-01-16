@@ -12,14 +12,14 @@ from discord.ext import commands
 
 from helpers import db_manager as dm
 from helpers import checks
-from helpers import util as u
+import util as u
 
 from helpers.battle import BattleData
 
-with open('txts/hometown.json') as json_file:
-    htown = json.load(json_file)
-with open('txts/adventure.json') as json_file:
-    adventures = json.load(json_file)
+with open('resources/text/hometown.json') as json_file:
+    H_TOWN = json.load(json_file)
+with open('resources/text/adventure.json') as json_file:
+    ADVENTURES = json.load(json_file)
 
 
 class Adventure(commands.Cog):
@@ -30,10 +30,7 @@ class Adventure(commands.Cog):
     @checks.is_registered()
     @checks.not_preoccupied("on an adventure")
     async def adventure(self, ctx: commands.Context):
-        """
-        Takes the player on an adventure.
-        Like literally what more is there
-        """
+        """Takes the player on an adventure."""
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
         dm.cur.execute("select * from adventuredatas where userid = " + str(a_id))
@@ -71,7 +68,7 @@ class Adventure(commands.Cog):
         leave = False
         adventure = False
 
-        ####################################### Functions #######################################
+        # region utilities
         mini_games = {
             "fishing": {
                 "rules": [
@@ -142,14 +139,15 @@ class Adventure(commands.Cog):
                     return [embed, None]
             elif not show_map:
                 return [embed, None]
+        # endregion
 
         # HOMETOWN EXPLORATION
         loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
         adventure_msg = await ctx.send(embed=loading_embed_message)
 
         while not leave and not afk and not adventure:
-            embed = discord.Embed(title=None, description="```" + htown[p_position]["description"] + "```", color=discord.Color.gold())
-            embed.add_field(name="Choices", value=choices_list(htown[p_position]["choices"]))
+            embed = discord.Embed(title=None, description="```" + H_TOWN[p_position]["description"] + "```", color=discord.Color.gold())
+            embed.add_field(name="Choices", value=choices_list(H_TOWN[p_position]["choices"]))
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             # embed.set_image(r"attachment://resources/img/hometown_map.png")
             embed.set_footer(text=f"{u.PREF}exit | {u.PREF}map | {u.PREF}backpack | {u.PREF}home | {u.PREF}refresh")
@@ -200,22 +198,22 @@ class Adventure(commands.Cog):
                     elif msg_reply in ['r', 'ref', 'refresh']:
                         if show_map:
                             adventure_msg = await ctx.send(embed=embed, file=discord.File(f"resources/img/{a_id}.png",
-                                                                                          filename=mark_location("hometown_map", htown[p_position]["coordinate"][0], htown[p_position]["coordinate"][1])))
+                                                                                          filename=mark_location("hometown_map", H_TOWN[p_position]["coordinate"][0], H_TOWN[p_position]["coordinate"][1])))
                             os.remove(f"resources/img/{a_id}.png")
                         else:
                             adventure_msg = await ctx.send(embed=embed, file=None)
 
-                if not 1 <= decision <= len(htown[p_position]["choices"]):
+                if not 1 <= decision <= len(H_TOWN[p_position]["choices"]):
                     if msg_reply not in ['exit', 'map', 'm', 'bp', 'backpack', 'home', 'h', 'ho', 'ref', 'r', 'refresh']:
-                        await ctx.send("You can only enter numbers `1-" + str(len(htown[p_position]["choices"])) + "`!")
+                        await ctx.send("You can only enter numbers `1-" + str(len(H_TOWN[p_position]["choices"])) + "`!")
                 else:
                     await msg_reply.delete()
                     break
 
-            position = htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]]
+            position = H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]]
 
             if position[1] == "self" and not afk and not leave:
-                if position[0] in htown:
+                if position[0] in H_TOWN:
                     p_position = position[0]
                 else:
                     await ctx.send(f"{mention} Sorry, this route is still in development! (stupid devs)")
@@ -363,7 +361,7 @@ class Adventure(commands.Cog):
                                                  u.PREF + "close` to close your chest and exit \n`" +
                                                  u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
                                          embed=u.display_backpack(p_stor, ctx.message.author, "Chest", level=p_datas[3]))
-                if htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0] == "chest":
+                if H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
@@ -466,8 +464,8 @@ class Adventure(commands.Cog):
                     p_datas[5] += earned_loots[0]
                     p_datas[6] += earned_loots[1]
 
-                await adventure_msg.edit(embed=setup_minigame(htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0])[0],
-                                         file=setup_minigame(htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0])[1])
+                await adventure_msg.edit(embed=setup_minigame(H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0])[0],
+                                         file=setup_minigame(H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0])[1])
                 if position[0] == "coin flip":
                     while not exit_game:
                         try:
@@ -788,7 +786,7 @@ class Adventure(commands.Cog):
         dm.db.commit()
 
         if adventure:
-            location = htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0]
+            location = H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0]
             event = "main"
             section = "start"
             distance = 0
@@ -799,7 +797,7 @@ class Adventure(commands.Cog):
             pre_message = []
 
         ##############################################################################################################################################
-        all_perks = json.load(open('txts/perks.json'))
+        all_perks = json.load(open('resources/text/perks.json'))
         # "hysterical maniac": {
         #     "name": "Hysterical Maniac",
         #     "description": "Use a card from your hand for 0 energy to a random enemy automatically every turn",
@@ -860,10 +858,10 @@ class Adventure(commands.Cog):
             dm.log_quest(3, t_dis, a_id)
 
             if perk_turn != 0:
-                options = option_decider(adventures[location][event][section], p_distance, boss_spawn, pre_message)
+                options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message)
                 pre_message = []
                 option = options[1]
-                choices = adventures[location][event][section][option]
+                choices = ADVENTURES[location][event][section][option]
                 await adventure_msg.edit(embed=options[0])
             else:
                 options = perk_decider()
@@ -917,7 +915,7 @@ class Adventure(commands.Cog):
                     else:
                         if not feed[2] is None:
                             pre_message.append(feed[2])
-                        options = option_decider(adventures[location][event][section], p_distance, boss_spawn, pre_message, option)
+                        options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message, option)
                         pre_message = []
                         await adventure_msg.edit(embed=options[0])
                 else:
@@ -1485,7 +1483,7 @@ class Adventure(commands.Cog):
 
                 if index[2] == "end":
                     if index[0] == "coin loss":
-                        coin_loss = random.randint(adventures["end"]["coin loss"][0], adventures["end"]["coin loss"][1])
+                        coin_loss = random.randint(ADVENTURES["end"]["coin loss"][0], ADVENTURES["end"]["coin loss"][1])
                         if p_datas[5] < abs(coin_loss) and coin_loss < 0:
                             coin_loss = p_datas[5]
                             p_datas[5] = 0

@@ -1,9 +1,9 @@
 import json
 import typing as t
 
-with open("txts/icons.json") as json_file:
+with open("resources/text/icons.json") as json_file:
     ICON: t.Final = json.load(json_file)
-with open("txts/admins.json") as json_file:
+with open("resources/text/admins.json") as json_file:
     ADMINS: t.Final = set(json.load(json_file))
 
 CONVERT: t.Final = {
@@ -40,16 +40,16 @@ SCALE: t.Final = 50, 1.05
 PREF: t.Final = "a."
 
 # Loads in all the necessary json files as dictionaries
-with open("txts/cards.json") as json_file:
+with open("resources/text/cards.json") as json_file:
     CARDS: t.Final = json.load(json_file)
-with open("txts/item_abbreviations.json") as json_file:
+with open("resources/text/item_abbreviations.json") as json_file:
     ITEM_ABB: t.Final = json.load(json_file)
-with open("txts/items.json") as json_file:
+with open("resources/text/items.json") as json_file:
     ITEMS: t.Final = json.load(json_file)
-with open("txts/mobs.json") as json_file:
+with open("resources/text/mobs.json") as json_file:
     MOBS: t.Final = json.load(json_file)
-with open("txts/effects.json") as json_file:
+with open("resources/text/effects.json") as json_file:
     EFFX: t.Final = json.load(json_file)
 
-with open("txts/card_list.json") as json_file:
+with open("resources/text/card_list.json") as json_file:
     CARD_LIST: t.Final = json.load(json_file)

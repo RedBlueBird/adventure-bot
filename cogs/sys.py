@@ -9,7 +9,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
-from helpers import util as u
+import util as u
 
 _today = str(dt.date.today() - dt.timedelta(days=1))
 

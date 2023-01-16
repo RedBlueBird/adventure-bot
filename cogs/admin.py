@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from helpers import checks
-from helpers import util as u
+import util as u
 from helpers import db_manager as dm
 
 
@@ -30,7 +30,7 @@ class Admin(commands.Cog, name="admin"):
         """
         mention = ctx.message.author.mention
 
-        with open("txts/bot_log.txt", "a") as log:
+        with open("resources/text/bot_log.txt", "a") as log:
             log.write(f">>>{ctx.message.content}\n")
             log.write(f"Sender: {ctx.message.author}, Date: {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
 

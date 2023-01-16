@@ -4,7 +4,7 @@ import discord
 
 from exceptions import *
 from helpers import db_manager as dm
-from helpers import util as u
+import util as u
 
 T = TypeVar("T")
 _queues = {}

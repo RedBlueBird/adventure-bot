@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 
 from helpers import db_manager as dm
-from helpers import util as u
+import util as u
 from helpers import checks
 
 
@@ -1295,7 +1295,7 @@ class Actions(commands.Cog, name="actions"):
     @commands.hybrid_command(aliases=["find_words", "findwords", "fw"], brief="Finds words with given letters.")
     async def find_word(self, ctx: commands.Context, letters: str, limit: int = 5):
         """Finds words with given letters."""
-        with open("txts/search.txt") as file:
+        with open("resources/text/search.txt") as file:
             valid_words = []
             for line in file:
                 if limit == 0:
