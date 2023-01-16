@@ -186,7 +186,6 @@ class Adventure(commands.Cog):
                         else:
                             show_map = True
                             await ctx.send(f"{mention}, map now shown")
-                        show_map = False
 
                     elif msg_reply in ["bp", "backpack"]:
                         await ctx.send(embed=u.display_backpack(p_inv, ctx.message.author, "Backpack"))

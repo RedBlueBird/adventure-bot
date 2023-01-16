@@ -61,15 +61,12 @@ class BattleData:
         self.turns = 1
         self.afk = 0
 
-        iter = list(range(1, 7))
-        random.shuffle(iter)
-        self.pps = dict(zip(iter, [u.ICON['ppr'], u.ICON['ppp'], u.ICON['ppw'], u.ICON['ppb'], u.ICON['ppo'], u.ICON['ppg']]))
+        player_orders = list(range(1, 7))
+        random.shuffle(player_orders)
+        self.pps = dict(zip(player_orders, [u.ICON['ppr'], u.ICON['ppp'], u.ICON['ppw'], u.ICON['ppb'], u.ICON['ppo'], u.ICON['ppg']]))
 
     def new_line(self, caster):
-        """
-        Line breaker
-        **FOR DEBUGGING AND FORMATTING!**
-        """
+        """Line breaker for debugging & formatting"""
         self.descriptions.info[caster].append(" \n")
 
     def eff_to_icon(self, effect):
