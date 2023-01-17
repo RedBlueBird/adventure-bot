@@ -7,7 +7,6 @@ from helpers import db_manager as dm
 import util as u
 
 T = TypeVar("T")
-_queues = {}
 
 
 def is_owner() -> Callable[[T], T]:

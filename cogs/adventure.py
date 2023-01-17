@@ -5,32 +5,41 @@ import os
 import asyncio
 import json
 from copy import deepcopy
+import io
 
 from PIL import Image
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm
+from helpers.battle import BattleData
 from helpers import checks
+from helpers.checks import valid_reaction, valid_reply
+from helpers import db_manager as dm
 import util as u
 
-from helpers.battle import BattleData
-
 with open('resources/text/hometown.json') as json_file:
-    H_TOWN = json.load(json_file)
+    htown = json.load(json_file)
 with open('resources/text/adventure.json') as json_file:
-    ADVENTURES = json.load(json_file)
+    adventures = json.load(json_file)
 
 
 class Adventure(commands.Cog):
+    """
+    The meat of this bot.
+    Contains the actual adventure that makes the bot worth playing
+    """
+
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name="adventure", aliases=["ad", "adv"], brief="Go on an adventure!")
+    @commands.command(pass_context=True, aliases=["advent", "ad", "adv"], brief="actions")
     @checks.is_registered()
     @checks.not_preoccupied("on an adventure")
     async def adventure(self, ctx: commands.Context):
-        """Takes the player on an adventure."""
+        """
+        Takes the player on an adventure.
+        Like literally what more is there
+        """
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
         dm.cur.execute("select * from adventuredatas where userid = " + str(a_id))
@@ -62,13 +71,12 @@ class Adventure(commands.Cog):
             show_map = False
         else:
             show_map = True
-        show_map = False
 
         afk = False
         leave = False
         adventure = False
 
-        # region utilities
+        # region Utilities
         mini_games = {
             "fishing": {
                 "rules": [
@@ -120,8 +128,10 @@ class Adventure(commands.Cog):
             background = Image.open(f"resources/img/{bg_pic}.png")
             new_image = Image.open("resources/img/marker.png")
             background.paste(new_image, (10 + 32 * x, 32 * y), new_image)
-            background.save(f"resources/img/{a_id}.png")
-            return f"resources/img/{a_id}.png"
+            out = io.BytesIO()
+            background.save(out, format="png")
+            out.seek(0)
+            return out
 
         def setup_minigame(game_name):
             logs = []
@@ -142,19 +152,24 @@ class Adventure(commands.Cog):
         # endregion
 
         # HOMETOWN EXPLORATION
+        dm.queues[str(a_id)] = "exploring in the Hometown"
+
         loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
         adventure_msg = await ctx.send(embed=loading_embed_message)
 
         while not leave and not afk and not adventure:
-            embed = discord.Embed(title=None, description="```" + H_TOWN[p_position]["description"] + "```", color=discord.Color.gold())
-            embed.add_field(name="Choices", value=choices_list(H_TOWN[p_position]["choices"]))
+            embed = discord.Embed(title=None, description="```" + htown[p_position]["description"] + "```", color=discord.Color.gold())
+            embed.add_field(name="Choices", value=choices_list(htown[p_position]["choices"]))
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             # embed.set_image(r"attachment://resources/img/hometown_map.png")
             embed.set_footer(text=f"{u.PREF}exit | {u.PREF}map | {u.PREF}backpack | {u.PREF}home | {u.PREF}refresh")
 
             if show_map:
-                await adventure_msg.edit(embed=embed, attachments=discord.File(f"resources/img/{a_id}.png"))
-                os.remove(f"resources/img/{a_id}.png")
+                file = discord.File(
+                    mark_location("hometown_map", htown[p_position]["coordinate"][0], htown[p_position]["coordinate"][1]),
+                    filename="hometown_map.png"
+                )
+                await adventure_msg.edit(embed=embed, attachments=[file])
             else:
                 await adventure_msg.edit(embed=embed)
 
@@ -163,7 +178,7 @@ class Adventure(commands.Cog):
             while True:
                 try:
                     msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                        check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                        check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                 except asyncio.TimeoutError:
                     afk = True
                     await ctx.send(f"{mention}, you went idling and the adventure was ended.")
@@ -196,23 +211,25 @@ class Adventure(commands.Cog):
 
                     elif msg_reply in ['r', 'ref', 'refresh']:
                         if show_map:
-                            adventure_msg = await ctx.send(embed=embed, file=discord.File(f"resources/img/{a_id}.png",
-                                                                                          filename=mark_location("hometown_map", H_TOWN[p_position]["coordinate"][0], H_TOWN[p_position]["coordinate"][1])))
-                            os.remove(f"resources/img/{a_id}.png")
+                            file = discord.File(
+                                mark_location("hometown_map", htown[p_position]["coordinate"][0], htown[p_position]["coordinate"][1]),
+                                filename="hometown_map.png"
+                            )
+                            adventure_msg = await ctx.send(embed=embed, file=file)
                         else:
                             adventure_msg = await ctx.send(embed=embed, file=None)
 
-                if not 1 <= decision <= len(H_TOWN[p_position]["choices"]):
+                if not 1 <= decision <= len(htown[p_position]["choices"]):
                     if msg_reply not in ['exit', 'map', 'm', 'bp', 'backpack', 'home', 'h', 'ho', 'ref', 'r', 'refresh']:
-                        await ctx.send("You can only enter numbers `1-" + str(len(H_TOWN[p_position]["choices"])) + "`!")
+                        await ctx.send("You can only enter numbers `1-" + str(len(htown[p_position]["choices"])) + "`!")
                 else:
                     await msg_reply.delete()
                     break
 
-            position = H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]]
+            position = htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]]
 
             if position[1] == "self" and not afk and not leave:
-                if position[0] in H_TOWN:
+                if position[0] in htown:
                     p_position = position[0]
                 else:
                     await ctx.send(f"{mention} Sorry, this route is still in development! (stupid devs)")
@@ -228,7 +245,7 @@ class Adventure(commands.Cog):
                 while not exiting:
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                            check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         exiting = True
                         await ctx.send(f"{mention} You went idle and decided to exit the shops")
@@ -304,7 +321,7 @@ class Adventure(commands.Cog):
                 while not exiting:
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                            check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         exiting = True
                         await ctx.send(
@@ -360,11 +377,11 @@ class Adventure(commands.Cog):
                                                  u.PREF + "close` to close your chest and exit \n`" +
                                                  u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
                                          embed=u.display_backpack(p_stor, ctx.message.author, "Chest", level=p_datas[3]))
-                if H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0] == "chest":
+                if htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                                check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exiting = True
                             await ctx.send(
@@ -451,6 +468,7 @@ class Adventure(commands.Cog):
                                         f"{mention} You can only do `" + u.PREF + "backpack`, `" + u.PREF + "chest`, `" + u.PREF + "close`, or `" + u.PREF + "withdraw/deposit (item_name) (amount)`!")
 
             elif position[1] == "mini game" and not afk and not leave:
+                dm.queues[str(a_id)] = "playing a mini game"
                 exit_game = False
                 earned_loots = [0, 0, 0]
                 random_number = random.randint(1, 1000)
@@ -463,13 +481,15 @@ class Adventure(commands.Cog):
                     p_datas[5] += earned_loots[0]
                     p_datas[6] += earned_loots[1]
 
-                await adventure_msg.edit(embed=setup_minigame(H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0])[0],
-                                         file=setup_minigame(H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0])[1])
+                await adventure_msg.edit(
+                    embed=setup_minigame(htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0])[0],
+                    attachments=[setup_minigame(htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0])[1]]
+                )
                 if position[0] == "coin flip":
                     while not exit_game:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=checks.valid_reply(['flip', 'f', 'exit'],
+                                                                check=valid_reply(['flip', 'f', 'exit'],
                                                                                   [ctx.message.author], [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exit_game = True
@@ -535,7 +555,7 @@ class Adventure(commands.Cog):
                     while not exit_game:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=checks.valid_reply(['exit', 'fish', 'f'],
+                                                                check=valid_reply(['exit', 'fish', 'f'],
                                                                                   [ctx.message.author], [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exit_game = True
@@ -573,14 +593,14 @@ class Adventure(commands.Cog):
 
                                 try:
                                     msg_reply2 = await self.bot.wait_for("message", timeout=30.0,
-                                                                         check=checks.valid_reply(['bait', 'b'], [ctx.message.author], [ctx.message.channel]))
+                                                                         check=valid_reply(['bait', 'b'], [ctx.message.author], [ctx.message.channel]))
                                 except asyncio.TimeoutError:
                                     await ctx.send(f"{mention} ```the fish got away!```")
                                 else:
                                     earned_loots[0] -= 50
                                     success_rate = 0
-                                    reply_ms = waits - (msg_reply2.created_at - msg2.created_at).total_seconds() * 1000
-                                    reply_time = round(abs(reply_ms)) / 1000
+                                    reply_ms = (msg_reply2.created_at - msg2.created_at).total_seconds()
+                                    reply_time = round(abs(waits - reply_ms), 4)
                                     if 0.750 <= reply_time <= 1.000:
                                         success_rate = 10
                                     elif 0.500 <= reply_time < 0.750:
@@ -599,13 +619,13 @@ class Adventure(commands.Cog):
                                             earned_loots[0] += 100 * award_multiplier * 4
                                             earned_loots[2] += 50
                                             dm.log_quest(8, 1, str(a_id))
-                                            to_send = f"{mention} ```You replied in EXACTLY {reply_ms / 1000} SECONDS!!! \n " \
+                                            to_send = f"{mention} ```You replied in EXACTLY {reply_ms} SECONDS!!! \n " \
                                                       f"0.000 SECONDS OFF FROM {waits} SECONDS!!! \n"
                                         else:
                                             earned_loots[0] += 100 * award_multiplier
                                             earned_loots[2] += 5
                                             dm.log_quest(8, 1, str(a_id))
-                                            to_send = f"{mention} ```You replied in {reply_ms / 1000} seconds \n" \
+                                            to_send = f"{mention} ```You replied in {reply_ms} seconds \n" \
                                                       f"{reply_time} seconds off from {waits} seconds! \n"
 
                                         to_send += f"You caught a {random.choice(fish_dict[{1: 'c', 1.5: 'r', 2.5: 'e', 4.5: 'l'}[award_multiplier]])}, " \
@@ -615,8 +635,8 @@ class Adventure(commands.Cog):
                                     else:
                                         earned_loots[2] += 2
                                         await ctx.send(
-                                            f"{mention} ```You replied in {reply_ms / 1000} seconds \n{reply_time} seconds off from {waits} seconds! \n" +
-                                            f"The fish fled away and you wasted {abs(earned_loots[0])} golden coins on the bait \n"
+                                            f"{mention} ```You replied in {reply_ms} seconds \n{reply_time} seconds off from {waits} seconds! \n" +
+                                            f"The fish fled and you wasted {abs(earned_loots[0])} golden coins on the bait \n"
                                             f"You only gained {earned_loots[2]} experience points \n"
                                             f"Better luck next time! \n``````{u.PREF}fish -try again \n{u.PREF}exit -quit the mini game```"
                                         )
@@ -632,14 +652,14 @@ class Adventure(commands.Cog):
                     while not exit_game:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=checks.valid_reply(['exit', 'start', 's'],
+                                                                check=valid_reply(['exit', 'start', 's'],
                                                                                   [ctx.message.author], [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exit_game = True
                             await ctx.send(f"{mention} ```You dozed off and got kicked out of the blackjack table```")
                         else:
-                            deck = deepcopy(u.deck)
-                            aces = deepcopy(u.aces)
+                            deck = deepcopy(u.DECK)
+                            aces = deepcopy(u.ACES)
                             if msg_reply.content.lower().startswith(f"{u.PREF}exit"):
                                 exit_game = True
                                 await ctx.send(f"{mention}, you quit this mini game")
@@ -671,7 +691,7 @@ class Adventure(commands.Cog):
                                                    f"{u.PREF}stand -end your turn```")
                                     try:
                                         msg_reply = await self.bot.wait_for("message", timeout=30.0,
-                                                                            check=checks.valid_reply(['hit', 'h', 'stand', 's'],
+                                                                            check=valid_reply(['hit', 'h', 'stand', 's'],
                                                                                               [ctx.message.author], [ctx.message.channel]))
                                     except asyncio.TimeoutError:
                                         values = [1000, 1000]
@@ -730,11 +750,12 @@ class Adventure(commands.Cog):
                             else:  # jeff this code LITERALLY CANNOT BE REACHED
                                 await ctx.send(f"{mention} ```The bar's BlackJack service went bankrupt!```")
                             """
+                    dm.queues[str(a_id)] = "exploring in the Hometown"
+                dm.queues[str(a_id)] = "exploring in the Hometown"
 
             elif position[1] == "adventure" and not afk and not leave:
                 dm.cur.execute("select deck_slot from playersinfo where userid = " + str(a_id))
-                deck_slot = dm.cur.fetchall()[0][0]
-                db_deck = f"deck{deck_slot}"
+                db_deck = f"deck{dm.cur.fetchall()[0][0]}"
                 dm.cur.execute(
                     f"select {db_deck} from playersachivements where userid = " + str(a_id))
                 mydeck = dm.cur.fetchall()[0][0].split(",")
@@ -759,11 +780,11 @@ class Adventure(commands.Cog):
                                                       "**[4]** Insane - Lv 15 \n"
                                                       "**[5]** Go Back")
                             for r in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
-                                await diff_msg.add_reaction(r)
+                                await diff_msg.add_reaction(emoji=r)
 
                             try:
                                 reaction, user = await self.bot.wait_for("reaction_add", timeout=120.0,
-                                                                         check=checks.valid_reaction(["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"],
+                                                                         check=valid_reaction(["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"],
                                                                                               [ctx.message.author], [diff_msg]))
                             except asyncio.TimeoutError:
                                 await ctx.send(f"{ctx.message.author} the host, went afk... :man_facepalming: ")
@@ -785,7 +806,7 @@ class Adventure(commands.Cog):
         dm.db.commit()
 
         if adventure:
-            location = H_TOWN[p_position]["choices"][list(H_TOWN[p_position]["choices"])[decision - 1]][0]
+            location = htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0]
             event = "main"
             section = "start"
             distance = 0
@@ -857,10 +878,10 @@ class Adventure(commands.Cog):
             dm.log_quest(3, t_dis, a_id)
 
             if perk_turn != 0:
-                options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message)
+                options = option_decider(adventures[location][event][section], p_distance, boss_spawn, pre_message)
                 pre_message = []
                 option = options[1]
-                choices = ADVENTURES[location][event][section][option]
+                choices = adventures[location][event][section][option]
                 await adventure_msg.edit(embed=options[0])
             else:
                 options = perk_decider()
@@ -872,7 +893,7 @@ class Adventure(commands.Cog):
             while not leave and not afk and p_hp > 0 and p_sta > 0 and "choices" in choices:
                 try:
                     msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                        check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                        check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                 except asyncio.TimeoutError:
                     afk = True
                     await ctx.send(f"{mention}, you went idling and the adventure was ended.")
@@ -914,7 +935,7 @@ class Adventure(commands.Cog):
                     else:
                         if not feed[2] is None:
                             pre_message.append(feed[2])
-                        options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message, option)
+                        options = option_decider(adventures[location][event][section], p_distance, boss_spawn, pre_message, option)
                         pre_message = []
                         await adventure_msg.edit(embed=options[0])
                 else:
@@ -961,7 +982,7 @@ class Adventure(commands.Cog):
                     trap_msg = await ctx.send('Now!')
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=20.0,
-                                                            check=checks.valid_reply(['react'], [ctx.message.author], [ctx.message.channel]))
+                                                            check=valid_reply(['react'], [ctx.message.author], [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
                         p_hp -= trap_dmg * 2
@@ -983,7 +1004,7 @@ class Adventure(commands.Cog):
                     await seq_msg.edit(content=f"Retype the sequence begin with `{u.PREF}`! \nEx: `{u.PREF}abcdefg`")
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=20.0,
-                                                            check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                            check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
                         p_hp -= trap_dmg * 2
@@ -1106,7 +1127,7 @@ class Adventure(commands.Cog):
                                 dd.hps.info[1][0] > 0 and dd.staminas.info[1] > 0:
                             try:
                                 replied_message = await self.bot.wait_for("message", timeout=120.0,
-                                                                          check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                                          check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 dd.hps.info[1][0] = 0
                                 dd.staminas.info[1] = 0
@@ -1482,7 +1503,7 @@ class Adventure(commands.Cog):
 
                 if index[2] == "end":
                     if index[0] == "coin loss":
-                        coin_loss = random.randint(ADVENTURES["end"]["coin loss"][0], ADVENTURES["end"]["coin loss"][1])
+                        coin_loss = random.randint(adventures["end"]["coin loss"][0], adventures["end"]["coin loss"][1])
                         if p_datas[5] < abs(coin_loss) and coin_loss < 0:
                             coin_loss = p_datas[5]
                             p_datas[5] = 0
@@ -1532,7 +1553,7 @@ class Adventure(commands.Cog):
                         while not leave and not afk:
                             try:
                                 msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                    check=checks.valid_reply([''], [ctx.message.author], [ctx.message.channel]))
+                                                                    check=valid_reply([''], [ctx.message.author], [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 afk = True
                                 await ctx.send(f"{mention}, you went idling and the adventure was ended.")
