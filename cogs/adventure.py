@@ -1,7 +1,6 @@
 import random
 import math
 import string
-import os
 import asyncio
 import json
 from copy import deepcopy
@@ -17,10 +16,49 @@ from helpers.checks import valid_reaction, valid_reply
 from helpers import db_manager as dm
 import util as u
 
-with open('resources/text/hometown.json') as json_file:
-    htown = json.load(json_file)
-with open('resources/text/adventure.json') as json_file:
-    adventures = json.load(json_file)
+with open("resources/text/hometown.json") as json_file:
+    HTOWN = json.load(json_file)
+with open("resources/text/adventure.json") as json_file:
+    ADVENTURES = json.load(json_file)
+with open("resources/text/minigames.json") as fin:
+    MINIGAMES = json.load(fin)
+
+
+def choices_list(choices) -> str:
+    logs = []
+    for c in choices:
+        logs.append(f"**[{len(logs) + 1}]** {c}")
+    return " \n".join(logs)
+
+
+def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
+    background = Image.open(f"resources/img/{bg_pic}.png")
+    new_image = Image.open("resources/img/marker.png")
+    background.paste(new_image, (10 + 32 * x, 32 * y), new_image)
+    out = io.BytesIO()
+    background.save(out, format="png")
+    out.seek(0)
+    return out
+
+
+def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
+    embed = discord.Embed(title=f"Mini Game - {game_name}!", color=discord.Color.gold())
+
+    logs = [f"• {r}" for r in MINIGAMES[game_name]["rules"]]
+    embed.add_field(name="Rules", value=" \n".join(logs))
+
+    embed.set_footer(text=f"{u.PREF}exit -quit mini game")
+    print(embed.image)
+    if show_map:
+        if MINIGAMES[game_name]["image"] is not None:
+            return (
+                embed,
+                discord.File(MINIGAMES[game_name]["image"])
+            )
+        else:
+            return embed, None
+    else:
+        return embed, None
 
 
 class Adventure(commands.Cog):
@@ -36,10 +74,6 @@ class Adventure(commands.Cog):
     @checks.is_registered()
     @checks.not_preoccupied("on an adventure")
     async def adventure(self, ctx: commands.Context):
-        """
-        Takes the player on an adventure.
-        Like literally what more is there
-        """
         mention = ctx.message.author.mention
         a_id = ctx.message.author.id
         dm.cur.execute("select * from adventuredatas where userid = " + str(a_id))
@@ -54,11 +88,11 @@ class Adventure(commands.Cog):
         db_deck = f"deck{deck_slot}"
         dm.cur.execute(f"select {db_deck}, badges from playersachivements where userid = " + str(a_id))
         result = dm.cur.fetchall()[0]
-        mydeck = result[0].split(",")
+        deck = result[0].split(",")
         badges = result[1]
-        dm.cur.execute(f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(mydeck)[1:-1]})")
-        mydeck = dm.cur.fetchall()
-        p_hand = random.sample([f"{x[1]}.{x[0]}" for x in mydeck], len(mydeck))
+        dm.cur.execute(f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(deck)[1:-1]})")
+        deck = dm.cur.fetchall()
+        p_hand = random.sample([f"{x[1]}.{x[0]}" for x in deck], len(deck))
         p_hand_size = 4
         p_effect = {}
         raid_levels = 1
@@ -76,81 +110,6 @@ class Adventure(commands.Cog):
         leave = False
         adventure = False
 
-        # region Utilities
-        mini_games = {
-            "fishing": {
-                "rules": [
-                    "Each bait cost 50 golden coins", "0% catch rate when above `1.000` second",
-                    "10% when between `1.000` and `0.750`",
-                    "20% when between `0.749` and `0.500`",
-                    "40% when between `0.499` and `0.250`",
-                    "60% when between `0.249` and `0.125`",
-                    "80% when between `0.124` and `0.050`",
-                    "100% when below `0.049`",
-                    f"Type `{u.PREF}fish` to start"
-                ],
-                "image": "resources/img/fishing_map.png"
-            },
-            "coin flip": {
-                "rules": [
-                    "Each coin flip takes 50 golden coins",
-                    "You gain golden coins when coin landed as what you expected",
-                    "You lose golden coins when it didn't",
-                    f"Type `{u.PREF}flip (head/tail/edge)` to start"
-                ],
-                "image": None
-            },
-            "blackjack": {
-                "rules": [
-                    "Each blackjack bet 50 golden coins",
-                    "You keep drawing cards in a standard card deck without jokers",
-                    "Get a total value as close as you can to 21 or exact 21 without go over",
-                    "Every card is equal to its own face value",
-                    "However, face cards are all worth 10",
-                    "Aces can be worth both 1 and 11",
-                    "You win if your cards have a higher value than "
-                    "the dealer's if no one went above 21",
-                    "You also win when the dealer went above 21 but you didn't",
-                    "You tie when you both have same total value",
-                    f"Type `{u.PREF}start` to start"
-                ],
-                "image": None
-            }
-        }
-
-        def choices_list(choices):
-            logs = []
-            for x in choices:
-                logs.append("**[" + str(len(logs) + 1) + "]** " + x)
-            return " \n".join(logs[:])
-
-        def mark_location(bg_pic, x, y):
-            background = Image.open(f"resources/img/{bg_pic}.png")
-            new_image = Image.open("resources/img/marker.png")
-            background.paste(new_image, (10 + 32 * x, 32 * y), new_image)
-            out = io.BytesIO()
-            background.save(out, format="png")
-            out.seek(0)
-            return out
-
-        def setup_minigame(game_name):
-            logs = []
-            for x in mini_games[game_name]["rules"]:
-                logs.append("• " + x)
-            embed = discord.Embed(title="Mini Game - " + str(game_name) + "!", description=None, color=discord.Color.gold())
-            embed.add_field(name="Rules", value=" \n".join(logs[:]))
-            embed.set_thumbnail(url=ctx.message.author.avatar.url)
-            embed.set_footer(text=u.PREF + "exit -quit mini game")
-            if show_map:
-                if mini_games[game_name]["image"] is not None:
-                    return [embed,
-                            discord.File(mini_games[game_name]["image"], filename=mini_games[game_name]["image"])]
-                else:
-                    return [embed, None]
-            elif not show_map:
-                return [embed, None]
-        # endregion
-
         # HOMETOWN EXPLORATION
         dm.queues[str(a_id)] = "exploring in the Hometown"
 
@@ -158,15 +117,15 @@ class Adventure(commands.Cog):
         adventure_msg = await ctx.send(embed=loading_embed_message)
 
         while not leave and not afk and not adventure:
-            embed = discord.Embed(title=None, description="```" + htown[p_position]["description"] + "```", color=discord.Color.gold())
-            embed.add_field(name="Choices", value=choices_list(htown[p_position]["choices"]))
+            embed = discord.Embed(title=None, description="```" + HTOWN[p_position]["description"] + "```", color=discord.Color.gold())
+            embed.add_field(name="Choices", value=choices_list(HTOWN[p_position]["choices"]))
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             # embed.set_image(r"attachment://resources/img/hometown_map.png")
             embed.set_footer(text=f"{u.PREF}exit | {u.PREF}map | {u.PREF}backpack | {u.PREF}home | {u.PREF}refresh")
 
             if show_map:
                 file = discord.File(
-                    mark_location("hometown_map", htown[p_position]["coordinate"][0], htown[p_position]["coordinate"][1]),
+                    mark_location("hometown_map", HTOWN[p_position]["coordinate"][0], HTOWN[p_position]["coordinate"][1]),
                     filename="hometown_map.png"
                 )
                 await adventure_msg.edit(embed=embed, attachments=[file])
@@ -212,24 +171,24 @@ class Adventure(commands.Cog):
                     elif msg_reply in ['r', 'ref', 'refresh']:
                         if show_map:
                             file = discord.File(
-                                mark_location("hometown_map", htown[p_position]["coordinate"][0], htown[p_position]["coordinate"][1]),
+                                mark_location("hometown_map", HTOWN[p_position]["coordinate"][0], HTOWN[p_position]["coordinate"][1]),
                                 filename="hometown_map.png"
                             )
                             adventure_msg = await ctx.send(embed=embed, file=file)
                         else:
                             adventure_msg = await ctx.send(embed=embed, file=None)
 
-                if not 1 <= decision <= len(htown[p_position]["choices"]):
+                if not 1 <= decision <= len(HTOWN[p_position]["choices"]):
                     if msg_reply not in ['exit', 'map', 'm', 'bp', 'backpack', 'home', 'h', 'ho', 'ref', 'r', 'refresh']:
-                        await ctx.send("You can only enter numbers `1-" + str(len(htown[p_position]["choices"])) + "`!")
+                        await ctx.send("You can only enter numbers `1-" + str(len(HTOWN[p_position]["choices"])) + "`!")
                 else:
                     await msg_reply.delete()
                     break
 
-            position = htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]]
+            position = HTOWN[p_position]["choices"][list(HTOWN[p_position]["choices"])[decision - 1]]
 
             if position[1] == "self" and not afk and not leave:
-                if position[0] in htown:
+                if position[0] in HTOWN:
                     p_position = position[0]
                 else:
                     await ctx.send(f"{mention} Sorry, this route is still in development! (stupid devs)")
@@ -377,7 +336,7 @@ class Adventure(commands.Cog):
                                                  u.PREF + "close` to close your chest and exit \n`" +
                                                  u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
                                          embed=u.display_backpack(p_stor, ctx.message.author, "Chest", level=p_datas[3]))
-                if htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0] == "chest":
+                if HTOWN[p_position]["choices"][list(HTOWN[p_position]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
@@ -481,10 +440,8 @@ class Adventure(commands.Cog):
                     p_datas[5] += earned_loots[0]
                     p_datas[6] += earned_loots[1]
 
-                await adventure_msg.edit(
-                    embed=setup_minigame(htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0])[0],
-                    attachments=[setup_minigame(htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0])[1]]
-                )
+                embed, img = setup_minigame(HTOWN[p_position]["choices"][list(HTOWN[p_position]["choices"])[decision - 1]][0], show_map)
+                await adventure_msg.edit(embed=embed, attachments=[img])
                 if position[0] == "coin flip":
                     while not exit_game:
                         try:
@@ -758,12 +715,12 @@ class Adventure(commands.Cog):
                 db_deck = f"deck{dm.cur.fetchall()[0][0]}"
                 dm.cur.execute(
                     f"select {db_deck} from playersachivements where userid = " + str(a_id))
-                mydeck = dm.cur.fetchall()[0][0].split(",")
+                deck = dm.cur.fetchall()[0][0].split(",")
                 dm.cur.execute(
-                    f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(mydeck)[1:-1]})")
-                mydeck = dm.cur.fetchall()
+                    f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(deck)[1:-1]})")
+                deck = dm.cur.fetchall()
 
-                if len(mydeck) == 12:
+                if len(deck) == 12:
                     if position[0] == "boss raid":
                         dm.cur.execute(f"select level, tickets from playersinfo where userid = {a_id}")
                         result = dm.cur.fetchall()[0]
@@ -806,7 +763,7 @@ class Adventure(commands.Cog):
         dm.db.commit()
 
         if adventure:
-            location = htown[p_position]["choices"][list(htown[p_position]["choices"])[decision - 1]][0]
+            location = HTOWN[p_position]["choices"][list(HTOWN[p_position]["choices"])[decision - 1]][0]
             event = "main"
             section = "start"
             distance = 0
@@ -878,10 +835,10 @@ class Adventure(commands.Cog):
             dm.log_quest(3, t_dis, a_id)
 
             if perk_turn != 0:
-                options = option_decider(adventures[location][event][section], p_distance, boss_spawn, pre_message)
+                options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message)
                 pre_message = []
                 option = options[1]
-                choices = adventures[location][event][section][option]
+                choices = ADVENTURES[location][event][section][option]
                 await adventure_msg.edit(embed=options[0])
             else:
                 options = perk_decider()
@@ -935,7 +892,7 @@ class Adventure(commands.Cog):
                     else:
                         if not feed[2] is None:
                             pre_message.append(feed[2])
-                        options = option_decider(adventures[location][event][section], p_distance, boss_spawn, pre_message, option)
+                        options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message, option)
                         pre_message = []
                         await adventure_msg.edit(embed=options[0])
                 else:
@@ -1503,7 +1460,7 @@ class Adventure(commands.Cog):
 
                 if index[2] == "end":
                     if index[0] == "coin loss":
-                        coin_loss = random.randint(adventures["end"]["coin loss"][0], adventures["end"]["coin loss"][1])
+                        coin_loss = random.randint(ADVENTURES["end"]["coin loss"][0], ADVENTURES["end"]["coin loss"][1])
                         if p_datas[5] < abs(coin_loss) and coin_loss < 0:
                             coin_loss = p_datas[5]
                             p_datas[5] = 0

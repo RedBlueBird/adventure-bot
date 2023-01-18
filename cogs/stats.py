@@ -560,7 +560,7 @@ class Stats(commands.Cog, name="informational"):
     @commands.hybrid_command(
         name="info",
         description="Looks up entities, from effects to mobs and displays an embed containing info about it.",
-        aliases=["in", "ins", "ifs", "informations", "check"]
+        aliases=["in", "information", "check"]
     )
     async def info(self, ctx: Context, dict_name: str, name: str, level: int = 1) -> None:
         """
@@ -576,7 +576,7 @@ class Stats(commands.Cog, name="informational"):
         }
 
         dict_name = dict_name.lower()
-        if dict_name in ["card", "cards", "c", "ca"]:
+        if "cards".startswith(dict_name):
             card_info = u.cards_dict(level, " ".join(name.lower().split("_")))
             info_str = [
                 f"**Name:** {card_info['name']}",
@@ -604,7 +604,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
 
-        elif dict_name in ["monster", "mon", "mob", "mobs", "m"]:
+        elif "monster".startswith(dict_name):
             mob_info = u.mobs_dict(level, " ".join(name.lower().split("_")))
             info_str = [
                 f"**Name:** {mob_info['name']}",
@@ -626,7 +626,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
 
-        elif dict_name in ["item", "items", "ite", "it", "i", "object", "objects", "obj", "objec", "o"]:
+        elif "item".startswith(dict_name) or "objects".startswith(dict_name):
             item_info = u.items_dict(" ".join(name.lower().split("_")))
             info_str = [
                 f"**Name:** {item_info['name']}",
@@ -653,7 +653,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_image(
                 url=f"https://cdn.discordapp.com/emojis/{u.ICON[item_info['name'].lower()][len(''.join(item_info['name'].split(' '))) + 3:-1]}.png")
 
-        elif dict_name in ["effect", "effects", "eff", "ef", "e"]:
+        elif "effects".startswith(dict_name):
             fx_info = u.fx_dict(" ".join(name.lower().split("_")))
             embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
             embed.add_field(name="Description: ", value=f"**Name:** {fx_info['name']}", inline=False)
@@ -674,15 +674,11 @@ class Stats(commands.Cog, name="informational"):
 
     @commands.hybrid_command(
         name="shop",
-        description="The player can buy cards and other things here.",
-        aliases=["shops"]
+        description="Display the shop."
     )
     @checks.level_check(3)
     async def shop(self, ctx: Context, page: int = -1) -> None:
-        """
-        The player can buy cards and other things here.
-        :param page: The page of the stop to display.
-        """
+        """The player can buy cards and other things here."""
         if not 1 <= page <= 3:
             embed = discord.Embed(title="Card Shop", description=None, color=discord.Color.gold())
             embed.add_field(name="Daily Deals", value="**»** page 1", inline=False)
@@ -692,14 +688,15 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send(embed=embed)
             return
 
-        dm.cur.execute(
-            "select coins, gems, event_token from playersinfo where userid = " + str(ctx.message.author.id))
+        a_id = ctx.message.author.id
+        dm.cur.execute(f"select coins, gems, event_token from playersinfo where userid = {a_id}")
         currencies = dm.cur.fetchall()
         coins = currencies[0][0]
         gems = currencies[0][1]
         tokens = currencies[0][2]
+        embed = None
         if page == 1:
-            dm.cur.execute("select deals from playersinfo where userid = " + str(ctx.message.author.id))
+            dm.cur.execute(f"select deals from playersinfo where userid = {ctx.message.author.id}")
             the_deals = dm.cur.fetchall()[0][0].split(",")
             embed = discord.Embed(
                 title="Shop - Daily Deals:",

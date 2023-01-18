@@ -1,0 +1,40 @@
+{
+    "fishing": {
+        "rules": [
+            "Each bait cost 50 golden coins", "0% catch rate when above `1.000` second",
+            "10% when between `1.000` and `0.750`",
+            "20% when between `0.749` and `0.500`",
+            "40% when between `0.499` and `0.250`",
+            "60% when between `0.249` and `0.125`",
+            "80% when between `0.124` and `0.050`",
+            "100% when below `0.049`",
+            "Type `a.fish` to start"
+        ],
+        "image": "resources/img/fishing_map.png"
+    },
+    "coin flip": {
+        "rules": [
+            "Each coin flip takes 50 golden coins",
+            "You gain golden coins when coin landed as what you expected",
+            "You lose golden coins when it didn't",
+            "Type `a.flip (head/tail/edge)` to start"
+        ],
+        "image": null
+    },
+    "blackjack": {
+        "rules": [
+            "Each blackjack bet 50 golden coins",
+            "You keep drawing cards in a standard card deck without jokers",
+            "Get a total value as close as you can to 21 or exact 21 without go over",
+            "Every card is equal to its own face value",
+            "However, face cards are all worth 10",
+            "Aces can be worth both 1 and 11",
+            "You win if your cards have a higher value than ",
+            "the dealer's if no one went above 21",
+            "You also win when the dealer went above 21 but you didn't",
+            "You tie when you both have same total value",
+            "Type `a.start` to start"
+        ],
+        "image": null
+    }
+}
