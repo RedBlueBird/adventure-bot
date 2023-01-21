@@ -151,7 +151,6 @@ class Owner(commands.Cog, name="owner"):
                 color=0xE02B2B
             )
             await ctx.send(embed=embed)
-            print(e)
             return
         embed = discord.Embed(
             title="Reload",
