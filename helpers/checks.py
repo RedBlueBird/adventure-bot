@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+import typing as t
 
 import discord
 
@@ -6,11 +6,10 @@ from exceptions import *
 from helpers import db_manager as dm
 import util as u
 
-T = TypeVar("T")
-_queues = {}
+T = t.TypeVar("T")
 
 
-def is_owner() -> Callable[[T], T]:
+def is_owner() -> t.Callable[[T], T]:
     """Checks if the calling user is an owner of the bot"""
 
     async def predicate(context: commands.Context) -> bool:
@@ -67,7 +66,7 @@ def valid_reply(
             return False
         if msg.author not in valid_authors:
             return False
-        return any(msg.content.lower().startswith(f"a.{s}") for s in valid_replies)
+        return any(msg.content.lower().startswith(f"{u.PREF}{s}") for s in valid_replies)
 
     return _valid_reply
 

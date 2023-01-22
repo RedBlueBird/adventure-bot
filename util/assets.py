@@ -38,7 +38,7 @@ def items_dict(item_name, max_stat=100 * SCALE[0]):
     if item_name not in ITEMS:
         return {
             "name": "Glitching", "rarity": "NA", "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
-            "one_use": "False", "in_battle": "False", "abb": "glitching", "sta_gaom": 1, "mod": {},
+            "one_use": "False", "in_battle": "False", "abb": "glitching", "sta_gain": 1, "mod": {},
             "description": "None", "brief": "Summons a black hole, ending all life on this planet."
         }
 

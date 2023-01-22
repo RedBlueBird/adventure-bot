@@ -58,32 +58,32 @@ def chest_storage(level):
 
 
 def display_backpack(store: dict, user: discord.User, container: str, padding=None, level=1):
-    inventory = ["*" * 30]
+    inv = ["*" * 30]
     # [[f"{{{'-' * 28}}}"],  ["_" * 30]]   # <-- other possible markers
     capacity = 100 if container == "Backpack" else chest_storage(level)
-    if store == {}:
+    if not store:
         if padding is None:
-            inventory.insert(len(inventory), f"Empty {container}!")
+            inv.insert(len(inv), f"Empty {container}!")
         else:
-            inventory.insert(len(inventory), "You lost nothing!")
+            inv.insert(len(inv), "You lost nothing!")
     else:
         for x in store:
             if store[x]["items"] != "x":
-                inventory.append(
+                inv.append(
                     f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - {store[x]['items']} "
                 )
             else:
-                inventory.append(
+                inv.append(
                     f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - ∞ "
                 )
 
-    inventory.insert(len(inventory), "------------------------------")
-    inventory.insert(len(inventory), f"{container} Storage used - {get_bp_weight(store)}/{capacity}")
-    inventory.insert(len(inventory), "******************************")
-    embed = discord.Embed(title=f"Your {container}:", description="```" + "\n".join(inventory) + "```")
+    inv.insert(len(inv), "------------------------------")
+    inv.insert(len(inv), f"{container} Storage used - {get_bp_weight(store)}/{capacity}")
+    inv.insert(len(inv), "******************************")
+    embed = discord.Embed(title=f"Your {container}:", description="```" + "\n".join(inv) + "```")
     embed.set_thumbnail(url=user.avatar.url)
 
     if padding is None:
         return embed
     else:
-        return "\n".join(inventory[padding[0]: padding[1]])
+        return "\n".join(inv[padding[0]:padding[1]])

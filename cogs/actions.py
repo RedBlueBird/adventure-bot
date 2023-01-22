@@ -3,6 +3,7 @@ import random
 import math
 import datetime as dt
 import asyncio
+import io
 from copy import deepcopy
 
 from PIL import Image, ImageFont, ImageDraw
@@ -1243,54 +1244,54 @@ class Actions(commands.Cog, name="actions"):
     @commands.hybrid_command(brief="Have Crispy agree with anything!")
     async def agree(self, ctx: commands.Context, statement: str = "but u said u are stupid"):
         """Have Crispy agree with anything!"""
-        a_id = ctx.message.author.id
         img = Image.open("resources/img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 24)
         draw.text((323, 82), statement, (170, 172, 171), font=font)
-        img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
-        os.remove(f"resources/img/{a_id}.png")
+        with io.BytesIO() as out:
+            img.save(out, format="png")
+            out.seek(0)
+            await ctx.send(file=discord.File(fp=out, filename="crispy_reply.png"))
 
     @commands.hybrid_command(brief="Mock the bot's creator.")
     async def birb(self, ctx: commands.Context, stuff: str = "1 + 1 = 3"):
         """Mock the bot's creator."""
-        a_id = ctx.message.author.id
         img = Image.open("resources/img/birb_logic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 12)
         draw.text((64, 28), stuff, (200, 200, 200), font=font)
-        img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
-        os.remove(f"resources/img/{a_id}.png")
+        with io.BytesIO() as out:
+            img.save(out, format="png")
+            out.seek(0)
+            await ctx.send(file=discord.File(fp=out, filename="birb_logic.png"))
 
-    @commands.hybrid_command(brief="fun")
+    @commands.hybrid_command(brief="This is fine.")
     async def dead(self, ctx: commands.Context, msg: str = "Should I be scared?"):
         """Kind of like the 'this is fine' meme, except you can make the dog say whatever you want."""
-        a_id = ctx.message.author.id
         img = Image.open("resources/img/pandemic.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 14)
         draw.text((62, 290), msg, (200, 200, 200), font=font)
-        img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
-        os.remove(f"resources/img/{a_id}.png")
+        with io.BytesIO() as out:
+            img.save(out, format="png")
+            out.seek(0)
+            await ctx.send(file=discord.File(fp=out, filename="pandemic.png"))
 
-    @commands.hybrid_command(brief="A adventurers themed meme generator.")
+    @commands.hybrid_command(brief="A adventure themed meme template.")
     async def kick_meme(
             self, ctx: commands.Context,
             kickee: str = "Me duelling someone", kicker: str = "RNG"
     ):
         """A adventurers themed meme generator."""
-        a_id = ctx.message.author.id
         img = Image.open("resources/img/meme_template.png")
         draw = ImageDraw.Draw(img)
         font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 17)
         draw.text((80, 25), kickee, (256, 256, 256), font=font)
         draw.text((330, 25), kicker, (256, 256, 256), font=font)
-        img.save(f"resources/img/{a_id}.png")
-        await ctx.send(file=discord.File(f"resources/img/{a_id}.png"))
-        os.remove(f"resources/img/{a_id}.png")
+        with io.BytesIO() as out:
+            img.save(out, format="png")
+            out.seek(0)
+            await ctx.send(file=discord.File(fp=out, filename="kick.png"))
 
     @commands.hybrid_command(aliases=["find_words", "findwords", "fw"], brief="Finds words with given letters.")
     async def find_word(self, ctx: commands.Context, letters: str, limit: int = 5):

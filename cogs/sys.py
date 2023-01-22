@@ -95,7 +95,7 @@ class Sys(commands.Cog):
             await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{u.PREF}`!')
 
         a = message.author  # shorthand
-        dm.cur.execute("select * from playersinfo where userid = " + str(a.id))
+        dm.cur.execute(f"SELECT * FROM playersinfo WHERE userid = {a.id}")
         profile = dm.cur.fetchall()
 
         if not profile:
@@ -264,7 +264,7 @@ class Sys(commands.Cog):
                 )
                 mention = rep.author.mention
                 ra_id = rep.author.id
-                
+
                 dm.cur.execute("SELECT * FROM playersinfo WHERE userid = " + str(ra_id))
                 profile = dm.cur.fetchall()
                 if profile:
