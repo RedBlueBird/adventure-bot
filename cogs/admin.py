@@ -186,6 +186,23 @@ class Admin(commands.Cog, name="admin"):
         """
         await loading.edit(content="Database printed!")
 
+        #dm.cur.execute("select deck1,deck2,deck3,deck4,deck5,deck6 from temp2")
+        #result = dm.cur.fetchall()
+        #for decks in result:
+        #    for count, deck in enumerate(decks):
+        #        cards = [int(i) for i in deck.split(",")]
+        #        if len(cards) == 1:
+        #            continue
+        #        for card in cards:
+        #            dm.cur.execute("update temp_cards set deck" + str(count+1) + " = 1 where id = " + str(card) + ";")
+        #dm.db.commit()
+
+        dm.cur.execute("select id, daily from temp2")
+        result = dm.cur.fetchall()
+        for dates in result:
+            dm.cur.execute("update temp2 set premium_account = '" + dates[1] + "' where id = " + str(dates[0]) + ";")
+        dm.db.commit()
+                         
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))
