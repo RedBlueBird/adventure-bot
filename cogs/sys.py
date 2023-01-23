@@ -85,26 +85,28 @@ class Sys(commands.Cog):
             ms = int(self.bot.latency * 1000)
             await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{u.PREF}`!')
 
-        member = message.author  # shorthand
+        ################### Gain Exp through Messaging 
+        member = message.author
         user_level = dm.get_user_level(member.id)
-
         if not user_level:
             return
-
         user_exp = dm.get_user_exp(member.id)
+        user_msg_exp = dm.get_user_msg_exp(member.id)
         user_premium_date = dm.get_user_premium(member.id)
-
         if (user_exp < math.floor(int((user_level ** 2) * 40 + 60)) and
-                int(user_level[3]) < 30 or int(user_level[3]) == 30):
-            if profile[16] > 0:
-                print("hi")
-                #user_premium_date > dt.datetime.today()
+                user_level < 30 or user_level == 30):
+            if user_msg_exp > 0:
+                if (user_premium_date > dt.datetime.today()):
+                    dm.set_user_exp(user_exp + 2, member.id)
+                else:
+                    dm.set_user_exp(user_exp + 1, member.id)
+                dm.set_user_msg_exp(user_msg_exp - 1, member.id)
         else:
             level_msg = []
-            if (profile[3] + 1) % 2 == 0:
+            if (user_level + 1) % 2 == 0:
                 add_hp = round(
-                    (u.SCALE[1] ** math.floor((profile[3] + 1) / 2) -
-                     u.SCALE[1] ** math.floor(profile[3] / 2)) * 100 * u.SCALE[0]
+                    (u.SCALE[1] ** math.floor((user_level + 1) / 2) -
+                     u.SCALE[1] ** math.floor(user_level / 2)) * 100 * u.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
@@ -151,44 +153,33 @@ class Sys(commands.Cog):
             ]
 
             # At levels 17 and 27, the user gets a week of free premium.
-            if profile[3] + 1 in [17, 27]:
-                dm.cur.execute(f"SELECT user_identity FROM playersinfo WHERE userid = '{a.id}'")
-                u_id = int(dm.cur.fetchall()[0][0].split(',')[1])
-                if u_id == 0:
-                    u_id = int(times.time())
-                dm.cur.execute(
-                    f"UPDATE playersinfo SET user_identity = '{'1,' + str(u_id + 604800)}' WHERE userid = '{a.id}'"
-                )
-                dm.db.commit()
+            if user_level + 1 in [17, 27]:
+                dm.set_user_premium(user_premium_date + dt.timedelta(days=7))
 
-            if level_chart[profile[3] - 1]:
-                level_msg.extend(level_chart[profile[3] - 1].split("\n"))
+            if level_chart[user_level - 1]:
+                level_msg.extend(level_chart[user_level - 1].split("\n"))
 
             embed = discord.Embed(
-                title=f"Congratulations {a.name}!",
+                title=f"Congratulations {member.name}!",
                 description=None,
                 color=discord.Color.green()
             )
             embed.add_field(
-                name="You're now level " + str(profile[3] + 1) + "!",
-                value=f"+{profile[3] * 50} {u.ICON['coin']} \n"
-                      f"+{math.ceil((profile[3] + 1) / 5) + 1} {u.ICON['gem']} \n"
+                name=f"You're now level {user_level + 1}!",
+                value=f"+{user_level * 50} {u.ICON['coin']} \n"
+                      f"+{math.ceil((user_level + 1) / 5) + 1} {u.ICON['gem']} \n"
                       "```» " + "\n\n» ".join(level_msg[:]) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
             await message.channel.send(embed=embed)
 
-            sql = "UPDATE playersinfo " \
-                  "SET exps = %s, level = level + %s, coins = coins + %s, gems = gems + %s " \
-                  "WHERE userid = %s"
-            value = (
-                current_exp - int((profile[3] ** 2) * 40 + 60), 1, profile[3] * 50,
-                math.ceil((profile[3] + 1) / 5) + 1, str(a.id)
-            )
-            dm.cur.execute(sql, value)
-            dm.db.commit()
+            dm.set_user_exp(user_exp - int((user_level ** 2) * 40 + 60), member.id)
+            dm.set_user_level(user_level + 1, member.id)
+            dm.set_user_coin(dm.get_user_coin(member.id) + user_level * 50, member.id)
+            dm.set_user_coin(dm.get_user_gem(member.id) + math.ceil((user_level + 1) / 5) + 1, member.id)
 
-        quests = profile[15].split(",")
+        ################### Redeem Quest awards through Messaging 
+        quests = dm.get_user_quest(member.id).split(",")
         if len(quests) > 1:
             quest_com = [
                 math.floor(int(quests[x].split(".")[2]) / u.quest_index(quests[x])[0] * 100)
@@ -218,15 +209,14 @@ class Sys(commands.Cog):
                         gained[1] += int(quest[1])
 
                     quests.remove(quests[x])
-                    dm.cur.execute(
-                        f"UPDATE playersinfo "
-                        f"SET coins = coins + {gained[0]}, gems = gems + {gained[1]}, exps = exps + {gained[2]}, "
-                        f"event_token = event_token + 1, quests = '{','.join(quests)}' "
-                        f"WHERE userid = {a.id}"
-                    )
-                    dm.db.commit()
+                    dm.set_user_coin(dm.get_user_coin(member.id) + gained[0], member.id)
+                    dm.set_user_gem(dm.get_user_gem(member.id) + gained[1], member.id)
+                    dm.set_user_gem(dm.get_user_exp(member.id) + gained[2], member.id)
+                    dm.set_user_token(dm.get_user_token(member.id) + 1, member.id)
+                    dm.set_user_quest(','.join(quests), member.id)
                     break
 
+        ################### Spawn bag of Gold through Messaging 
         by_jeff = message.content == "Spawn" and str(a.id) == "344292024486330371"
         if random.randint(1, 250) == 1 or by_jeff:
             if random.randint(1, 30) == 1:
@@ -250,21 +240,16 @@ class Sys(commands.Cog):
                     check=lambda m: m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
                                     m.channel == spawn_msg.channel
                 )
-                mention = rep.author.mention
-                ra_id = rep.author.id
+                member = rep.author
 
-                dm.cur.execute("SELECT * FROM playersinfo WHERE userid = " + str(ra_id))
-                profile = dm.cur.fetchall()
-                if profile:
+                user_coin = dm.get_user_coin(member.id)
+                if user_coin:
+                    dm.set_user_coin(user_coin + amt, member.id)
                     if random.randint(1, 100) == 1:
-                        dm.cur.execute(
-                            f"UPDATE playersinfo SET coins = coins + {amt}, gems = gems + 1 WHERE userid = {ra_id}"
-                        )
+                        dm.set_user_gem(dm.get_user_gem(member.id) + 1, member.id)
                         msg = f"{mention}, you collected {amt} {u.ICON['coin']} **and** __1 {u.ICON['gem']}__!"
                     else:
-                        dm.cur.execute(f"UPDATE playersinfo SET coins = coins + {amt} WHERE userid = {ra_id}")
                         msg = f"{mention}, you collected {amt} {u.ICON['coin']}!"
-                    dm.db.commit()
                 else:
                     msg = f"{mention}, you have to register in this bot first! \n" \
                           f"Type `{u.PREF}register` to register!"
@@ -278,65 +263,27 @@ class Sys(commands.Cog):
     @tasks.loop(seconds=10.0)
     async def background_task(self):
         global _today
-        dm.cur.execute("SELECT cooldown, daily, userid, streak, user_identity, quests FROM playersinfo")
-        all_cooldowns = dm.cur.fetchall()
-        limit = len(all_cooldowns)
-        repeats = 1
+        all_userid = [userid[0] for userid in dm.get_all_userid()]
         refresh = _today != dt.date.today()
 
-        while repeats != limit + 1:
-            if all_cooldowns[repeats - 1][0] - 1 >= 0:
-                dm.cur.execute(
-                    "UPDATE playersinfo SET cooldown = cooldown - 1 WHERE userid = %s",
-                    all_cooldowns[repeats - 1][2]
-                )
-
-            if int(all_cooldowns[repeats - 1][4].split(",")[1]) - 1 >= 0:
-                if int(all_cooldowns[repeats - 1][4].split(",")[1]) - 1 - int(times.time()) == 172800:
-                    try:
-                        user = await self.bot.fetch_user(all_cooldowns[repeats - 1][2])
-                        await user.send(
-                            "Your Premium Membership is going to expire in *__2 days__*! "
-                            "Contact a bot admin in the bot server to recharge your godly powers again!"
-                        )
-                    except:
-                        print(f"UNABLE TO DM USER: {all_cooldowns[repeats - 1][2]}")
-
-                if int(all_cooldowns[repeats - 1][4].split(",")[1]) - 1 - int(times.time()) <= 1:
-                    try:
-                        user = await self.bot.fetch_user(all_cooldowns[repeats - 1][2])
-                        await user.send(
-                            "**R.I.P.** \n"
-                            "Your Premium Membership just *__EXPIRED__*!"
-                            "Contact a bot admin in the bot server to reclaim your godly powers again!")
-                    except:
-                        print(f"UNABLE TO DM USER: {all_cooldowns[repeats - 1][2]}")
-
-                    dm.cur.execute(
-                        f"UPDATE playersinfo SET user_identity = '0,0'"
-                        f"WHERE userid = {all_cooldowns[repeats - 1][2]}"
-                    )
+        for curr_id in all_userid:
+            user_cooldown = dm.get_user_cooldown(curr_id)
+            if user_cooldown - 1 >= 0:
+                dm.set_user_cooldown(user_cooldown - 1)
 
             if refresh:
                 deals_cards = []
-                dm.cur.execute(
-                    f"select level, user_identity from playersinfo where userid = {all_cooldowns[repeats - 1][2]}")
-                result = list(dm.cur.fetchall())[0]
-                player_lvl = result[0]
-                user_identity = result[1]
-                if int(user_identity.split(",")[0]) == 0:
-                    for x in range(6):
-                        deals_cards.append(u.add_a_card(player_lvl, all_cooldowns[repeats - 1][2]))
-                elif int(user_identity.split(",")[0]) == 1:
+                user_level = dm.get_user_level(curr_id)
+                user_premium_date = dm.get_user_premium(curr_id)
+                if user_premium_date >= dt.datetime.today():
                     for x in range(9):
-                        deals_cards.append(u.add_a_card(player_lvl, all_cooldowns[repeats - 1][2]))
-                sql = "update playersinfo set deals = %s, msg_exp = 1000 where userid = %s"
-                value = (",".join(deals_cards[:]), all_cooldowns[repeats - 1][2])
-                dm.cur.execute(sql, value)
+                        deals_cards.append(u.add_a_card(user_level, curr_id))
+                else:
+                    for x in range(6):
+                        deals_cards.append(u.add_a_card(user_level, curr_id))
+                dm.set_user_deals(",".join(deals_cards[:]), curr_id)
+                dm.set_user_msg_exp(1000, curr_id)
 
-            repeats += 1
-
-        dm.db.commit()
         if refresh:
             _today = dt.date.today()
 

@@ -62,6 +62,9 @@ def get_user_id(uid: int) -> int:
     cur.execute(f"SELECT id FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
 
+def get_all_userid() -> list[int]:
+    cur.execute(f"SELECT userid FROM temp2")
+    return cur.fetchall()
 
 def get_user_cooldown(uid: int) -> int:
     cur.execute(f"SELECT cooldown FROM temp2 WHERE userid = {uid}")
@@ -88,7 +91,7 @@ def get_user_exp(uid: int) -> int:
 
 
 def set_user_exp(value: int, uid: int):
-    cur.execute(f"UPDATE temp2 SET exp = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET exps = {value} WHERE userid = {uid}")
     db.commit()
 
 
@@ -148,7 +151,7 @@ def get_user_daily(uid: int) -> dt.datetime:
 
 
 def set_user_daily(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET daily_date = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET daily_date = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -168,7 +171,7 @@ def get_user_deals(uid: int) -> str:
 
 
 def set_user_deals(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET deals = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET deals = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -188,7 +191,7 @@ def get_user_quest(uid: int) -> str:
 
 
 def set_user_quest(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET quests = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET quests = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -300,7 +303,7 @@ def get_user_position(uid: int) -> str:
 
 
 def set_user_position(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET position = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET position = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -310,7 +313,7 @@ def get_user_inventory(uid: int) -> str:
 
 
 def set_user_inventory(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET inventory = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET inventory = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -320,7 +323,7 @@ def get_user_storage(uid: int) -> str:
 
 
 def set_user_storage(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET storage = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET storage = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -350,7 +353,7 @@ def get_user_register_date(uid: int) -> dt.datetime:
 
 
 def set_user_register_date(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET creation_date = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET creation_date = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
@@ -360,7 +363,7 @@ def get_user_premium(uid: int) -> dt.datetime:
 
 
 def set_user_premium(value: str, uid: int):
-    cur.execute(f"UPDATE temp2 SET premium_account = {value} WHERE userid = {uid}")
+    cur.execute(f"UPDATE temp2 SET premium_account = '{value}' WHERE userid = {uid}")
     db.commit()
 
 

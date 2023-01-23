@@ -196,12 +196,6 @@ class Admin(commands.Cog, name="admin"):
         #        for card in cards:
         #            dm.cur.execute("update temp_cards set deck" + str(count+1) + " = 1 where id = " + str(card) + ";")
         #dm.db.commit()
-
-        dm.cur.execute("select id, daily from temp2")
-        result = dm.cur.fetchall()
-        for dates in result:
-            dm.cur.execute("update temp2 set premium_account = '" + dates[1] + "' where id = " + str(dates[0]) + ";")
-        dm.db.commit()
                          
 
 async def setup(bot):
