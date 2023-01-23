@@ -51,6 +51,15 @@ def get_user_id(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
+def get_user_cooldown(uid: int) -> int:
+    cur.execute(f"SELECT cooldown FROM temp2 WHERE userid = {uid}")
+    return cur.fetchall()[0][0]
+
+def set_user_cooldown(value: int, uid: int):
+    cur.execute(f"UPDATE temp2 SET cooldown = {value} WHERE userid = {uid}")
+    db.commit()
+
+
 def get_user_level(uid: int) -> int:
     cur.execute(f"SELECT level FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
@@ -186,6 +195,7 @@ def set_user_deck_slot(value: int, uid: int):
     cur.execute(f"UPDATE temp2 SET deck_slot = {value} WHERE userid = {uid}")
     db.commit()
 
+
 def get_user_cards_count(uid: int) -> int:
     cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid}")
     return cur.fetchall()[0][0]
@@ -193,6 +203,7 @@ def get_user_cards_count(uid: int) -> int:
 def get_user_deck_count(slot: int, uid: int) -> int:
     cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid} AND deck{slot} = 1")
     return cur.fetchall()[0][0]
+
 
 def get_user_deck(slot: int, order: int, uid: int) -> 'deck':
     order_by = ""
@@ -241,6 +252,22 @@ def get_user_cards(start: int, length: int, order: int, uid: int, add_rules: str
         result = u.order_by_cost(result, 1)
         result = u.order_by_rarity(result, order - 9)
     return result[start:start+length]
+
+def add_user_cards(cards):
+    sql = "INSERT INTO temp_cards (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
+    val = [(c[0], c[1], c[2]) for c in cards]
+    cur.executemany(sql, val)
+    db.commit()
+
+def add_user(uid: int):
+    sql = "INSERT INTO temp2 (userid) VALUES (%s)"
+    val = [uid]
+    cur.execute(sql, val)
+    db.commit()
+
+def set_user_card_deck(slot: int, value: int, id: int, uid: int):
+    cur.execute(f"UPDATE temp_cards SET deck{slot} = {value} WHERE id = {id} AND owned_user = {uid}")
+    db.commit()
 
 
 def get_user_position(uid: int) -> str:

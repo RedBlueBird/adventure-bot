@@ -25,61 +25,52 @@ class Sys(commands.Cog):
     )
     async def register(self, ctx: Context):
         """Registers the author of the bot."""
-        author_id = str(ctx.message.author.id)
+        member = ctx.message.author
 
-        dm.cur.execute(f"SELECT cooldown FROM playersinfo WHERE userid = {author_id}")
-        result = dm.cur.fetchall()
-        if result:
-            if result[0][0] == 0:
+        user_cooldown = dm.get_user_cooldown(member.id)
+        if user_cooldown:
+            if user_cooldown == 0:
                 await ctx.send(f"{ctx.message.author.mention}, you're already registered in this bot!")
             else:
                 await ctx.send(
                     "You have to wait " +
-                    u.time_converter(result[0][0]) +
+                    u.time_converter(user_cooldown) +
                     " before you can send another command!"
                 )
             return
 
         await ctx.send(f"*registering {ctx.message.author.mention}...*")
-        sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
 
-        starter_cards = [
+        card_names = [
             "Stab", "Stab", "Shield", "Shield", "Strike", "Strike",
             "Punch", "Punch", "Heal", "Slash", "Explode", "Aim"
         ]
-        val = [(author_id, c, 4) for c in starter_cards]
-        dm.cur.executemany(sql, val)
+        owned_user = [member.id for i in range(12)]
+        card_levels = [4 for i in range(12)]
+        dm.add_user_cards(list(zip(owned_user,card_names,card_levels)))
 
-        sql = "INSERT INTO playersinfo (userid, coins, gems, user_identity) VALUES (%s, %s, %s, %s)"
-        val = (author_id, 250, 5, f"1,{1209600 + int(times.time())}")
-        dm.cur.execute(sql, val)
+        dm.add_user(member.id)
+        dm.set_user_coin(250, member.id)
+        dm.set_user_gems(5, member.id)
+        dm.set_user_premium(dt.datetime.today() + dt.timedelta(days=7), member.id)
+        dm.set_user_register_date(dt.datetime.today(), member.id)
+        dm.set_user_position("home", member.id)
+        dm.set_user_inventory("{}", member.id)
+        dm.set_user_storage("{}", member.id)
 
-        sql = "INSERT INTO playersachivements (userid, register_date, badges) VALUES (%s, %s, %s)"
-        val = (author_id, str(dt.date.today()), "1000000000000000000000000000000000000000")
-        dm.cur.execute(sql, val)
-
-        sql = "INSERT INTO adventuredatas (userid, position, inventory, show_map, storage) VALUES (%s, %s, %s, %s, %s)"
-        val = (author_id, "home", "{}", "true", "{}")
-        dm.cur.execute(sql, val)
-
-        dm.db.commit()
-
-        dm.cur.execute(f"SELECT id FROM cardsinfo WHERE owned_user = '{author_id}'")
-        result = dm.cur.fetchall()
-        ids = [str(i[0]) for i in result]
-        dm.cur.execute(f"UPDATE playersachivements SET deck1 = '{','.join(ids)}' WHERE userid = '{author_id}'")
+        user_cards = dm.get_user_cards(0,500,1,member.id)
+        for card in user_cards:
+            dm.set_user_card_deck(1,1,card[0],member.id)
 
         deals_cards = []
         for _ in range(9):
             deals_cards.append(u.add_a_card(1))
-        dm.cur.execute(f"UPDATE playersinfo SET deals = '{','.join(deals_cards)}' WHERE userid = '{author_id}'")
-
-        dm.db.commit()
+        dm.set_user_deals(','.join(deals_cards), member.id)
 
         await ctx.send(
-            "__FREE PREMIUM MEMBERSHIP__ for 2 weeks obtained!\n"
-            f"*Registered {ctx.message.author.mention} into this bot!* "
-            f"Do `{u.PREF}help` and `{u.PREF}tutorial` to get started!"
+            "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
+            f"Registered {ctx.message.author.mention} into this bot! "
+            f"Do `{u.PREF}tutorial` to get started!"
         )
 
     @commands.Cog.listener()
@@ -94,23 +85,20 @@ class Sys(commands.Cog):
             ms = int(self.bot.latency * 1000)
             await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{u.PREF}`!')
 
-        a = message.author  # shorthand
-        dm.cur.execute(f"SELECT * FROM playersinfo WHERE userid = {a.id}")
-        profile = dm.cur.fetchall()
+        member = message.author  # shorthand
+        user_level = dm.get_user_level(member.id)
 
-        if not profile:
+        if not user_level:
             return
 
-        profile = profile[0]
-        current_exp = profile[4]
+        user_exp = dm.get_user_exp(member.id)
+        user_premium_date = dm.get_user_premium(member.id)
 
-        if (current_exp < math.floor(int((profile[3] ** 2) * 40 + 60)) and
-                int(profile[3]) < 30 or int(profile[3]) == 30):
+        if (user_exp < math.floor(int((user_level ** 2) * 40 + 60)) and
+                int(user_level[3]) < 30 or int(user_level[3]) == 30):
             if profile[16] > 0:
-                sql = "update playersinfo set exps = %s, msg_exp = msg_exp - 1 where userid = %s"
-                value = (current_exp + 1 + int(profile[14].split(",")[0]), str(a.id))
-                dm.cur.execute(sql, value)
-                dm.db.commit()
+                print("hi")
+                #user_premium_date > dt.datetime.today()
         else:
             level_msg = []
             if (profile[3] + 1) % 2 == 0:
