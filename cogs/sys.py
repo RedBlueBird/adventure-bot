@@ -51,7 +51,7 @@ class Sys(commands.Cog):
 
         dm.add_user(member.id)
         dm.set_user_coin(250, member.id)
-        dm.set_user_gems(5, member.id)
+        dm.set_user_gem(5, member.id)
         dm.set_user_premium(dt.datetime.today() + dt.timedelta(days=7), member.id)
         dm.set_user_register_date(dt.datetime.today(), member.id)
         dm.set_user_position("home", member.id)
