@@ -62,13 +62,16 @@ def get_user_id(uid: int) -> int:
     cur.execute(f"SELECT id FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
 
-def get_all_userid() -> list[int]:
+
+def get_all_userid() -> list[tuple[str]]:
     cur.execute(f"SELECT userid FROM temp2")
     return cur.fetchall()
+
 
 def get_user_cooldown(uid: int) -> int:
     cur.execute(f"SELECT cooldown FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
+
 
 def set_user_cooldown(value: int, uid: int):
     cur.execute(f"UPDATE temp2 SET cooldown = {value} WHERE userid = {uid}")
@@ -221,7 +224,8 @@ def get_user_cards_count(uid: int) -> int:
 
 
 def get_user_deck_count(slot: int, uid: int) -> int:
-    cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid} AND deck{slot} = 1")
+    db_deck = f"deck{slot}"
+    cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid} AND {db_deck} = 1")
     return cur.fetchall()[0][0]
 
 
@@ -239,9 +243,11 @@ def get_user_deck(slot: int, order: int, uid: int) -> 'deck':
         order_by = "id, card_name"
     elif order == 6:
         order_by = "id desc, card_name"
+
+    db_deck = f"deck{slot}"
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
-        f"owned_user = {uid} AND deck{slot} = 1 ORDER BY {order_by}"
+        f"owned_user = {uid} AND {db_deck} = 1 ORDER BY {order_by}"
     )
     result = cur.fetchall()
     if order in [7, 8]:
@@ -267,10 +273,12 @@ def get_user_cards(start: int, length: int, order: int, uid: int, add_rules: str
         order_by = "id, card_name"
     elif order == 6:
         order_by = "id desc, card_name"
+
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
         f"owned_user = {uid} {add_rules} ORDER BY {order_by}"
     )
+
     result = cur.fetchall()
     if order in [7, 8]:
         result = u.order_by_rarity(result, 1)
@@ -280,11 +288,13 @@ def get_user_cards(start: int, length: int, order: int, uid: int, add_rules: str
         result = u.order_by_rarity(result, order - 9)
     return result[start:start + length]
 
+
 def add_user_cards(cards):
     sql = "INSERT INTO temp_cards (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
     val = [(c[0], c[1], c[2]) for c in cards]
     cur.executemany(sql, val)
     db.commit()
+
 
 def add_user(uid: int):
     sql = "INSERT INTO temp2 (userid) VALUES (%s)"
@@ -292,8 +302,10 @@ def add_user(uid: int):
     cur.execute(sql, val)
     db.commit()
 
-def set_user_card_deck(slot: int, value: int, id: int, uid: int):
-    cur.execute(f"UPDATE temp_cards SET deck{slot} = {value} WHERE id = {id} AND owned_user = {uid}")
+
+def set_user_card_deck(slot: int, value: int, deck: int, uid: int):
+    db_deck = f"deck{slot}"
+    cur.execute(f"UPDATE temp_cards SET {db_deck} = {value} WHERE id = {deck} AND owned_user = {uid}")
     db.commit()
 
 
@@ -352,7 +364,7 @@ def get_user_register_date(uid: int) -> dt.datetime:
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
 
 
-def set_user_register_date(value: str, uid: int):
+def set_user_register_date(value: dt.datetime, uid: int):
     cur.execute(f"UPDATE temp2 SET creation_date = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -362,7 +374,7 @@ def get_user_premium(uid: int) -> dt.datetime:
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
 
 
-def set_user_premium(value: str, uid: int):
+def set_user_premium(value: dt.datetime, uid: int):
     cur.execute(f"UPDATE temp2 SET premium_account = '{value}' WHERE userid = {uid}")
     db.commit()
 
