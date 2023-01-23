@@ -1,3 +1,4 @@
+import typing as t
 import random
 import math
 import time as times
@@ -21,14 +22,14 @@ class Stats(commands.Cog, name="informational"):
         description="Check a player's general information.",
         aliases=["p", "pro"]
     )
-    async def profile(self, ctx: Context, user: discord.User = None) -> None:
+    async def profile(self, ctx: Context, member: discord.Member = None) -> None:
         """Check a player's general information."""
 
-        if user is None:
-            user = ctx.message.author
-        member = ctx.guild.get_member(user.id) or await ctx.guild.fetch_member(user.id)
+        if member is None:
+            member = ctx.message.author
+
         if not dm.is_registered(member.id):
-            await ctx.send(f"{ctx.message.author.mention}, that's an invalid user id!")
+            await ctx.send(f"{ctx.message.author.mention}, that user isn't registered!")
             return
 
         user_premium_date = dm.get_user_premium(member.id)
@@ -46,41 +47,42 @@ class Stats(commands.Cog, name="informational"):
         user_register_date = dm.get_user_register_date(member.id)
 
         if user_premium_date > dt.datetime.today():
-            description_msg = f"14 \n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {(user_premium_date-dt.datetime.today()).day} days remain\n"
+            description_msg = f"14 \n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
+                              f"{(user_premium_date - dt.datetime.today()).days} days remaining\n"
             tickets = "10"
         else:
             description_msg = "7 \n"
             tickets = "5"
 
-        tick_msg = "" if user_level < 4 else f"{u.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(member.id)}/{tickets}"
+        tick_msg = ""
+        if user_level >= 4:
+            tick_msg = f"{u.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(member.id)}/{tickets}"
 
-        embed_descr = f"```{dm.queues[str(member.id)]}``` \n" if str(member.id) in dm.queues else None
+        descr = f"```{dm.queues[str(member.id)]}```\n" if str(member.id) in dm.queues else None
         embed = discord.Embed(
-            title=member.display_name + "'s profile:",
-            description=embed_descr,
+            title=f"{member.display_name}'s profile:",
+            description=descr,
             color=discord.Color.gold()
         )
         embed.set_thumbnail(url=member.avatar.url)
 
+        hp = round((100 * u.SCALE[1] ** math.floor(user_level / 2)) * u.SCALE[0])
         if user_level < 30:
             embed.add_field(
                 name=f"Current Level: {user_level}",
                 value=f"{u.ICON['exp']} {user_exp}/{math.floor(int((user_level ** 2) * 40 + 60))}\n"
-                      f"{u.ICON['hp']} {round((100 * u.SCALE[1] ** math.floor(user_level / 2)) * u.SCALE[0])}",
+                      f"{u.ICON['hp']} {hp}",
                 inline=False
             )
         else:
             embed.add_field(
                 name=f"Max Level: {user_level}",
                 value=f"{u.ICON['exp']} {user_exp}\n"
-                      f"{u.ICON['hp']} {round((100 * u.SCALE[1] ** math.floor(user_level / 2)) * u.SCALE[0])}",
+                      f"{u.ICON['hp']} {hp}",
                 inline=False
             )
 
-        if user_daily != str(dt.date.today()):
-            dts = "Right Now!"
-        else:
-            dts = u.remain_time()
+        dts = "Right now!" if user_daily.date() != dt.date.today() else u.remain_time()
         embed.add_field(
             name="Currency: ",
             value=f"{u.ICON['coin']}**Golden Coins: **{user_coin}\n"
@@ -90,6 +92,7 @@ class Stats(commands.Cog, name="informational"):
                   f"{tick_msg}",
             inline=False
         )
+
         embed.add_field(
             name="Times: ",
             value=f"{u.ICON['streak']}**Current daily streak: **{user_streak}/" +
@@ -100,7 +103,7 @@ class Stats(commands.Cog, name="informational"):
             inline=False
         )
 
-        if user_badge != 2**30:
+        if user_badge != 2 ** 30:
             badges = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
             owned_badges = []
             for i in range(29):
@@ -123,7 +126,7 @@ class Stats(commands.Cog, name="informational"):
     @commands.hybrid_command(
         name="quests",
         description="Displays all current quests of a user.",
-        aliases=["quest", "que", "qu"]
+        aliases=["q"]
     )
     async def quests(self, ctx: Context, user: discord.User = None) -> None:
         """Displays all current quests of a user."""
@@ -256,13 +259,13 @@ class Stats(commands.Cog, name="informational"):
         embed.set_thumbnail(url=member.avatar.url)
         show_start = (page - 1) * 15 + 1
         show_end = show_start + len(user_cards) - 1
-        embed.set_footer(text=f"{show_start}-{show_end}/{user_cards_count} cards displayed in page {page}")
+        embed.set_footer(text=f"{show_start}-{show_end}/{user_cards_count} cards displayed on page {page}")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
         name="leaderboard",
         description="Displays the world's top players.",
-        aliases=["lb", "leaderboards", "lbs"]
+        aliases=["lb", "lbs"]
     )
     async def leaderboard(self, ctx: Context, lb_type: str = "") -> None:
         """
@@ -272,7 +275,7 @@ class Stats(commands.Cog, name="informational"):
 
         lim = 10
         lb_type = lb_type.lower()
-        description_param = "",""
+        description_param = "", ""
         if lb_type.lower() in ["levels", "level", "exps", "exp", "l", "e"]:
             lb_type = "XP"
             description_param = "• Level: {player[2]}, Exp: {player[3]}"
@@ -294,8 +297,8 @@ class Stats(commands.Cog, name="informational"):
                 description=f"`{u.PREF}leaderboard (leaderboard_type)`",
                 color=discord.Color.gold()
             )
-            lb_types = ["XP","Golden Coins","Shiny Gems","Medals","Tokens"]
-            lb_commands = ["levels","coins","gems","medals","tokens"]
+            lb_types = ["XP", "Golden Coins", "Shiny Gems", "Medals", "Tokens"]
+            lb_commands = ["levels", "coins", "gems", "medals", "tokens"]
             for i in range(len(lb_types)):
                 embed.add_field(
                     name=f"Players with the most {lb_types[i]}",
@@ -304,7 +307,7 @@ class Stats(commands.Cog, name="informational"):
                 )
             embed.set_footer(text=f"Shows the top {lim} players in the world.")
             await ctx.send(embed=embed)
-            return 
+            return
 
         selected_players = []
         players = dm.get_leaderboard(lb_type, lim)
@@ -314,7 +317,7 @@ class Stats(commands.Cog, name="informational"):
             description = eval("f'" + description_param + "'")
             if str(player[1]) == str(ctx.message.author.id):
                 description = f"__{description}__"
-            selected_players.append("".join([name,description+"\n"]))
+            selected_players.append("".join([name, description + "\n"]))
 
         embed = discord.Embed(
             title=f"Leaderboard - most {lb_type}",
@@ -355,7 +358,7 @@ class Stats(commands.Cog, name="informational"):
         if user_level < deck_slots[slot]:
             await ctx.send("You don't have access to that deck slot yet!")
             return
-        
+
         user_deck = dm.get_user_deck(slot, user_order, member.id)
         all_cards = []
         total_energy_cost = 0
@@ -415,7 +418,7 @@ class Stats(commands.Cog, name="informational"):
             if user_level < deck_slots[i + 1]:
                 card_info = f"Unlocked at level {deck_slots[i + 1]}"
             else:
-                deck_lens = dm.get_user_deck_count(i+1,member.id)
+                deck_lens = dm.get_user_deck_count(i + 1, member.id)
                 card_info = f"{deck_lens}/12 cards"
 
             embed.add_field(name=name, value=card_info, inline=False)
@@ -428,10 +431,14 @@ class Stats(commands.Cog, name="informational"):
         description="Looks up entities, from effects to mobs and displays an embed containing info about it.",
         aliases=["in", "information", "check"]
     )
-    async def info(self, ctx: Context, dict_name: str, name: str, level: int = 1) -> None:
+    async def info(
+            self, ctx: Context,
+            type_: t.Literal["card", "monster", "item", "effect"],
+            name: str, level: int = 1
+    ) -> None:
         """
         Looks up entities, from effects to mobs and displays an embed containing info about it.
-        :param dict_name: The type of the thing which to look up (can be a card, mob, item, or effect)
+        :param type_: The type of the thing which to look up (can be a card, mob, item, or effect)
         :param name: The name of the thing to look up
         :param level: The level of the thing for number crunching
         """
@@ -441,8 +448,8 @@ class Stats(commands.Cog, name="informational"):
             "L": "Legendary", "M": "N/A", "NA": "N/A"
         }
 
-        dict_name = dict_name.lower()
-        if "cards".startswith(dict_name):
+        embed = None
+        if type_ == "card":
             card_info = u.cards_dict(level, " ".join(name.lower().split("_")))
             info_str = [
                 f"**Name:** {card_info['name']}",
@@ -470,7 +477,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
 
-        elif "monster".startswith(dict_name):
+        elif type_ == "monster":
             mob_info = u.mobs_dict(level, " ".join(name.lower().split("_")))
             info_str = [
                 f"**Name:** {mob_info['name']}",
@@ -492,7 +499,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
 
-        elif "item".startswith(dict_name) or "objects".startswith(dict_name):
+        elif type_ == "item":
             item_info = u.items_dict(" ".join(name.lower().split("_")))
             info_str = [
                 f"**Name:** {item_info['name']}",
@@ -519,7 +526,7 @@ class Stats(commands.Cog, name="informational"):
             embed.set_image(
                 url=f"https://cdn.discordapp.com/emojis/{u.ICON[item_info['name'].lower()][len(''.join(item_info['name'].split(' '))) + 3:-1]}.png")
 
-        elif "effects".startswith(dict_name):
+        elif type_ == "effect":
             fx_info = u.fx_dict(" ".join(name.lower().split("_")))
             embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
             embed.add_field(name="Description: ", value=f"**Name:** {fx_info['name']}", inline=False)
@@ -529,26 +536,16 @@ class Stats(commands.Cog, name="informational"):
                     f"{u.CONVERT[fx_info['name'].lower()][4:-1]}.png"
             )
 
-        else:
-            await ctx.send(
-                f"{ctx.message.author.mention}, the correct format for this command is "
-                f"`{u.PREF}info (card/mob/item/effect) (name) (level)`!"
-            )
-            return
-
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(
-        name="shop",
-        description="Display the shop."
-    )
+    @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)
     async def shop(self, ctx: Context, page: int = -1) -> None:
         """
         The player can buy cards and other things here.
         :param page: The page of the stop to display.
         """
-        member = ctx.message.author;
+        a = ctx.message.author
         if not 1 <= page <= 3:
             embed = discord.Embed(title="Card Shop", description=None, color=discord.Color.gold())
             embed.add_field(name="Daily Deals", value="**»** page 1", inline=False)
@@ -558,11 +555,13 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send(embed=embed)
             return
 
-        user_coin = dm.get_user_coin(member.id)
-        user_gem = dm.get_user_gem(member.id)
-        user_token = dm.get_user_token(member.id)
+        user_coin = dm.get_user_coin(a.id)
+        user_gem = dm.get_user_gem(a.id)
+        user_token = dm.get_user_token(a.id)
+
+        embed = None
         if page == 1:
-            user_deals = dm.get_user_deals(member.id).split(",")
+            user_deals = dm.get_user_deals(a.id).split(",")
             embed = discord.Embed(
                 title="Shop - Daily Deals:",
                 description=f"{u.ICON['coin']} **{user_coin}** {u.ICON['gem']} **{user_gem}**",
@@ -576,7 +575,7 @@ class Stats(commands.Cog, name="informational"):
                     cost = round(1.6 ** int(card[0]) * 50 * u.price_factor(card[1]))
                     embed.add_field(
                         name=f"**[{u.rarity_cost(card[1])}] {card[1]} lv: {card[0]}**",
-                        value=f"Cost: **{cost}** {u.ICON['coin']} \n`{u.PREF}buy {x+1}`"
+                        value=f"Cost: **{cost}** {u.ICON['coin']} \n`{u.PREF}buy {x + 1}`"
                     )
                 else:
                     embed.add_field(
@@ -667,69 +666,76 @@ class Stats(commands.Cog, name="informational"):
     )
     async def card_search(
             self, ctx: Context,
-            search_type="nothing", filter_="nothing",
-            page: str = "bruh moment"
+            search_type: t.Literal["level", "name", "rarity", "energy cost"],
+            query: str | None = None,
+            page: int = 1
     ) -> None:
         """
         Searches your cards according to a query.
         :param search_type: What to search by
-        :param filter_: The actual search query that the bot will search by
+        :param query: The actual search query that the bot will search by
         :param page: The page of the card results to go to.
         """
 
-        page = int(page) if page.isdigit() else 1
-        page = 1 if page <= 0 else page
+        page = max(page, 1)
 
         member = ctx.message.author
         user_order = dm.get_user_order(member.id)
         user_slot = dm.get_user_deck_slot(member.id)
         user_deck = dm.get_user_deck(user_slot, user_order, member.id)
         deck_ids = [card[0] for card in user_deck]
-        add_rules = ""
 
-        total_cards = []
+        res = []
         search_type = search_type.lower()
-        if search_type in ["level", "lvl", "l"]:
-            total_cards = dm.get_user_cards(0,500,user_order,member.id,f"AND card_level = {filter_}")
-        elif search_type in ["name", "na", "n"]:
-            total_cards = dm.get_user_cards(0,500,user_order,member.id,f"AND card_name like '" + " ".join(filter_.split("_")) + "%'")
-        elif search_type in ["rarity", "rare", "ra", "r"]:
-            user_cards = dm.get_user_cards(0,500,user_order,member.id)
+        if search_type == "level":
+            additional = "" if query is None else f"AND card_level = {query}"
+            res = dm.get_user_cards(0, 500, user_order, member.id, additional)
+
+        elif search_type == "name":
+            res = dm.get_user_cards(
+                0, 500, user_order, member.id,
+                "" if query is None else f"AND card_name LIKE '%{query}%'"
+            )
+
+        elif search_type == "rarity":
+            user_cards = dm.get_user_cards(0, 500, user_order, member.id)
             rarity_terms = {
                 "L": ["legendary", "legend", "leg", "le", "l"],
                 "EX": ["exclusive", "exclu", "exc", "ex"],
                 "E": ["epic", "ep", "e"],
                 "R": ["rare", "ra", "rr", "r"],
                 "C": ["common", "com", "co", "c"],
-                "M": ["monsters", "monster", "mon", "mons", "mo", "most", "mosts", 'm', "ms"],
+                "M": ["monsters", "monster", "mon", "mons", "mo", "most", "mosts", "m", "ms"],
                 "NA": ["not_available", "notavailable", "not_ava", "notava", "not", "no", "na", "n/a", "n"]
             }
-            for x in user_cards:
-                if filter_.lower() in rarity_terms[u.cards_dict(x[2], x[1])["rarity"]]:
-                    total_cards.append(x)
-        elif search_type in ["energy_cost", "energycost", "energy", "cost", "en", "co", "ec", "e", "c"]:
-            user_cards = dm.get_user_cards(0,500,user_order,member.id)
-            for x in user_cards:
-                if filter_ == str(u.cards_dict(x[2], x[1])["cost"]):
-                    total_cards.append(x)
-        else:
-            await ctx.send(
-                f"{ctx.message.author.mention}, your search was invalid! "
-                f"Do `{u.PREF}card_search "
-                f"(level/name/rarity/cost) (the level number/card name)`."
-            )
-            return
 
-        if not total_cards:
+            if query is None:
+                res = user_cards
+            else:
+                for x in user_cards:
+                    if query.lower() in rarity_terms[u.cards_dict(x[2], x[1])["rarity"]]:
+                        res.append(x)
+
+        elif search_type == "energy cost":
+            user_cards = dm.get_user_cards(0, 500, user_order, member.id)
+
+            if query is None:
+                res = user_cards
+            else:
+                for x in user_cards:
+                    if query == str(u.cards_dict(x[2], x[1])["cost"]):
+                        res.append(x)
+
+        if not res:
             await ctx.send(f"{ctx.message.author.mention}, nothing matched your search!")
             return
-        elif len(total_cards) <= (page - 1) * 15:
+        elif len(res) <= (page - 1) * 15:
             await ctx.send(f"{ctx.message.author.mention}, you don't have any cards on page {page}!")
             return
 
         all_cards = []
 
-        for x in total_cards[(page - 1) * 15:(page - 1) * 15 + 15]:
+        for x in res[(page - 1) * 15:(page - 1) * 15 + 15]:
             card = f"[{u.rarity_cost(x[1])}] **{x[1]}**, " \
                    f"lv: **{x[2]}**, id: `{x[0]}` "
             if x[0] in deck_ids:
@@ -743,9 +749,9 @@ class Stats(commands.Cog, name="informational"):
         )
 
         show_start = (page - 1) * 15 + 1
-        show_end = min(show_start + 14, len(total_cards))
+        show_end = min(show_start + 14, len(res))
         embed.set_footer(
-            text=f"{show_start}-{show_end}/{len(total_cards)} cards displayed in page {page}"
+            text=f"{show_start}-{show_end}/{len(res)} cards displayed in page {page}"
         )
         await ctx.send(embed=embed)
 

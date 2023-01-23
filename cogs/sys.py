@@ -1,7 +1,6 @@
 import random
 import math
 import datetime as dt
-import time as times
 import asyncio
 
 import discord
@@ -25,9 +24,9 @@ class Sys(commands.Cog):
     )
     async def register(self, ctx: Context):
         """Registers the author of the bot."""
-        member = ctx.message.author
+        a = ctx.message.author
 
-        user_cooldown = dm.get_user_cooldown(member.id)
+        user_cooldown = dm.get_user_cooldown(a.id)
         if user_cooldown:
             if user_cooldown == 0:
                 await ctx.send(f"{ctx.message.author.mention}, you're already registered in this bot!")
@@ -45,27 +44,27 @@ class Sys(commands.Cog):
             "Stab", "Stab", "Shield", "Shield", "Strike", "Strike",
             "Punch", "Punch", "Heal", "Slash", "Explode", "Aim"
         ]
-        owned_user = [member.id for i in range(12)]
-        card_levels = [4 for i in range(12)]
-        dm.add_user_cards(list(zip(owned_user,card_names,card_levels)))
+        owned_user = [a.id for _ in range(12)]
+        card_levels = [4 for _ in range(12)]
+        dm.add_user_cards(list(zip(owned_user, card_names, card_levels)))
 
-        dm.add_user(member.id)
-        dm.set_user_coin(250, member.id)
-        dm.set_user_gem(5, member.id)
-        dm.set_user_premium(dt.datetime.today() + dt.timedelta(days=7), member.id)
-        dm.set_user_register_date(dt.datetime.today(), member.id)
-        dm.set_user_position("home", member.id)
-        dm.set_user_inventory("{}", member.id)
-        dm.set_user_storage("{}", member.id)
+        dm.add_user(a.id)
+        dm.set_user_coin(250, a.id)
+        dm.set_user_gem(5, a.id)
+        dm.set_user_premium(dt.datetime.today() + dt.timedelta(days=7), a.id)
+        dm.set_user_register_date(dt.datetime.today(), a.id)
+        dm.set_user_position("home", a.id)
+        dm.set_user_inventory("{}", a.id)
+        dm.set_user_storage("{}", a.id)
 
-        user_cards = dm.get_user_cards(0,500,1,member.id)
+        user_cards = dm.get_user_cards(0, 500, 1, a.id)
         for card in user_cards:
-            dm.set_user_card_deck(1,1,card[0],member.id)
+            dm.set_user_card_deck(1, 1, card[0], a.id)
 
         deals_cards = []
         for _ in range(9):
             deals_cards.append(u.add_a_card(1))
-        dm.set_user_deals(','.join(deals_cards), member.id)
+        dm.set_user_deals(','.join(deals_cards), a.id)
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
@@ -80,27 +79,28 @@ class Sys(commands.Cog):
 
         content = message.content.lower()
         if (content.startswith(f"{u.PREF}pong")
-                or content.startswith("<@521056196380065802>")
-                or content.startswith("<@!521056196380065802>")):
+                or content.startswith(f"<@{self.bot.application_id}>")
+                or content.startswith(f"<@!{self.bot.application_id}>")):
             ms = int(self.bot.latency * 1000)
             await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{u.PREF}`!')
 
-        ################### Gain Exp through Messaging 
-        member = message.author
-        user_level = dm.get_user_level(member.id)
+        # region Give the user XP through messages
+        a = message.author
+        user_level = dm.get_user_level(a.id)
         if not user_level:
             return
-        user_exp = dm.get_user_exp(member.id)
-        user_msg_exp = dm.get_user_msg_exp(member.id)
-        user_premium_date = dm.get_user_premium(member.id)
-        if (user_exp < math.floor(int((user_level ** 2) * 40 + 60)) and
-                user_level < 30 or user_level == 30):
+        user_exp = dm.get_user_exp(a.id)
+        user_msg_exp = dm.get_user_msg_exp(a.id)
+        user_premium_date = dm.get_user_premium(a.id)
+
+        exp_req = math.floor(int((user_level ** 2) * 40 + 60))
+        if user_exp < exp_req and user_level < 30 or user_level == 30:
             if user_msg_exp > 0:
-                if (user_premium_date > dt.datetime.today()):
-                    dm.set_user_exp(user_exp + 2, member.id)
+                if user_premium_date > dt.datetime.today():
+                    dm.set_user_exp(user_exp + 2, a.id)
                 else:
-                    dm.set_user_exp(user_exp + 1, member.id)
-                dm.set_user_msg_exp(user_msg_exp - 1, member.id)
+                    dm.set_user_exp(user_exp + 1, a.id)
+                dm.set_user_msg_exp(user_msg_exp - 1, a.id)
         else:
             level_msg = []
             if (user_level + 1) % 2 == 0:
@@ -154,13 +154,13 @@ class Sys(commands.Cog):
 
             # At levels 17 and 27, the user gets a week of free premium.
             if user_level + 1 in [17, 27]:
-                dm.set_user_premium(user_premium_date + dt.timedelta(days=7))
+                dm.set_user_premium(user_premium_date + dt.timedelta(days=7), a.id)
 
             if level_chart[user_level - 1]:
                 level_msg.extend(level_chart[user_level - 1].split("\n"))
 
             embed = discord.Embed(
-                title=f"Congratulations {member.name}!",
+                title=f"Congratulations {a.name}!",
                 description=None,
                 color=discord.Color.green()
             )
@@ -168,18 +168,19 @@ class Sys(commands.Cog):
                 name=f"You're now level {user_level + 1}!",
                 value=f"+{user_level * 50} {u.ICON['coin']} \n"
                       f"+{math.ceil((user_level + 1) / 5) + 1} {u.ICON['gem']} \n"
-                      "```» " + "\n\n» ".join(level_msg[:]) + "```"
+                      "```» " + "\n\n» ".join(level_msg) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
             await message.channel.send(embed=embed)
 
-            dm.set_user_exp(user_exp - int((user_level ** 2) * 40 + 60), member.id)
-            dm.set_user_level(user_level + 1, member.id)
-            dm.set_user_coin(dm.get_user_coin(member.id) + user_level * 50, member.id)
-            dm.set_user_coin(dm.get_user_gem(member.id) + math.ceil((user_level + 1) / 5) + 1, member.id)
+            dm.set_user_exp(user_exp - int((user_level ** 2) * 40 + 60), a.id)
+            dm.set_user_level(user_level + 1, a.id)
+            dm.set_user_coin(dm.get_user_coin(a.id) + user_level * 50, a.id)
+            dm.set_user_coin(dm.get_user_gem(a.id) + math.ceil((user_level + 1) / 5) + 1, a.id)
+        # endregion
 
-        ################### Redeem Quest awards through Messaging 
-        quests = dm.get_user_quest(member.id).split(",")
+        # region Quest Completion Check (scuffed)
+        quests = dm.get_user_quest(a.id).split(",")
         if len(quests) > 1:
             quest_com = [
                 math.floor(int(quests[x].split(".")[2]) / u.quest_index(quests[x])[0] * 100)
@@ -209,15 +210,16 @@ class Sys(commands.Cog):
                         gained[1] += int(quest[1])
 
                     quests.remove(quests[x])
-                    dm.set_user_coin(dm.get_user_coin(member.id) + gained[0], member.id)
-                    dm.set_user_gem(dm.get_user_gem(member.id) + gained[1], member.id)
-                    dm.set_user_gem(dm.get_user_exp(member.id) + gained[2], member.id)
-                    dm.set_user_token(dm.get_user_token(member.id) + 1, member.id)
-                    dm.set_user_quest(','.join(quests), member.id)
+                    dm.set_user_coin(dm.get_user_coin(a.id) + gained[0], a.id)
+                    dm.set_user_gem(dm.get_user_gem(a.id) + gained[1], a.id)
+                    dm.set_user_gem(dm.get_user_exp(a.id) + gained[2], a.id)
+                    dm.set_user_token(dm.get_user_token(a.id) + 1, a.id)
+                    dm.set_user_quest(','.join(quests), a.id)
                     break
+        # endregion
 
-        ################### Spawn bag of Gold through Messaging 
-        by_jeff = message.content == "Spawn" and str(a.id) == "344292024486330371"
+        # region Gold Spawn Logic
+        by_jeff = message.content.lower() == "spawn" and str(a.id) == "344292024486330371"
         if random.randint(1, 250) == 1 or by_jeff:
             if random.randint(1, 30) == 1:
                 amt = random.randint(250, 500)
@@ -240,14 +242,14 @@ class Sys(commands.Cog):
                     check=lambda m: m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
                                     m.channel == spawn_msg.channel
                 )
-                member = rep.author
+                mention = rep.author.mention
 
-                user_coin = dm.get_user_coin(member.id)
+                user_coin = dm.get_user_coin(a.id)
                 if user_coin:
-                    dm.set_user_coin(user_coin + amt, member.id)
+                    dm.set_user_coin(user_coin + amt, a.id)
                     if random.randint(1, 100) == 1:
-                        dm.set_user_gem(dm.get_user_gem(member.id) + 1, member.id)
-                        msg = f"{mention}, you collected {amt} {u.ICON['coin']} **and** __1 {u.ICON['gem']}__!"
+                        dm.set_user_gem(dm.get_user_gem(a.id) + 1, a.id)
+                        msg = f"{mention}, you collected {amt} {u.ICON['coin']} and 1 {u.ICON['gem']} as well!"
                     else:
                         msg = f"{mention}, you collected {amt} {u.ICON['coin']}!"
                 else:
@@ -256,20 +258,21 @@ class Sys(commands.Cog):
 
                 await rep.channel.send(msg)
             except asyncio.TimeoutError:
-                print("No one claimed")
+                print("No one claimed the bag of coins.")
+        # endregion
 
         # no need for bot.process bc the one in main already handled that
 
     @tasks.loop(seconds=10.0)
     async def background_task(self):
         global _today
-        all_userid = [userid[0] for userid in dm.get_all_userid()]
+        all_uids = [int(uid[0]) for uid in dm.get_all_userid()]
         refresh = _today != dt.date.today()
 
-        for curr_id in all_userid:
+        for curr_id in all_uids:
             user_cooldown = dm.get_user_cooldown(curr_id)
             if user_cooldown - 1 >= 0:
-                dm.set_user_cooldown(user_cooldown - 1)
+                dm.set_user_cooldown(curr_id, user_cooldown - 1)
 
             if refresh:
                 deals_cards = []
