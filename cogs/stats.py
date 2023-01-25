@@ -231,7 +231,7 @@ class Stats(commands.Cog, name="informational"):
         user_slot = dm.get_user_deck_slot(member.id)
         user_deck = dm.get_user_deck(user_slot, user_order, member.id)
         deck_ids = [card[0] for card in user_deck]
-        user_cards = dm.get_user_cards((page - 1) * 15, 15, user_order, member.id)
+        user_cards = dm.get_user_cards(member.id, user_order, start=(page - 1) * 15, length=15)
         user_cards_count = dm.get_user_cards_count(member.id)
 
         if len(user_cards) == 0:
@@ -519,7 +519,7 @@ class Stats(commands.Cog, name="informational"):
             embed.add_field(name="Brief: ", value=f"*{item_info['brief']}*", inline=False)
 
             """
-            if "journal" in item_info:
+            if "journal" in item_info:  
                 embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             """
@@ -689,16 +689,16 @@ class Stats(commands.Cog, name="informational"):
         search_type = search_type.lower()
         if search_type == "level":
             additional = "" if query is None else f"AND card_level = {query}"
-            res = dm.get_user_cards(0, 500, user_order, member.id, additional)
+            res = dm.get_user_cards(member.id, user_order, additional)
 
         elif search_type == "name":
             res = dm.get_user_cards(
-                0, 500, user_order, member.id,
+                member.id, user_order,
                 "" if query is None else f"AND card_name LIKE '%{query}%'"
             )
 
         elif search_type == "rarity":
-            user_cards = dm.get_user_cards(0, 500, user_order, member.id)
+            user_cards = dm.get_user_cards(member.id, user_order)
             rarity_terms = {
                 "L": ["legendary", "legend", "leg", "le", "l"],
                 "EX": ["exclusive", "exclu", "exc", "ex"],
@@ -717,7 +717,7 @@ class Stats(commands.Cog, name="informational"):
                         res.append(x)
 
         elif search_type == "energy cost":
-            user_cards = dm.get_user_cards(0, 500, user_order, member.id)
+            user_cards = dm.get_user_cards(member.id, user_order)
 
             if query is None:
                 res = user_cards

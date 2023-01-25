@@ -229,7 +229,7 @@ def get_user_deck_count(slot: int, uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck(slot: int, order: int, uid: int) -> 'deck':
+def get_user_deck(slot: int, order: int, uid: int) -> list[tuple[int, str, int]]:
     order_by = ""
     if order == 1:
         order_by = "card_level, card_name"
@@ -259,7 +259,9 @@ def get_user_deck(slot: int, order: int, uid: int) -> 'deck':
     return result
 
 
-def get_user_cards(start: int, length: int, order: int, uid: int, add_rules: str = "") -> 'cards':
+def get_user_cards(
+        uid: int, order: int, add_rules: str = "", start: int = 0, length: int = -1,
+) -> list[tuple[int, str, int]]:
     order_by = ""
     if order == 1:
         order_by = "card_level, card_name"
@@ -286,7 +288,8 @@ def get_user_cards(start: int, length: int, order: int, uid: int, add_rules: str
     if order in [9, 10]:
         result = u.order_by_cost(result, 1)
         result = u.order_by_rarity(result, order - 9)
-    return result[start:start + length]
+
+    return result[start:] if length < 0 else result[start:start + length]
 
 
 def add_user_cards(cards):
@@ -379,7 +382,7 @@ def set_user_premium(value: dt.datetime, uid: int):
     db.commit()
 
 
-def get_leaderboard(order_by: str, limit: int) -> "players":
+def get_leaderboard(order_by: str, limit: int) -> list[tuple[int, str, int] | tuple[int, str, int, int]]:
     select = []
     order = []
     if order_by == "XP":
