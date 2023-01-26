@@ -934,10 +934,9 @@ class Actions(commands.Cog, name="actions"):
 
         dm.cur.execute(f"SELECT level FROM playersinfo WHERE userid = {a_id}")
         level = dm.cur.fetchall()[0][0]
-        deck_slots = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
 
-        if level < deck_slots[deck_slot]:
-            await ctx.send(f"Deck #{deck_slot} is unlocked at {deck_slots[deck_slot]}!")
+        if level < u.DECK_LVL_REQ[deck_slot]:
+            await ctx.send(f"Deck #{deck_slot} is unlocked at {u.DECK_LVL_REQ[deck_slot]}!")
             return
 
         dm.cur.execute(f"UPDATE playersinfo SET deck_slot = {deck_slot} WHERE userid = {a_id}")

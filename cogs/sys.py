@@ -13,7 +13,7 @@ import util as u
 _today = str(dt.date.today() - dt.timedelta(days=1))
 
 
-class Sys(commands.Cog):
+class Sys(commands.Cog, name="sys"):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.background_task.start()
@@ -93,8 +93,7 @@ class Sys(commands.Cog):
         user_msg_exp = dm.get_user_msg_exp(a.id)
         user_premium_date = dm.get_user_premium(a.id)
 
-        exp_req = math.floor(int((user_level ** 2) * 40 + 60))
-        if user_exp < exp_req and user_level < 30 or user_level == 30:
+        if user_exp < u.level_xp(user_level) and user_level < 30 or user_level == 30:
             if user_msg_exp > 0:
                 if user_premium_date > dt.datetime.today():
                     dm.set_user_exp(user_exp + 2, a.id)
@@ -173,7 +172,7 @@ class Sys(commands.Cog):
             embed.set_thumbnail(url=a.avatar.url)
             await message.channel.send(embed=embed)
 
-            dm.set_user_exp(user_exp - int((user_level ** 2) * 40 + 60), a.id)
+            dm.set_user_exp(user_exp - u.level_xp(user_level), a.id)
             dm.set_user_level(user_level + 1, a.id)
             dm.set_user_coin(dm.get_user_coin(a.id) + user_level * 50, a.id)
             dm.set_user_coin(dm.get_user_gem(a.id) + math.ceil((user_level + 1) / 5) + 1, a.id)

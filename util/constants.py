@@ -38,6 +38,7 @@ ACES: t.Final = [f"[{s} Ace]" for s in ["♠", "♥", "♦", "♣"]]
 
 SCALE: t.Final = 50, 1.05
 PREF: t.Final = "a."
+DECK_LVL_REQ: t.Final = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
 
 # Loads in all the necessary json files as dictionaries
 with open("resources/text/cards.json") as json_file:

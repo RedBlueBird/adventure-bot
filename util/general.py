@@ -4,18 +4,6 @@ import datetime as dt
 import discord
 
 
-def log_level_gen(i: int) -> int:
-    """
-    Spits out a number given an i from 1 to 10.
-    Since this function is logarithmic, i has to increase dramatically to go from, say, 5 to 6,
-    and even more so from 8 to 9.
-    :param i: Any positive number.
-    :return: An integer between 1 and 10, inclusive.
-    """
-    return min(10, max(1, (10 - math.floor(math.log(i - 1) / math.log(2))))) if i > 1 else 10
-
-
-# region Utilities
 def time_converter(seconds: str | int) -> str:
     """
     Returns a string representation of the amount of time given in seconds.
@@ -41,18 +29,17 @@ def time_converter(seconds: str | int) -> str:
     return "Right Now"
 
 
-def remain_time():
+def time_til_midnight() -> str:
     dts = dt.datetime.now()
-    dts = str(time_converter(((24 - dts.hour - 1) * 60 * 60) + ((60 - dts.minute - 1) * 60) + (60 - dts.second)))
-    return dts
+    # https://stackoverflow.com/a/45986036/12128483
+    return time_converter(
+        ((24 - dts.hour - 1) * 60 * 60) + ((60 - dts.minute - 1) * 60) + (60 - dts.second)
+    )
 
 
 def uid_converter(name: str) -> str:
     if len(name) > 10:
-        if name[2] == "!":
-            return name[3: len(name) - 1]
-        else:
-            return name[2: len(name) - 1]
+        return name[3 if name[2] == "!" else 2: -1]
     return name
 
 
@@ -68,12 +55,9 @@ def get_user(user, msg: discord.Message):
     if msg.guild is None:
         return msg.author
 
-    try:
-        member = msg.guild.get_member(int(author_id))
-        if member is not None:
-            return member
-    except:
-        pass
+    member = msg.guild.get_member(int(author_id))
+    if member is not None:
+        return member
 
     for mem in msg.guild.members:
         if mem.display_name.lower().startswith(user.lower()):
@@ -82,3 +66,19 @@ def get_user(user, msg: discord.Message):
             return mem
 
     return msg.author
+
+
+def log_level_gen(i: int) -> int:
+    """
+    Spits out a number given an i from 1 to 10.
+    Since this function is logarithmic, i has to increase dramatically to go from, say, 5 to 6,
+    and even more so from 8 to 9.
+    :param i: Any positive number.
+    :return: An integer between 1 and 10, inclusive.
+    """
+    return min(10, max(1, (10 - math.floor(math.log(i - 1) / math.log(2))))) if i > 1 else 10
+
+
+def level_xp(lvl: int) -> int:
+    """:return: The amount of XP required to advance to the next level, given the current one."""
+    return math.floor(int((lvl ** 2) * 40 + 60))
