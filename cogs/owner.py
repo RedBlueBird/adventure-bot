@@ -7,7 +7,7 @@ from helpers import checks
 
 
 class Owner(commands.Cog, name="owner"):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command(
@@ -49,7 +49,7 @@ class Owner(commands.Cog, name="owner"):
     @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
     @checks.is_owner()
     async def unsync(self, ctx: Context, scope: str) -> None:
-        """Unsynchronizes the slash commands."""
+        """Unsyncs the slash commands."""
 
         if scope == "global":
             ctx.bot.tree.clear_commands(guild=None)
@@ -110,10 +110,7 @@ class Owner(commands.Cog, name="owner"):
     @app_commands.describe(cog="The name of the cog to unload")
     @checks.is_owner()
     async def unload(self, ctx: Context, cog: str) -> None:
-        """
-        The bot will unload the given cog.
-        :param cog: The name of the cog to unload.
-        """
+        """The bot will unload the given cog."""
         try:
             await self.bot.unload_extension(f"cogs.{cog}")
         except Exception:
@@ -138,13 +135,10 @@ class Owner(commands.Cog, name="owner"):
     @app_commands.describe(cog="The name of the cog to reload")
     @checks.is_owner()
     async def reload(self, ctx: Context, cog: str) -> None:
-        """
-        The bot will reload the given cog.
-        :param cog: The name of the cog to reload.
-        """
+        """The bot will reload the given cog."""
         try:
             await self.bot.reload_extension(f"cogs.{cog}")
-        except Exception as e:
+        except:
             embed = discord.Embed(
                 title="Error!",
                 description=f"Could not reload the `{cog}` cog.",
@@ -172,36 +166,6 @@ class Owner(commands.Cog, name="owner"):
         )
         await ctx.send(embed=embed)
         await self.bot.close()
-
-    @commands.hybrid_command(
-        name="say",
-        description="The bot will say anything you want.",
-    )
-    @app_commands.describe(message="The message that should be repeated by the bot")
-    @checks.is_owner()
-    async def say(self, ctx: Context, *, message: str) -> None:
-        """
-        The bot will say anything you want.
-        :param message: The message that should be repeated by the bot.
-        """
-        await ctx.send(message)
-
-    @commands.hybrid_command(
-        name="embed",
-        description="The bot will say anything you want, but within embeds.",
-    )
-    @app_commands.describe(message="The message that should be repeated by the bot")
-    @checks.is_owner()
-    async def embed(self, ctx: Context, *, message: str) -> None:
-        """
-        The bot will say anything you want, but using embeds.
-        :param message: The message that should be repeated by the bot.
-        """
-        embed = discord.Embed(
-            description=message,
-            color=0x9C84EF
-        )
-        await ctx.send(embed=embed)
 
 
 async def setup(bot):

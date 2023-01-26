@@ -5,8 +5,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import checks
-
 
 class Choice(discord.ui.View):
     def __init__(self):
@@ -95,12 +93,9 @@ class Fun(commands.Cog, name="fun"):
         description="Get a random fact."
     )
     async def randomfact(self, context: Context) -> None:
-        """
-        Get a random fact.
-
-        :param context: The hybrid command context.
-        """
-        # This will prevent your bot from stopping everything when doing a web request - see: https://discordpy.readthedocs.io/en/stable/faq.html#how-do-i-make-a-web-request
+        """Get a random fact."""
+        # This will prevent your bot from stopping everything when doing a web request.
+        # See https://discordpy.readthedocs.io/en/stable/faq.html#how-do-i-make-a-web-request
         async with aiohttp.ClientSession() as session:
             async with session.get("https://uselessfacts.jsph.pl/random.json?language=en") as request:
                 if request.status == 200:
@@ -116,36 +111,6 @@ class Fun(commands.Cog, name="fun"):
                         color=0xE02B2B
                     )
                 await context.send(embed=embed)
-
-    @commands.hybrid_command(
-        name="coinflip",
-        description="Make a coin flip, but give your bet before."
-    )
-    async def coinflip(self, context: Context) -> None:
-        """
-        Make a coin flip, but give your bet before.
-
-        :param context: The hybrid command context.
-        """
-        buttons = Choice()
-        embed = discord.Embed(
-            description="What is your bet?",
-            color=0x9C84EF
-        )
-        message = await context.send(embed=embed, view=buttons)
-        await buttons.wait()  # We wait for the user to click a button.
-        result = random.choice(["heads", "tails"])
-        if buttons.value == result:
-            embed = discord.Embed(
-                description=f"Correct! You guessed `{buttons.value}` and I flipped the coin to `{result}`.",
-                color=0x9C84EF
-            )
-        else:
-            embed = discord.Embed(
-                description=f"Woops! You guessed `{buttons.value}` and I flipped the coin to `{result}`, better luck next time!",
-                color=0xE02B2B
-            )
-        await message.edit(embed=embed, view=None, content=None)
 
     @commands.hybrid_command(
         name="rps",

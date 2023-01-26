@@ -292,7 +292,7 @@ def get_user_cards(
     return result[start:] if length < 0 else result[start:start + length]
 
 
-def add_user_cards(cards):
+def add_user_cards(cards: list[tuple[str | int, int, int]]):
     sql = "INSERT INTO temp_cards (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
     val = [(c[0], c[1], c[2]) for c in cards]
     cur.executemany(sql, val)
@@ -352,7 +352,7 @@ def set_user_map(value: bool, uid: int):
     db.commit()
 
 
-def get_user_badge(uid: int) -> int:
+def get_user_badge(uid: int | str) -> int:
     cur.execute(f"SELECT all_badges FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
 
