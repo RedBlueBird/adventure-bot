@@ -300,9 +300,7 @@ def add_user_cards(cards: list[tuple[str | int, int, int]]):
 
 
 def add_user(uid: int):
-    sql = "INSERT INTO temp2 (userid) VALUES (%s)"
-    val = [uid]
-    cur.execute(sql, val)
+    cur.execute(f"INSERT INTO temp2 (userid) VALUES ({uid})")
     db.commit()
 
 

@@ -20,10 +20,10 @@ class Sys(commands.Cog, name="sys"):
 
     @commands.hybrid_command(
         name="register",
-        description="Registers the author of the bot.",
+        description="Registers the author of the message.",
     )
     async def register(self, ctx: Context):
-        """Registers the author of the bot."""
+        """Registers the author of the message."""
         a = ctx.message.author
 
         user_cooldown = dm.get_user_cooldown(a.id)
@@ -68,8 +68,7 @@ class Sys(commands.Cog, name="sys"):
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
-            f"Registered {ctx.message.author.mention} into this bot! "
-            f"Do `{u.PREF}tutorial` to get started!"
+            f"Welcome to Adventure Bot! Do `{u.PREF}tutorial` to get started!"
         )
 
     @commands.Cog.listener()
@@ -77,7 +76,7 @@ class Sys(commands.Cog, name="sys"):
         if message.author.bot:
             return
 
-        content = message.content.lower()
+        content = message.content.lower().strip()
         if (content.startswith(f"{u.PREF}pong")
                 or content.startswith(f"<@{self.bot.application_id}>")
                 or content.startswith(f"<@!{self.bot.application_id}>")):
@@ -109,54 +108,12 @@ class Sys(commands.Cog, name="sys"):
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
-            """
-            Each element of this list corresponds to what will be unlocked when a player levels up.
-            The first element is when level 2 is reached, and then it increments by 1 so on.
-            Empty strings signify that no particular special thing is unlocked.
-            """
-            level_chart = [
-                f"{u.PREF}Quest is unlocked!",
-                f"{u.PREF}Shop is unlocked!",
-                f"{u.PREF}Coop is unlocked! \n"
-                f"Daily shop max card level +1!",
-                f"{u.PREF}Battle for PvP is unlocked!",
-                f"Deck slot +1!",
-                f"{u.PREF}Trade is unlocked! \n"
-                f"Adventure Chest Storage +50!",
-                f"Daily shop max card level +1!",
-                f"Adventure Boss Raids is unlocked! \n"
-                f"Raid Tickets is unlocked!",
-                f"Daily shop min card level +1!",
-                f"Adventure Cemetery Map unlocked!",
-                f"Daily shop max card level +1!",
-                f"Adventure Hometown chest storage +25!",
-                f"",
-                f"Deck slot +1!",
-                f"Daily shop max card level +1!",
-                f"Received 1 week of Premium!",
-                f"",
-                f"Adventure Hometown chest storage +25!",
-                f"Daily shop min card level +1!\n"
-                f"Daily shop max card level +1!",
-                f"Deck slot +1!",
-                f"",
-                f"New Adventure Map unlocked!",
-                f"",
-                f"Adventure Hometown chest storage +25!",
-                f"",
-                f"Received 1 week of Premium!",
-                f"",
-                f"Deck slot +1!",
-                f"Daily shop min card level +1!\n"
-                f"Adventure Hometown chest storage +25!"
-            ]
-
             # At levels 17 and 27, the user gets a week of free premium.
             if user_level + 1 in [17, 27]:
                 dm.set_user_premium(user_premium_date + dt.timedelta(days=7), a.id)
 
-            if level_chart[user_level - 1]:
-                level_msg.extend(level_chart[user_level - 1].split("\n"))
+            if u.LEVELS[user_level - 1]:
+                level_msg.extend(u.LEVELS[user_level - 1].format(u.PREF).split("\n"))
 
             embed = discord.Embed(
                 title=f"Congratulations {a.name}!",
