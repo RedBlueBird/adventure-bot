@@ -5,12 +5,13 @@ import platform
 import sys
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands import Bot, Context
 
 from helpers import db_manager as dm
 
 import exceptions
+from util import PREF
 
 config_path = f"{os.path.realpath(os.path.dirname(__file__))}/config.json"
 if not os.path.isfile(config_path):
@@ -23,7 +24,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = Bot(
-    command_prefix=commands.when_mentioned_or(config["prefix"]),
+    command_prefix=commands.when_mentioned_or(PREF),
     intents=intents,
     help_command=None,
     case_insensitive=True

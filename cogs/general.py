@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
+from util import PREF
+
 
 class General(commands.Cog, name="general"):
     def __init__(self, bot: commands.Bot):
@@ -12,7 +14,6 @@ class General(commands.Cog, name="general"):
         description="List all commands the bot has loaded."
     )
     async def help(self, ctx: Context) -> None:
-        prefix = self.bot.config["prefix"]
         embed = discord.Embed(
             title="Help", description="List of available commands:", color=0x9C84EF
         )
@@ -22,7 +23,7 @@ class General(commands.Cog, name="general"):
             data = []
             for cmd in cog.get_commands():
                 description = cmd.description.partition('\n')[0]
-                data.append(f"{prefix}{cmd.name} - {description}")
+                data.append(f"{PREF}{cmd.name} - {description}")
             help_text = "\n".join(data)
             embed.add_field(
                 name=i.capitalize(), value=f'```{help_text}```', inline=False
