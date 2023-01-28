@@ -3,6 +3,10 @@ import json
 import os
 import platform
 import sys
+import pkgutil
+import importlib
+import typing as t
+from types import ModuleType
 
 import discord
 from discord.ext import commands
@@ -12,6 +16,20 @@ from helpers import db_manager as dm
 
 import exceptions
 from util import PREF
+
+
+def walk_modules(start: str) -> t.Iterator[ModuleType]:
+    """Yield imported modules from the bot.exts subpackage."""
+    def on_error(name: str) -> t.NoReturn:
+        raise ImportError(name=name)  # pragma: no cover
+
+    # The mock prevents asyncio.get_event_loop() from being called.
+    prefix = f"{start}."
+    print(discord.__path__)
+    for module in pkgutil.walk_packages([start], prefix, onerror=on_error):
+        if not module.ispkg:
+            yield importlib.import_module(module.name)
+
 
 config_path = f"{os.path.realpath(os.path.dirname(__file__))}/config.json"
 if not os.path.isfile(config_path):
@@ -126,15 +144,14 @@ async def on_command_error(ctx: Context, error) -> None:
 
 
 async def load_cogs() -> None:
-    for file in os.listdir(f"{os.path.realpath(os.path.dirname(__file__))}/cogs"):
-        if file.endswith(".py"):
-            extension = file[:-3]
-            try:
-                await bot.load_extension(f"cogs.{extension}")
-                print(f"Loaded extension '{extension}'")
-            except Exception as e:
-                exception = f"{type(e).__name__}: {e}"
-                print(f"Failed to load extension {extension}\n{exception}")
+    for ext in walk_modules("cogs"):
+        name = ext.__name__
+        try:
+            await bot.load_extension(name)
+            print(f"Loaded extension '{name}'")
+        except Exception as e:
+            exception = f"{type(e).__name__}: {e}"
+            print(f"Failed to load extension {name}\n{exception}")
 
 
 if __name__ == "__main__":

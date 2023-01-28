@@ -152,7 +152,7 @@ class Admin(commands.Cog, name="admin"):
         print("Connected on " + str(len(self.bot.guilds)) + " guilds:")
         for x in range(len(guilds)):
             print('  ' + guilds[x - 1].name)
-        folders = os.listdir(".")
+        folders = os.listdir("..")
         print(folders)
         """
         for guild in self.bot.guilds:
