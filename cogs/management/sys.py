@@ -217,35 +217,5 @@ class Sys(commands.Cog, name="sys"):
         # no need for bot.process bc the one in main already handled that
 
 
-@tasks.loop(seconds=1.0)
-async def background_task():
-    global _today
-    refresh = _today != dt.date.today()
-
-    print("did this get called")
-    for uid in dm.get_all_userid():
-        user_cooldown = dm.get_user_cooldown(uid)
-        if user_cooldown >= 1:
-            dm.set_user_cooldown(uid, user_cooldown - 1)
-
-        if refresh:
-            deals = []
-            user_level = dm.get_user_level(uid)
-            user_premium_date = dm.get_user_premium(uid)
-            if user_premium_date >= dt.datetime.today():
-                for x in range(9):
-                    deals.append(u.add_a_card(user_level))
-            else:
-                for x in range(6):
-                    deals.append(u.add_a_card(user_level))
-
-            dm.set_user_deals(",".join(deals), uid)
-            dm.set_user_msg_exp(50, uid)
-
-    if refresh:
-        _today = dt.date.today()
-
-
 async def setup(bot: commands.Bot):
     await bot.add_cog(Sys(bot))
-    background_task.start()
