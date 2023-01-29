@@ -20,6 +20,12 @@ with open("resources/text/card_list.json") as json_file:
     CARD_LIST: t.Final = json.load(json_file)
 with open("resources/text/levels.json") as json_file:
     LEVELS: t.Final = json.load(json_file)
+with open("resources/text/hometown.json") as json_file:
+    HTOWN = json.load(json_file)
+with open("resources/text/adventure.json") as json_file:
+    ADVENTURES = json.load(json_file)
+with open("resources/text/minigames.json") as fin:
+    MINIGAMES = json.load(fin)
 
 CONVERT: t.Final = {
     "burn": ICON["burn"],

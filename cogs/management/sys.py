@@ -16,7 +16,6 @@ _today = str(dt.date.today() - dt.timedelta(days=1))
 class Sys(commands.Cog, name="sys"):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.background_task.start()
 
     @commands.hybrid_command(
         name="register",
@@ -44,8 +43,8 @@ class Sys(commands.Cog, name="sys"):
             "Stab", "Stab", "Shield", "Shield", "Strike", "Strike",
             "Punch", "Punch", "Heal", "Slash", "Explode", "Aim"
         ]
-        owned_user = [a.id for _ in range(12)]
-        card_levels = [4 for _ in range(12)]
+        owned_user = [a.id for _ in range(len(card_names))]
+        card_levels = [4 for _ in range(len(card_names))]
         dm.add_user_cards(list(zip(owned_user, card_names, card_levels)))
 
         dm.add_user(a.id)
@@ -94,10 +93,8 @@ class Sys(commands.Cog, name="sys"):
 
         if user_exp < u.level_xp(user_level) and user_level < 30 or user_level == 30:
             if user_msg_exp > 0:
-                if user_premium_date > dt.datetime.today():
-                    dm.set_user_exp(user_exp + 2, a.id)
-                else:
-                    dm.set_user_exp(user_exp + 1, a.id)
+                inc_amt = 2 if user_premium_date > dt.datetime.today() else 1
+                dm.set_user_exp(user_exp + inc_amt, a.id)
                 dm.set_user_msg_exp(user_msg_exp - 1, a.id)
         else:
             level_msg = []
@@ -219,33 +216,36 @@ class Sys(commands.Cog, name="sys"):
 
         # no need for bot.process bc the one in main already handled that
 
-    @tasks.loop(seconds=10.0)
-    async def background_task(self):
-        global _today
-        all_uids = [int(uid[0]) for uid in dm.get_all_userid()]
-        refresh = _today != dt.date.today()
 
-        for curr_id in all_uids:
-            user_cooldown = dm.get_user_cooldown(curr_id)
-            if user_cooldown - 1 >= 0:
-                dm.set_user_cooldown(curr_id, user_cooldown - 1)
+@tasks.loop(seconds=1.0)
+async def background_task():
+    global _today
+    refresh = _today != dt.date.today()
 
-            if refresh:
-                deals_cards = []
-                user_level = dm.get_user_level(curr_id)
-                user_premium_date = dm.get_user_premium(curr_id)
-                if user_premium_date >= dt.datetime.today():
-                    for x in range(9):
-                        deals_cards.append(u.add_a_card(user_level, curr_id))
-                else:
-                    for x in range(6):
-                        deals_cards.append(u.add_a_card(user_level, curr_id))
-                dm.set_user_deals(",".join(deals_cards[:]), curr_id)
-                dm.set_user_msg_exp(1000, curr_id)
+    print("did this get called")
+    for uid in dm.get_all_userid():
+        user_cooldown = dm.get_user_cooldown(uid)
+        if user_cooldown >= 1:
+            dm.set_user_cooldown(uid, user_cooldown - 1)
 
         if refresh:
-            _today = dt.date.today()
+            deals = []
+            user_level = dm.get_user_level(uid)
+            user_premium_date = dm.get_user_premium(uid)
+            if user_premium_date >= dt.datetime.today():
+                for x in range(9):
+                    deals.append(u.add_a_card(user_level))
+            else:
+                for x in range(6):
+                    deals.append(u.add_a_card(user_level))
+
+            dm.set_user_deals(",".join(deals), uid)
+            dm.set_user_msg_exp(50, uid)
+
+    if refresh:
+        _today = dt.date.today()
 
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Sys(bot))
+    background_task.start()

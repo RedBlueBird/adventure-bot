@@ -167,7 +167,10 @@ class Moderation(commands.Cog, name="moderation"):
     )
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    @app_commands.describe(user_id="The user ID that should be banned.", reason="The reason why the user should be banned.")
+    @app_commands.describe(
+        user_id="The user ID that should be banned.",
+        reason="The reason why the user should be banned."
+    )
     async def hackban(self, ctx: Context, user_id: str, *, reason: str = "Not specified") -> None:
         """
         Bans a user without the user having to be in the server.
@@ -187,11 +190,11 @@ class Moderation(commands.Cog, name="moderation"):
                 value=reason
             )
             await ctx.send(embed=embed)
-        except Exception as e:
+        except:
             embed = discord.Embed(
                 title="Error!",
                 description="An error occurred while trying to ban the user. "
-                            "Make sure ID is an existing ID that belongs to a user.",
+                            "Make sure the ID is an existing ID that belongs to a user.",
                 color=0xE02B2B
             )
             await ctx.send(embed=embed)

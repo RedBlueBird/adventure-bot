@@ -33,18 +33,16 @@ def fill_args(card, level):
                     args[all_param[param.index(k) + 11]] = card[i][k]
                     if k == "eff_app":
                         args[all_param[param.index(k) + 11]] = card[i][k][0]
+
     return Template(card["description"]).safe_substitute(args)
 
 
-def add_a_card(player_lvl, userid=None):
-    if userid != "344292024486330371":
-        energy_cost = log_level_gen(
-            random.randint(2 ** (max(0, 5 - (player_lvl // 4))),
-                           2 ** (10 - math.floor(player_lvl / 10)))
-        )
-        return f"{energy_cost}.{random_card(energy_cost, 'normal')}"
-    else:
-        return f"{random.randint(3, 10)}.Snowball"
+def add_a_card(player_lvl):
+    energy_cost = log_level_gen(
+        random.randint(2 ** (max(0, 5 - (player_lvl // 4))),
+                       2 ** (10 - math.floor(player_lvl / 10)))
+    )
+    return f"{energy_cost}.{random_card(energy_cost, 'normal')}"
 
 
 def random_card(energy: int, edition: str) -> str:
@@ -88,12 +86,13 @@ def random_card(energy: int, edition: str) -> str:
         return random.choice(cards["1"])
 
 
-def order_by_cost(cards, direction):
+def order_by_cost(cards, direction: int):
     cards_by_cost = {}
     for x in cards:
         if cards_dict(x[4], x[3])["cost"] not in cards_by_cost:
             cards_by_cost[cards_dict(x[4], x[3])["cost"]] = []
         cards_by_cost[cards_dict(x[4], x[3])["cost"]].append(x)
+
     cards = []
     cost_order = list(cards_by_cost.keys())
     if direction == 0:
@@ -102,6 +101,7 @@ def order_by_cost(cards, direction):
         cost_order.sort(reverse=True)
     for x in cost_order:
         cards += cards_by_cost[x]
+
     return cards
 
 
@@ -120,7 +120,7 @@ def order_by_rarity(cards, direction):
 
 def rarity_cost(card_name):
     card = cards_dict(1, str(card_name))
-    return card["rarity"] + "/" + str(card["cost"])
+    return f"{card['rarity']}/{card['cost']}"
 
 
 def price_factor(card_name):

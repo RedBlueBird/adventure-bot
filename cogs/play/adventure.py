@@ -16,13 +16,6 @@ from helpers.checks import valid_reaction, valid_reply
 from helpers import db_manager as dm
 import util as u
 
-with open("resources/text/hometown.json") as json_file:
-    HTOWN = json.load(json_file)
-with open("resources/text/adventure.json") as json_file:
-    ADVENTURES = json.load(json_file)
-with open("resources/text/minigames.json") as fin:
-    MINIGAMES = json.load(fin)
-
 
 def choices_list(choices) -> str:
     logs = []
@@ -44,15 +37,15 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
 def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
     embed = discord.Embed(title=f"Mini Game - {game_name}!", color=discord.Color.gold())
 
-    logs = [f"• {r}" for r in MINIGAMES[game_name]["rules"]]
+    logs = [f"• {r}" for r in u.MINIGAMES[game_name]["rules"]]
     embed.add_field(name="Rules", value=" \n".join(logs))
 
     embed.set_footer(text=f"{u.PREF}exit -quit mini game")
     if show_map:
-        if MINIGAMES[game_name]["image"] is not None:
+        if u.MINIGAMES[game_name]["image"] is not None:
             return (
                 embed,
-                discord.File(MINIGAMES[game_name]["image"])
+                discord.File(u.MINIGAMES[game_name]["image"])
             )
         else:
             return embed, None
@@ -113,10 +106,10 @@ class Adventure(commands.Cog, name="adventure"):
 
         while not leave and not afk and not adventure:
             embed = discord.Embed(
-                description=f"```{HTOWN[p_pos]['description']}```",
+                description=f"```{u.HTOWN[p_pos]['description']}```",
                 color=discord.Color.gold()
             )
-            embed.add_field(name="Choices", value=choices_list(HTOWN[p_pos]["choices"]))
+            embed.add_field(name="Choices", value=choices_list(u.HTOWN[p_pos]["choices"]))
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
 
             always = ["exit", "map", "backpack", "home", "refresh"]
@@ -124,7 +117,7 @@ class Adventure(commands.Cog, name="adventure"):
 
             if show_map:
                 file = discord.File(
-                    mark_location("hometown_map", HTOWN[p_pos]["coordinate"][0], HTOWN[p_pos]["coordinate"][1]),
+                    mark_location("hometown_map", u.HTOWN[p_pos]["coordinate"][0], u.HTOWN[p_pos]["coordinate"][1]),
                     filename="hometown_map.png"
                 )
                 await adventure_msg.edit(embed=embed, attachments=[file])
@@ -146,11 +139,11 @@ class Adventure(commands.Cog, name="adventure"):
                 content = msg_reply.content[len(u.PREF):]
                 if content.isdigit():
                     decision = int(content)
-                    if 1 <= decision <= len(HTOWN[p_pos]["choices"]):
+                    if 1 <= decision <= len(u.HTOWN[p_pos]["choices"]):
                         await msg_reply.delete()
                         break
                     else:
-                        await ctx.send(f"You can only enter numbers `1-{len(HTOWN[p_pos]['choices'])}`!")
+                        await ctx.send(f"You can only enter numbers `1-{len(u.HTOWN[p_pos]['choices'])}`!")
                 else:
                     decision = 0
                     if content == "exit":
@@ -177,7 +170,7 @@ class Adventure(commands.Cog, name="adventure"):
                         if show_map:
                             file = discord.File(
                                 mark_location(
-                                    "hometown_map", HTOWN[p_pos]["coordinate"][0], HTOWN[p_pos]["coordinate"][1]
+                                    "hometown_map", u.HTOWN[p_pos]["coordinate"][0], u.HTOWN[p_pos]["coordinate"][1]
                                 ),
                                 filename="hometown_map.png"
                             )
@@ -189,10 +182,10 @@ class Adventure(commands.Cog, name="adventure"):
                         await ctx.send("That's an invalid option!")
                         break
 
-            pos = HTOWN[p_pos]["choices"][list(HTOWN[p_pos]["choices"])[decision - 1]]
+            pos = u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]]
 
             if pos[1] == "self" and not afk and not leave:
-                if pos[0] in HTOWN:
+                if pos[0] in u.HTOWN:
                     p_pos = pos[0]
                 else:
                     await ctx.send(f"{mention} Sorry, this route is still in development! (stupid devs)")
@@ -347,7 +340,7 @@ class Adventure(commands.Cog, name="adventure"):
                                                  u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
                                          embed=u.display_backpack(p_stor, ctx.message.author, "Chest",
                                                                   level=p_datas[3]))
-                if HTOWN[p_pos]["choices"][list(HTOWN[p_pos]["choices"])[decision - 1]][0] == "chest":
+                if u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
@@ -453,7 +446,7 @@ class Adventure(commands.Cog, name="adventure"):
                     p_datas[5] += earned_loots[0]
                     p_datas[6] += earned_loots[1]
 
-                embed, img = setup_minigame(HTOWN[p_pos]["choices"][list(HTOWN[p_pos]["choices"])[decision - 1]][0],
+                embed, img = setup_minigame(u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0],
                                             show_map)
                 await adventure_msg.edit(embed=embed, attachments=[img])
                 if pos[0] == "coin flip":
@@ -794,7 +787,7 @@ class Adventure(commands.Cog, name="adventure"):
         dm.db.commit()
 
         if adventure:
-            location = HTOWN[p_pos]["choices"][list(HTOWN[p_pos]["choices"])[decision - 1]][0]
+            location = u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0]
             event = "main"
             section = "start"
             distance = 0
@@ -870,10 +863,10 @@ class Adventure(commands.Cog, name="adventure"):
             dm.log_quest(3, t_dis, a_id)
 
             if perk_turn != 0:
-                options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message)
+                options = option_decider(u.ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message)
                 pre_message = []
                 option = options[1]
-                choices = ADVENTURES[location][event][section][option]
+                choices = u.ADVENTURES[location][event][section][option]
                 await adventure_msg.edit(embed=options[0])
             else:
                 options = perk_decider()
@@ -930,7 +923,7 @@ class Adventure(commands.Cog, name="adventure"):
                     else:
                         if not feed[2] is None:
                             pre_message.append(feed[2])
-                        options = option_decider(ADVENTURES[location][event][section], p_distance, boss_spawn,
+                        options = option_decider(u.ADVENTURES[location][event][section], p_distance, boss_spawn,
                                                  pre_message, option)
                         pre_message = []
                         await adventure_msg.edit(embed=options[0])
@@ -1533,7 +1526,7 @@ class Adventure(commands.Cog, name="adventure"):
 
                 if index[2] == "end":
                     if index[0] == "coin loss":
-                        coin_loss = random.randint(ADVENTURES["end"]["coin loss"][0], ADVENTURES["end"]["coin loss"][1])
+                        coin_loss = random.randint(u.ADVENTURES["end"]["coin loss"][0], u.ADVENTURES["end"]["coin loss"][1])
                         if p_datas[5] < abs(coin_loss) and coin_loss < 0:
                             coin_loss = p_datas[5]
                             p_datas[5] = 0

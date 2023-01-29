@@ -238,10 +238,10 @@ class Actions(commands.Cog, name="actions"):
                             if int(user_identity.split(",")[0]) == 0:
                                 for x in range(6):
                                     deals_cards.append(
-                                        u.add_a_card(player_lvl, str(a_id)))
+                                        u.add_a_card(player_lvl))
                             elif int(user_identity.split(",")[0]) == 1:
                                 for x in range(9):
-                                    deals_cards.append(u.add_a_card(player_lvl, str(a_id)))
+                                    deals_cards.append(u.add_a_card(player_lvl))
                             sql = "UPDATE playersinfo SET deals = %s, coins = coins - 200 WHERE userid = %s"
                             value = (",".join(deals_cards), str(a_id))
                             dm.cur.execute(sql, value)
@@ -641,13 +641,12 @@ class Actions(commands.Cog, name="actions"):
                 embed.set_thumbnail(url=ctx.message.author.avatar.url)
                 await ctx.send(embed=embed)
 
-    @commands.hybrid_command(aliases=["trades"], brief="actions")
+    @commands.hybrid_command(brief="Trade with other players!")
     @checks.is_registered()
     @checks.not_preoccupied("trading")
     @checks.level_check(7)
-    async def trade(self, ctx: commands.Context, target=None):
-        """Trade with other players for gold and cards"""
-        target = u.get_user(target, ctx.message)
+    async def trade(self, ctx: commands.Context, target: discord.Member):
+        """Trade with other players!"""
         author = ctx.message.author
         mention = author.mention
         dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{target.id}'")

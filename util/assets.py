@@ -71,7 +71,7 @@ def fx_dict(eff_name: str):
     if eff_name.lower() not in EFFX:
         return {
             "name": "Glitch",
-            "description": "Anyone who ever has this effect immediately dies a horrible death."
+            "description": "This effect oH NO HE COMES"
         }
     return copy.deepcopy(EFFX[eff_name.lower()])
 
@@ -79,28 +79,19 @@ def fx_dict(eff_name: str):
 def quest_index(index: str) -> list[str | int]:
     """
     Returns the information for a quest given an index.
-    Information for all_indices:
-        1- Kill mobs
-        2- Collect items
-        3- Travel a certain distance
-        4- Do battles
-        5- Collect golden coins
-        6- Collect medals
-        7- Merge pairs of cards
-        8- Catch fish
     :param index: The quest to get in the form of a string
     :return: A list of strings and ints representing the info about this quest
     """
     indices = index.split(".")[:2]
     all_indices = {
-        "1": [5, 10, 20, 50],
-        "2": [10, 20, 40, 60],
-        "3": [500, 1000, 2000, 5000],
-        "4": [1, 3, 5, 10],
-        "5": [100, 200, 500, 1000],
-        "6": [5, 10, 25, 50],
-        "7": [1, 2, 5, 10],
-        "8": [3, 5, 10, 20]
+        "1": [5, 10, 20, 50],  # Kill mobs
+        "2": [10, 20, 40, 60],  # Collect items
+        "3": [500, 1000, 2000, 5000],  # Travel a certain distance
+        "4": [1, 3, 5, 10],  # Battle
+        "5": [100, 200, 500, 1000],  # Collect coins
+        "6": [5, 10, 25, 50],  # Collect medals
+        "7": [1, 2, 5, 10],  # Merge cards
+        "8": [3, 5, 10, 20]  # Catch fish
     }
     all_rewards = {
         "1": [200, 500, 1000, 2500],
@@ -110,9 +101,13 @@ def quest_index(index: str) -> list[str | int]:
     exp_rewards = {"0": 25, "1": 50, "2": 100, "3": 200, "4": 250}
     all_rarities = {"0": "{C}", "1": "{R}", "2": "{E}", "3": "{L}", "4": "{EX}"}
 
-    # requirements, type rewards, rarity, reward unit, exp rewards
-    return [all_indices[indices[1]][int(indices[0][0])], str(all_rewards[indices[0][1]][int(indices[0][0])]),
-            all_rarities[indices[0][0]], reward_units[indices[0][1]], exp_rewards[indices[0][0]]]
+    return [
+        all_indices[indices[1]][int(indices[0][0])],  # requirement
+        str(all_rewards[indices[0][1]][int(indices[0][0])]),  # reward amt
+        all_rarities[indices[0][0]],  # rarity
+        reward_units[indices[0][1]],  # reward unit
+        exp_rewards[indices[0][0]]  # exp reward
+    ]
 
 
 def quest_str_rep(quest_type: str | int, amt: str | int):

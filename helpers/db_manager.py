@@ -63,9 +63,9 @@ def get_user_id(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_all_userid() -> list[tuple[str]]:
+def get_all_userid() -> list[int]:
     cur.execute(f"SELECT userid FROM temp2")
-    return cur.fetchall()
+    return [int(i[0]) for i in cur.fetchall()]
 
 
 def get_user_cooldown(uid: int) -> int:
@@ -400,3 +400,8 @@ def get_leaderboard(order_by: str, limit: int) -> list[tuple[int, str, int] | tu
         order = ["event_token DESC"]
     cur.execute(f"SELECT {','.join(select)} FROM playersinfo ORDER BY {','.join(order)} LIMIT {limit}")
     return cur.fetchall()
+
+
+if __name__ == "__main__":
+    init()
+    print(get_all_userid())
