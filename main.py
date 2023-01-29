@@ -9,7 +9,7 @@ import typing as t
 from types import ModuleType
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
