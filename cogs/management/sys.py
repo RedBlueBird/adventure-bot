@@ -10,8 +10,6 @@ from discord.ext.commands import Context
 from helpers import db_manager as dm
 import util as u
 
-_today = str(dt.date.today() - dt.timedelta(days=1))
-
 
 class Sys(commands.Cog, name="sys"):
     def __init__(self, bot: commands.Bot) -> None:
@@ -192,8 +190,9 @@ class Sys(commands.Cog, name="sys"):
             try:
                 rep = await self.bot.wait_for(
                     "message", timeout=600.0,
-                    check=lambda m: m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
-                                    m.channel == spawn_msg.channel
+                    check=lambda m:
+                    m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
+                    m.channel == spawn_msg.channel
                 )
                 mention = rep.author.mention
 
@@ -202,12 +201,11 @@ class Sys(commands.Cog, name="sys"):
                     dm.set_user_coin(user_coin + amt, a.id)
                     if random.randint(1, 100) == 1:
                         dm.set_user_gem(dm.get_user_gem(a.id) + 1, a.id)
-                        msg = f"{mention}, you collected {amt} {u.ICON['coin']} and 1 {u.ICON['gem']} as well!"
+                        msg = f"{mention}, you got {amt} {u.ICON['coin']} and 1 {u.ICON['gem']} as well!"
                     else:
-                        msg = f"{mention}, you collected {amt} {u.ICON['coin']}!"
+                        msg = f"{mention}, you got {amt} {u.ICON['coin']}!"
                 else:
-                    msg = f"{mention}, you have to register in this bot first! \n" \
-                          f"Type `{u.PREF}register` to register!"
+                    msg = f"{mention}, you have to register in this bot first with `{u.PREF}register`! \n"
 
                 await rep.channel.send(msg)
             except asyncio.TimeoutError:

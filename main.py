@@ -19,7 +19,7 @@ from util import PREF
 
 
 def walk_modules(start: str) -> t.Iterator[ModuleType]:
-    """Yield imported modules from the bot.exts subpackage."""
+    """Yield imported modules from the bot.cogs subpackage."""
     def on_error(name: str) -> t.NoReturn:
         raise ImportError(name=name)  # pragma: no cover
 
@@ -52,11 +52,6 @@ class AdventurerBot(commands.Bot):
             print("Syncing commands globally...")
             await bot.tree.sync()
             print("Finished syncing!")
-
-    async def on_message(self, message: discord.Message) -> None:
-        if message.author == bot.user or message.author.bot:
-            return
-        await self.process_commands(message)
 
     async def on_command_completion(self, ctx: Context) -> None:
         """Executed every time a normal command has been *successfully* executed"""
@@ -128,8 +123,14 @@ class AdventurerBot(commands.Bot):
         raise error
 
     async def setup_hook(self):
-        # https://github.com/Rapptz/discord.py/blob/master/examples/background_task.py
-        pass
+        for ext in walk_modules("cogs"):
+            name = ext.__name__
+            try:
+                await bot.load_extension(name)
+                print(f"Loaded extension '{name}'")
+            except Exception as e:
+                exception = f"{type(e).__name__}: {e}"
+                print(f"Failed to load extension {name}\n{exception}")
 
 
 intents = discord.Intents.default()
@@ -143,19 +144,6 @@ bot = AdventurerBot(
 )
 bot.config = config
 
-
-async def load_cogs() -> None:
-    for ext in walk_modules("cogs"):
-        name = ext.__name__
-        try:
-            await bot.load_extension(name)
-            print(f"Loaded extension '{name}'")
-        except Exception as e:
-            exception = f"{type(e).__name__}: {e}"
-            print(f"Failed to load extension {name}\n{exception}")
-
-
 if __name__ == "__main__":
     dm.init()
-    asyncio.run(load_cogs())
     bot.run(config["token"])
