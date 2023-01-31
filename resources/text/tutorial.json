@@ -1,0 +1,836 @@
+{
+    "teams": {
+        "1": [
+            1
+        ],
+        "2": [
+            2,
+            3
+        ]
+    },
+    "players": [
+        "{Player}",
+        "Dummy",
+        "Dummy"
+    ],
+    "p_ids": [
+        "{Player ID}",
+        "123",
+        "1234"
+    ],
+    "decks": [
+        [
+            "4.Stab",
+            "4.Shield",
+            "4.Strike",
+            "4.Slash",
+            "4.Explode",
+            "4.Heal",
+            "4.Punch",
+            "4.Aim",
+            "4.Punch",
+            "4.Strike",
+            "4.Stab"
+        ],
+        [
+            "3.Shield",
+            "3.Stab",
+            "3.Shield",
+            "3.Stab",
+            "3.Zap",
+            "3.Stab",
+            "3.Absorb",
+            "3.Shield",
+            "3.Aid",
+            "3.Aid",
+            "3.Terminate"
+        ],
+        [
+            "3.Shield",
+            "3.Stab",
+            "3.Shield",
+            "3.Stab",
+            "3.Zap",
+            "3.Stab",
+            "3.Absorb",
+            "3.Shield",
+            "3.Aid",
+            "3.Aid",
+            "20.Terminate"
+        ]
+    ],
+    "backpacks": [
+        {
+            "wooden sword": {
+                "items": 1
+            },
+            "health potion": {
+                "items": 3
+            }
+        },
+        {},
+        {}
+    ],
+    "hps": [
+        [
+            5000,
+            0,
+            5000,
+            0,
+            0
+        ],
+        [
+            1500,
+            0,
+            1500,
+            0,
+            0
+        ],
+        [
+            1500,
+            0,
+            1500,
+            0,
+            0
+        ]
+    ],
+    "staminas": [
+        100,
+        20,
+        20
+    ],
+    "counts": 3,
+    "stored_energies": [
+        8,
+        3,
+        3
+    ],
+    "procedure": [
+        "This is the bot's battle system! Look complicated? Don't worry!\nI'll teach you everything you need to know!",
+        "Do you see your username next to the **#1**? \nYou are `player 1` in this simulated battlefield! \n<:Health:606677204616609792> represents your health.\n<:Stamina:606677247784517632> represents your stamina. \n<:Energy:606677171590791170> represents your energy. \nYou consume 1 stamina for each card you use, unless specified otherwise in the card description. \nEach card costs a certain amount of energy, shown in **[Rarity/Energy]**.",
+        "When your <:Health:606677204616609792> or <:Stamina:606677247784517632> reaches 0, you lose the battle.\nYou gain <:Energy:606677171590791170> every turn, and the amount of energy you receive per turn is also increased every 4 turns!\nYou can see the turn number, as well as your current energy per turn at the bottom of the hand board.",
+        "Take a look at your hand! Currently it consists of 4 cards.\nLet's use **[C/1] Stab lv 4** as an example. \n`C`, or Common, stands for the rarity of the card.  \n`1` represents the amount of energy required to use this card. \n`lv 4` displays the level! \nTo see more info about this card, type `{prefix}info card Stab (level)`",
+        "*(`{prefix}exit` to quit the tutorial at anytime)* \n\nType `{prefix}info mob dummy` to see more info about them! \nThe Dummies are shown in the hand board as the **#2** and **#3** slots. \nYour goal is to defeat the dummies before they take you out. Simple right? \nYou currently have 8 <:Energy:606677171590791170>. \nStab is your first card in your hand, and the first dummy is **#2**. \nType `{prefix}12` to Stab it! ",
+        "Nice hit! However, one stab alone won't enough! \nTry Slash on the dummy this time! \n`{prefix}info card slash (level)` for more info on this card. \nHint: Slash is your 3rd card in your hand, and you want to attack Dummy **#2**!",
+        "The Dummy used shield and blocked your damage!\nShield only blocks damage on the turn it is used. \nTry to cast a shield on yourself this turn!",
+        "Excellent! You successfully blocked both dummies attacks! :stuck_out_tongue:\nType `{prefix}r` to refresh, and the bot will repost the messages at the bottom of this channel! \nThis helps if other users are messaging in the channel.",
+        "Very good! Although shields are useful... \nThey can't block everything! Pierce damage can bypass all defenses! \nThe Strike card in your hand does exactly that. \nType `{prefix}info card strike (level)` to see more! \nLets use Strike on the dummy this time!",
+        "Nice work. Let's finish the first dummy once and for all! \nExplode does a lot of damage. More than enough to finish off the dummy!\nThe side effect of Explode is that it also deals some self damage. \nUnfourtunately... It costs 5 energy to use, and you only have 3 this turn. \nBut you can type `{prefix}s` to skip this turn!",
+        "Oh also, just some useful info to keep in mind, \n```You can only keep a maximum 6 cards and 12 energy at a time. \nEvery turn, you automatically draw a card and gain energy listed at the bottom of the hand board.``` \nJust enough energy to unleash Explode! \nNow! Let's EXPLODE the dummy! :laughing:",
+        "Spectacular Explosion! A Critical Hit!\nCritical hits give the card 50% more power, and have a random chance to occur. To see the chance for a certain card, type `{prefix}info card (card) (level)` \nYou have now slayed the first dummy. Even its shield could not block your mightiness! \nYou need to heal yourself now, but the heal card in your hand costs 4 energy! \nDon't worry though, there's another solution! \nCheck out your backpack by typing `{prefix}bp`!",
+        "You see the health potion in there? \nType `{prefix}info item health_potion` to see what it can do! \nWhen you're out there adventuring, you can collect items such as this along the way to aid you in battles!\nTo use the potion, type `{prefix}health_potion1`. \nAs you wanted to heal yourself, **#1**, not the dummies!",
+        "Refresh the bots messages again with `{prefix}r`, so you don't have to scroll up to read each time! :ok_hand:",
+        "The second Dummy zapped you as you drank the health potion!\nZap is a spell card that applies 2 Stun effects to the victim, \n`{prefix}info effect stun` to see the effects of Stun! \nHowever, stun can be cancelled out with the Bullseye effect! \nThe Aim card in your hand is the perfect candidate! \nSince Aim is a buff card, you'll want to use it on yourself!",
+        "Nice! As Aim also applies blocks, it successfully blocked the second dummy's Stab!\nDid you know you can do multiple things in the same turn?\nLet's apply a Strike and a DOUBLE Stab to the new Dummy! \nNote that the new target is **#3** now.\nYou can do this using `{prefix}43 53 63`!",
+        "Great combo attack! \nHowever, the Dummy used a defensive Aid card, which applies recover effects. \nType `{prefix}info effect recover` to see more info about the effect dummy just got! \nYou can also use both cards and an item on the same turn! \nCheck your backpack again!",
+        "Nice Wooden Sword you got there! \nType `{prefix}info item wooden_sword` to see what it can do. \nNow, you can use your Wooden Sword and your Slash on the same turn to increase the damage! \nLet's do this by typing `{prefix}wooden_sword1 43`!",
+        "The Dummy absorbed part of the damage! \nAbsorb is same as blocking, except the absorbed damage is turned into healing! \nWait... The dummy was not suppose to use absorb in this tutorial! :fearful:\nSkip this turn for now?",
+        "Another note, the maximum cards you can use per turn is 4, \nand you can use at most 1 item per turn. \nLet's... throw a double Punch maybe? ",
+        "THE PUNCHES MISSED! Not now! Not here!! The Dummy became self aware!! :scream:\nThis is suppose to be a safe tutorial!! :scream:\nAhhhh!!!! I do suggest you to `{prefix}flee` to escape this battle :scream:\nIt only has a 40% success rate, don't take my words that it'll escape any situation! :scream: ",
+        "Flee failed!?\nMay...Maybe try fleeing again? Maybe you can fight it somehow? \nI gotta get out of here! ... gtg bye? You are on your own now! Sorry! ",
+        "You Actually BEAT the Dummy!! :open_mouth:",
+        "How's my acting? \nOf course. \nThe dummies didn't malfunction, this is all according to plan!",
+        "Why? It's getting harder to find talented adventurers like you nowdays. \nSo I decided to add... some surprises inside this new tutorial! \nBut hey! If you understood everything the tutorial has offered so far, \nDefeating the dummy was a breeze! <:Chill:649063268593303583>",
+        "Btw, one more helpful tip! \nWhen you want to use items, you can use a short abbreviation instead. \nInstead of typing `{prefix}health_potion1` or `{prefix}wooden_sword1` \nYou can just type `{prefix}hp1` or `{prefix}ws1`!",
+        "And once again! Congratulations on passing this tutorial! \nI believe you are going to be a great adventurer one day! \nI gtg for real now! Cya! Go to our support channel if you need further help! :wave:",
+        "You lost in the tutorial?",
+        "I guess it's fine... \nYou can always try again next time! \n",
+        "Btw. One more helpful tip! \nWhen you want to use items, you can use a short abbreviation instead. \nInstead of typing `{prefix}health_potion1` or `{prefix}wooden_sword1` \nYou can just type `{prefix}hp1` or `{prefix}ws1`! :ok_hand:",
+        "A tie? :face_with_monocle:",
+        "You must had a serious fight! \nConsidering when I left, you barely had any health left!",
+        "Sorry about leaving, \nI bet the next time you face an enemy, you're gonna crush them into the ground!",
+        "Btw, one more helpful tip! \nWhen you want to use items, you can use a short abbreviation instead. \nInstead of typing `{prefix}health_potion1` or `{prefix}wooden_sword1` \nYou can just type `{prefix}hp1` or `{prefix}ws1`! :ok_hand:",
+        "Good luck on your way toward becoming a great adventuerer!",
+        "You beat the Dummy without killing? \n :eyes:How strange!!",
+        "Oh, and sorry for abandoning you \nI was just acting, \nThe dummies were suppose to act like they malfunctioned, \nYou see, it's harder to identify a potential Adventurer now, \nAnd... thats why I made a \"Test\" part at the end of our tutorial.",
+        "Btw, one more helpful tip! \nWhen you want to use items, you can use a short abbreviation instead. \nInstead of typing `{prefix}health_potion1` or `{prefix}wooden_sword` \nYou can just type `{prefix}hp1` or `{prefix}ws1`! ",
+        "Not many have beaten the dummy by draining its stamina... \nYou are a unique one! I believe you have a HUGE potential! \nBut please don't have mercy on the monsters you encounter in the adventures. \nYou will only harm yourself that way. :slight_frown: \nAnnnnd once again! Cya and have a nice adventuring experience with our bot!"
+    ],
+    "expected_message": {
+        "4": [
+            12
+        ],
+        "5": [
+            32
+        ],
+        "6": [
+            11
+        ],
+        "7": "refresh",
+        "8": [
+            12
+        ],
+        "9": "skip",
+        "10": [
+            12
+        ],
+        "11": "backpack",
+        "12": "None",
+        "13": "refresh",
+        "14": [
+            31
+        ],
+        "15": [
+            43,
+            53,
+            63
+        ],
+        "16": "backpack",
+        "17": [
+            43
+        ],
+        "18": "skip",
+        "19": [
+            23,
+            33
+        ],
+        "20": "flee",
+        "21": "None"
+    },
+    "expected_item": {
+        "4": [
+            "None",
+            1
+        ],
+        "5": [
+            "None",
+            1
+        ],
+        "6": [
+            "None",
+            1
+        ],
+        "7": [
+            "None",
+            1
+        ],
+        "8": [
+            "None",
+            1
+        ],
+        "9": [
+            "None",
+            1
+        ],
+        "10": [
+            "None",
+            1
+        ],
+        "11": [
+            "None",
+            1
+        ],
+        "12": [
+            "health potion",
+            1
+        ],
+        "13": [
+            "None",
+            1
+        ],
+        "14": [
+            "None",
+            1
+        ],
+        "15": [
+            "None",
+            1
+        ],
+        "16": [
+            "None",
+            1
+        ],
+        "17": [
+            "wooden sword",
+            1
+        ],
+        "18": [
+            "None",
+            1
+        ],
+        "19": [
+            "None",
+            1
+        ],
+        "20": [
+            "None",
+            1
+        ],
+        "21": [
+            "None",
+            1
+        ]
+    },
+    "triggered_message": {
+        "4": [
+            "Type `{prefix}12`! :tired_face:"
+        ],
+        "5": [
+            "You should type `{prefix}32`! :sweat_smile:"
+        ],
+        "6": [
+            "That's not how you play shield. Remember, you are player **#1**! :slight_frown:",
+            "Shield is the first card in your hand! :frowning2:",
+            "You should type `{prefix}11`! :disappointed_relieved:"
+        ],
+        "7": [
+            "Nooooo! Type `{prefix}r` to refresh the bot's messages! :cry:"
+        ],
+        "8": [
+            "Type `{prefix}12`! :face_with_raised_eyebrow:"
+        ],
+        "9": [
+            "Nooooo! Type `{prefix}s` to skip this turn! :cry:"
+        ],
+        "10": [
+            "Type `{prefix}12`! :laughing:"
+        ],
+        "11": [
+            "Nooooo! Type `{prefix}bp` to check your backpack! :cry:"
+        ],
+        "12": [
+            "Type `{prefix}health_potion1`, you wanted to use the health potion on yourself! :disappointed:"
+        ],
+        "13": [
+            "Nooooo! Type `{prefix}r` to refresh the bot's messages! :cry:"
+        ],
+        "14": [
+            "Type `{prefix}31`! :unamused:"
+        ],
+        "15": [
+            "Type `{prefix}43 53 63`! :neutral_face:"
+        ],
+        "16": [
+            "Nooooo! Type `{prefix}bp` to check your backpack! :pensive:"
+        ],
+        "17": [
+            "Type `{prefix}wooden_sword1 43`! :confused:"
+        ],
+        "18": [
+            "Type `{prefix}s` to skip the turn!! :fearful:"
+        ],
+        "19": [
+            "Type `{prefix}23 33`!!! :cold_sweat:"
+        ],
+        "20": [
+            "Please type `{prefix}f` to flee!! :scream:"
+        ],
+        "21": [
+            "None"
+        ]
+    },
+    "buffs": {
+        "4": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "5": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "6": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "7": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "8": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "9": [
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ]
+        ],
+        "10": [
+            [
+                0,
+                0,
+                100,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                100,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                100,
+                100,
+                0
+            ]
+        ],
+        "11": [
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ]
+        ],
+        "12": [
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ]
+        ],
+        "13": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "14": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "15": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "16": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "17": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ]
+        ],
+        "18": [
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                100,
+                0
+            ]
+        ],
+        "19": [
+            [
+                0,
+                0,
+                -100,
+                -100,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                100,
+                100,
+                0
+            ]
+        ],
+        "20": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ],
+        "21": [
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        ]
+    },
+    "enemy_moves": {
+        "4": [
+            "skip",
+            "skip"
+        ],
+        "5": [
+            [
+                1
+            ],
+            "skip"
+        ],
+        "6": [
+            [
+                1
+            ],
+            [
+                2
+            ]
+        ],
+        "7": [
+            "skip",
+            "skip"
+        ],
+        "8": [
+            [
+                1
+            ],
+            [
+                1
+            ]
+        ],
+        "9": [
+            "skip",
+            "skip"
+        ],
+        "10": [
+            [
+                5
+            ],
+            [
+                2
+            ]
+        ],
+        "11": [
+            "skip",
+            "skip"
+        ],
+        "12": [
+            "skip",
+            [
+                2
+            ]
+        ],
+        "13": [
+            "skip",
+            "skip"
+        ],
+        "14": [
+            "skip",
+            [
+                2
+            ]
+        ],
+        "15": [
+            "skip",
+            [
+                5
+            ]
+        ],
+        "16": [
+            "skip",
+            "skip"
+        ],
+        "17": [
+            "skip",
+            [
+                2
+            ]
+        ],
+        "18": [
+            "skip",
+            "skip"
+        ],
+        "19": [
+            "skip",
+            [
+                4
+            ]
+        ],
+        "20": [
+            "skip",
+            "skip"
+        ],
+        "21": [
+            "skip",
+            "skip"
+        ]
+    }
+}

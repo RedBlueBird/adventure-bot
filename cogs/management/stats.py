@@ -498,7 +498,7 @@ class Stats(commands.Cog, name="informational"):
                 embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
             embed.set_thumbnail(url=ctx.author.avatar.url)a.
             """
-            print(u.ICON[item_info['name'].lower()])
+            # print(u.ICON[item_info['name'].lower()])
             if name.lower() in u.ICON:
                 icon = u.ICON[name.lower()]
                 icon_id = icon[icon.rfind(":") + 1:-1]

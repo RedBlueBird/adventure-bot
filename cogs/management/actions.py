@@ -919,8 +919,6 @@ class Actions(commands.Cog, name="actions"):
                 trade_end = True
                 await ctx.send(f"Trade between {ctx.message.author} and {target} is now finished!")
 
-        del dm.queues[str(target.id)]
-
     @commands.hybrid_command(aliases=["selectdeck", "sel", "se"], brief="Get a deck from your deck slots.")
     @checks.is_registered()
     async def select(self, ctx: commands.Context, deck_slot: int):
