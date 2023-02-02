@@ -207,11 +207,9 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
             return
 
-        user_order = dm.get_user_order(user.id)
-        user_slot = dm.get_user_deck_slot(user.id)
-        user_deck = dm.get_user_deck(user_slot, user_order, user.id)
+        user_deck = dm.get_user_deck(user.id)
         deck_ids = [card[0] for card in user_deck]
-        user_cards = dm.get_user_cards(user.id, user_order, start=(page - 1) * 15, length=15)
+        user_cards = dm.get_user_cards(user.id, start=(page - 1) * 15, length=15)
         user_cards_count = dm.get_user_cards_count(user.id)
 
         if len(user_cards) == 0:
@@ -338,7 +336,7 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send("You don't have access to that deck slot yet!")
             return
 
-        user_deck = dm.get_user_deck(slot, dm.get_user_order(user.id), user.id)
+        user_deck = dm.get_user_deck(user.id)
         all_cards = []
         tot_energy = 0
         for x in user_deck:
@@ -658,24 +656,21 @@ class Stats(commands.Cog, name="informational"):
         page = max(page, 1)
 
         a = ctx.author
-        order = dm.get_user_order(a.id)
-        slot = dm.get_user_deck_slot(a.id)
-        deck_ids = [card[0] for card in dm.get_user_deck(slot, order, a.id)]
+        deck_ids = [card[0] for card in dm.get_user_deck(a.id)]
 
         res = []
         search_type = search_type.lower()
         if search_type == "level":
             additional = "" if query is None else f"AND card_level = {query}"
-            res = dm.get_user_cards(a.id, order, additional)
+            res = dm.get_user_cards(a.id, add_rules=additional)
 
         elif search_type == "name":
             res = dm.get_user_cards(
-                a.id, order,
-                "" if query is None else f"AND card_name LIKE '%{query}%'"
+                a.id, add_rules="" if query is None else f"AND card_name LIKE '%{query}%'"
             )
 
         elif search_type == "rarity":
-            user_cards = dm.get_user_cards(a.id, order)
+            user_cards = dm.get_user_cards(a.id)
             rarity_terms = {
                 "L": ["legendary", "legend", "leg", "le", "l"],
                 "EX": ["exclusive", "exclu", "exc", "ex"],
@@ -694,7 +689,7 @@ class Stats(commands.Cog, name="informational"):
                         res.append(x)
 
         elif search_type == "energy cost":
-            user_cards = dm.get_user_cards(a.id, order)
+            user_cards = dm.get_user_cards(a.id)
 
             if query is None:
                 res = user_cards

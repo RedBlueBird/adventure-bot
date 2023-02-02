@@ -54,7 +54,7 @@ class Sys(commands.Cog, name="sys"):
         dm.set_user_inventory("{}", a.id)
         dm.set_user_storage("{}", a.id)
 
-        user_cards = dm.get_user_cards(1, a.id)
+        user_cards = dm.get_user_cards(a.id, 1)
         for card in user_cards:
             dm.set_user_card_deck(1, 1, card[0], a.id)
 

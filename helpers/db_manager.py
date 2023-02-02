@@ -229,7 +229,9 @@ def get_user_deck_count(slot: int, uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck(slot: int, order: int, uid: int) -> list[tuple[int, str, int]]:
+def get_user_deck(uid: int) -> list[tuple[int, str, int]]:
+    order = get_user_order(uid)
+
     order_by = ""
     if order == 1:
         order_by = "card_level, card_name"
@@ -244,7 +246,7 @@ def get_user_deck(slot: int, order: int, uid: int) -> list[tuple[int, str, int]]
     elif order == 6:
         order_by = "id desc, card_name"
 
-    db_deck = f"deck{slot}"
+    db_deck = f"deck{get_user_deck_slot(uid)}"
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
         f"owned_user = {uid} AND {db_deck} = 1 ORDER BY {order_by}"
@@ -260,9 +262,11 @@ def get_user_deck(slot: int, order: int, uid: int) -> list[tuple[int, str, int]]
 
 
 def get_user_cards(
-        uid: int, order: int, add_rules: str = "", start: int = 0, length: int = -1,
+        uid: int, order: int | None = None, add_rules: str = "",
+        start: int = 0, length: int = -1,
 ) -> list[tuple[int, str, int]]:
     order_by = ""
+    order = get_user_order(uid) if order is None else order
     if order == 1:
         order_by = "card_level, card_name"
     elif order in [2, 7, 8, 9, 10]:
