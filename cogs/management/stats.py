@@ -104,7 +104,7 @@ class Stats(commands.Cog, name="informational"):
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
 
         embed.set_footer(
-            text=f"Player ID: {dm.get_user_id(user.id)}; "
+            text=f"Player ID: {dm.get_id(user.id)}; "
                  f"Register Date: {dm.get_user_register_date(user.id)}"
         )
         await ctx.send(embed=embed)
@@ -152,7 +152,7 @@ class Stats(commands.Cog, name="informational"):
                         new_quest_type = random.randint(1, 8)
                     quests.insert(-1, f"{quest_id}{award_type}.{new_quest_type}.0")
 
-                dm.set_user_quest(','.join(quests), user.id)
+                dm.set_user_quest(user.id, ','.join(quests))
 
         if len(quests) == 1:
             embed = discord.Embed(
@@ -392,7 +392,7 @@ class Stats(commands.Cog, name="informational"):
             if dm.get_user_level(user.id) < u.DECK_LVL_REQ[i + 1]:
                 card_info = f"Unlocked at level {u.DECK_LVL_REQ[i + 1]}"
             else:
-                deck_lens = dm.get_user_deck_count(i + 1, user.id)
+                deck_lens = dm.get_user_deck_count(user.id, i + 1)
                 card_info = f"{deck_lens}/12 cards"
 
             embed.add_field(name=name, value=card_info, inline=False)

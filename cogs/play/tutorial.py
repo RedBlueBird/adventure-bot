@@ -557,7 +557,7 @@ class Tutorial(commands.Cog, name="tutorial"):
                 # badge stuff prone to change, left commented for now
                 # badges = dm.get_user_badge(id)
                 # badges |= (1 << 27)
-                # dm.set_user_badge(badges, id)
+                # dm.set_user_badge(id, badges)
             else:
                 step = 27
                 final_step = 29

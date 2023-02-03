@@ -58,7 +58,7 @@ def log_quest(quest_type: int, value: int, userid):
     db.commit()
 
 
-def get_user_id(uid: int) -> int:
+def get_id(uid: int) -> int:
     cur.execute(f"SELECT id FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
 
@@ -73,7 +73,7 @@ def get_user_level(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_level(value: int, uid: int):
+def set_user_level(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET level = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -83,7 +83,7 @@ def get_user_exp(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_exp(value: int, uid: int):
+def set_user_exp(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET exps = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -93,7 +93,7 @@ def get_user_coin(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_coin(value: int, uid: int):
+def set_user_coin(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET coins = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -103,7 +103,7 @@ def get_user_gem(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_gem(value: int, uid: int):
+def set_user_gem(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET gems = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -113,7 +113,7 @@ def get_user_token(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_token(value: int, uid: int):
+def set_user_token(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET event_token = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -123,7 +123,7 @@ def get_user_medal(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_medal(value: int, uid: int):
+def set_user_medal(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET medals = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -133,7 +133,7 @@ def get_user_ticket(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_ticket(value: int, uid: int):
+def set_user_ticket(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET tickets = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -143,7 +143,7 @@ def get_user_daily(uid: int) -> dt.datetime:
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
 
 
-def set_user_daily(value: str, uid: int):
+def set_user_daily(uid: int, value: str):
     cur.execute(f"UPDATE temp2 SET daily_date = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -153,7 +153,7 @@ def get_user_order(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_order(value: int, uid: int):
+def set_user_order(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET inventory_order = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -163,7 +163,7 @@ def get_user_deals(uid: int) -> str:
     return cur.fetchall()[0][0]
 
 
-def set_user_deals(value: str, uid: int):
+def set_user_deals(uid: int, value: str):
     cur.execute(f"UPDATE temp2 SET deals = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -173,7 +173,7 @@ def get_user_streak(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_streak(value: int, uid: int):
+def set_user_streak(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET streak = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -183,7 +183,7 @@ def get_user_quest(uid: int) -> str:
     return cur.fetchall()[0][0]
 
 
-def set_user_quest(value: str, uid: int):
+def set_user_quest(uid: int, value: str):
     cur.execute(f"UPDATE temp2 SET quests = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -193,7 +193,7 @@ def get_user_msg_exp(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_msg_exp(value: int, uid: int):
+def set_user_msg_exp(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET msg_exp = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -203,7 +203,7 @@ def get_user_deck_slot(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_deck_slot(value: int, uid: int):
+def set_user_deck_slot(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET deck_slot = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -213,7 +213,7 @@ def get_user_cards_count(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck_count(slot: int, uid: int) -> int:
+def get_user_deck_count(uid: int, slot: int) -> int:
     db_deck = f"deck{slot}"
     cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid} AND {db_deck} = 1")
     return cur.fetchall()[0][0]
@@ -298,7 +298,7 @@ def add_user(uid: int):
     db.commit()
 
 
-def set_user_card_deck(slot: int, value: int, deck: int, uid: int):
+def set_user_card_deck(uid: int, slot: int, value: int, deck: int):
     db_deck = f"deck{slot}"
     cur.execute(f"UPDATE temp_cards SET {db_deck} = {value} WHERE id = {deck} AND owned_user = {uid}")
     db.commit()
@@ -309,7 +309,7 @@ def get_user_position(uid: int) -> str:
     return cur.fetchall()[0][0]
 
 
-def set_user_position(value: str, uid: int):
+def set_user_position(uid: int, value: str):
     cur.execute(f"UPDATE temp2 SET position = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -319,7 +319,7 @@ def get_user_inventory(uid: int) -> str:
     return cur.fetchall()[0][0]
 
 
-def set_user_inventory(value: str, uid: int):
+def set_user_inventory(uid: int, value: str):
     cur.execute(f"UPDATE temp2 SET inventory = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -329,7 +329,7 @@ def get_user_storage(uid: int) -> str:
     return cur.fetchall()[0][0]
 
 
-def set_user_storage(value: str, uid: int):
+def set_user_storage(uid: int, value: str):
     cur.execute(f"UPDATE temp2 SET storage = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -339,7 +339,7 @@ def get_user_map(uid: int) -> bool:
     return cur.fetchall()[0][0]
 
 
-def set_user_map(value: bool, uid: int):
+def set_user_map(uid: int, value: bool):
     cur.execute(f"UPDATE temp2 SET display_map = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -349,7 +349,7 @@ def get_user_badge(uid: int | str) -> int:
     return cur.fetchall()[0][0]
 
 
-def set_user_badge(value: int, uid: int):
+def set_user_badge(uid: int, value: int):
     cur.execute(f"UPDATE temp2 SET all_badges = {value} WHERE userid = {uid}")
     db.commit()
 
@@ -359,7 +359,7 @@ def get_user_register_date(uid: int) -> dt.datetime:
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
 
 
-def set_user_register_date(value: dt.datetime, uid: int):
+def set_user_register_date(uid: int, value: dt.datetime):
     cur.execute(f"UPDATE temp2 SET creation_date = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -369,7 +369,7 @@ def get_user_premium(uid: int) -> dt.datetime:
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
 
 
-def set_user_premium(value: dt.datetime, uid: int):
+def set_user_premium(uid: int, value: dt.datetime):
     cur.execute(f"UPDATE temp2 SET premium_account = '{value}' WHERE userid = {uid}")
     db.commit()
 

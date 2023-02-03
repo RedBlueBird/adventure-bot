@@ -4,7 +4,7 @@ import datetime as dt
 import asyncio
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
@@ -34,22 +34,22 @@ class Sys(commands.Cog, name="sys"):
         dm.add_user_cards(list(zip(owned_user, card_names, card_levels)))
 
         dm.add_user(a.id)
-        dm.set_user_coin(250, a.id)
-        dm.set_user_gem(5, a.id)
-        dm.set_user_premium(dt.datetime.today() + dt.timedelta(days=7), a.id)
-        dm.set_user_register_date(dt.datetime.today(), a.id)
-        dm.set_user_position("home", a.id)
-        dm.set_user_inventory("{}", a.id)
-        dm.set_user_storage("{}", a.id)
+        dm.set_user_coin(a.id, 250)
+        dm.set_user_gem(a.id, 5)
+        dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
+        dm.set_user_register_date(a.id, dt.datetime.today())
+        dm.set_user_position(a.id, "home")
+        dm.set_user_inventory(a.id, "{}")
+        dm.set_user_storage(a.id, "{}")
 
         user_cards = dm.get_user_cards(a.id, 1)
         for card in user_cards:
-            dm.set_user_card_deck(1, 1, card[0], a.id)
+            dm.set_user_card_deck(a.id, 1, 1, card[0])
 
         deals_cards = []
         for _ in range(9):
             deals_cards.append(u.add_a_card(1))
-        dm.set_user_deals(','.join(deals_cards), a.id)
+        dm.set_user_deals(a.id, ','.join(deals_cards))
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
@@ -80,8 +80,8 @@ class Sys(commands.Cog, name="sys"):
         if user_exp < u.level_xp(user_level) and user_level < 30 or user_level == 30:
             if user_msg_exp > 0:
                 inc_amt = 2 if user_premium_date > dt.datetime.today() else 1
-                dm.set_user_exp(user_exp + inc_amt, a.id)
-                dm.set_user_msg_exp(user_msg_exp - 1, a.id)
+                dm.set_user_exp(a.id, user_exp + inc_amt)
+                dm.set_user_msg_exp(a.id, user_msg_exp - 1)
         else:
             level_msg = []
             if (user_level + 1) % 2 == 0:
@@ -93,7 +93,7 @@ class Sys(commands.Cog, name="sys"):
 
             # At levels 17 and 27, the user gets a week of free premium.
             if user_level + 1 in [17, 27]:
-                dm.set_user_premium(user_premium_date + dt.timedelta(days=7), a.id)
+                dm.set_user_premium(a.id, user_premium_date + dt.timedelta(days=7))
 
             if u.LEVELS[user_level - 1]:
                 level_msg.extend(u.LEVELS[user_level - 1].format(u.PREF).split("\n"))
@@ -112,10 +112,10 @@ class Sys(commands.Cog, name="sys"):
             embed.set_thumbnail(url=a.avatar.url)
             await message.channel.send(embed=embed)
 
-            dm.set_user_exp(user_exp - u.level_xp(user_level), a.id)
-            dm.set_user_level(user_level + 1, a.id)
-            dm.set_user_coin(dm.get_user_coin(a.id) + user_level * 50, a.id)
-            dm.set_user_coin(dm.get_user_gem(a.id) + math.ceil((user_level + 1) / 5) + 1, a.id)
+            dm.set_user_exp(a.id, user_exp - u.level_xp(user_level))
+            dm.set_user_level(a.id, user_level + 1)
+            dm.set_user_coin(a.id, dm.get_user_coin(a.id) + user_level * 50)
+            dm.set_user_coin(a.id, dm.get_user_gem(a.id) + math.ceil((user_level + 1) / 5) + 1)
         # endregion
 
         # region Quest Completion Check (scuffed)
@@ -149,11 +149,11 @@ class Sys(commands.Cog, name="sys"):
                         gained[1] += int(quest[1])
 
                     quests.remove(quests[x])
-                    dm.set_user_coin(dm.get_user_coin(a.id) + gained[0], a.id)
-                    dm.set_user_gem(dm.get_user_gem(a.id) + gained[1], a.id)
-                    dm.set_user_gem(dm.get_user_exp(a.id) + gained[2], a.id)
-                    dm.set_user_token(dm.get_user_token(a.id) + 1, a.id)
-                    dm.set_user_quest(','.join(quests), a.id)
+                    dm.set_user_coin(a.id, dm.get_user_coin(a.id) + gained[0])
+                    dm.set_user_gem(a.id, dm.get_user_gem(a.id) + gained[1])
+                    dm.set_user_gem(a.id, dm.get_user_exp(a.id) + gained[2])
+                    dm.set_user_token(a.id, dm.get_user_token(a.id) + 1)
+                    dm.set_user_quest(a.id, ','.join(quests))
                     break
         # endregion
 
@@ -186,9 +186,9 @@ class Sys(commands.Cog, name="sys"):
 
                 user_coin = dm.get_user_coin(a.id)
                 if user_coin:
-                    dm.set_user_coin(user_coin + amt, a.id)
+                    dm.set_user_coin(a.id, user_coin + amt)
                     if random.randint(1, 100) == 1:
-                        dm.set_user_gem(dm.get_user_gem(a.id) + 1, a.id)
+                        dm.set_user_gem(a.id, dm.get_user_gem(a.id) + 1)
                         msg = f"{mention}, you got {amt} {u.ICON['coin']} and 1 {u.ICON['gem']} as well!"
                     else:
                         msg = f"{mention}, you got {amt} {u.ICON['coin']}!"
