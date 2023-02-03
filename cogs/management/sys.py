@@ -23,18 +23,6 @@ class Sys(commands.Cog, name="sys"):
         """Registers the author of the message."""
         a = ctx.message.author
 
-        user_cooldown = dm.get_user_cooldown(a.id)
-        if user_cooldown:
-            if user_cooldown == 0:
-                await ctx.send(f"{ctx.message.author.mention}, you're already registered in this bot!")
-            else:
-                await ctx.send(
-                    "You have to wait " +
-                    u.time_converter(user_cooldown) +
-                    " before you can send another command!"
-                )
-            return
-
         await ctx.send(f"*registering {ctx.message.author.mention}...*")
 
         card_names = [

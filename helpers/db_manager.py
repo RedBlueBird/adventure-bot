@@ -68,16 +68,6 @@ def get_all_userid() -> list[int]:
     return [int(i[0]) for i in cur.fetchall()]
 
 
-def get_user_cooldown(uid: int) -> int:
-    cur.execute(f"SELECT cooldown FROM temp2 WHERE userid = {uid}")
-    return cur.fetchall()[0][0]
-
-
-def set_user_cooldown(value: int, uid: int):
-    cur.execute(f"UPDATE temp2 SET cooldown = {value} WHERE userid = {uid}")
-    db.commit()
-
-
 def get_user_level(uid: int) -> int:
     cur.execute(f"SELECT level FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
