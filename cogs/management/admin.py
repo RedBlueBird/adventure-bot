@@ -120,7 +120,7 @@ class Admin(commands.Cog, name="admin"):
                 dm.set_user_gem(d, user_gem + earned_gems)
                 dm.set_user_medal(d, medals)
             except:
-                print(all_datas.index(d))
+                print(all_ids)
 
         await ctx.message.channel.send("Season Ended!")
 
