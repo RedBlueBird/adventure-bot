@@ -142,7 +142,8 @@ cython_debug/
 .vscode/*
 .vs/*
 *.pyproj
-*.sln
+# *.sln
+# apparently I need .sln for it to auto add new files from pull
 
 # SQLITE database
 *.db

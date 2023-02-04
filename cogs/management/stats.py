@@ -31,10 +31,10 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered!")
             return
 
-        user_premium_date = dm.get_user_premium(user.id)
-        if user_premium_date > dt.datetime.today():
+        user_premium = dm.get_user_premium(user.id)
+        if user_premium > dt.datetime.today():
             description_msg = f"14 \n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
-                              f"{(user_premium_date - dt.datetime.today()).days} days remaining\n"
+                              f"{(user_premium - dt.datetime.today()).days} days remaining\n"
             tickets = 10
         else:
             description_msg = "7 \n"
@@ -123,10 +123,10 @@ class Stats(commands.Cog, name="informational"):
             return
 
         user_quest = dm.get_user_quest(user.id)
-        user_premium_date = dm.get_user_premium(user.id)
+        user_premium = dm.get_user_premium(user.id)
 
         quests = user_quest.split(",")
-        is_premium = user_premium_date > dt.datetime.today()
+        is_premium = user_premium > dt.datetime.today()
 
         if (len(quests) < 4 and not is_premium) or (len(quests) < 5 and is_premium):
             if int(quests[-1]) - int(times.time()) <= 1:

@@ -9,7 +9,6 @@ from helpers import checks
 import util as u
 from helpers import db_manager as dm
 
-
 class Admin(commands.Cog, name="admin"):
     def __init__(self, bot):
         self.bot = bot
@@ -38,10 +37,7 @@ class Admin(commands.Cog, name="admin"):
         if "cards".startswith(item_type):
             card_name = " ".join(name.split("_")).title()
             try:
-                mysql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
-                value = (target, card_name, math.floor(int(level)))
-                dm.cur.execute(mysql, value)
-                dm.db.commit()
+                dm.add_user_cards([(target.id, card_name, math.floor(int(level)))])
 
                 await ctx.message.channel.send(
                     f"{target.mention}, you received a **[{u.rarity_cost(card_name)}] "
@@ -52,8 +48,7 @@ class Admin(commands.Cog, name="admin"):
 
         elif "items".startswith(item_type):
             item_name = u.items_dict(" ".join(name.split("_")))["name"]
-            dm.cur.execute(f"SELECT inventory FROM adventuredatas WHERE userid = {target.id}")
-            inventory_data = eval(dm.cur.fetchall()[0][0])
+            inventory_data = eval(dm.get_user_inventory(target.id))
             try:
                 if math.floor(int(level)) > 0 and not item_name.lower() in inventory_data:
                     inventory_data[item_name.lower()] = {"items": math.floor(int(level))}
@@ -68,10 +63,7 @@ class Admin(commands.Cog, name="admin"):
                     del inventory_data[x]
 
                 inv_json = str(inventory_data).replace("'", "\"")
-                dm.cur.execute(
-                    f"UPDATE adventuredatas SET inventory = '{inv_json}' WHERE userid = {target.id}"
-                )
-                dm.db.commit()
+                dm.set_user_inventory(target.id, inv_json)
                 await ctx.message.channel.send(
                     f"{target.mention}, you received "
                     f"**[{u.items_dict(item_name)['rarity']}/"
@@ -95,22 +87,24 @@ class Admin(commands.Cog, name="admin"):
     @commands.is_owner()
     async def end_season(self, ctx: commands.Context):
         """Resets the PVP season and gives each player their medals."""
-        dm.cur.execute("select userid, medals, user_identity from playersinfo")
-        all_datas = dm.cur.fetchall()
-        for d in all_datas:
+        all_ids = dm.get_all_userids()
+        for d in all_ids:
             try:
-                user = await self.bot.fetch_user(d[0])
+                user = await self.bot.fetch_user(d)
+                user_coin = dm.get_user_coin(d)
+                user_gem = dm.get_user_gem(d)
+                user_medal = dm.get_user_medal(d)
 
                 if int(d[2].split(",")[0]) == 0:
-                    earned_coins = d[1] * 5
-                    earned_gems = math.floor(d[1] / 100)
+                    earned_coins = user_medal * 5
+                    earned_gems = math.floor(user_medal / 100)
                 elif int(d[2].split(",")[0]) == 1:
-                    earned_coins = d[1] * 10
-                    earned_gems = math.floor(d[1] / 100) * 2
+                    earned_coins = user_medal * 10
+                    earned_gems = math.floor(user_medal / 100) * 2
                 if d[1] > 500:
-                    medals = math.ceil((d[1] - 500) / 2) + 500
+                    medals = math.ceil((user_medal - 500) / 2) + 500
                 else:
-                    medals = d[1]
+                    medals = user_medal
 
                 if earned_gems == 0:
                     await user.send(
@@ -122,10 +116,9 @@ class Admin(commands.Cog, name="admin"):
                         f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
                         f"\n+{earned_coins} {u.ICON['coin']} \n+{earned_gems} {u.ICON['gem']}!"
                     )
-                sql = "UPDATE playersinfo SET coins = coins + %s, gems = gems + %s, medals = %s WHERE userid = %s"
-                data = (earned_coins, earned_gems, medals, d[0])
-                dm.cur.execute(sql, data)
-                dm.db.commit()
+                dm.set_user_coin(d, user_coin + earned_coins)
+                dm.set_user_gem(d, user_gem + earned_gems)
+                dm.set_user_medal(d, medals)
             except:
                 print(all_datas.index(d))
 

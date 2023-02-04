@@ -23,88 +23,84 @@ class Actions(commands.Cog, name="actions"):
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
         """Get your daily rewards!"""
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
-        dm.cur.execute(
-            f"SELECT coins, exps, medals, level, daily, streak, user_identity, tickets "
-            f"FROM playersinfo WHERE userid = {a_id}"
-        )
-        result = dm.cur.fetchall()[0]
+        member = ctx.message.author
+        user_coin = dm.get_user_coin(member.id)
+        user_exp = dm.get_user_exp(member.id)
+        user_medal = dm.get_user_medal(member.id)
+        user_level = dm.get_user_level(member.id)
+        user_streak = dm.get_user_streak(member.id)
+        user_ticket = dm.get_user_ticket(member.id)
+        user_premium = dm.get_user_premium(member.id)
+        user_daily = dm.get_user_daily(member.id)
 
-        if result[4] == str(dt.date.today()):
-            dts = dt.datetime.now()
-            time = u.time_converter(
-                ((24 - dts.hour - 1) * 60 * 60) +
-                ((60 - dts.minute - 1) * 60) + (60 - dts.second)
-            )
-            await ctx.send(f"{mention}, your next daily is in {time}!")
+        if user_daily.date() == dt.date.today():
+            dts = u.time_til_midnight()
+            await ctx.send(f"{member.mention}, your next daily is in {dts}!")
             return
 
-        streak = int(result[5]) + 1
+        streak = int(user_streak) + 1
         medal_reward = 1
         ticket_reward = 1
         max_streak = 7
         max_tickets = 5
         tick_msg = ""
 
-        if int(result[6].split(",")[0]) == 1:
+        if user_premium.date() > dt.date.today():
             max_streak = 14
             max_tickets = 10
-        if result[4] != str(dt.date.today() - dt.timedelta(days=1)):
+        if user_daily.date() < dt.date.today() - dt.timedelta(days=1):
             streak = 1
         elif streak >= max_streak:
             streak = max_streak
         if streak >= 7:
             medal_reward = 2
-        if result[7] >= max_tickets or result[3] < 4:
+        if user_ticket >= max_tickets or user_level < 4:
             ticket_reward = 0
         else:
             tick_msg = f"+{ticket_reward} {u.ICON['tick']}"
 
-        dm.cur.execute(f"SELECT id FROM cardsinfo WHERE owned_user = {a_id}")
-        cards_count = len(dm.cur.fetchall())
+        user_cards_count = dm.get_user_cards_count(member.id)
 
-        if cards_count < 500:
-            card_level = u.log_level_gen(random.randint(2 ** (max(0, 5 - (result[3] // 4))),
-                                                         2 ** (10 - math.floor(result[3] / 10))))
+        if user_cards_count < 500:
+            card_level = u.log_level_gen(random.randint(2 ** (max(0, 5 - (user_level // 4))),
+                                                         2 ** (10 - math.floor(user_level / 10))))
             card = u.random_card(card_level, "normal")
-            sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
-            val = (a_id, card, card_level)
-            dm.cur.execute(sql, val)
-            dm.db.commit()
+            dm.add_user_cards([(member.id, card, card_level)])
             card_msg = f"Obtained **[{u.rarity_cost(card)}] {card} lv: {card_level}**!"
         else:
-            dm.cur.execute(f"UPDATE playersinfo SET coins = coins + 250 WHERE userid = '{a_id}'")
-            dm.db.commit()
+            dm.set_user_coin(member.id, user_coin + 250)
             card_msg = f"Received extra 250 {u.ICON['coin']}!"
 
-        if random.randint(1, 7) == 1:  # one in 7 change ig
-            new_coins = result[0] + 400 + math.floor(result[3] / 5) * 20 + streak * 80
-            new_exps = result[1] + 200
-            new_medals = result[2] + medal_reward * 4
+        if random.randint(1, 7) == 1:  # one in 7 chance ig
+
+            new_coins = user_coin + 400 + math.floor(user_level / 5) * 20 + streak * 80
+            new_exps = user_exp + 200
+            new_medals = user_medal + medal_reward * 4
             await ctx.send(
-                f"{mention} JACKPOT!!! \n"
-                f"**+{math.floor(result[3] / 5) * 20 + 400 + streak * 80} "
+                f"{member.mention} JACKPOT!!! \n"
+                f"**+{math.floor(user_level / 5) * 20 + 400 + streak * 80} "
                 f"{u.ICON['coin']} +200 {u.ICON['exp']}"
                 f" +{medal_reward * 4} {u.ICON['medal']} {tick_msg}! \n"
                 f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
             )
         else:
-            new_coins = result[0] + 100 + math.floor(result[3] / 5) * 5 + streak * 20
-            new_exps = result[1] + 50
-            new_medals = result[2] + medal_reward
+            new_coins = user_coin + 100 + math.floor(user_level / 5) * 5 + streak * 20
+            new_exps = user_exp + 50
+            new_medals = user_medal + medal_reward
             await ctx.send(
-                f"{mention} \n"
-                f"**+{math.floor(result[3] / 5) * 5 + 100 + streak * 20} {u.ICON['coin']} +50 {u.ICON['exp']}"
+                f"{member.mention} \n"
+                f"**+{math.floor(user_level / 5) * 5 + 100 + streak * 20} {u.ICON['coin']} +50 {u.ICON['exp']}"
                 f" +{medal_reward}{u.ICON['medal']} {tick_msg}\n"
                 f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
             )
 
-        sql = f"UPDATE playersinfo SET coins = %s, exps = %s, medals = %s, " \
-              f"tickets = tickets + %s, daily = %s, streak = %s WHERE userid = %s"
-        value = (new_coins, new_exps, new_medals, ticket_reward, str(dt.date.today()), streak, a_id)
-        dm.cur.execute(sql, value)
-        dm.db.commit()
+        dm.set_user_coin(member.id, new_coins)
+        dm.set_user_exp(member.id, new_exps)
+        dm.set_user_medal(member.id, new_medals)
+        dm.set_user_ticket(member.id, user_ticket + ticket_reward)
+        dm.set_user_daily(member.id, dt.date.today())
+        dm.set_user_streak(member.id, streak)
+
 
     @commands.hybrid_command(aliases=["orders"], brief="cards")
     @checks.is_registered()
