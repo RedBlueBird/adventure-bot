@@ -115,34 +115,34 @@ class Actions(commands.Cog, name="actions"):
         ascending_aliases = ["ascending", "ascend", "a", "asc"]
         descending_aliases = ["descending", "descend", "d", "desc", "des"]
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        member = ctx.message.author
 
-        order = [0, None, None]
-        if order_by in ascending_aliases + descending_aliases:
-            card_property = card_property.lower()
-            if card_property in level_aliases:
-                order = [1, "level", " ascending"]
-            elif card_property in name_aliases:
-                order = [3, "name", " ascending"]
-            elif card_property in id_aliases:
-                order = [5, "id", " ascending"]
-            elif card_property in cost_aliases:
-                order = [7, "cost", " ascending"]
-            elif card_property in rarity_aliases:
-                order = [9, "rarity", " ascending"]
-        if order_by in descending_aliases:
-            order[0] += 1
-            order[2] = " descending"
-        if order_by == [0, None, None]:
-            await ctx.send(
-                f"{mention}, the correct format for this command is "
-                f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!"
-            )
+        if card_property is None or order_by is None:
+            await ctx.send(f"{member.mention}, the correct format for this command is "
+                           f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!")
         else:
-            dm.cur.execute(f"UPDATE playersinfo SET inventory_order = {order[0]} WHERE userid = {a_id}")
-            dm.db.commit()
-            await ctx.send(f"{mention}, the order had been set to {order[1]}/{order[2]}.")
+            order = [0, None, None]
+            if order_by in ascending_aliases + descending_aliases:
+                card_property = card_property.lower()
+                if card_property in level_aliases:
+                    order = [1, "level", " ascending"]
+                elif card_property in name_aliases:
+                    order = [3, "name", " ascending"]
+                elif card_property in id_aliases:
+                    order = [5, "id", " ascending"]
+                elif card_property in cost_aliases:
+                    order = [7, "cost", " ascending"]
+                elif card_property in rarity_aliases:
+                    order = [9, "rarity", " ascending"]
+            if order_by in descending_aliases:
+                order[0] += 1
+                order[2] = " descending"
+            if order == [0, None, None]:
+                await ctx.send(f"{member.mention}, the correct format for this command is "
+                               f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!")
+            else:
+                dm.set_user_order(member.id, order[0])
+                await ctx.send(f"{member.mention}, the order had been set to {order[1]}{order[2]}.")
 
     @commands.hybrid_command(aliases=["buying"], brief="actions")
     @checks.is_registered()
@@ -151,23 +151,24 @@ class Actions(commands.Cog, name="actions"):
     async def buy(self, ctx: commands.Context, to_buy=None):
         """Command for buying items in the shop"""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
-        dm.cur.execute("SELECT deals FROM playersinfo WHERE userid = " + str(a_id))
-        deals = dm.cur.fetchall()[0][0].split(',')
+        member = ctx.message.author
+        deals = dm.get_user_deal(member.id).split(',')
 
         if to_buy is None:
             await ctx.send(f"{mention}, the correct format for this command is "
                            f"`{u.PREF}buy (1-{len(deals)}/all/refresh)`!")
             return
 
-        dm.cur.execute(f"SELECT count(*) FROM cardsinfo WHERE owned_user = {a_id}")
-        cards_count = dm.cur.fetchall()[0][0]
+        user_cards_count = dm.get_user_cards_count(member.id)
+        user_coin = dm.get_user_coin(member.id)
+        user_gem = dm.get_user_gem(member.id)
+        user_token = dm.get_user_token(member.id)
+        user_ticket = dm.get_user_ticket(member.id)
+        user_premium = dm.get_user_premium(member.id)
+        user_level = dm.get_user_level(member.id)
 
-        dm.cur.execute(
-            f"SELECT coins, gems, event_token, tickets, user_identity, level FROM playersinfo WHERE userid = '{a_id}'")
-        coins, gems, tokens, tickets, user_identity, player_lvl = dm.cur.fetchall()[0]
-        max_tickets = 5 if user_identity.split(",")[0] != "1" else 10
+            #f"SELECT coins, gems, event_token, tickets, user_identity, level FROM playersinfo WHERE userid = '{a_id}'"
+        max_tickets = 5 if user_premium.date() < dt.date.today() else 10
 
         if not to_buy.isdigit():
             # well, maybe the user wants to do some other action?
@@ -193,23 +194,6 @@ class Actions(commands.Cog, name="actions"):
                         return f"You need least {gem_cost} {u.ICON['gem']} to buy {reward_amount} {u.ICON[reward_currency]}!", "None", [
                             0, 'coins', 0, 'coin']
                 return "None", "None", [0, 'coins', 0, 'coin']
-
-            def card_buy(command, gem_cost, token_cost, cards, levels):
-                if to_buy.lower() == command:
-                    if gems >= gem_cost and tokens >= token_cost:
-                        if cards_count + cards > 500:
-                            return "you can only have at most 500 cards!", "None", [0, 0, 'basic', 0, 128]
-                        else:
-                            return f"Are you sure you want to purchase a {command.title()} Edition card pack?", "card", [
-                                gem_cost, token_cost, command, cards, levels]
-                    else:
-                        if token_cost == 0:
-                            return f"You need {gem_cost} {u.ICON['gem']} in order to buy a {command.title()} Edition card pack!", "None", [
-                                0, 0, 'basic', 0, 128]
-                        else:
-                            return f"You need {token_cost} {u.ICON['token']} in order to buy a {command.title()} Edition card pack!", "None", [
-                                0, 0, 'basic', 0, 128]
-                return "None", "None", [0, 0, 'basic', 0, 128]
 
             if to_buy.lower() in ["refresh", "ref", "re", "r"]:
                 if coins >= 200:
@@ -246,20 +230,33 @@ class Actions(commands.Cog, name="actions"):
                 else:
                     await ctx.send(f"{mention}, you need least 200 {u.ICON['coin']} to refresh the shop!")
 
-            card_packs = [
-                ['basic', 3, 0, 3, 128],
-                ['fire', 5, 0, 4, 128],
-                ['evil', 5, 0, 4, 128],
-                ['electric', 5, 0, 4, 128],
-                ['defensive', 5, 0, 4, 128],
-                ['pro', 24, 0, 6, 16],
-                ['pro', 24, 0, 6, 16],
-                # ['confetti', 0, 40, 6, 16]
-            ]
+            #gem, token, cards, levels
+            card_packs = {
+                "basic": [3,0,3,128],
+                "fire": [5,0,4,128],
+                "evil": [5,0,4,128],
+                "electric": [5,0,4,128],
+                "defensive": [5,0,4,128],
+                "pro": [24,0,6,16],
+                #"confetti": [0,40,6,16]
+            }
 
-            for p in card_packs:
-                if deal_msg == 'None':
-                    deal_msg, deal_started, deal_cards = card_buy(*p)
+            if to_buy.lower() in card_packs:
+                if gems >= gem_cost and tokens >= token_cost:
+                    if cards_count + cards > 500:
+                        return "you can only have at most 500 cards!", "None", [0, 0, 'basic', 0, 128]
+                    else:
+                        return f"Are you sure you want to purchase a {command.title()} Edition card pack?", "card", [
+                            gem_cost, token_cost, command, cards, levels]
+                else:
+                    if token_cost == 0:
+                        return f"You need {gem_cost} {u.ICON['gem']} in order to buy a {command.title()} Edition card pack!", "None", [
+                            0, 0, 'basic', 0, 128]
+                    else:
+                        return f"You need {token_cost} {u.ICON['token']} in order to buy a {command.title()} Edition card pack!", "None", [
+                            0, 0, 'basic', 0, 128]
+            return "None", "None", [0, 0, 'basic', 0, 128]
+                deal_msg, deal_started, deal_cards = card_buy(*p)
 
             currency_deals = [
                 ["gc1", 3, 'coin', 1000],

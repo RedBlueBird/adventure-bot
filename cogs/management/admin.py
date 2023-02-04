@@ -94,26 +94,27 @@ class Admin(commands.Cog, name="admin"):
                 user_coin = dm.get_user_coin(d)
                 user_gem = dm.get_user_gem(d)
                 user_medal = dm.get_user_medal(d)
+                user_premium = dm.get_user_premium(d)
 
-                if int(d[2].split(",")[0]) == 0:
+                if user_premium.date() < dt.date.today():
                     earned_coins = user_medal * 5
                     earned_gems = math.floor(user_medal / 100)
-                elif int(d[2].split(",")[0]) == 1:
+                else:
                     earned_coins = user_medal * 10
                     earned_gems = math.floor(user_medal / 100) * 2
-                if d[1] > 500:
+                if user_medal > 500:
                     medals = math.ceil((user_medal - 500) / 2) + 500
                 else:
                     medals = user_medal
 
                 if earned_gems == 0:
                     await user.send(
-                        f"```Season Ended!``` You now have {medals} {u.ICON['medal']} (from {d[1]}) "
+                        f"```Season Ended!``` You now have {medals} {u.ICON['medal']} (from {user_medal}) "
                         f"\n+{earned_coins} {u.ICON['coin']}!"
                     )
                 else:
                     await user.send(
-                        f"```Season Ended!``` You now have {medals} medals (from {d[1]}) "
+                        f"```Season Ended!``` You now have {medals} medals (from {user_medal}) "
                         f"\n+{earned_coins} {u.ICON['coin']} \n+{earned_gems} {u.ICON['gem']}!"
                     )
                 dm.set_user_coin(d, user_coin + earned_coins)
