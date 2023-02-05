@@ -235,7 +235,7 @@ class Actions(commands.Cog, name="actions"):
             total_cost = sum([u.compute_card_cost(i[1],int(i[0])) if i != "-" else 0 for i in deals])
             total_count = sum([1 if i[0] != "-" else 0 for i in deals])
 
-            if total_count + cards_count > 500:
+            if total_count + total_count > 500:
                 deal_msg = f"Purchasing those cards will exceed the 500 cards capacity for your inventory!"
             elif total_count == 0:
                 deal_msg = f"You have already bought every card!"
