@@ -148,17 +148,11 @@ class Actions(commands.Cog, name="actions"):
     @checks.is_registered()
     @checks.not_preoccupied("in the shop")
     @checks.level_check(3)
-    async def buy(self, ctx: commands.Context, to_buy=None):
+    async def buy(self, ctx: commands.Context, to_buy="None"):
         """Command for buying items in the shop"""
 
         member = ctx.message.author
-        deals = dm.get_user_deal(member.id).split(',')
-
-        if to_buy is None:
-            await ctx.send(f"{mention}, the correct format for this command is "
-                           f"`{u.PREF}buy (1-{len(deals)}/all/refresh)`!")
-            return
-
+        deals = [i.split(".") for i in dm.get_user_deal(member.id).split(',')]
         user_cards_count = dm.get_user_cards_count(member.id)
         user_coin = dm.get_user_coin(member.id)
         user_gem = dm.get_user_gem(member.id)
@@ -167,303 +161,217 @@ class Actions(commands.Cog, name="actions"):
         user_premium = dm.get_user_premium(member.id)
         user_level = dm.get_user_level(member.id)
 
-            #f"SELECT coins, gems, event_token, tickets, user_identity, level FROM playersinfo WHERE userid = '{a_id}'"
         max_tickets = 5 if user_premium.date() < dt.date.today() else 10
+        deal_type = "None"
+        deal_msg = "None"
+        deal_transaction = []
 
-        if not to_buy.isdigit():
-            # well, maybe the user wants to do some other action?
-            other_action_taken = True
-            deal_started = "None"
-            deal_msg = "None"
-            deal_transaction = [0, 'coins', 0, 'coin']
-            deal_cards = [0, 0, 'basic', 0, 128]
+        #gem, token, cards, levels
+        card_packs = {
+            "basic": [3,0,3,128],
+            "fire": [5,0,4,128],
+            "evil": [5,0,4,128],
+            "electric": [5,0,4,128],
+            "defensive": [5,0,4,128],
+            "pro": [24,0,6,16],
+            #"confetti": [0,40,6,16]
+        }
+        #gem, coin, ticket
+        currency_deals = {
+            "gc1": [3,1000,0],
+            "gc2": [6,2250,0],
+            "gc3": [24,11000,0],
+            "rt1": [2,0,1],
+            "rt2": [4,0,3],
+            "rt3": [6,0,5]
+        }
 
-            def currency_buy(command, gem_cost, reward_currency, reward_amount):
-                if to_buy.lower() == command:
-                    if gems >= gem_cost:
-                        if reward_currency != "tick" or (
-                                reward_currency == "tick" and tickets + reward_amount <= max_tickets):
-                            deal_started = "currency"
-                            deal_transaction = [gem_cost, {'coin': 'coins', 'tick': 'tickets', 'token': 'event_token'}[
-                                reward_currency], reward_amount, reward_currency]
-                            return f"Are you sure you want to buy {reward_amount} {u.ICON[reward_currency]} with {gem_cost} {u.ICON['gem']}?", deal_started, deal_transaction
-                        else:
-                            return f"You can't buy {reward_amount} {u.ICON[reward_currency]}, it exceeds the maximum amount of {u.ICON['tick']} you can store!", "None", [
-                                0, 'coins', 0, 'coin']
-                    else:
-                        return f"You need least {gem_cost} {u.ICON['gem']} to buy {reward_amount} {u.ICON[reward_currency]}!", "None", [
-                            0, 'coins', 0, 'coin']
-                return "None", "None", [0, 'coins', 0, 'coin']
+        if to_buy.lower() in card_packs:
+            gem_cost = card_packs[to_buy.lower()][0]
+            token_cost = card_packs[to_buy.lower()][1]
+            cards_count = card_packs[to_buy.lower()][2]
+            cards_level = card_packs[to_buy.lower()][3]
 
-            if to_buy.lower() in ["refresh", "ref", "re", "r"]:
-                if coins >= 200:
-                    msg = await ctx.send(f"{mention}, do you want to refresh the shop for 200 {u.ICON['coin']}?")
-                    await msg.add_reaction("✅")
-                    await msg.add_reaction("❎")
-                    try:
-                        reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                                 check=checks.valid_reaction(["❎", "✅"],
-                                                                                             [ctx.message.author],
-                                                                                             [msg]))
-                    except asyncio.TimeoutError:
-                        await msg.edit(content=f"{mention}, purchase cancelled")
-                        await msg.clear_reactions()
-                    else:
-                        if reaction.emoji == "❎":
-                            await msg.edit(content=f"{mention}, purchase cancelled")
-                            await msg.clear_reactions()
-                        else:
-                            await msg.delete()
-                            deals_cards = []
-                            if int(user_identity.split(",")[0]) == 0:
-                                for x in range(6):
-                                    deals_cards.append(
-                                        u.add_a_card(player_lvl))
-                            elif int(user_identity.split(",")[0]) == 1:
-                                for x in range(9):
-                                    deals_cards.append(u.add_a_card(player_lvl))
-                            sql = "UPDATE playersinfo SET deals = %s, coins = coins - 200 WHERE userid = %s"
-                            value = (",".join(deals_cards), str(a_id))
-                            dm.cur.execute(sql, value)
-                            dm.db.commit()
-                            await ctx.send(f"{mention}, you refreshed your shop for 200 {u.ICON['coin']}!")
+            if user_gem >= gem_cost and user_token >= token_cost:
+                if cards_count + user_cards_count > 500:
+                    deal_msg = "you can only have at most 500 cards!"
                 else:
-                    await ctx.send(f"{mention}, you need least 200 {u.ICON['coin']} to refresh the shop!")
-
-            #gem, token, cards, levels
-            card_packs = {
-                "basic": [3,0,3,128],
-                "fire": [5,0,4,128],
-                "evil": [5,0,4,128],
-                "electric": [5,0,4,128],
-                "defensive": [5,0,4,128],
-                "pro": [24,0,6,16],
-                #"confetti": [0,40,6,16]
-            }
-
-            if to_buy.lower() in card_packs:
-                if gems >= gem_cost and tokens >= token_cost:
-                    if cards_count + cards > 500:
-                        return "you can only have at most 500 cards!", "None", [0, 0, 'basic', 0, 128]
-                    else:
-                        return f"Are you sure you want to purchase a {command.title()} Edition card pack?", "card", [
-                            gem_cost, token_cost, command, cards, levels]
-                else:
-                    if token_cost == 0:
-                        return f"You need {gem_cost} {u.ICON['gem']} in order to buy a {command.title()} Edition card pack!", "None", [
-                            0, 0, 'basic', 0, 128]
-                    else:
-                        return f"You need {token_cost} {u.ICON['token']} in order to buy a {command.title()} Edition card pack!", "None", [
-                            0, 0, 'basic', 0, 128]
-            return "None", "None", [0, 0, 'basic', 0, 128]
-                deal_msg, deal_started, deal_cards = card_buy(*p)
-
-            currency_deals = [
-                ["gc1", 3, 'coin', 1000],
-                ['gc2', 6, 'coin', 2250],
-                ['gc3', 24, 'coin', 11000],
-                ['rt1', 2, 'tick', 1],
-                ['rt2', 4, 'tick', 3],
-                ['rt3', 6, 'tick', 5]
-            ]
-
-            for c in currency_deals:
-                if deal_msg == 'None':
-                    deal_msg, deal_started, deal_transaction = currency_buy(*c)
-
-            if deal_msg != "None":
-                deal_msg = await ctx.send(deal_msg)
-
-            if deal_started != "None":
-                await deal_msg.add_reaction("✅")
-                await deal_msg.add_reaction("❎")
-                try:
-                    reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                             check=checks.valid_reaction(["❎", "✅"],
-                                                                                         [ctx.message.author],
-                                                                                         [deal_msg]))
-                except asyncio.TimeoutError:
-                    await deal_msg.edit(content=f"{mention}, the transaction timed out.")
-                    await deal_msg.clear_reactions()
-                else:
-                    if reaction.emoji == "❎":
-                        await deal_msg.edit(content=f"{mention}, you cancelled the purchase.")
-                        await deal_msg.clear_reactions()
-                    else:
-                        await deal_msg.delete()
-                        if deal_started == "currency":
-                            dm.cur.execute(f"UPDATE playersinfo SET gems = gems - {deal_transaction[0]}, "
-                                           f"{deal_transaction[1]} = {deal_transaction[1]} + {deal_transaction[2]} "
-                                           f"WHERE userid = {a_id}")
-                            dm.db.commit()
-                            embed = discord.Embed(title="You got:",
-                                                  description=f"**{deal_transaction[2]}** {u.ICON[deal_transaction[3]]}!",
-                                                  color=discord.Color.gold())
-                            embed.set_thumbnail(url=ctx.message.author.avatar.url)
-                            embed.set_footer(text="Gems left: " + str(gems - deal_transaction[0]))
-                            await ctx.send(embed=embed)
-
-                        elif deal_started == "card":
-                            dm.cur.execute(f"UPDATE playersinfo SET gems = gems - {deal_cards[0]}, "
-                                           f"event_token = event_token - {deal_cards[1]} WHERE userid = {a_id}")
-                            dm.db.commit()
-                            if deal_cards[0] > 0:
-                                deals_cards = []
-                                for x in range(deal_cards[3]):
-                                    energy_cost = u.log_level_gen(random.randint(1, deal_cards[4]))
-                                    deals_cards.append(energy_cost)
-                                    deals_cards.append(u.random_card(energy_cost, deal_cards[2]))
-
-                                sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
-                                val = [(str(a_id), deals_cards[i * 2 + 1], deals_cards[i * 2]) for i in
-                                       range(deal_cards[3])]
-
-                                dm.cur.executemany(sql, val)
-                                dm.db.commit()
-                                all_cards = []
-                                for x in range(deal_cards[3]):
-                                    all_cards.append(
-                                        f"[{u.rarity_cost(deals_cards[x * 2 + 1])}] **{deals_cards[x * 2 + 1]}** lv: **{deals_cards[x * 2]}** \n")
-
-                                all_cards.append("=======================\n")
-                                all_cards.append(f"**From {deal_cards[2].title()} Edition card pack**")
-                                embed = discord.Embed(title="You got:", description=" ".join(all_cards),
-                                                      color=discord.Color.gold())
-
-                            elif deal_cards[1] > 0:
-                                sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
-                                val = (str(a_id), "Confetti Cannon", 10)
-                                dm.cur.execute(sql, val)
-                                dm.db.commit()
-                                embed = discord.Embed(
-                                    title=f"**From {deal_cards[2].title()} Anniversary card pack!!**",
-                                    description="You got\n [Ex/7] Confetti Cannon lv: 10",
-                                    color=discord.Color.green())
-
-                            embed.set_thumbnail(url=ctx.message.author.avatar.url)
-                            embed.set_footer(text="Gems left: " + str(gems - deal_cards[0]))
-                            await ctx.send(embed=embed)
-
-            elif to_buy.lower() == "all":
-                total_cost = 0
-                total_energy = []
-                for x in deals:
-                    if x[0] != "-":
-                        total_energy.insert(len(total_energy), int(x.split(".")[0]))
-                    else:
-                        total_energy.insert(len(total_energy), 0)
-                for x in range(len(total_energy)):
-                    if not total_energy[x] == 0:
-                        total_cost += round(1.6 ** total_energy[x] * 50 *
-                                            u.price_factor(deals[x][len(str(total_energy[x])):]))
-
-                if sum([1 if not i == 0 else 0 for i in total_energy]) + cards_count > 500:
-                    await ctx.send(f"{mention}, you can't have more than 500 cards!")
-
-                elif total_cost > 0:
-                    if total_cost > coins:
-                        await ctx.send(
-                            f"{mention}, you need {total_cost} {u.ICON['coin']} to buy all cards in the shop!")
-                    else:
-                        await ctx.send(
-                            f"{mention}, type `{u.PREF}deals confirm` to buy all the cards for {total_cost} {u.ICON['coin']}.")
-
-                        try:
-                            message = await self.bot.wait_for("message", timeout=15.0,
-                                                              check=checks.valid_reply(['deals confirm'],
-                                                                                       [ctx.message.author],
-                                                                                       [ctx.message.channel]))
-                        except asyncio.TimeoutError:
-                            await ctx.send(f"{mention}, deals cancelled")
-
-                        else:
-                            y = 0
-                            cards_bought = []
-
-                            for x in deals:
-                                if total_energy[y] != 0:
-                                    sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
-                                    val = (str(a_id), x.split(".")[1], total_energy[y])
-                                    dm.cur.execute(sql, val)
-                                    cards_bought.append(
-                                        f"[{u.rarity_cost(x.split('.')[1])}] **{x.split('.')[1]}** lv: **{total_energy[y]}** - "
-                                        f"**{round(1.6 ** total_energy[y] * 50 * u.price_factor(x.split('.')[1]))}** {u.ICON['coin']} \n")
-                                    dm.db.commit()
-                                    deals[y] = "-" + x
-                                y += 1
-
-                            sql = "UPDATE playersinfo SET coins = %s, deals = %s WHERE userid = %s"
-                            value = (coins - total_cost, ",".join(deals), str(a_id))
-                            dm.cur.execute(sql, value)
-                            dm.db.commit()
-
-                            cards_bought.append("=======================\n")
-                            cards_bought.append(f"**Total Cost - {total_cost} {u.ICON['coin']}**")
-                            embed = discord.Embed(title="You Bought:",
-                                                  description=" ".join(cards_bought),
-                                                  color=discord.Color.gold())
-                            embed.set_footer(text=f"You currently have {coins - total_cost} golden coins left")
-                            embed.set_thumbnail(url=ctx.message.author.avatar.url)
-                            await ctx.send(embed=embed)
-                else:
-                    await ctx.send(f"{mention}, you have already bought every card!")
-        else:
-            other_action_taken = False
-            to_buy = int(to_buy)
-
-        if not other_action_taken and 0 < to_buy <= len(deals):
-            if deals[to_buy - 1][0] == "-":
-                await ctx.send(f"{mention}, you already bought this card!")
+                    deal_msg = f"Are you sure you want to purchase a {command.title()} Edition card pack?"
+                    deal_type = "Card"
+                    deal_transaction = [gem_cost, token_cost, cards_count, cards_level]
             else:
-                card_energy_cost = int(deals[to_buy - 1].split(".")[0])
-                card = deals[to_buy - 1].split(".")[1]
-                if round(1.6 ** card_energy_cost * 50 * u.price_factor(card)) > coins:
-                    await ctx.send(f"{mention}, you don't have enough golden coins to buy that card!")
-                elif cards_count + 1 > 500:
-                    await ctx.send(f"{mention}, you can't have more than 500 cards!")
+                if token_cost == 0:
+                    deal_msg = f"You need {gem_cost} {u.ICON['gem']} in order to buy a {command.title()} Edition card pack!"
                 else:
-                    msg = await ctx.send(
-                        f"{mention}, are you sure you want to purchase **[{u.rarity_cost(card)}] {card} lv: {card_energy_cost}**?")
-                    await msg.add_reaction("✅")
-                    await msg.add_reaction("❎")
-                    try:
-                        reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                                 check=checks.valid_reaction(["❎", "✅"],
-                                                                                             [ctx.message.author],
-                                                                                             [msg]))
-                    except asyncio.TimeoutError:
-                        await msg.edit(content=f"{mention}, purchase cancelled")
-                    else:
-                        if reaction.emoji == "❎":
-                            await msg.edit(content=f"{mention}, purchase cancelled")
-                        else:
-                            sql = "INSERT INTO cardsinfo (owned_user, card_name, card_level) values (%s, %s, %s)"
-                            val = (str(a_id), card, card_energy_cost)
-                            dm.cur.execute(sql, val)
-                            dm.db.commit()
-                            await msg.edit(
-                                content=f"{mention}, you successfully bought a **[{u.rarity_cost(card)}] {card} "
-                                        f"lv: {card_energy_cost}** with "
-                                        f"{round(1.6 ** card_energy_cost * 50 * u.price_factor(card))} {u.ICON['coin']}!")
-                            deals[to_buy - 1] = "-" + deals[to_buy - 1]
-                            sql = "UPDATE playersinfo SET coins = coins - %s, deals = %s WHERE userid = %s"
-                            value = (round(1.6 ** card_energy_cost * 50 * u.price_factor(card)),
-                                     ",".join(deals), str(a_id))
-                            dm.cur.execute(sql, value)
-                            dm.db.commit()
-                    await msg.clear_reactions()
-        else:
-            try:
-                if (to_buy.lower() not in ["all", "basic", "fire", "evil", "electric",
-                                           "defensive", "pro", "gc1", "gc2", "gc3", "rt1",
-                                           "rt2", "rt3", "refresh", "ref", "re", "r", "confetti"]):
-                    await ctx.send(
-                        f"{mention}, the correct format for this command is `{u.PREF}buy (1-{len(deals)}/all/refresh)`!")
-            except:
-                await ctx.send(
-                    f"{mention}, the correct format for this command is `{u.PREF}buy (1-{len(deals)}/all/refresh)`!")
+                    deal_msg = f"You need {token_cost} {u.ICON['token']} in order to buy a {command.title()} Edition card pack!"
+        elif to_buy.lower() in currency_deals:
+            gem_cost = currency_deals[to_buy.lower()][0]
+            coin_gain = currency_deals[to_buy.lower()][1]
+            ticket_gain = currency_deals[to_buy.lower()][2]
 
-    # await ctx.send(f"{mention}, shop is currently temporarily disabled!")
+            if ticket_gain != 0:
+                if user_gem < gem_cost:
+                    deal_msg = f"You need least {gem_cost} {u.ICON['gem']} to buy {ticket_gain} {u.ICON['tick']}!"
+                elif user_ticket + ticket_gain > max_tickets:
+                    deal_msg = f"You can't buy {ticket_gain} {u.ICON['tick']}, it exceeds the maximum amount of {u.ICON['tick']} you can store!"
+                else:
+                    deal_type = "Currency"
+                    deal_msg = f"Are you sure you want to buy {ticket_gain} {u.ICON['tick']} with {gem_cost} {u.ICON['gem']}?"
+                    deal_transaction = [gem_cost, coin_gain, ticket_gain]
+            else:
+                if user_gem < gem_cost:
+                    deal_msg = f"You need least {gem_cost} {u.ICON['gem']} to buy {coin_gain} {u.ICON['coin']}!"
+                else:
+                    deal_type = "Currency"
+                    deal_msg = f"Are you sure you want to buy {coin_gain} {u.ICON['coin']} with {gem_cost} {u.ICON['gem']}?"
+                    deal_transaction = [gem_cost, coin_gain, ticket_gain]
+        elif to_buy.lower() in ["refresh", "ref", "re", "r"]:
+            if user_coin < 200:
+                deal_msg = f"{member.mention}, you need least 200 {u.ICON['coin']} to refresh the shop!"
+            else:
+                deal_msg = f"{member.mention}, do you want to refresh the shop for 200 {u.ICON['coin']}?"
+                deal_type = "Refresh"
+        elif to_buy.lower() == "all":
+            total_cost = sum([u.compute_card_cost(int(i[0]),i[1]) if i != "-" else 0 for i in deals])
+            total_count = sum([1 if i[0] != "-" else 0 for i in deals])
+
+            if total_count + cards_count > 500:
+                deal_msg = f"{member.mention}, you can't have more than 500 cards!"
+            elif total_count == 0:
+                deal_msg = f"{member.mention}, you have already bought every card!"
+            elif total_cost > user_coin:
+                deal_msg = f"{member.mention}, you need {total_cost} {u.ICON['coin']} to buy all cards in the shop!"
+            else:
+                deal_msg = f"{member.mention}, do you want to buy all {total_count} card(s) in the shop for {total_cost} {u.ICON['coin']}?"
+                deal_type = "All"
+        elif to_buy.isdigit():
+            selection = int(to_buy)-1
+            if not (0 < selection < len(deals)):
+                deal_msg = f"{member.mention}, number must be between 1 and {len(deals)}!"
+            elif deals[selection][0] == "-":
+                deal_msg = f"{member.mention}, you already bought this card!"
+            elif user_cards_count + 1 > 500:
+                deal_msg = f"{member.mention}, you can't have more than 500 cards!"
+            else:
+                card_cost = u.compute_card_cost(deals[selection][0],deals[selection][1])
+                if card_cost > user_coin:
+                    deal_msg = f"{member.mention}, you don't have enough golden coins to buy that card!"
+                else:
+                    deal_msg = f"{member.mention}, are you sure you want to purchase **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} lv: {deals[selection][0]}**?"
+                    deal_type = "Single"
+
+        if deal_type == "None":
+            if deal_msg == "None":
+                deal_msg = f"{member.mention}, the correct format for this command is `{u.PREF}buy (1-{len(deals)}/all/refresh)`!"
+            await ctx.send(deal_msg)
+            return
+        deal_msg = await ctx.send(deal_msg)
+        await deal_msg.add_reaction("✅")
+        await deal_msg.add_reaction("❎")
+        try:
+            reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
+                                                        check=checks.valid_reaction(["❎", "✅"],
+                                                                                    [member],
+                                                                                    [deal_msg]))
+        except asyncio.TimeoutError:
+            await deal_msg.edit(content=f"{member.mention}, the transaction timed out.")
+            await deal_msg.clear_reactions()
+            return
+        if reaction.emoji == "❎":
+            await deal_msg.edit(content=f"{member.mention}, you cancelled the purchase.")
+            await deal_msg.clear_reactions()
+            return
+        await deal_msg.delete()
+
+        if deal_type == "Currency":
+            dm.set_user_gem(member.id, user_gem - deal_transaction[0])
+            dm.set_user_coin(member.id, user_coin + deal_transaction[1])
+            dm.set_user_ticket(member.id, user_ticket + deal_transaction[2])
+            if deal_transaction[1] != 0:
+                deal_msg = f"**{deal_transaction[1]}** {u.ICON['coin']}!"
+            else:
+                deal_msg = f"**{deal_transaction[2]}** {u.ICON['tick']}!"
+
+            embed = discord.Embed(title="You got:",
+                                    description=deal_msg,
+                                    color=discord.Color.gold())
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_footer(text="Gems left: " + str(user_gem - deal_transaction[0]))
+            await ctx.send(embed=embed)
+        elif deal_type == "Card":
+            dm.set_user_gem(member.id, user_gem - deal_transaction[0])
+            dm.set_user_token(member.id, user_token - deal_transaction[1])
+            if deal_transaction[0] > 0:
+                gained_cards = []
+                cards_msg = []
+                for x in range(deal_transaction[3]):
+                    card_level = u.log_level_gen(random.randint(1, deal_transaction[4]))
+                    card_name = u.random_card(card_level, deal_transaction[2])
+                    gained_cards.append((member.id, card_name, card_level))
+                    cards_msg.append(f"[{u.rarity_cost(card_name)}] **{card_name}** lv: **{card_level}** \n")
+
+                dm.add_user_cards(gained_cards)
+
+                cards_msg.append("=======================\n")
+                cards_msg.append(f"**From {to_buy.lower().title()} Edition card pack**")
+                embed = discord.Embed(title="You got:", description=" ".join(cards_msg),
+                                        color=discord.Color.gold())
+
+            elif deal_cards[1] > 0:
+                dm.add_user_cards([(member.id, "Confetti Cannon", 10)])
+                embed = discord.Embed(
+                    title=f"**From Anniversary card pack!!**",
+                    description="You got\n [Ex/7] Confetti Cannon lv: 10",
+                    color=discord.Color.green())
+
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_footer(text="Gems left: " + str(gems - deal_cards[0]))
+            await ctx.send(embed=embed)
+        elif deal_type == "Refresh":
+            gained_cards = []
+            if user_premium.date() < dt.date.today():
+                for x in range(6):
+                    deals_cards.append(u.add_a_card(player_lvl))
+            else:
+                for x in range(9):
+                    deals_cards.append(u.add_a_card(player_lvl))
+            dm.set_user_coin(member.id, user_coin - 200)
+            dm.set_user_deals(member.id, ",".join(deals_cards))
+            await ctx.send(f"{member.mention}, you refreshed your shop for 200 {u.ICON['coin']}!")
+        elif deal_type == "All":
+            gained_cards = []
+            cards_msg = []
+            total_cost = sum([u.compute_card_cost(int(i[0]),i[1]) if i != "-" else 0 for i in deals])
+            for x in deals:
+                if x[0] == "-":
+                    continue
+                gained_cards.append((member.id, x[1], int(x[0])))
+                cards_msg.append(
+                        f"[{u.rarity_cost(x[1])}] **{x[1]}** lv: **{int(x[0])}** - "
+                        f"**{dm.compute_card_cost(x[1], int(x[0]))}** {u.ICON['coin']} \n")
+
+            dm.add_user_cards(gained_cards)
+            dm.set_user_coin(member.id, user_coin - total_cost)
+            cards_msg.append("=======================\n")
+            cards_msg.append(f"**Total Cost - {total_cost} {u.ICON['coin']}**")
+            dm.set_user_deals(member.id, ",".join(["-." + i[1] for i in deals]))
+            embed = discord.Embed(title="You Bought:",
+                                    description=" ".join(cards_msg),
+                                    color=discord.Color.gold())
+            embed.set_footer(text=f"You currently have {user_coin - total_cost} golden coins left")
+            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            await ctx.send(embed=embed)
+        elif deal_type == "Single":
+            selection = int(to_buy)-1
+            card_cost = u.compute_card_cost(deals[selection][0],deals[selection][1])
+            await msg.edit(
+                content=f"{member.mention}, you successfully bought a **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} "
+                        f"lv: {deals[selection][0]}** with "
+                        f"{card_cost} {u.ICON['coin']}!")
+            deals[selection][0] = "-"
+            dm.add_user_cards([(member.id, deals[selection][1], deals[selection][0])])
+            dm.set_user_coin(member.id, user_coin - card_cost)
+            dm.set_user_deals(member.id, ",".join([".".join(i[:]) for i in deals]))
 
     @commands.command(aliases=["dis"], brief="cards")
     @checks.is_registered()

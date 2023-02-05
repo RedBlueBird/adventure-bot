@@ -127,3 +127,6 @@ def price_factor(card_name):
     return {
         r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])
     }.get(cards_dict(1, card_name)["rarity"], 1)
+
+def compute_card_cost(card_name, card_level):
+    return 1.6 ** card_level * 50 * price_factor(card_name)
