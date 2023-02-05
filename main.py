@@ -26,8 +26,6 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
     # The mock prevents asyncio.get_event_loop() from being called.
     prefix = f"{start}."
     for module in pkgutil.walk_packages([start], prefix, onerror=on_error):
-        if "action" in module.name:
-            continue
         if not module.ispkg:
             yield importlib.import_module(module.name)
 
