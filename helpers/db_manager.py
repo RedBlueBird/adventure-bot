@@ -286,7 +286,7 @@ def get_user_cards(
     return result[start:] if length < 0 else result[start:start + length]
 
 
-def add_user_cards(cards: list[tuple[str | int, int, int]]):
+def add_user_cards(cards: list[tuple[str | int, str, int]]):
     sql = "INSERT INTO temp_cards (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
     val = [(c[0], c[1], c[2]) for c in cards]
     cur.executemany(sql, val)
@@ -367,6 +367,10 @@ def set_user_register_date(uid: int, value: dt.datetime):
 def get_user_premium(uid: int) -> dt.datetime:
     cur.execute(f"SELECT premium_account FROM temp2 WHERE userid = {uid}")
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
+
+
+def has_premium(uid: int) -> bool:
+    return get_user_premium(uid) > dt.datetime.today()
 
 
 def set_user_premium(uid: int, value: dt.datetime):

@@ -1,6 +1,7 @@
 import math
 import datetime as dt
 import os
+import typing as t
 
 import discord
 from discord.ext import commands
@@ -9,17 +10,19 @@ from helpers import checks
 import util as u
 from helpers import db_manager as dm
 
+
 class Admin(commands.Cog, name="admin"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(
-        aliases=["red", "deem"],
-        brief="Gives users the specified items in the arguments."
-    )
+    @commands.hybrid_command(brief="Gives users the specified items in the arguments.")
     @checks.is_registered()
     @checks.is_owner()
-    async def redeem(self, ctx: commands.Context, item_type: str, name: str, level: int, target: discord.User):
+    async def redeem(
+            self, ctx: commands.Context,
+            item_type: t.Literal["card", "item"],
+            name: str, level: int, target: discord.Member
+    ):
         """
         Gives users the specified items in the arguments.
         :param item_type: The type of item to give
@@ -31,51 +34,47 @@ class Admin(commands.Cog, name="admin"):
 
         with open("resources/text/bot_log.txt", "a") as log:
             log.write(f">>>{ctx.message.content}\n")
-            log.write(f"Sender: {ctx.message.author}, Date: {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            log.write(f"{ctx.message.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
         item_type = item_type.lower()
-        if "cards".startswith(item_type):
+        if item_type == "card":
             card_name = " ".join(name.split("_")).title()
-            try:
-                dm.add_user_cards([(target.id, card_name, math.floor(int(level)))])
 
-                await ctx.message.channel.send(
-                    f"{target.mention}, you received a **[{u.rarity_cost(card_name)}] "
-                    f"{card_name} lv: {math.floor(int(level))}** from {mention}"
-                )
-            except BaseException as error:
-                await ctx.message.channel.send(mention + ", " + str(error) + ".")
+            dm.add_user_cards([(target.id, card_name, math.floor(int(level)))])
+            await ctx.reply(
+                f"{target.mention}, you received a **[{u.rarity_cost(card_name)}] "
+                f"{card_name} lv: {math.floor(int(level))}** from {mention}"
+            )
 
-        elif "items".startswith(item_type):
+        elif item_type == "item":
             item_name = u.items_dict(" ".join(name.split("_")))["name"]
             inventory_data = eval(dm.get_user_inventory(target.id))
-            try:
-                if math.floor(int(level)) > 0 and not item_name.lower() in inventory_data:
-                    inventory_data[item_name.lower()] = {"items": math.floor(int(level))}
-                else:
-                    inventory_data[item_name.lower()]["items"] += math.floor(int(level))
-                inv_delete = []
-                for x in inventory_data:
-                    if not inventory_data[x]["items"] == "x":
-                        if inventory_data[x]["items"] <= 0:
-                            inv_delete.append(x)
-                for x in inv_delete:
-                    del inventory_data[x]
 
-                inv_json = str(inventory_data).replace("'", "\"")
-                dm.set_user_inventory(target.id, inv_json)
-                await ctx.message.channel.send(
-                    f"{target.mention}, you received "
-                    f"**[{u.items_dict(item_name)['rarity']}/"
-                    f"{u.items_dict(item_name)['weight']}] "
-                    f"{item_name}** x{math.floor(int(level))} "
-                    f"from {mention}"
-                )
-            except BaseException as error:
-                await ctx.message.channel.send(mention + f", {error}!")
+            if math.floor(int(level)) > 0 and not item_name.lower() in inventory_data:
+                inventory_data[item_name.lower()] = {"items": math.floor(int(level))}
+            else:
+                inventory_data[item_name.lower()]["items"] += math.floor(int(level))
+
+            inv_delete = []
+            for x in inventory_data:
+                if not inventory_data[x]["items"] == "x":
+                    if inventory_data[x]["items"] <= 0:
+                        inv_delete.append(x)
+            for x in inv_delete:
+                del inventory_data[x]
+
+            inv_json = str(inventory_data).replace("'", "\"")
+            dm.set_user_inventory(target.id, inv_json)
+            await ctx.reply(
+                f"{target.mention}, you received "
+                f"**[{u.items_dict(item_name)['rarity']}/"
+                f"{u.items_dict(item_name)['weight']}] "
+                f"{item_name}** x{math.floor(int(level))} "
+                f"from {mention}"
+            )
 
         else:
-            await ctx.message.channel.send(
+            await ctx.reply(
                 f"{mention}, the correct format for this command is "
                 f"`{u.PREF}redeem (card/item) (name) (level/amount) (user)`!"
             )
@@ -87,43 +86,29 @@ class Admin(commands.Cog, name="admin"):
     @commands.is_owner()
     async def end_season(self, ctx: commands.Context):
         """Resets the PVP season and gives each player their medals."""
-        all_ids = dm.get_all_userids()
-        for d in all_ids:
-            try:
-                user = await self.bot.fetch_user(d)
-                user_coin = dm.get_user_coin(d)
-                user_gem = dm.get_user_gem(d)
-                user_medal = dm.get_user_medal(d)
-                user_premium = dm.get_user_premium(d)
+        for d in dm.get_all_userid():
+            user_medal = dm.get_user_medal(d)
 
-                if user_premium.date() < dt.date.today():
-                    earned_coins = user_medal * 5
-                    earned_gems = math.floor(user_medal / 100)
-                else:
-                    earned_coins = user_medal * 10
-                    earned_gems = math.floor(user_medal / 100) * 2
-                if user_medal > 500:
-                    medals = math.ceil((user_medal - 500) / 2) + 500
-                else:
-                    medals = user_medal
+            earned_coins = user_medal * 5
+            earned_gems = math.floor(user_medal / 100)
+            if dm.has_premium(d):
+                earned_coins *= 2
+                earned_gems *= 2
 
-                if earned_gems == 0:
-                    await user.send(
-                        f"```Season Ended!``` You now have {medals} {u.ICON['medal']} (from {user_medal}) "
-                        f"\n+{earned_coins} {u.ICON['coin']}!"
-                    )
-                else:
-                    await user.send(
-                        f"```Season Ended!``` You now have {medals} medals (from {user_medal}) "
-                        f"\n+{earned_coins} {u.ICON['coin']} \n+{earned_gems} {u.ICON['gem']}!"
-                    )
-                dm.set_user_coin(d, user_coin + earned_coins)
-                dm.set_user_gem(d, user_gem + earned_gems)
-                dm.set_user_medal(d, medals)
-            except:
-                print(all_ids)
+            medals = math.ceil((user_medal - 500) / 2) + 500 if user_medal > 500 else user_medal
 
-        await ctx.message.channel.send("Season Ended!")
+            msg = f"```Season Ended!``` You now have {medals} {u.ICON['medal']} (from {user_medal}) "\
+                  f"\n+{earned_coins} {u.ICON['coin']}!"
+            if earned_gems > 0:
+                msg += f"\n + {earned_gems} {u.ICON['gem']}"
+
+            user = await self.bot.fetch_user(d)
+            await user.send(msg)
+            dm.set_user_coin(d, dm.get_user_coin(d) + earned_coins)
+            dm.set_user_gem(d, dm.get_user_gem(d) + earned_gems)
+            dm.set_user_medal(d, medals)
+
+        await ctx.reply("Season Ended!")
 
     @commands.hybrid_command(aliases=["testing"], brief="Prints some debugging info for the devs.")
     @commands.is_owner()
@@ -132,7 +117,7 @@ class Admin(commands.Cog, name="admin"):
         loading = await ctx.message.channel.send(str(ctx.message.author) + u.ICON['load'])
 
         def print_all(tables_name):
-            dm.cur.execute("select * from " + tables_name)
+            dm.cur.execute(f"SELECT * FROM {tables_name}")
             result = dm.cur.fetchall()
             for r in result:
                 print(r)
@@ -180,16 +165,16 @@ class Admin(commands.Cog, name="admin"):
         """
         await loading.edit(content="Database printed!")
 
-        #dm.cur.execute("select deck1,deck2,deck3,deck4,deck5,deck6 from temp2")
-        #result = dm.cur.fetchall()
-        #for decks in result:
+        # dm.cur.execute("select deck1,deck2,deck3,deck4,deck5,deck6 from temp2")
+        # result = dm.cur.fetchall()
+        # for decks in result:
         #    for count, deck in enumerate(decks):
         #        cards = [int(i) for i in deck.split(",")]
         #        if len(cards) == 1:
         #            continue
         #        for card in cards:
         #            dm.cur.execute("update temp_cards set deck" + str(count+1) + " = 1 where id = " + str(card) + ";")
-        #dm.db.commit()
+        # dm.db.commit()
                          
 
 async def setup(bot):
