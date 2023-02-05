@@ -839,24 +839,19 @@ class Actions(commands.Cog, name="actions"):
 
     @commands.hybrid_command(brief="Returns the card IDs of your current deck.")
     @checks.is_registered()
-    async def paste(self, ctx: commands.Context, deck_slot: int = None):
+    async def paste(self, ctx: commands.Context, deck_slot: int = 0):
         """Returns the card IDs of your current deck."""
 
-        a_id = ctx.author.id
-        if deck_slot is None:
-            dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
-            deck_slot = dm.cur.fetchall()[0][0]
+        member = ctx.message.author
 
-        if not 1 <= deck_slot <= 6:
-            await ctx.send("The deck slot number must between 1-6!")
+        if not 0 <= deck_slot <= 6:
+            await ctx.send(f"{member.mention} The deck slot number must between 1-6!")
             return
 
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = {a_id}")
-        deck = dm.cur.fetchall()[0][0].split(",")
-        deck = [" "] if deck == ['0'] else deck
+        user_deck_slot = deck_slot if deck_slot != 0 else dm.get_user_deck_slot(member.id)
+        user_deck_cards = dm.get_user_deck(member.id, user_deck_slot)
 
-        await ctx.send(f"All the card IDs in Deck #{deck_slot}: \n`{' '.join(deck)}`")
+        await ctx.send(f"All the card IDs in Deck #{user_deck_slot}: \n`{' '.join([str(i[0]) for i in user_deck_cards])}`")
 
     @commands.hybrid_command(
         aliases=["replace", "switch", "change", "alter"],
@@ -864,42 +859,38 @@ class Actions(commands.Cog, name="actions"):
     )
     @checks.is_registered()
     @checks.not_preoccupied()
-    async def swap(self, ctx: commands.Context, new_id: int, old_id: int):
+    async def swap(self, ctx: commands.Context, new_id: str, old_id: str):
         """Swap a card from your deck with another."""
 
-        a_id = ctx.author.id
-        mention = ctx.author.mention
+        member = ctx.message.author
+        user_deck_slot = dm.get_user_deck_slot(member.id)
+        error_msg = []
+        swap_msg = []
 
-        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
-        deck_slot = dm.cur.fetchall()[0][0]
+        for x in [new_id, old_id]:
+            if not x.isdigit():
+                error_msg.append(f"`{x}` is not a number!")
+                continue
+            card_name = dm.get_card_name(member.id, x)
+            card_level = dm.get_card_level(member.id, x)
+            card_decks = dm.get_card_decks(x)
 
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = {a_id}")
-        deck = dm.cur.fetchall()[0][0].split(",")
+            if not card_name:
+                error_msg.append(f"You don't have a card with id `{x}`!")
+            elif (card_decks[user_deck_slot-1] == 1 and x == new_id) or (card_decks[user_deck_slot-1] == 0 and x == old_id):
+                error_msg = [f"The correct format is `{u.PREF}swap (card id swap in) (card id swap out)`!"]
+                break
+            else:
+                swap_msg.append(f"**[{u.rarity_cost(card_name)}] {card_name} lv: {card_level}** Id `{x}`")
 
-        old_id, new_id = str(old_id), str(new_id)
-        if old_id not in deck or new_id in deck:
-            await ctx.send(
-                f"{mention}, the first card shouldn't exist in your deck #{deck_slot} "
-                f"and the second card needs to exist in your deck #{deck_slot}!"
-            )
+        if len(error_msg) != 0:
+            await ctx.send(f"{member.mention} \n" + " \n".join(error_msg))
             return
 
-        dm.cur.execute(f"SELECT card_name, card_level FROM cardsinfo WHERE id = {new_id} AND owned_user = '{a_id}'")
-        new = dm.cur.fetchall()[0]
-        if not new:
-            await ctx.send(f"{mention}, the first id doesn't exist in your card inventory.")
-            return
-
-        deck.remove(old_id)
-        deck.append(new_id)
-        dm.cur.execute(f"SELECT card_name, card_level FROM cardsinfo WHERE id = {old_id} AND owned_user = '{a_id}'")
-        old = dm.cur.fetchall()[0]
-        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '{','.join(deck)}' WHERE userid = '{a_id}'")
-        dm.db.commit()
+        dm.set_user_card_deck(member.id, user_deck_slot, 1, new_id)
+        dm.set_user_card_deck(member.id, user_deck_slot, 0, old_id)
         await ctx.send(
-            f"You swapped the card **[{u.rarity_cost(old[0])}] {old[0]} lv: {old[1]}** "
-            f"with the card **[{u.rarity_cost(new[0])}] {new[0]} lv: {new[1]}** in your deck #{deck_slot}!"
+            f"You swapped the card \n{swap_msg[0]} with \n{swap_msg[1]} \nin deck #{user_deck_slot}!"
         )
 
     @commands.command(aliases=["adds", "use", "uses"], brief="Add a card to your deck.")
