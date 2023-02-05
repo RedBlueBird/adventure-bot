@@ -152,7 +152,7 @@ class Actions(commands.Cog, name="actions"):
         """Command for buying items in the shop"""
 
         member = ctx.message.author
-        deals = [i.split(".") for i in dm.get_user_deal(member.id).split(',')]
+        deals = [i.split(".") for i in dm.get_user_deals(member.id).split(',')]
         user_cards_count = dm.get_user_cards_count(member.id)
         user_coin = dm.get_user_coin(member.id)
         user_gem = dm.get_user_gem(member.id)
@@ -194,16 +194,16 @@ class Actions(commands.Cog, name="actions"):
 
             if user_gem >= gem_cost and user_token >= token_cost:
                 if cards_count + user_cards_count > 500:
-                    deal_msg = "you can only have at most 500 cards!"
+                    deal_msg = "Purchasing this card pack will exceed the 500 cards capacity for your inventory!"
                 else:
-                    deal_msg = f"Are you sure you want to purchase a {command.title()} Edition card pack?"
+                    deal_msg = f"Are you sure you want to purchase a {to_buy.lower().title()} Edition card pack?"
                     deal_type = "Card"
                     deal_transaction = [gem_cost, token_cost, cards_count, cards_level]
             else:
                 if token_cost == 0:
-                    deal_msg = f"You need {gem_cost} {u.ICON['gem']} in order to buy a {command.title()} Edition card pack!"
+                    deal_msg = f"You need {gem_cost} {u.ICON['gem']} in order to buy a {to_buy.lower().title()} Edition card pack!"
                 else:
-                    deal_msg = f"You need {token_cost} {u.ICON['token']} in order to buy a {command.title()} Edition card pack!"
+                    deal_msg = f"You need {token_cost} {u.ICON['token']} in order to buy a {to_buy.lower().title()} Edition card pack!"
         elif to_buy.lower() in currency_deals:
             gem_cost = currency_deals[to_buy.lower()][0]
             coin_gain = currency_deals[to_buy.lower()][1]
@@ -227,44 +227,46 @@ class Actions(commands.Cog, name="actions"):
                     deal_transaction = [gem_cost, coin_gain, ticket_gain]
         elif to_buy.lower() in ["refresh", "ref", "re", "r"]:
             if user_coin < 200:
-                deal_msg = f"{member.mention}, you need least 200 {u.ICON['coin']} to refresh the shop!"
+                deal_msg = f"You need least 200 {u.ICON['coin']} to refresh the shop!"
             else:
-                deal_msg = f"{member.mention}, do you want to refresh the shop for 200 {u.ICON['coin']}?"
+                deal_msg = f"Do you want to refresh the shop for 200 {u.ICON['coin']}?"
                 deal_type = "Refresh"
         elif to_buy.lower() == "all":
-            total_cost = sum([u.compute_card_cost(int(i[0]),i[1]) if i != "-" else 0 for i in deals])
+            total_cost = sum([u.compute_card_cost(i[1],int(i[0])) if i != "-" else 0 for i in deals])
             total_count = sum([1 if i[0] != "-" else 0 for i in deals])
 
             if total_count + cards_count > 500:
-                deal_msg = f"{member.mention}, you can't have more than 500 cards!"
+                deal_msg = f"Purchasing those cards will exceed the 500 cards capacity for your inventory!"
             elif total_count == 0:
-                deal_msg = f"{member.mention}, you have already bought every card!"
+                deal_msg = f"You have already bought every card!"
             elif total_cost > user_coin:
-                deal_msg = f"{member.mention}, you need {total_cost} {u.ICON['coin']} to buy all cards in the shop!"
+                deal_msg = f"You need {total_cost} {u.ICON['coin']} to buy all cards in the shop!"
             else:
-                deal_msg = f"{member.mention}, do you want to buy all {total_count} card(s) in the shop for {total_cost} {u.ICON['coin']}?"
+                deal_msg = f"Do you want to buy all {total_count} card(s) in the shop for {total_cost} {u.ICON['coin']}?"
                 deal_type = "All"
         elif to_buy.isdigit():
             selection = int(to_buy)-1
-            if not (0 < selection < len(deals)):
-                deal_msg = f"{member.mention}, number must be between 1 and {len(deals)}!"
+            if not (0 < selection+1 < len(deals)):
+                deal_msg = f"Number must be between 1 and {len(deals)}!"
             elif deals[selection][0] == "-":
-                deal_msg = f"{member.mention}, you already bought this card!"
+                deal_msg = f"You already bought this card!"
             elif user_cards_count + 1 > 500:
-                deal_msg = f"{member.mention}, you can't have more than 500 cards!"
+                deal_msg = f"You are already at the maximum 500 cards capacity!"
             else:
-                card_cost = u.compute_card_cost(deals[selection][0],deals[selection][1])
+                card_cost = u.compute_card_cost(deals[selection][1],int(deals[selection][0]))
                 if card_cost > user_coin:
-                    deal_msg = f"{member.mention}, you don't have enough golden coins to buy that card!"
+                    deal_msg = f"You don't have enough golden coins to buy that card!"
                 else:
-                    deal_msg = f"{member.mention}, are you sure you want to purchase **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} lv: {deals[selection][0]}**?"
+                    deal_msg = f"Are you sure you want to purchase **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} lv: {deals[selection][0]}**?"
                     deal_type = "Single"
 
         if deal_type == "None":
             if deal_msg == "None":
-                deal_msg = f"{member.mention}, the correct format for this command is `{u.PREF}buy (1-{len(deals)}/all/refresh)`!"
+                deal_msg = f"The correct format for this command is `{u.PREF}buy (1-{len(deals)}/all/refresh)`!"
+            deal_msg = f"{member.mention} {deal_msg}"
             await ctx.send(deal_msg)
             return
+        deal_msg = f"{member.mention} {deal_msg}"
         deal_msg = await ctx.send(deal_msg)
         await deal_msg.add_reaction("✅")
         await deal_msg.add_reaction("❎")
@@ -304,9 +306,9 @@ class Actions(commands.Cog, name="actions"):
             if deal_transaction[0] > 0:
                 gained_cards = []
                 cards_msg = []
-                for x in range(deal_transaction[3]):
-                    card_level = u.log_level_gen(random.randint(1, deal_transaction[4]))
-                    card_name = u.random_card(card_level, deal_transaction[2])
+                for x in range(deal_transaction[2]):
+                    card_level = u.log_level_gen(random.randint(1, deal_transaction[3]))
+                    card_name = u.random_card(card_level, to_buy.lower())
                     gained_cards.append((member.id, card_name, card_level))
                     cards_msg.append(f"[{u.rarity_cost(card_name)}] **{card_name}** lv: **{card_level}** \n")
 
@@ -317,7 +319,7 @@ class Actions(commands.Cog, name="actions"):
                 embed = discord.Embed(title="You got:", description=" ".join(cards_msg),
                                         color=discord.Color.gold())
 
-            elif deal_cards[1] > 0:
+            elif deal_transaction[1] > 0:
                 dm.add_user_cards([(member.id, "Confetti Cannon", 10)])
                 embed = discord.Embed(
                     title=f"**From Anniversary card pack!!**",
@@ -325,7 +327,7 @@ class Actions(commands.Cog, name="actions"):
                     color=discord.Color.green())
 
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
-            embed.set_footer(text="Gems left: " + str(gems - deal_cards[0]))
+            embed.set_footer(text="Gems left: " + str(user_gem - deal_transaction[0]))
             await ctx.send(embed=embed)
         elif deal_type == "Refresh":
             gained_cards = []
@@ -341,7 +343,7 @@ class Actions(commands.Cog, name="actions"):
         elif deal_type == "All":
             gained_cards = []
             cards_msg = []
-            total_cost = sum([u.compute_card_cost(int(i[0]),i[1]) if i != "-" else 0 for i in deals])
+            total_cost = sum([u.compute_card_cost(i[1],int(i[0])) if i != "-" else 0 for i in deals])
             for x in deals:
                 if x[0] == "-":
                     continue
@@ -363,14 +365,13 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(embed=embed)
         elif deal_type == "Single":
             selection = int(to_buy)-1
-            card_cost = u.compute_card_cost(deals[selection][0],deals[selection][1])
-            await msg.edit(
-                content=f"{member.mention}, you successfully bought a **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} "
-                        f"lv: {deals[selection][0]}** with "
-                        f"{card_cost} {u.ICON['coin']}!")
-            deals[selection][0] = "-"
+            card_cost = u.compute_card_cost(deals[selection][1],int(deals[selection][0]))
+            await ctx.send(content=f"{member.mention}, you successfully bought a **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} " + 
+                                        f"lv: {deals[selection][0]}** with " + 
+                                        f"{card_cost} {u.ICON['coin']}!")
             dm.add_user_cards([(member.id, deals[selection][1], deals[selection][0])])
             dm.set_user_coin(member.id, user_coin - card_cost)
+            deals[selection][0] = "-"
             dm.set_user_deals(member.id, ",".join([".".join(i[:]) for i in deals]))
 
     @commands.command(aliases=["dis"], brief="cards")
@@ -379,33 +380,39 @@ class Actions(commands.Cog, name="actions"):
     async def discard(self, ctx: commands.Context, *card_id):
         """Remove the existences of the unwanted cards"""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        member = ctx.message.author
+
         if not card_id:
-            await ctx.send(f"{mention}, the correct format is `{u.PREF}discard (* card_ids)`!")
+            await ctx.send(f"{member.mention}, the correct format is `{u.PREF}discard (* card_ids)`!")
             return
 
-        dm.cur.execute(f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
-        decks = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
         card_ids = list(card_id)
-        final_msg = []
+        discard_ids = []
+        discard_msg = []
+        error_msg = []
 
         for x in card_ids:
-            try:
-                dm.cur.execute(f"SELECT card_name, card_level FROM cardsinfo WHERE id = {x} AND owned_user = '{a_id}'")
-                y = dm.cur.fetchall()[0]
-                if not y:
-                    final_msg.append(f"You don't have a card with id `{x}`!")
-                if str(x) in decks:
-                    final_msg.append(f"Id `{x}` is equipped in your deck")
-                else:
-                    final_msg.append(f"**[{u.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** Id `{x}`")
-            except:
-                final_msg.append(f"`{x}` isn't a valid card id")
+            if not x.isdigit():
+                error_msg.append(f"`{x}` is not a number!")
+            card_name = dm.get_card_name(member.id, x)
+            card_level = dm.get_card_level(member.id, x)
+            card_decks = dm.get_card_decks(x)
+
+            if not card_name:
+                error_msg.append(f"You don't have a card with id `{x}`!")
+            elif sum(card_decks):
+                error_msg.append(f"Id `{x}` is equipped in at least one of your decks!")
+            else:
+                discard_ids.append((x, member.id))
+                discard_msg.append(f"**[{u.rarity_cost(card_name)}] {card_name} lv: {card_level}** Id `{x}`")
+
+        if len(error_msg) != 0:
+            await ctx.send(f"{member.mention} " + " \n".join(error_msg))
+            return
 
         msg = await ctx.send(
-            f"{mention}, are you sure you want to discard: \n"
-            " \n".join(final_msg) +
+            f"{member.mention} \nAre you sure you want to discard: \n" + 
+            f" \n".join(discard_msg) + 
             f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
         )
 
@@ -417,32 +424,16 @@ class Actions(commands.Cog, name="actions"):
                 check=checks.valid_reaction(["❎", "✅"], ctx.message.author, msg)
             )
         except asyncio.TimeoutError:
-            await msg.edit(content=f"{mention}, discarding cancelled")
+            await msg.edit(content=f"{member.mention}, discarding cancelled")
             await msg.clear_reactions()
             return
-
+        await msg.clear_reactions()
         if reaction.emoji == "❎":
-            await msg.edit(content=f"{mention}, discarding cancelled")
-            await msg.clear_reactions()
+            await msg.edit(content=f"{member.mention}, discarding cancelled")
             return
 
-        for x in card_ids:
-            try:
-                dm.cur.execute(
-                    f"SELECT card_name, card_level FROM cardsinfo WHERE id = {x} AND owned_user = '{a_id}'")
-                y = dm.cur.fetchall()[0]
-                if not y:
-                    continue
-                if str(x) in decks:
-                    continue
-                else:
-                    dm.cur.execute(f"delete FROM cardsinfo WHERE id = {x}")
-            except:
-                continue
-
-        dm.db.commit()
-
-        await msg.edit(content=f"{mention}, card(s) discarded successfully!")
+        dm.delete_user_cards(discard_ids)
+        await msg.edit(content=f"{member.mention}, {len(discard_ids)} card(s) discarded successfully!")
 
     @commands.hybrid_command(aliases=["mer"], brief="cards")
     @checks.is_registered()

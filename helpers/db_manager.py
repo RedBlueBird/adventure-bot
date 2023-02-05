@@ -293,6 +293,29 @@ def add_user_cards(cards: list[tuple[str | int, str, int]]):
     db.commit()
 
 
+def delete_user_cards(cards: list[int, int]):
+    sql = "DELETE FROM temp_cards WHERE id = (%s) AND owned_user = (%s)"
+    val = [(i[0], i[1]) for i in cards]
+    cur.executemany(sql, val)
+    db.commit()
+
+
+def get_card_name(uid: int, id: int) -> str:
+    cur.execute(f"SELECT card_name FROM temp_cards WHERE id = {id} AND owned_user = {uid}")
+    result = cur.fetchall()
+    return None if len(result) == 0 else result[0][0]
+
+def get_card_level(uid: int, id: int) -> int:
+    cur.execute(f"SELECT card_level FROM temp_cards WHERE id = {id} AND owned_user = {uid}")
+    result = cur.fetchall()
+    return None if len(result) == 0 else result[0][0]
+
+
+def get_card_decks(id: int) -> list[int]:
+    cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM temp_cards WHERE id = {id}")
+    result = cur.fetchall()
+    return None if len(result) == 0 else result[0]
+
 def add_user(uid: int):
     cur.execute(f"INSERT INTO temp2 (userid) VALUES ({uid})")
     db.commit()
