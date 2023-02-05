@@ -818,24 +818,21 @@ class Actions(commands.Cog, name="actions"):
 
     @commands.hybrid_command(aliases=["selectdeck", "sel", "se"], brief="Get a deck from your deck slots.")
     @checks.is_registered()
-    async def select(self, ctx: commands.Context, deck_slot: int):
+    async def select(self, ctx: commands.Context, deck_slot: int = 0):
         """Get a deck from your deck slots."""
 
-        a_id = ctx.author.id
+        member = ctx.message.author
         if not 1 <= deck_slot <= 6:
-            await ctx.send("The deck slot number must between 1-6!")
+            await ctx.send("{member.mention} The deck slot number must between 1-6!")
             return
 
-        dm.cur.execute(f"SELECT level FROM playersinfo WHERE userid = {a_id}")
-        level = dm.cur.fetchall()[0][0]
-
-        if level < u.DECK_LVL_REQ[deck_slot]:
-            await ctx.send(f"Deck #{deck_slot} is unlocked at {u.DECK_LVL_REQ[deck_slot]}!")
+        user_level = dm.get_user_level(member.id)
+        if user_level < u.DECK_LVL_REQ[deck_slot]:
+            await ctx.send(f"{member.mention} Deck #{deck_slot} is unlocked at {u.DECK_LVL_REQ[deck_slot]}!")
             return
 
-        dm.cur.execute(f"UPDATE playersinfo SET deck_slot = {deck_slot} WHERE userid = {a_id}")
-        dm.db.commit()
-        await ctx.send(f"Deck #{deck_slot} is now selected!")
+        dm.set_user_deck_slot(member.id, deck_slot)
+        await ctx.send(f"{member.mention} Deck #{deck_slot} is now selected!")
 
     @commands.hybrid_command(brief="Returns the card IDs of your current deck.")
     @checks.is_registered()
