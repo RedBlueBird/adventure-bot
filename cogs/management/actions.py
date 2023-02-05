@@ -23,7 +23,7 @@ class Actions(commands.Cog, name="actions"):
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
         """Get your daily rewards!"""
-        member = ctx.message.author
+        member = ctx.author
         user_coin = dm.get_user_coin(member.id)
         user_exp = dm.get_user_exp(member.id)
         user_medal = dm.get_user_medal(member.id)
@@ -115,7 +115,7 @@ class Actions(commands.Cog, name="actions"):
         ascending_aliases = ["ascending", "ascend", "a", "asc"]
         descending_aliases = ["descending", "descend", "d", "desc", "des"]
 
-        member = ctx.message.author
+        member = ctx.author
 
         if card_property is None or order_by is None:
             await ctx.send(f"{member.mention}, the correct format for this command is "
@@ -151,7 +151,7 @@ class Actions(commands.Cog, name="actions"):
     async def buy(self, ctx: commands.Context, to_buy=None):
         """Command for buying items in the shop"""
 
-        member = ctx.message.author
+        member = ctx.author
         deals = dm.get_user_deal(member.id).split(',')
 
         if to_buy is None:
@@ -203,7 +203,7 @@ class Actions(commands.Cog, name="actions"):
                     try:
                         reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
                                                                  check=checks.valid_reaction(["❎", "✅"],
-                                                                                             [ctx.message.author],
+                                                                                             [ctx.author],
                                                                                              [msg]))
                     except asyncio.TimeoutError:
                         await msg.edit(content=f"{mention}, purchase cancelled")
@@ -280,7 +280,7 @@ class Actions(commands.Cog, name="actions"):
                 try:
                     reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
                                                              check=checks.valid_reaction(["❎", "✅"],
-                                                                                         [ctx.message.author],
+                                                                                         [ctx.author],
                                                                                          [deal_msg]))
                 except asyncio.TimeoutError:
                     await deal_msg.edit(content=f"{mention}, the transaction timed out.")
@@ -299,7 +299,7 @@ class Actions(commands.Cog, name="actions"):
                             embed = discord.Embed(title="You got:",
                                                   description=f"**{deal_transaction[2]}** {u.ICON[deal_transaction[3]]}!",
                                                   color=discord.Color.gold())
-                            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+                            embed.set_thumbnail(url=ctx.author.avatar.url)
                             embed.set_footer(text="Gems left: " + str(gems - deal_transaction[0]))
                             await ctx.send(embed=embed)
 
@@ -340,7 +340,7 @@ class Actions(commands.Cog, name="actions"):
                                     description="You got\n [Ex/7] Confetti Cannon lv: 10",
                                     color=discord.Color.green())
 
-                            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+                            embed.set_thumbnail(url=ctx.author.avatar.url)
                             embed.set_footer(text="Gems left: " + str(gems - deal_cards[0]))
                             await ctx.send(embed=embed)
 
@@ -371,7 +371,7 @@ class Actions(commands.Cog, name="actions"):
                         try:
                             message = await self.bot.wait_for("message", timeout=15.0,
                                                               check=checks.valid_reply(['deals confirm'],
-                                                                                       [ctx.message.author],
+                                                                                       [ctx.author],
                                                                                        [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             await ctx.send(f"{mention}, deals cancelled")
@@ -403,7 +403,7 @@ class Actions(commands.Cog, name="actions"):
                                                   description=" ".join(cards_bought),
                                                   color=discord.Color.gold())
                             embed.set_footer(text=f"You currently have {coins - total_cost} golden coins left")
-                            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+                            embed.set_thumbnail(url=ctx.author.avatar.url)
                             await ctx.send(embed=embed)
                 else:
                     await ctx.send(f"{mention}, you have already bought every card!")
@@ -429,7 +429,7 @@ class Actions(commands.Cog, name="actions"):
                     try:
                         reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
                                                                  check=checks.valid_reaction(["❎", "✅"],
-                                                                                             [ctx.message.author],
+                                                                                             [ctx.author],
                                                                                              [msg]))
                     except asyncio.TimeoutError:
                         await msg.edit(content=f"{mention}, purchase cancelled")
@@ -471,8 +471,8 @@ class Actions(commands.Cog, name="actions"):
     async def discard(self, ctx: commands.Context, *card_id):
         """Remove the existences of the unwanted cards"""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        a_id = ctx.author.id
+        mention = ctx.author.mention
         if not card_id:
             await ctx.send(f"{mention}, the correct format is `{u.PREF}discard (* card_ids)`!")
             return
@@ -506,7 +506,7 @@ class Actions(commands.Cog, name="actions"):
         try:
             reaction, user = await self.bot.wait_for(
                 "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.message.author, msg)
+                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
             )
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, discarding cancelled")
@@ -542,8 +542,8 @@ class Actions(commands.Cog, name="actions"):
     async def merge(self, ctx: commands.Context, card1_id: int, card2_id: int):
         """Upgrade a card to next level with two cards"""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        a_id = ctx.author.id
+        mention = ctx.author.mention
 
         dm.cur.execute(
             f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
@@ -601,7 +601,7 @@ class Actions(commands.Cog, name="actions"):
         try:
             reaction, user = await self.bot.wait_for(
                 "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.message.author, msg)
+                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
             )
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, merging timed out")
@@ -631,7 +631,7 @@ class Actions(commands.Cog, name="actions"):
                     value=f"[{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]} \n"
                           f"[{u.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}"
                 )
-                embed.set_thumbnail(url=ctx.message.author.avatar.url)
+                embed.set_thumbnail(url=ctx.author.avatar.url)
                 await ctx.send(embed=embed)
 
     @commands.hybrid_command(brief="Trade with other players!")
@@ -640,7 +640,7 @@ class Actions(commands.Cog, name="actions"):
     @checks.level_check(7)
     async def trade(self, ctx: commands.Context, target: discord.Member):
         """Trade with other players!"""
-        author = ctx.message.author
+        author = ctx.author
         mention = author.mention
         dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{target.id}'")
         target_info = dm.cur.fetchall()
@@ -670,7 +670,7 @@ class Actions(commands.Cog, name="actions"):
             try:
                 reaction, user = await self.bot.wait_for(
                     "reaction_add", timeout=60.0,
-                    check=checks.valid_reaction(["❎", "✅"], [target, ctx.message.author], deal_msg)
+                    check=checks.valid_reaction(["❎", "✅"], [target, ctx.author], deal_msg)
                 )
             except asyncio.TimeoutError:
                 await deal_msg.edit(content=f"{mention}, trade cancelled due to afk {u.ICON['dead']}")
@@ -790,7 +790,7 @@ class Actions(commands.Cog, name="actions"):
                         confirmed[0] = True
                     else:
                         await ctx.send(
-                            f"{ctx.message.author}, you can't afford the transaction fee!")
+                            f"{ctx.author}, you can't afford the transaction fee!")
                         continue
                 else:
                     if target_coins + tax() <= target_info[1]:
@@ -810,7 +810,7 @@ class Actions(commands.Cog, name="actions"):
                             if amount <= author_info[1]:
                                 author_coins += amount
                             else:
-                                await ctx.send(f"{ctx.message.author}, you don't have enough coins for this!")
+                                await ctx.send(f"{ctx.author}, you don't have enough coins for this!")
                                 continue
                         else:
                             if amount <= target_info[1]:
@@ -833,13 +833,13 @@ class Actions(commands.Cog, name="actions"):
                         else:
                             if reply_author.id == author.id:
                                 if len(author_cards) == 16:
-                                    await ctx.send(f"{ctx.message.author}, you can only put 16 cards at max per trade!")
+                                    await ctx.send(f"{ctx.author}, you can only put 16 cards at max per trade!")
                                 elif card_id in author_cards:
-                                    await ctx.send(f"{ctx.message.author}, you already put this card id in the offer!")
+                                    await ctx.send(f"{ctx.author}, you already put this card id in the offer!")
                                     continue
                                 elif card_id in decks1:
                                     await ctx.send(
-                                        f"{ctx.message.author}, you can't put a card from your deck into this offer!")
+                                        f"{ctx.author}, you can't put a card from your deck into this offer!")
                                 else:
                                     author_cards[card_id] = result
                             else:
@@ -865,7 +865,7 @@ class Actions(commands.Cog, name="actions"):
                                 author_coins -= amount
                             else:
                                 await ctx.send(
-                                    f"{ctx.message.author}, you can't drop more coins than what you have in your offer!")
+                                    f"{ctx.author}, you can't drop more coins than what you have in your offer!")
                                 continue
                         else:
                             if amount <= target_coins:
@@ -883,7 +883,7 @@ class Actions(commands.Cog, name="actions"):
                             if card_id in author_cards:
                                 del author_cards[card_id]
                             else:
-                                await ctx.send(f"{ctx.message.author}, the card id you want to drop doesn't exist!")
+                                await ctx.send(f"{ctx.author}, the card id you want to drop doesn't exist!")
                                 continue
                         else:
                             if card_id in target_cards:
@@ -910,14 +910,14 @@ class Actions(commands.Cog, name="actions"):
                     dm.cur.execute(f"UPDATE cardsinfo SET owned_user = '{author.id}' WHERE id = {card}")
                 dm.db.commit()
                 trade_end = True
-                await ctx.send(f"Trade between {ctx.message.author} and {target} is now finished!")
+                await ctx.send(f"Trade between {ctx.author} and {target} is now finished!")
 
     @commands.hybrid_command(aliases=["selectdeck", "sel", "se"], brief="Get a deck from your deck slots.")
     @checks.is_registered()
     async def select(self, ctx: commands.Context, deck_slot: int):
         """Get a deck from your deck slots."""
 
-        a_id = ctx.message.author.id
+        a_id = ctx.author.id
         if not 1 <= deck_slot <= 6:
             await ctx.send("The deck slot number must between 1-6!")
             return
@@ -938,7 +938,7 @@ class Actions(commands.Cog, name="actions"):
     async def paste(self, ctx: commands.Context, deck_slot: int = None):
         """Returns the card IDs of your current deck."""
 
-        a_id = ctx.message.author.id
+        a_id = ctx.author.id
         if deck_slot is None:
             dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
             deck_slot = dm.cur.fetchall()[0][0]
@@ -963,8 +963,8 @@ class Actions(commands.Cog, name="actions"):
     async def swap(self, ctx: commands.Context, new_id: int, old_id: int):
         """Swap a card from your deck with another."""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        a_id = ctx.author.id
+        mention = ctx.author.mention
 
         dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
         deck_slot = dm.cur.fetchall()[0][0]
@@ -1004,8 +1004,8 @@ class Actions(commands.Cog, name="actions"):
     async def add(self, ctx: commands.Context, card_id: int):
         """Add a card to your deck."""
 
-        mention = ctx.message.author.mention
-        a_id = ctx.message.author.id
+        mention = ctx.author.mention
+        a_id = ctx.author.id
         if not card_id:
             await ctx.send(f"{mention}, the correct format is `{u.PREF}add (* card_ids)`!")
             return
@@ -1045,8 +1045,8 @@ class Actions(commands.Cog, name="actions"):
     async def remove(self, ctx: commands.Context, card_id: int):
         """Remove a card from your deck."""
 
-        mention = ctx.message.author.mention
-        a_id = ctx.message.author.id
+        mention = ctx.author.mention
+        a_id = ctx.author.id
         if not card_id:
             await ctx.send(f"{mention}, the correct format is `{u.PREF}remove (* card_ids)`!")
             return
@@ -1083,8 +1083,8 @@ class Actions(commands.Cog, name="actions"):
     async def clear(self, ctx: commands.Context):
         """Clear your current deck."""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        a_id = ctx.author.id
+        mention = ctx.author.mention
 
         dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
         deck_slot = dm.cur.fetchall()[0][0]
@@ -1103,7 +1103,7 @@ class Actions(commands.Cog, name="actions"):
         try:
             reaction, user = await self.bot.wait_for(
                 "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.message.author, msg)
+                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
             )
         except asyncio.TimeoutError:
             await msg.edit(content=f"{mention}, clearing deck cancelled")
@@ -1126,8 +1126,8 @@ class Actions(commands.Cog, name="actions"):
     async def blackjack(self, ctx):
         """Practice your blackjack skills!"""
 
-        a_id = ctx.message.author.id
-        mention = ctx.message.author.mention
+        a_id = ctx.author.id
+        mention = ctx.author.mention
 
         deck = deepcopy(u.DECK)
         aces = deepcopy(u.ACES)
@@ -1161,7 +1161,7 @@ class Actions(commands.Cog, name="actions"):
             try:
                 msg_reply = await self.bot.wait_for(
                     "message", timeout=30.0,
-                    check=checks.valid_reply(hit + stand, ctx.message.author, ctx.message.channel)
+                    check=checks.valid_reply(hit + stand, ctx.author, ctx.message.channel)
                 )
             except asyncio.TimeoutError:
                 values = [1000, 1000]
@@ -1209,7 +1209,7 @@ class Actions(commands.Cog, name="actions"):
     @checks.not_preoccupied("testing timing accuracy")
     async def reaction(self, ctx: commands.Context, wait_time: float = -1.0):
         """Test your reflexes AND counting ability!"""
-        mention = ctx.message.author.mention
+        mention = ctx.author.mention
 
         if wait_time <= 0:
             wait_time = random.randint(6, 30)
@@ -1218,7 +1218,7 @@ class Actions(commands.Cog, name="actions"):
         try:
             message = await self.bot.wait_for(
                 "message", timeout=70,
-                check=checks.valid_reply("", ctx.message.author, ctx.message.channel)
+                check=checks.valid_reply("", ctx.author, ctx.message.channel)
             )
         except asyncio.TimeoutError:
             await ctx.send(f"{mention}, time's up!")

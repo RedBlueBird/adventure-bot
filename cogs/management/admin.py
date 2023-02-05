@@ -5,6 +5,7 @@ import typing as t
 
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 from helpers import checks
 import util as u
@@ -30,13 +31,12 @@ class Admin(commands.Cog, name="admin"):
         :param level: The level/amount of the card/item to give.
         :param target: Who to give the item to
         """
-        mention = ctx.message.author.mention
+        mention = ctx.author.mention
 
         with open("resources/text/bot_log.txt", "a") as log:
             log.write(f">>>{ctx.message.content}\n")
-            log.write(f"{ctx.message.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            log.write(f"{ctx.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
-        item_type = item_type.lower()
         if item_type == "card":
             card_name = " ".join(name.split("_")).title()
 
@@ -73,12 +73,6 @@ class Admin(commands.Cog, name="admin"):
                 f"from {mention}"
             )
 
-        else:
-            await ctx.reply(
-                f"{mention}, the correct format for this command is "
-                f"`{u.PREF}redeem (card/item) (name) (level/amount) (user)`!"
-            )
-
     @commands.hybrid_command(
         aliases=["endseason"],
         brief="Resets the PVP season and gives each player their medals."
@@ -97,7 +91,7 @@ class Admin(commands.Cog, name="admin"):
 
             medals = math.ceil((user_medal - 500) / 2) + 500 if user_medal > 500 else user_medal
 
-            msg = f"```Season Ended!``` You now have {medals} {u.ICON['medal']} (from {user_medal}) "\
+            msg = f"The season ended! You now have {medals} {u.ICON['medal']} (from {user_medal}) "\
                   f"\n+{earned_coins} {u.ICON['coin']}!"
             if earned_gems > 0:
                 msg += f"\n + {earned_gems} {u.ICON['gem']}"
@@ -110,11 +104,11 @@ class Admin(commands.Cog, name="admin"):
 
         await ctx.reply("Season Ended!")
 
-    @commands.hybrid_command(aliases=["testing"], brief="Prints some debugging info for the devs.")
+    @commands.hybrid_command(brief="Prints some debugging info for the devs.")
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.message.channel.send(str(ctx.message.author) + u.ICON['load'])
+        loading = await ctx.message.channel.send(str(ctx.author) + u.ICON['load'])
 
         def print_all(tables_name):
             dm.cur.execute(f"SELECT * FROM {tables_name}")
@@ -128,53 +122,14 @@ class Admin(commands.Cog, name="admin"):
         print(u.ADMINS)
         print(dm.queues)
         guilds = list(self.bot.guilds)
+
         print("Connected on " + str(len(self.bot.guilds)) + " guilds:")
         for x in range(len(guilds)):
             print('  ' + guilds[x - 1].name)
         folders = os.listdir("..")
-        print(folders)
-        """
-        for guild in self.bot.guilds:
-            for emoji in guild.emojis:
-                print(emoji)
-            for channel in guild.channels:
-                try:
-                    invite = await channel.create_invite()
-                    await ctx.message.channel.send(invite)
-                    break
-                except:
-                    pass
-        dm.cur.execute("select id, userid, position, inventory, show_map, storage from adventuredatas")
-        adventure = dm.cur.fetchall()
-        dm.cur.execute("select id, userid from playersinfo")
-        ids =dm.cur.fetchall()
-        for x in ids:
-            found = False
-            for y in adventure:
-                if x[1] == y[1]:
-                    found = True
-                    sql = "INSERT INTO adventurecopy(userid, position, inventory, show_map, storage) VALUES (%s, %s, %s, %s, %s)"
-                    val = (y[1], y[2], y[3], y[4], y[5])
-                    dm.cur.execute(sql, val)
-                    break
-            if not found:
-                sql = "INSERT INTO adventurecopy(userid, position, inventory, show_map, storage) VALUES (%s, %s, %s, %s, %s)"
-                val = (x[1], "home", '{}', 'true', '{}')
-                dm.cur.execute(sql, val)
-        dm.db.commit()
-        """
-        await loading.edit(content="Database printed!")
 
-        # dm.cur.execute("select deck1,deck2,deck3,deck4,deck5,deck6 from temp2")
-        # result = dm.cur.fetchall()
-        # for decks in result:
-        #    for count, deck in enumerate(decks):
-        #        cards = [int(i) for i in deck.split(",")]
-        #        if len(cards) == 1:
-        #            continue
-        #        for card in cards:
-        #            dm.cur.execute("update temp_cards set deck" + str(count+1) + " = 1 where id = " + str(card) + ";")
-        # dm.db.commit()
+        print(folders)
+        await loading.edit(content="Database printed!")
                          
 
 async def setup(bot):

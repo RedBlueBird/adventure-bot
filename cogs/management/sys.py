@@ -21,9 +21,9 @@ class Sys(commands.Cog, name="sys"):
     )
     async def register(self, ctx: Context):
         """Registers the author of the message."""
-        a = ctx.message.author
+        a = ctx.author
 
-        await ctx.send(f"*registering {ctx.message.author.mention}...*")
+        await ctx.send(f"*registering {ctx.author.mention}...*")
 
         card_names = [
             "Stab", "Stab", "Shield", "Shield", "Strike", "Strike",
