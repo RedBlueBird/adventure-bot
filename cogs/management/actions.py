@@ -336,12 +336,12 @@ class Actions(commands.Cog, name="actions"):
             gained_cards = []
             if user_premium.date() < dt.date.today():
                 for x in range(6):
-                    deals_cards.append(u.add_a_card(player_lvl))
+                    gained_cards.append(u.add_a_card(user_level))
             else:
                 for x in range(9):
-                    deals_cards.append(u.add_a_card(player_lvl))
+                    gained_cards.append(u.add_a_card(user_level))
             dm.set_user_coin(member.id, user_coin - 200)
-            dm.set_user_deals(member.id, ",".join(deals_cards))
+            dm.set_user_deals(member.id, ",".join(gained_cards))
             await ctx.send(f"{member.mention}, you refreshed your shop for 200 {u.ICON['coin']}!")
         elif deal_type == "All":
             gained_cards = []
