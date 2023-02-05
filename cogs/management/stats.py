@@ -206,7 +206,7 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
             return
 
-        user_deck = dm.get_user_deck(user.id)
+        user_deck = dm.get_user_deck(user.id, dm.get_user_deck_slot(user.id))
         deck_ids = [card[0] for card in user_deck]
         user_cards = dm.get_user_cards(user.id, start=(page - 1) * 15, length=15)
         user_cards_count = dm.get_user_cards_count(user.id)
@@ -321,12 +321,14 @@ class Stats(commands.Cog, name="informational"):
             await ctx.send("You don't have access to that deck slot yet!")
             return
 
-        user_deck = dm.get_user_deck(user.id)
+        user_deck = dm.get_user_deck(user.id, slot)
+        equipped_deck_ids = user_deck if slot == u_slot else dm.get_user_deck(user.id, u_slot)
+        equipped_deck_ids = [i[0] for i in equipped_deck_ids]
         all_cards = []
         tot_energy = 0
         for x in user_deck:
             card = f"[{u.rarity_cost(x[1])}] **{x[1]}**, lv: **{x[2]}**, id: `{x[0]}` "
-            if slot == u_slot:
+            if x[0] == equipped_deck_ids:
                 card = f"**>**{card}"
             all_cards.append(card)
             tot_energy += u.cards_dict(x[2], x[1])["cost"]
@@ -641,7 +643,7 @@ class Stats(commands.Cog, name="informational"):
         page = max(page, 1)
 
         a = ctx.author
-        deck_ids = [card[0] for card in dm.get_user_deck(a.id)]
+        deck_ids = [card[0] for card in dm.get_user_deck(a.id, dm.get_user_deck_slot(a.id))]
 
         res = []
         search_type = search_type.lower()

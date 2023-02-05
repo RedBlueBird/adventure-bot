@@ -982,21 +982,15 @@ class Actions(commands.Cog, name="actions"):
     async def clear(self, ctx: commands.Context):
         """Clear your current deck."""
 
-        a_id = ctx.author.id
-        mention = ctx.author.mention
+        member = ctx.message.author
+        user_slot = dm.get_user_deck_slot(member.id)
+        equipped_deck = dm.get_user_deck(member.id, user_slot)
 
-        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = {a_id}")
-        deck_slot = dm.cur.fetchall()[0][0]
-
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = {a_id}")
-        deck = dm.cur.fetchall()[0][0].split(",")
-
-        if deck == ["0"]:
-            await ctx.send(f"{mention}, your deck's already empty!")
+        if len(equipped_deck) == 0:
+            await ctx.send(f"{member.mention}, your deck's already empty!")
             return
 
-        msg = await ctx.send(f"{mention}, do you really want to clear Deck #{deck_slot}?")
+        msg = await ctx.send(f"{member.mention}, do you really want to clear Deck #{user_slot}?")
         await msg.add_reaction("✅")
         await msg.add_reaction("❎")
         try:
@@ -1005,17 +999,17 @@ class Actions(commands.Cog, name="actions"):
                 check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
             )
         except asyncio.TimeoutError:
-            await msg.edit(content=f"{mention}, clearing deck cancelled")
+            await msg.edit(content=f"{member.mention}, clearing deck cancelled")
             return
 
         if reaction.emoji == "❎":
-            await msg.edit(content=f"{mention}, clearing deck cancelled")
+            await msg.edit(content=f"{member.mention}, clearing deck cancelled")
             return
 
-        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '0' WHERE userid = {a_id}")
-        dm.db.commit()
+        for i in equipped_deck:
+            dm.set_user_card_deck(member.id, user_slot, 0, i[0])
         await msg.edit(
-            content=f"{mention}, your Deck #{deck_slot} has been cleared! \n"
+            content=f"{member.mention}, your Deck #{user_slot} has been cleared! \n"
                     f"Do `{u.PREF}add (card_id)` command to add new cards into your deck!"
         )
         await msg.clear_reactions()

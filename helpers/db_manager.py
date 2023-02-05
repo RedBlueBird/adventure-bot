@@ -219,7 +219,7 @@ def get_user_deck_count(uid: int, slot: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck(uid: int) -> list[tuple[int, str, int]]:
+def get_user_deck(uid: int, slot: int) -> list[tuple[int, str, int]]:
     order = get_user_order(uid)
 
     order_by = ""
@@ -236,10 +236,9 @@ def get_user_deck(uid: int) -> list[tuple[int, str, int]]:
     elif order == 6:
         order_by = "id desc, card_name"
 
-    db_deck = f"deck{get_user_deck_slot(uid)}"
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
-        f"owned_user = {uid} AND {db_deck} = 1 ORDER BY {order_by}"
+        f"owned_user = {uid} AND deck{slot} = 1 ORDER BY {order_by}"
     )
     result = cur.fetchall()
     if order in [7, 8]:
@@ -321,9 +320,9 @@ def add_user(uid: int):
     db.commit()
 
 
-def set_user_card_deck(uid: int, slot: int, value: int, deck: int):
+def set_user_card_deck(uid: int, slot: int, value: int, id: int):
     db_deck = f"deck{slot}"
-    cur.execute(f"UPDATE temp_cards SET {db_deck} = {value} WHERE id = {deck} AND owned_user = {uid}")
+    cur.execute(f"UPDATE temp_cards SET {db_deck} = {value} WHERE id = {id} AND owned_user = {uid}")
     db.commit()
 
 
