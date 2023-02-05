@@ -143,7 +143,7 @@ def get_user_daily(uid: int) -> dt.datetime:
     return dt.datetime.combine(cur.fetchall()[0][0], dt.datetime.min.time())
 
 
-def set_user_daily(uid: int, value: str):
+def set_user_daily(uid: int, value: str | dt.date):
     cur.execute(f"UPDATE temp2 SET daily_date = '{value}' WHERE userid = {uid}")
     db.commit()
 

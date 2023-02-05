@@ -63,7 +63,7 @@ class Actions(commands.Cog, name="actions"):
 
         if user_cards_count < 500:
             card_level = u.log_level_gen(random.randint(2 ** (max(0, 5 - (user_level // 4))),
-                                                         2 ** (10 - math.floor(user_level / 10))))
+                                                        2 ** (10 - math.floor(user_level / 10))))
             card = u.random_card(card_level, "normal")
             dm.add_user_cards([(member.id, card, card_level)])
             card_msg = f"Obtained **[{u.rarity_cost(card)}] {card} lv: {card_level}**!"
@@ -72,7 +72,6 @@ class Actions(commands.Cog, name="actions"):
             card_msg = f"Received extra 250 {u.ICON['coin']}!"
 
         if random.randint(1, 7) == 1:  # one in 7 chance ig
-
             new_coins = user_coin + 400 + math.floor(user_level / 5) * 20 + streak * 80
             new_exps = user_exp + 200
             new_medals = user_medal + medal_reward * 4
@@ -101,8 +100,7 @@ class Actions(commands.Cog, name="actions"):
         dm.set_user_daily(member.id, dt.date.today())
         dm.set_user_streak(member.id, streak)
 
-
-    @commands.hybrid_command(aliases=["orders"], brief="cards")
+    @commands.hybrid_command(brief="cards")
     @checks.is_registered()
     async def order(self, ctx: commands.Context, card_property: str, order_by: str):
         """Command formatting for the card display order"""
@@ -118,8 +116,10 @@ class Actions(commands.Cog, name="actions"):
         member = ctx.author
 
         if card_property is None or order_by is None:
-            await ctx.send(f"{member.mention}, the correct format for this command is "
-                           f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!")
+            await ctx.send(
+                f"{member.mention}, the correct format for this command is "
+                f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!"
+            )
         else:
             order = [0, None, None]
             if order_by in ascending_aliases + descending_aliases:
@@ -138,13 +138,15 @@ class Actions(commands.Cog, name="actions"):
                 order[0] += 1
                 order[2] = " descending"
             if order == [0, None, None]:
-                await ctx.send(f"{member.mention}, the correct format for this command is "
-                               f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!")
+                await ctx.send(
+                    f"{member.mention}, the correct format for this command is "
+                    f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!"
+                )
             else:
                 dm.set_user_order(member.id, order[0])
                 await ctx.send(f"{member.mention}, the order had been set to {order[1]}{order[2]}.")
 
-    @commands.hybrid_command(aliases=["buying"], brief="actions")
+    @commands.hybrid_command(brief="actions")
     @checks.is_registered()
     @checks.not_preoccupied("in the shop")
     @checks.level_check(3)
@@ -166,24 +168,24 @@ class Actions(commands.Cog, name="actions"):
         deal_msg = "None"
         deal_transaction = []
 
-        #gem, token, cards, levels
+        # gem, token, cards, levels
         card_packs = {
-            "basic": [3,0,3,128],
-            "fire": [5,0,4,128],
-            "evil": [5,0,4,128],
-            "electric": [5,0,4,128],
-            "defensive": [5,0,4,128],
-            "pro": [24,0,6,16],
-            #"confetti": [0,40,6,16]
+            "basic": [3, 0, 3, 128],
+            "fire": [5, 0, 4, 128],
+            "evil": [5, 0, 4, 128],
+            "electric": [5, 0, 4, 128],
+            "defensive": [5, 0, 4, 128],
+            "pro": [24, 0, 6, 16],
+            # "confetti": [0,40,6,16]
         }
-        #gem, coin, ticket
+        # gem, coin, ticket
         currency_deals = {
-            "gc1": [3,1000,0],
-            "gc2": [6,2250,0],
-            "gc3": [24,11000,0],
-            "rt1": [2,0,1],
-            "rt2": [4,0,3],
-            "rt3": [6,0,5]
+            "gc1": [3, 1000, 0],
+            "gc2": [6, 2250, 0],
+            "gc3": [24, 11000, 0],
+            "rt1": [2, 0, 1],
+            "rt2": [4, 0, 3],
+            "rt3": [6, 0, 5]
         }
 
         if to_buy.lower() in card_packs:
@@ -232,7 +234,7 @@ class Actions(commands.Cog, name="actions"):
                 deal_msg = f"Do you want to refresh the shop for 200 {u.ICON['coin']}?"
                 deal_type = "Refresh"
         elif to_buy.lower() == "all":
-            total_cost = sum([u.compute_card_cost(i[1],int(i[0])) if i != "-" else 0 for i in deals])
+            total_cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
             total_count = sum([1 if i[0] != "-" else 0 for i in deals])
 
             if total_count + cards_count > 500:
@@ -245,15 +247,15 @@ class Actions(commands.Cog, name="actions"):
                 deal_msg = f"Do you want to buy all {total_count} card(s) in the shop for {total_cost} {u.ICON['coin']}?"
                 deal_type = "All"
         elif to_buy.isdigit():
-            selection = int(to_buy)-1
-            if not (0 < selection+1 < len(deals)):
+            selection = int(to_buy) - 1
+            if not (0 < selection + 1 < len(deals)):
                 deal_msg = f"Number must be between 1 and {len(deals)}!"
             elif deals[selection][0] == "-":
                 deal_msg = f"You already bought this card!"
             elif user_cards_count + 1 > 500:
                 deal_msg = f"You are already at the maximum 500 cards capacity!"
             else:
-                card_cost = u.compute_card_cost(deals[selection][1],int(deals[selection][0]))
+                card_cost = u.compute_card_cost(deals[selection][1], int(deals[selection][0]))
                 if card_cost > user_coin:
                     deal_msg = f"You don't have enough golden coins to buy that card!"
                 else:
@@ -271,10 +273,10 @@ class Actions(commands.Cog, name="actions"):
         await deal_msg.add_reaction("✅")
         await deal_msg.add_reaction("❎")
         try:
-            reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0,
-                                                        check=checks.valid_reaction(["❎", "✅"],
-                                                                                    [member],
-                                                                                    [deal_msg]))
+            reaction, user = await self.bot.wait_for(
+                "reaction_add", timeout=30.0,
+                check=checks.valid_reaction(["❎", "✅"], member, deal_msg)
+            )
         except asyncio.TimeoutError:
             await deal_msg.edit(content=f"{member.mention}, the transaction timed out.")
             await deal_msg.clear_reactions()
@@ -295,8 +297,8 @@ class Actions(commands.Cog, name="actions"):
                 deal_msg = f"**{deal_transaction[2]}** {u.ICON['tick']}!"
 
             embed = discord.Embed(title="You got:",
-                                    description=deal_msg,
-                                    color=discord.Color.gold())
+                                  description=deal_msg,
+                                  color=discord.Color.gold())
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             embed.set_footer(text="Gems left: " + str(user_gem - deal_transaction[0]))
             await ctx.send(embed=embed)
@@ -317,7 +319,7 @@ class Actions(commands.Cog, name="actions"):
                 cards_msg.append("=======================\n")
                 cards_msg.append(f"**From {to_buy.lower().title()} Edition card pack**")
                 embed = discord.Embed(title="You got:", description=" ".join(cards_msg),
-                                        color=discord.Color.gold())
+                                      color=discord.Color.gold())
 
             elif deal_transaction[1] > 0:
                 dm.add_user_cards([(member.id, "Confetti Cannon", 10)])
@@ -343,14 +345,14 @@ class Actions(commands.Cog, name="actions"):
         elif deal_type == "All":
             gained_cards = []
             cards_msg = []
-            total_cost = sum([u.compute_card_cost(i[1],int(i[0])) if i != "-" else 0 for i in deals])
+            total_cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
             for x in deals:
                 if x[0] == "-":
                     continue
                 gained_cards.append((member.id, x[1], int(x[0])))
                 cards_msg.append(
-                        f"[{u.rarity_cost(x[1])}] **{x[1]}** lv: **{int(x[0])}** - "
-                        f"**{dm.compute_card_cost(x[1], int(x[0]))}** {u.ICON['coin']} \n")
+                    f"[{u.rarity_cost(x[1])}] **{x[1]}** lv: **{int(x[0])}** - "
+                    f"**{dm.compute_card_cost(x[1], int(x[0]))}** {u.ICON['coin']} \n")
 
             dm.add_user_cards(gained_cards)
             dm.set_user_coin(member.id, user_coin - total_cost)
@@ -358,17 +360,18 @@ class Actions(commands.Cog, name="actions"):
             cards_msg.append(f"**Total Cost - {total_cost} {u.ICON['coin']}**")
             dm.set_user_deals(member.id, ",".join(["-." + i[1] for i in deals]))
             embed = discord.Embed(title="You Bought:",
-                                    description=" ".join(cards_msg),
-                                    color=discord.Color.gold())
+                                  description=" ".join(cards_msg),
+                                  color=discord.Color.gold())
             embed.set_footer(text=f"You currently have {user_coin - total_cost} golden coins left")
             embed.set_thumbnail(url=ctx.message.author.avatar.url)
             await ctx.send(embed=embed)
         elif deal_type == "Single":
-            selection = int(to_buy)-1
-            card_cost = u.compute_card_cost(deals[selection][1],int(deals[selection][0]))
-            await ctx.send(content=f"{member.mention}, you successfully bought a **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} " + 
-                                        f"lv: {deals[selection][0]}** with " + 
-                                        f"{card_cost} {u.ICON['coin']}!")
+            selection = int(to_buy) - 1
+            card_cost = u.compute_card_cost(deals[selection][1], int(deals[selection][0]))
+            await ctx.send(
+                content=f"{member.mention}, you successfully bought a **[{u.rarity_cost(deals[selection][1])}] {deals[selection][1]} " +
+                        f"lv: {deals[selection][0]}** with " +
+                        f"{card_cost} {u.ICON['coin']}!")
             dm.add_user_cards([(member.id, deals[selection][1], deals[selection][0])])
             dm.set_user_coin(member.id, user_coin - card_cost)
             deals[selection][0] = "-"
@@ -411,8 +414,8 @@ class Actions(commands.Cog, name="actions"):
             return
 
         msg = await ctx.send(
-            f"{member.mention} \nAre you sure you want to discard: \n" + 
-            f" \n".join(discard_msg) + 
+            f"{member.mention} \nAre you sure you want to discard: \n" +
+            f" \n".join(discard_msg) +
             f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
         )
 
