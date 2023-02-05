@@ -9,6 +9,7 @@ from copy import deepcopy
 from PIL import Image, ImageFont, ImageDraw
 import discord
 from discord.ext import commands
+from discord.ext.commands import Greedy
 
 from helpers import db_manager as dm
 import util as u
@@ -397,11 +398,12 @@ class Actions(commands.Cog, name="actions"):
         for x in card_ids:
             if not x.isdigit():
                 error_msg.append(f"`{x}` is not a number!")
+                continue
             card_name = dm.get_card_name(member.id, x)
             card_level = dm.get_card_level(member.id, x)
             card_decks = dm.get_card_decks(x)
 
-            if not card_name:
+            if not card_name or x in discard_ids:
                 error_msg.append(f"You don't have a card with id `{x}`!")
             elif sum(card_decks):
                 error_msg.append(f"Id `{x}` is equipped in at least one of your decks!")
@@ -409,15 +411,15 @@ class Actions(commands.Cog, name="actions"):
                 discard_ids.append((x, member.id))
                 discard_msg.append(f"**[{u.rarity_cost(card_name)}] {card_name} lv: {card_level}** Id `{x}`")
 
-        if len(error_msg) != 0:
-            await ctx.send(f"{member.mention} " + " \n".join(error_msg))
+        msg = f"{member.mention} \n" + \
+              f" \n".join(error_msg) + "\n"
+        if len(discard_ids) != 0:
+            msg += f"You sure you want to discard: \n" + \
+                   f" \n".join(discard_msg) + \
+                   f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
+        await ctx.send(msg)
+        if len(discard_ids) == 0:
             return
-
-        msg = await ctx.send(
-            f"{member.mention} \nAre you sure you want to discard: \n" +
-            f" \n".join(discard_msg) +
-            f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
-        )
 
         await msg.add_reaction("✅")
         await msg.add_reaction("❎")
@@ -900,84 +902,95 @@ class Actions(commands.Cog, name="actions"):
             f"with the card **[{u.rarity_cost(new[0])}] {new[0]} lv: {new[1]}** in your deck #{deck_slot}!"
         )
 
-    @commands.hybrid_command(aliases=["adds", "use", "uses"], brief="Add a card to your deck.")
+    @commands.command(aliases=["adds", "use", "uses"], brief="Add a card to your deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
-    async def add(self, ctx: commands.Context, card_id: int):
+    async def add(self, ctx: commands.Context, * card_id):
         """Add a card to your deck."""
-
-        mention = ctx.author.mention
-        a_id = ctx.author.id
+        
+        member = ctx.message.author
         if not card_id:
-            await ctx.send(f"{mention}, the correct format is `{u.PREF}add (* card_ids)`!")
+            await ctx.send(f"{member.mention}, the correct format is `{u.PREF}add (* card_ids)`!")
             return
 
-        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = '{a_id}'")
-        deck_slot = dm.cur.fetchall()[0][0]
+        user_deck_slot = dm.get_user_deck_slot(member.id)
+        user_deck_count = dm.get_user_deck_count(member.id, user_deck_slot)
+        card_ids = list(card_id)
+        add_ids = []
+        add_msg = []
+        error_msg = []
 
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = '{a_id}'")
-        deck = dm.cur.fetchall()[0][0].split(",")
+        for x in card_ids:
+            if not x.isdigit():
+                error_msg.append(f"`{x}` is not a number!")
+                continue
+            card_name = dm.get_card_name(member.id, x)
+            card_level = dm.get_card_level(member.id, x)
+            card_decks = dm.get_card_decks(x)
 
-        deck = [] if deck == ['0'] else deck
-        if str(card_id) in deck:
-            await ctx.send(f"{mention}, Card #`{card_id}` is already in your deck.")
-            return
-        if len(deck) == 12:
-            await ctx.send(f"{mention}, your deck's full - do `{u.PREF}swap` instead!")
-            return
+            if not card_name:
+                error_msg.append(f"You don't have a card with id `{x}`!")
+            elif card_decks[user_deck_slot-1] or x in add_ids:
+                error_msg.append(f"Id `{x}` is equipped in your deck already!")
+            elif user_deck_count + len(add_ids) >= 12:
+                error_msg.append(f"Id `{x}` failed. Deck already at max capacity of 12 cards.")
+            else:
+                add_ids.append(x)
+                add_msg.append(f"**[{u.rarity_cost(card_name)}] {card_name} lv: {card_level}** Id `{x}`")
 
-        dm.cur.execute(
-            f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{a_id}'"
-        )
-        y = dm.cur.fetchall()[0]
-        if y:
-            res_msg = f"**[{u.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** » Deck #{deck_slot}"
-            deck.append(str(card_id))
-        else:
-            res_msg = f"Card #`{card_id}` doesn't exist in your inventory"
+        for i in add_ids:
+            dm.set_user_card_deck(member.id, user_deck_slot, 1, i)
 
-        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '{','.join(deck)}' WHERE userid = '{a_id}'")
-        dm.db.commit()
-        await ctx.send(f"{mention}\n {res_msg}")
+        msg = f"{member.mention} \n" + \
+              f" \n".join(error_msg) + "\n"
+        if len(add_ids) != 0:
+            msg += f"Following cards are now added to deck {user_deck_slot}!: \n" + \
+                   f" \n".join(add_msg)
+        await ctx.send(msg)
 
-    @commands.hybrid_command(aliases=["rem"], brief="Remove a card from your deck.")
+    @commands.command(aliases=["rem"], brief="Remove a card from your deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
-    async def remove(self, ctx: commands.Context, card_id: int):
+    async def remove(self, ctx: commands.Context, * card_id):
         """Remove a card from your deck."""
 
-        mention = ctx.author.mention
-        a_id = ctx.author.id
+        member = ctx.message.author
         if not card_id:
-            await ctx.send(f"{mention}, the correct format is `{u.PREF}remove (* card_ids)`!")
+            await ctx.send(f"{member.mention}, the correct format is `{u.PREF}add (* card_ids)`!")
             return
 
-        dm.cur.execute(f"SELECT deck_slot FROM playersinfo WHERE userid = '{a_id}'")
-        deck_slot = dm.cur.fetchall()[0][0]
+        user_deck_slot = dm.get_user_deck_slot(member.id)
+        user_deck_count = dm.get_user_deck_count(member.id, user_deck_slot)
+        card_ids = list(card_id)
+        remove_ids = []
+        remove_msg = []
+        error_msg = []
 
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"SELECT {db_deck} FROM playersachivements WHERE userid = '{a_id}'")
-        deck = dm.cur.fetchall()[0][0].split(",")
-        deck_length = 0 if deck == ['0'] else len(deck)
+        for x in card_ids:
+            if not x.isdigit():
+                error_msg.append(f"`{x}` is not a number!")
+                continue
+            card_name = dm.get_card_name(member.id, x)
+            card_level = dm.get_card_level(member.id, x)
+            card_decks = dm.get_card_decks(x)
 
-        if deck_length == 0:
-            await ctx.send(f"{mention}, your deck's empty!")
-            return
+            if not card_name:
+                error_msg.append(f"You don't have a card with id `{x}`!")
+            elif card_decks[user_deck_slot-1] == 0 or x in remove_ids:
+                error_msg.append(f"Can't remove a card with id `{x}` that isn't already in your current deck!")
+            else:
+                remove_ids.append(x)
+                remove_msg.append(f"**[{u.rarity_cost(card_name)}] {card_name} lv: {card_level}** Id `{x}`")
 
-        if str(card_id) in deck:
-            dm.cur.execute(
-                f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{a_id}'"
-            )
-            y = dm.cur.fetchall()[0]
-            res_msg = f"**[{u.rarity_cost(y[0])}] {y[0]} lv: {y[1]}** « Deck #{deck_slot}"
-            deck.remove(str(card_id))
-        else:
-            res_msg = f"Card #`{card_id}` isn't in your deck."
+        for i in remove_ids:
+            dm.set_user_card_deck(member.id, user_deck_slot, 0, i)
 
-        dm.cur.execute(f"UPDATE playersachivements SET {db_deck} = '{','.join(deck)}' WHERE userid = '{a_id}'")
-        dm.db.commit()
-        await ctx.send(f"{mention}\n {res_msg}")
+        msg = f"{member.mention} \n" + \
+              f" \n".join(error_msg) + "\n"
+        if len(remove_ids) != 0:
+            msg += f"Following cards are removed from deck {user_deck_slot}: \n" + \
+                   f" \n".join(remove_msg)
+        await ctx.send(msg)
 
     @commands.hybrid_command(aliases=["clear_deck", "cleardeck"], brief="Clear your current deck.")
     @checks.is_registered()

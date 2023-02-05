@@ -321,8 +321,7 @@ def add_user(uid: int):
 
 
 def set_user_card_deck(uid: int, slot: int, value: int, id: int):
-    db_deck = f"deck{slot}"
-    cur.execute(f"UPDATE temp_cards SET {db_deck} = {value} WHERE id = {id} AND owned_user = {uid}")
+    cur.execute(f"UPDATE temp_cards SET deck{slot} = {value} WHERE id = {id} AND owned_user = {uid}")
     db.commit()
 
 

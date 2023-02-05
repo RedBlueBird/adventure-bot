@@ -349,7 +349,7 @@ class Stats(commands.Cog, name="informational"):
 
         len_req = 12
         if len(user_deck) != len_req:
-            embed.set_footer(text=f"You need {len_req - len(user_deck)} more cards needed to complete this deck.")
+            embed.set_footer(text=f"{len_req - len(user_deck)}/12 more card(s) to complete this deck.")
         else:
             embed.set_footer(text=f"Average energy cost: {round(tot_energy / len_req, 1)}")
 
