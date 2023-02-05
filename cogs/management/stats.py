@@ -192,12 +192,11 @@ class Stats(commands.Cog, name="informational"):
     @commands.hybrid_command(
         name="inventory",
         description="Displays all the cards in a member's inventory in the form of an embed.",
-        aliases=["card", "i", "inv"]
+        aliases=["card", "cards", "i", "inv"]
     )
     async def inventory(self, ctx: Context, page: int = 1, user: discord.Member = None) -> None:
         """
         Displays all the cards in a member's inventory in the form of an embed.
-
         :param page: The page of cards to display
         :param user: The user whose cards to display
         """
@@ -245,46 +244,33 @@ class Stats(commands.Cog, name="informational"):
         description="Displays the world's top players.",
         aliases=["lb", "lbs"]
     )
-    async def leaderboard(self, ctx: Context, lb_type: str = "") -> None:
+    async def leaderboard(
+            self, ctx: Context,
+            lb_type: t.Literal["level", "coins", "gems", "medals", "tokens"]
+    ) -> None:
         """
         Displays the world's top players.
         :param lb_type: The type of leaderboard to display
         """
 
         lim = 10
-        lb_type = lb_type.lower()
-        if lb_type.lower() in ["levels", "level", "exps", "exp", "l", "e"]:
+        raw_descr = None
+        if lb_type == "level":
             lb_type = "XP"
             raw_descr = "• Level: {}, Exp: {}"
-        elif lb_type.lower() in ["coins", "golden_coins", "goldencoins", "goldencoins", "coin", "gc", "c"]:
+        elif lb_type == "coins":
             lb_type = "Golden Coins"
             raw_descr = "• Golden Coins: {}, Shiny Gems: {}"
-        elif lb_type.lower() in ["shiny_gems", "shinygems", "shiny_gem", "shinygem", "gems", "gem", "g", "sg"]:
+        elif lb_type == "gems":
             lb_type = "Shiny Gems"
             raw_descr = "• Shiny Gems: {}, Golden Coins: {}"
-        elif lb_type.lower() in ["medals", "medal", "m"]:
+        elif lb_type == "medals":
             lb_type = "Medals"
             raw_descr = "• Medals: {}"
-        elif lb_type.lower() in ["tokens", "t", "event_tokens", "token"]:
+        elif lb_type == "tokens":
             lb_type = "Tokens"
             raw_descr = "• Tokens: {}"
-        else:
-            embed = discord.Embed(
-                title="Available leaderboards",
-                description=f"`{u.PREF}leaderboard (leaderboard type)`",
-                color=discord.Color.gold()
-            )
-            lb_types = ["XP", "Golden Coins", "Shiny Gems", "Medals", "Tokens"]
-            lb_commands = ["levels", "coins", "gems", "medals", "tokens"]
-            for i in range(len(lb_types)):
-                embed.add_field(
-                    name=f"Players with the most {lb_types[i]}",
-                    value=f"`{u.PREF}leaderbord {lb_commands[i]}`",
-                    inline=False
-                )
-            embed.set_footer(text=f"Shows the top {lim} players in the world.")
-            await ctx.send(embed=embed)
-            return
+        assert raw_descr is not None
 
         selected_players = []
         players = dm.get_leaderboard(lb_type, lim)
@@ -310,8 +296,7 @@ class Stats(commands.Cog, name="informational"):
 
     @commands.hybrid_command(
         name="deck",
-        description="Displays the deck in the member's current deck slot",
-        aliases=["decks"]
+        description="Displays the deck in the member's current deck slot"
     )
     async def deck(self, ctx: Context, slot: int = 0, user: discord.Member = None) -> None:
         """

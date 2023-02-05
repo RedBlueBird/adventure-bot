@@ -22,7 +22,7 @@ class Tutorial(commands.Cog, name="tutorial"):
     async def tutorial(self, ctx: commands.Context):
         """A battle simulator that gives people new to the bot a simple tutorial."""
 
-        author = ctx.message.author
+        author = ctx.author
         mention = author.mention
         a_id = str(author.id)
         start_msg = await ctx.send(

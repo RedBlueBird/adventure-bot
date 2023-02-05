@@ -61,8 +61,8 @@ class Adventure(commands.Cog, name="adventure"):
     @checks.is_registered()
     @checks.not_preoccupied("on an adventure")
     async def adventure(self, ctx: commands.Context):
-        mention = ctx.message.author.mention
-        a_id = ctx.message.author.id
+        mention = ctx.author.mention
+        a_id = ctx.author.id
         dm.cur.execute("select * from adventuredatas where userid = " + str(a_id))
         a_datas = dm.cur.fetchall()
         dm.cur.execute("select * from playersinfo where userid = " + str(a_id))
@@ -110,7 +110,7 @@ class Adventure(commands.Cog, name="adventure"):
                 color=discord.Color.gold()
             )
             embed.add_field(name="Choices", value=choices_list(u.HTOWN[p_pos]["choices"]))
-            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.author.avatar.url)
 
             always = ["exit", "map", "backpack", "home", "refresh"]
             embed.set_footer(text=" | ".join(f"{u.PREF}{c}" for c in always))
@@ -129,7 +129,7 @@ class Adventure(commands.Cog, name="adventure"):
                 try:
                     msg_reply = await self.bot.wait_for(
                         "message", timeout=60.0,
-                        check=valid_reply("", ctx.message.author, ctx.message.channel)
+                        check=valid_reply("", ctx.author, ctx.message.channel)
                     )
                 except asyncio.TimeoutError:
                     afk = True
@@ -160,7 +160,7 @@ class Adventure(commands.Cog, name="adventure"):
                             await ctx.send(f"{mention}, map now shown")
 
                     elif content in ["bp", "backpack"]:
-                        await ctx.send(embed=u.display_backpack(p_inv, ctx.message.author, "Backpack"))
+                        await ctx.send(embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
 
                     elif "home".startswith(content):
                         p_pos = "south street"
@@ -198,12 +198,12 @@ class Adventure(commands.Cog, name="adventure"):
                             f"`{u.PREF}backpack` to check your backpack \n"
                             f"`{u.PREF}info item (item_name)` to check the item sell price \n"
                             f"`{u.PREF}exit` to exit the shops",
-                    embed=u.display_backpack(p_inv, ctx.message.author, "Backpack")
+                    embed=u.display_backpack(p_inv, ctx.author, "Backpack")
                 )
                 while not exiting:
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=valid_reply([''], [ctx.message.author],
+                                                            check=valid_reply([''], [ctx.author],
                                                                               [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         exiting = True
@@ -218,7 +218,7 @@ class Adventure(commands.Cog, name="adventure"):
                         break
 
                     elif msg_reply[0] in ["backpack", "bp"]:
-                        await ctx.send(embed=u.display_backpack(p_inv, ctx.message.author, "Backpack"))
+                        await ctx.send(embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
                         continue
 
                     elif msg_reply[0] in ['r', 'ref', 'refresh']:
@@ -226,7 +226,7 @@ class Adventure(commands.Cog, name="adventure"):
                                                                f"`{u.PREF}backpack` to check your backpack \n" +
                                                                f"`{u.PREF}info item (item_name)` to check the item sell price \n" +
                                                                f"`{u.PREF}exit` to exit the shops",
-                                                       embed=u.display_backpack(p_inv, ctx.message.author, "Backpack"))
+                                                       embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
                         continue
 
                     elif len(msg_reply) < 3:
@@ -282,7 +282,7 @@ class Adventure(commands.Cog, name="adventure"):
                 while not exiting:
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=valid_reply([''], [ctx.message.author],
+                                                            check=valid_reply([''], [ctx.author],
                                                                               [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         exiting = True
@@ -296,7 +296,7 @@ class Adventure(commands.Cog, name="adventure"):
                     elif msg_reply[0].lower() == "exit":
                         break
                     elif msg_reply[0].lower() in ["backpack", "back", "bpack", "bp", "b"]:
-                        await ctx.send(embed=u.display_backpack(p_inv, ctx.message.author, "Backpack"))
+                        await ctx.send(embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
                         continue
                     elif msg_reply[0].lower() in ["refresh", "ref", "re", "r"]:
                         adventure_msg = await ctx.send(embed=embed)
@@ -338,13 +338,13 @@ class Adventure(commands.Cog, name="adventure"):
                                                  u.PREF + "chest` to check your chest \n`" +
                                                  u.PREF + "close` to close your chest and exit \n`" +
                                                  u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
-                                         embed=u.display_backpack(p_stor, ctx.message.author, "Chest",
+                                         embed=u.display_backpack(p_stor, ctx.author, "Chest",
                                                                   level=p_datas[3]))
                 if u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply([''], [ctx.message.author],
+                                                                check=valid_reply([''], [ctx.author],
                                                                                   [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exiting = True
@@ -373,10 +373,10 @@ class Adventure(commands.Cog, name="adventure"):
                                                 f"`{u.PREF}chest` to check your chest \n" +
                                                 f"`{u.PREF}close` to close your chest and exit \n" +
                                                 f"`{u.PREF}withdraw/deposit (item_name) (amount) to take or put items from your backpack and chest",
-                                        embed=u.display_backpack(p_stor, ctx.message.author, "Chest", level=p_datas[3]))
+                                        embed=u.display_backpack(p_stor, ctx.author, "Chest", level=p_datas[3]))
 
                                 elif inputs[0] in ["backpack", "bp", "b"]:
-                                    embed = u.display_backpack(p_inv, ctx.message.author, "Backpack")
+                                    embed = u.display_backpack(p_inv, ctx.author, "Backpack")
                                     embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n"
                                                                          f"Stamina - {p_sta} \n"
                                                                          f"Traveled {p_distance} meters", inline=False)
@@ -387,7 +387,7 @@ class Adventure(commands.Cog, name="adventure"):
                                     await ctx.send(embed=embed)
 
                                 elif inputs[0] in ["chest", "ch", "c"]:
-                                    await ctx.send(embed=u.display_backpack(p_stor, ctx.message.author, "Chest"))
+                                    await ctx.send(embed=u.display_backpack(p_stor, ctx.author, "Chest"))
 
                                 elif len(inputs) < 3 or amount < 1:
                                     await ctx.send(
@@ -454,7 +454,7 @@ class Adventure(commands.Cog, name="adventure"):
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
                                                                 check=valid_reply(['flip', 'f', 'exit'],
-                                                                                  [ctx.message.author],
+                                                                                  [ctx.author],
                                                                                   [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exit_game = True
@@ -525,7 +525,7 @@ class Adventure(commands.Cog, name="adventure"):
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
                                                                 check=valid_reply(['exit', 'fish', 'f'],
-                                                                                  [ctx.message.author],
+                                                                                  [ctx.author],
                                                                                   [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exit_game = True
@@ -565,7 +565,7 @@ class Adventure(commands.Cog, name="adventure"):
                                 try:
                                     msg_reply2 = await self.bot.wait_for("message", timeout=30.0,
                                                                          check=valid_reply(['bait', 'b'],
-                                                                                           [ctx.message.author],
+                                                                                           [ctx.author],
                                                                                            [ctx.message.channel]))
                                 except asyncio.TimeoutError:
                                     await ctx.send(f"{mention} ```the fish got away!```")
@@ -626,7 +626,7 @@ class Adventure(commands.Cog, name="adventure"):
                         try:
                             msg_reply = await self.bot.wait_for("message", timeout=60.0,
                                                                 check=valid_reply(['exit', 'start', 's'],
-                                                                                  [ctx.message.author],
+                                                                                  [ctx.author],
                                                                                   [ctx.message.channel]))
                         except asyncio.TimeoutError:
                             exit_game = True
@@ -667,7 +667,7 @@ class Adventure(commands.Cog, name="adventure"):
                                         msg_reply = await self.bot.wait_for("message", timeout=30.0,
                                                                             check=valid_reply(
                                                                                 ['hit', 'h', 'stand', 's'],
-                                                                                [ctx.message.author],
+                                                                                [ctx.author],
                                                                                 [ctx.message.channel]))
                                     except asyncio.TimeoutError:
                                         values = [1000, 1000]
@@ -765,9 +765,9 @@ class Adventure(commands.Cog, name="adventure"):
                                 reaction, user = await self.bot.wait_for("reaction_add", timeout=120.0,
                                                                          check=valid_reaction(
                                                                              ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"],
-                                                                             [ctx.message.author], [diff_msg]))
+                                                                             [ctx.author], [diff_msg]))
                             except asyncio.TimeoutError:
-                                await ctx.send(f"{ctx.message.author} the host, went afk... :man_facepalming: ")
+                                await ctx.send(f"{ctx.author} the host, went afk... :man_facepalming: ")
                             else:
                                 if reaction.emoji != "5️⃣":
                                     raid_levels = {"1️⃣": 1, "2️⃣": 5, "3️⃣": 10, "4️⃣": 15}[reaction.emoji]
@@ -837,7 +837,7 @@ class Adventure(commands.Cog, name="adventure"):
                                       color=discord.Color.gold())
             if "choices" in path[option]:
                 embed.add_field(name="Choices", value=choices_list(path[option]["choices"]))
-            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.author.avatar.url)
             embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack | {u.PREF}refresh")
             return [embed, option]
 
@@ -878,7 +878,7 @@ class Adventure(commands.Cog, name="adventure"):
             while not leave and not afk and p_hp > 0 and p_sta > 0 and "choices" in choices:
                 try:
                     msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                        check=valid_reply([''], [ctx.message.author],
+                                                        check=valid_reply([''], [ctx.author],
                                                                           [ctx.message.channel]))
                 except asyncio.TimeoutError:
                     afk = True
@@ -894,7 +894,7 @@ class Adventure(commands.Cog, name="adventure"):
                         await ctx.send(f"{mention}, you quit this adventure")
                         break
                     elif msg_reply in ["bp", "backpack"]:
-                        embed = u.display_backpack(p_inv, ctx.message.author, "Backpack")
+                        embed = u.display_backpack(p_inv, ctx.author, "Backpack")
                         embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n" + \
                                                              f"Stamina - {p_sta} \n" + \
                                                              f"Traveled {p_distance} meters", inline=False)
@@ -972,7 +972,7 @@ class Adventure(commands.Cog, name="adventure"):
                     trap_msg = await ctx.send('Now!')
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=20.0,
-                                                            check=valid_reply(['react'], [ctx.message.author],
+                                                            check=valid_reply(['react'], [ctx.author],
                                                                               [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
@@ -995,7 +995,7 @@ class Adventure(commands.Cog, name="adventure"):
                     await seq_msg.edit(content=f"Retype the sequence begin with `{u.PREF}`! \nEx: `{u.PREF}abcdefg`")
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=20.0,
-                                                            check=valid_reply([''], [ctx.message.author],
+                                                            check=valid_reply([''], [ctx.author],
                                                                               [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
@@ -1069,7 +1069,7 @@ class Adventure(commands.Cog, name="adventure"):
                              [[u.mobs_dict(levels, i)["health"], 0, u.mobs_dict(levels, i)['health'], 0, 0] for i in
                               enemynames]
                     dd = BattleData({1: [1], 2: [i + 2 for i in range(len(enemynames))]},  # teams
-                                    [ctx.message.author] + enemynames,  # names
+                                    [ctx.author] + enemynames,  # names
                                     [a_id] + [123] * len(enemynames),  # ids
                                     ad_decks,  # decks
                                     [p_inv] + [{} for i in range(len(enemynames))],  # backpack
@@ -1120,7 +1120,7 @@ class Adventure(commands.Cog, name="adventure"):
                                 dd.hps.info[1][0] > 0 and dd.staminas.info[1] > 0:
                             try:
                                 replied_message = await self.bot.wait_for("message", timeout=120.0,
-                                                                          check=valid_reply([''], [ctx.message.author],
+                                                                          check=valid_reply([''], [ctx.author],
                                                                                             [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 dd.hps.info[1][0] = 0
@@ -1568,7 +1568,7 @@ class Adventure(commands.Cog, name="adventure"):
                                                   description="```" + msg + "\n\n" + choices['name'] + "'s offers:```",
                                                   color=discord.Color.gold())
                         embed.add_field(name="Choices", value="\n".join(logs[:]))
-                        embed.set_thumbnail(url=ctx.message.author.avatar.url)
+                        embed.set_thumbnail(url=ctx.author.avatar.url)
                         embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack")
                         return embed
 
@@ -1578,7 +1578,7 @@ class Adventure(commands.Cog, name="adventure"):
                         while not leave and not afk:
                             try:
                                 msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                    check=valid_reply([''], [ctx.message.author],
+                                                                    check=valid_reply([''], [ctx.author],
                                                                                       [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 afk = True
@@ -1594,7 +1594,7 @@ class Adventure(commands.Cog, name="adventure"):
                                     await ctx.send(f"{mention}, you quit this adventure")
                                     break
                                 elif msg_reply in ["bp", "backpack"]:
-                                    embed = u.display_backpack(p_inv, ctx.message.author, "Backpack")
+                                    embed = u.display_backpack(p_inv, ctx.author, "Backpack")
                                     embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n"
                                                                          f"Stamina - {p_sta} \n"
                                                                          f"Traveled {p_distance} meters", inline=False)
@@ -1667,7 +1667,7 @@ class Adventure(commands.Cog, name="adventure"):
                     embed = discord.Embed(title="You ran out of stamina!",
                                           description="```" + "\n".join(
                                               pre_message) + "You died from exhaustion!``` ```Loss: \n" + \
-                                                      u.display_backpack(p_inv, ctx.message.author, "Backpack",
+                                                      u.display_backpack(p_inv, ctx.author, "Backpack",
                                                                          [0, -2]) + "```",
                                           color=discord.Color.gold())
                     p_inv = {}
@@ -1677,7 +1677,7 @@ class Adventure(commands.Cog, name="adventure"):
                         title="You ran out of health!",
                         description="```" + "\n".join(
                             pre_message) + "The world starts to go dark. You struggled to breath properly. You died!``` ```Loss: \n" + \
-                                    u.display_backpack(p_inv, ctx.message.author, "Backpack", [0, -2]) + "```",
+                                    u.display_backpack(p_inv, ctx.author, "Backpack", [0, -2]) + "```",
                         color=discord.Color.gold()
                     )
                     p_inv = {}
@@ -1711,7 +1711,7 @@ class Adventure(commands.Cog, name="adventure"):
                         dm.db.commit()
 
                 embed.add_field(name="Result:", value="Total distance traveled - " + str(p_distance) + " meters")
-                embed.set_thumbnail(url=ctx.message.author.avatar.url)
+                embed.set_thumbnail(url=ctx.author.avatar.url)
                 embed.set_footer(text=f"Type {u.PREF}adventure to restart!")
                 await adventure_msg.edit(embed=embed)
 
