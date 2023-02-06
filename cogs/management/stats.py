@@ -112,7 +112,7 @@ class Stats(commands.Cog, name="informational"):
     @commands.hybrid_command(
         name="quests",
         description="Displays all current quests of a user.",
-        aliases=["q"]
+        aliases=["q", "quest", "qu"]
     )
     async def quests(self, ctx: Context, user: discord.Member = None) -> None:
         """Displays all current quests of a user."""

@@ -1196,6 +1196,10 @@ class Actions(commands.Cog, name="actions"):
         else:
             await ctx.send("No words found! :frown:")
 
+    @commands.hybrid_command(brief="ephemeral testing")
+    async def ephemeral(self, ctx: commands.Context):
+        await ctx.send("Only you can see this message!!!", ephemeral=True)
+
 
 async def setup(bot):
     await bot.add_cog(Actions(bot))
