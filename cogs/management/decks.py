@@ -6,8 +6,8 @@ import discord
 from discord.ext import commands
 
 from helpers import db_manager as dm
-import util as u
 from helpers import checks
+import util as u
 
 
 class Decks(commands.Cog, name="decks"):
