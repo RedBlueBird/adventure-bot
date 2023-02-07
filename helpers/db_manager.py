@@ -219,8 +219,9 @@ def get_user_deck_count(uid: int, slot: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck(uid: int, slot: int) -> list[tuple[int, str, int]]:
+def get_user_deck(uid: int, slot: int = -1) -> list[tuple[int, str, int]]:
     order = get_user_order(uid)
+    slot = slot if 1 <= slot <= 6 else get_user_deck_slot(uid)
 
     order_by = ""
     if order == 1:
@@ -292,7 +293,7 @@ def add_user_cards(cards: list[tuple[str | int, str, int]]):
     db.commit()
 
 
-def delete_user_cards(cards: list[int, int]):
+def delete_user_cards(cards: list[tuple[int, int]]):
     sql = "DELETE FROM temp_cards WHERE id = (%s) AND owned_user = (%s)"
     val = [(i[0], i[1]) for i in cards]
     cur.executemany(sql, val)
