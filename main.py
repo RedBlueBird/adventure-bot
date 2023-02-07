@@ -89,8 +89,10 @@ class AdventurerBot(commands.Bot):
             # UserNotOwner happens with @checks.is_owner() (or you can manually raise it)
             embed.description = "You're not an owner of the bot!"
         elif isinstance(error, exceptions.UserPreoccupied):
+            embed.title = "Hold on!"
             embed.description = f"You're still {error.action}! " \
-                                "If you think this is a bug, please report it [here](https://discord.gg/w2CkRtkj57)!"
+                                "If you think this is a bug, please report it " \
+                                "[here](https://discord.gg/w2CkRtkj57)!"
         elif isinstance(error, exceptions.UserSkillIssue):
             embed.description = f"You need to be at least level {error.req_lvl} to unlock this command!"
         elif isinstance(error, commands.MissingPermissions):
