@@ -46,25 +46,23 @@ class Fun(commands.Cog, name="fun"):
     @commands.hybrid_command(brief="Test your reflexes and counting ability!")
     @checks.not_preoccupied("testing timing accuracy")
     async def reaction(self, ctx: commands.Context, wait_time: float = -1.0):
-        """Test your reflexes AND counting ability!"""
-        mention = ctx.author.mention
-
+        """Test your reflexes and counting ability!"""
         if wait_time <= 0:
             wait_time = random.randint(6, 30)
 
-        t = await ctx.send(f"{mention}, reply `{u.PREF}` as close as you can to {wait_time} seconds!")
+        t = await ctx.reply(f"Reply `{u.PREF}` as close as you can to {wait_time} seconds!")
         try:
             message = await self.bot.wait_for(
                 "message", timeout=70,
                 check=checks.valid_reply("", ctx.author, ctx.message.channel)
             )
         except asyncio.TimeoutError:
-            await ctx.send(f"{mention}, time's up!")
+            await ctx.reply(f"Time's up!")
         else:
             recorded = (message.created_at - t.created_at).total_seconds()
             off = round(abs(wait_time - recorded) * 1000) / 1000
-            await ctx.send(
-                f"{mention}, you replied in {recorded} seconds, which "
+            await ctx.reply(
+                f"You replied in {recorded} seconds, which "
                 f"is {off} seconds off from {wait_time} seconds"
             )
 
