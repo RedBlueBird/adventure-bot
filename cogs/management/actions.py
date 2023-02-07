@@ -1,15 +1,14 @@
-import os
 import random
 import math
 import datetime as dt
 import asyncio
 import io
 from copy import deepcopy
+import typing as t
 
 from PIL import Image, ImageFont, ImageDraw
 import discord
 from discord.ext import commands
-from discord.ext.commands import Greedy
 
 from helpers import db_manager as dm
 import util as u
@@ -24,128 +23,103 @@ class Actions(commands.Cog, name="actions"):
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
         """Get your daily rewards!"""
-        member = ctx.author
-        user_coin = dm.get_user_coin(member.id)
-        user_exp = dm.get_user_exp(member.id)
-        user_medal = dm.get_user_medal(member.id)
-        user_level = dm.get_user_level(member.id)
-        user_streak = dm.get_user_streak(member.id)
-        user_ticket = dm.get_user_ticket(member.id)
-        user_premium = dm.get_user_premium(member.id)
-        user_daily = dm.get_user_daily(member.id)
-
-        if user_daily.date() == dt.date.today():
+        a = ctx.author
+        last_d = dm.get_user_daily(a.id)
+        if last_d.date() == dt.date.today():
             dts = u.time_til_midnight()
-            await ctx.send(f"{member.mention}, your next daily is in {dts}!")
+            await ctx.send(f"{a.mention}, your next daily is in {dts}!")
             return
 
-        streak = int(user_streak) + 1
-        medal_reward = 1
-        ticket_reward = 1
+        streak = dm.get_user_streak(a.id) + 1
         max_streak = 7
         max_tickets = 5
-        tick_msg = ""
-
-        if user_premium.date() > dt.date.today():
+        if dm.has_premium(a.id):
             max_streak = 14
             max_tickets = 10
-        if user_daily.date() < dt.date.today() - dt.timedelta(days=1):
+
+        if last_d.date() < dt.date.today() - dt.timedelta(days=1):
             streak = 1
         elif streak >= max_streak:
             streak = max_streak
-        if streak >= 7:
-            medal_reward = 2
-        if user_ticket >= max_tickets or user_level < 4:
+
+        tickets = dm.get_user_ticket(a.id)
+        lvl = dm.get_user_level(a.id)
+        if tickets >= max_tickets or lvl < 4:
             ticket_reward = 0
+            tick_msg = ""
         else:
+            ticket_reward = 1
             tick_msg = f"+{ticket_reward} {u.ICON['tick']}"
 
-        user_cards_count = dm.get_user_cards_count(member.id)
-
-        if user_cards_count < 500:
-            card_level = u.log_level_gen(random.randint(2 ** (max(0, 5 - (user_level // 4))),
-                                                        2 ** (10 - math.floor(user_level / 10))))
+        coins = dm.get_user_coin(a.id)
+        # Give the user a card or 250 coins, depending on how many they already have
+        if dm.get_user_cards_count(a.id) < 500:
+            card_level = u.log_level_gen(random.randint(
+                2 ** (max(0, 5 - (lvl // 4))),
+                2 ** (10 - math.floor(lvl / 10))
+            ))
             card = u.random_card(card_level, "normal")
-            dm.add_user_cards([(member.id, card, card_level)])
+            dm.add_user_cards([(a.id, card, card_level)])
             card_msg = f"Obtained **[{u.rarity_cost(card)}] {card} lv: {card_level}**!"
         else:
-            dm.set_user_coin(member.id, user_coin + 250)
-            card_msg = f"Received extra 250 {u.ICON['coin']}!"
+            card_val = 250
+            coins += card_val
+            card_msg = f"Obtained {card_val} {u.ICON['coin']}!"
 
-        if random.randint(1, 7) == 1:  # one in 7 chance ig
-            new_coins = user_coin + 400 + math.floor(user_level / 5) * 20 + streak * 80
-            new_exps = user_exp + 200
-            new_medals = user_medal + medal_reward * 4
-            await ctx.send(
-                f"{member.mention} JACKPOT!!! \n"
-                f"**+{math.floor(user_level / 5) * 20 + 400 + streak * 80} "
-                f"{u.ICON['coin']} +200 {u.ICON['exp']}"
-                f" +{medal_reward * 4} {u.ICON['medal']} {tick_msg}! \n"
-                f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
-            )
+        xp = dm.get_user_exp(a.id)
+        medals = dm.get_user_medal(a.id)
+        medal_base = 1 if streak < 7 else 2
+        # 1/7 change to get a jackpot daily, with greatly increased rewards
+        if jackpot := random.randint(1, 7) == 1:
+            coins += (coin_amt := 400 + math.floor(lvl / 5) * 20 + streak * 80)
+            xp += (xp_amt := 200)
+            medals += (medal_amt := medal_base * 4)
         else:
-            new_coins = user_coin + 100 + math.floor(user_level / 5) * 5 + streak * 20
-            new_exps = user_exp + 50
-            new_medals = user_medal + medal_reward
-            await ctx.send(
-                f"{member.mention} \n"
-                f"**+{math.floor(user_level / 5) * 5 + 100 + streak * 20} {u.ICON['coin']} +50 {u.ICON['exp']}"
-                f" +{medal_reward}{u.ICON['medal']} {tick_msg}\n"
-                f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
-            )
+            coins += (coin_amt := 100 + math.floor(lvl / 5) * 5 + streak * 20)
+            xp += (xp_amt := 50)
+            medals += (medal_amt := medal_base)
 
-        dm.set_user_coin(member.id, new_coins)
-        dm.set_user_exp(member.id, new_exps)
-        dm.set_user_medal(member.id, new_medals)
-        dm.set_user_ticket(member.id, user_ticket + ticket_reward)
-        dm.set_user_daily(member.id, dt.date.today())
-        dm.set_user_streak(member.id, streak)
+        await ctx.reply(
+            f"{'***JACKPOT!!!***' if jackpot else ''}\n"
+            f"**+{coin_amt} {u.ICON['coin']} +{xp_amt} {u.ICON['exp']}"
+            f" +{medal_amt}{u.ICON['medal']} {tick_msg}\n"
+            f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
+        )
 
-    @commands.hybrid_command(brief="cards")
+        dm.set_user_coin(a.id, coins)
+        dm.set_user_exp(a.id, xp)
+        dm.set_user_medal(a.id, medals)
+        dm.set_user_ticket(a.id, tickets + ticket_reward)
+        dm.set_user_daily(a.id, dt.date.today())
+        dm.set_user_streak(a.id, streak)
+
+    @commands.hybrid_command(brief="Set the card display order.")
     @checks.is_registered()
-    async def order(self, ctx: commands.Context, card_property: str, order_by: str):
-        """Command formatting for the card display order"""
+    async def order(
+            self, ctx: commands.Context,
+            card_property: t.Literal["level", "id", "name", "energy", "rarity"],
+            order_by: t.Literal["ascending", "descending"]
+    ):
+        """Set the card display order."""
+        order = None
+        card_property = card_property.lower()
+        if card_property == "level":
+            order = 1
+        elif card_property == "name":
+            order = 3
+        elif card_property == "id":
+            order = 5
+        elif card_property == "energy":
+            order = 7
+        elif card_property == "rarity":
+            order = 8
+        assert order is not None
 
-        level_aliases = ["level", "levels", "card_level", "card_levels", "l"]
-        id_aliases = ["id", "ids", "i"]
-        name_aliases = ["name", "names", "card_name", "card_names", "n", "nam"]
-        cost_aliases = ["energy_cost", "energycost", "energy", "cost", "ec", "en", "co", "e", "c"]
-        rarity_aliases = ["rarity", "rare", "ra", "r"]
-        ascending_aliases = ["ascending", "ascend", "a", "asc"]
-        descending_aliases = ["descending", "descend", "d", "desc", "des"]
+        if order_by == "descending":
+            order += 1
 
-        member = ctx.author
-
-        if card_property is None or order_by is None:
-            await ctx.send(
-                f"{member.mention}, the correct format for this command is "
-                f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!"
-            )
-        else:
-            order = [0, None, None]
-            if order_by in ascending_aliases + descending_aliases:
-                card_property = card_property.lower()
-                if card_property in level_aliases:
-                    order = [1, "level", " ascending"]
-                elif card_property in name_aliases:
-                    order = [3, "name", " ascending"]
-                elif card_property in id_aliases:
-                    order = [5, "id", " ascending"]
-                elif card_property in cost_aliases:
-                    order = [7, "cost", " ascending"]
-                elif card_property in rarity_aliases:
-                    order = [9, "rarity", " ascending"]
-            if order_by in descending_aliases:
-                order[0] += 1
-                order[2] = " descending"
-            if order == [0, None, None]:
-                await ctx.send(
-                    f"{member.mention}, the correct format for this command is "
-                    f"`{u.PREF}order (level/name/id/cost/rarity) (ascending/descending)`!"
-                )
-            else:
-                dm.set_user_order(member.id, order[0])
-                await ctx.send(f"{member.mention}, the order had been set to {order[1]}{order[2]}.")
+        dm.set_user_order(ctx.author.id, order)
+        await ctx.reply(f"The order had been set to {card_property} {order_by}.")
 
     @commands.hybrid_command(brief="actions")
     @checks.is_registered()
@@ -154,7 +128,7 @@ class Actions(commands.Cog, name="actions"):
     async def buy(self, ctx: commands.Context, to_buy="None"):
         """Command for buying items in the shop"""
 
-        member = ctx.message.author
+        member = ctx.author
         deals = [i.split(".") for i in dm.get_user_deals(member.id).split(',')]
         user_cards_count = dm.get_user_cards_count(member.id)
         user_coin = dm.get_user_coin(member.id)
@@ -300,7 +274,7 @@ class Actions(commands.Cog, name="actions"):
             embed = discord.Embed(title="You got:",
                                   description=deal_msg,
                                   color=discord.Color.gold())
-            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.author.avatar.url)
             embed.set_footer(text="Gems left: " + str(user_gem - deal_transaction[0]))
             await ctx.send(embed=embed)
         elif deal_type == "Card":
@@ -329,7 +303,7 @@ class Actions(commands.Cog, name="actions"):
                     description="You got\n [Ex/7] Confetti Cannon lv: 10",
                     color=discord.Color.green())
 
-            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.author.avatar.url)
             embed.set_footer(text="Gems left: " + str(user_gem - deal_transaction[0]))
             await ctx.send(embed=embed)
         elif deal_type == "Refresh":
@@ -364,7 +338,7 @@ class Actions(commands.Cog, name="actions"):
                                   description=" ".join(cards_msg),
                                   color=discord.Color.gold())
             embed.set_footer(text=f"You currently have {user_coin - total_cost} golden coins left")
-            embed.set_thumbnail(url=ctx.message.author.avatar.url)
+            embed.set_thumbnail(url=ctx.author.avatar.url)
             await ctx.send(embed=embed)
         elif deal_type == "Single":
             selection = int(to_buy) - 1
@@ -381,24 +355,15 @@ class Actions(commands.Cog, name="actions"):
     @commands.command(aliases=["dis"], brief="cards")
     @checks.is_registered()
     @checks.not_preoccupied("discarding cards")
-    async def discard(self, ctx: commands.Context, *card_id):
-        """Remove the existences of the unwanted cards"""
+    async def discard(self, ctx: commands.Context, card_ids: commands.Greedy[int]):
+        """Deletes unwanted cards."""
 
-        member = ctx.message.author
-
-        if not card_id:
-            await ctx.send(f"{member.mention}, the correct format is `{u.PREF}discard (* card_ids)`!")
-            return
-
-        card_ids = list(card_id)
+        member = ctx.author
         discard_ids = []
         discard_msg = []
         error_msg = []
 
         for x in card_ids:
-            if not x.isdigit():
-                error_msg.append(f"`{x}` is not a number!")
-                continue
             card_name = dm.get_card_name(member.id, x)
             card_level = dm.get_card_level(member.id, x)
             card_decks = dm.get_card_decks(x)
@@ -417,7 +382,7 @@ class Actions(commands.Cog, name="actions"):
             msg += f"You sure you want to discard: \n" + \
                    f" \n".join(discard_msg) + \
                    f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
-        await ctx.send(msg)
+        msg = await ctx.send(msg)
         if len(discard_ids) == 0:
             return
 
@@ -821,7 +786,7 @@ class Actions(commands.Cog, name="actions"):
     async def select(self, ctx: commands.Context, deck_slot: int = 0):
         """Get a deck from your deck slots."""
 
-        member = ctx.message.author
+        member = ctx.author
         if not 1 <= deck_slot <= 6:
             await ctx.send("{member.mention} The deck slot number must between 1-6!")
             return
@@ -839,7 +804,7 @@ class Actions(commands.Cog, name="actions"):
     async def paste(self, ctx: commands.Context, deck_slot: int = 0):
         """Returns the card IDs of your current deck."""
 
-        member = ctx.message.author
+        member = ctx.author
 
         if not 0 <= deck_slot <= 6:
             await ctx.send(f"{member.mention} The deck slot number must between 1-6!")
@@ -848,7 +813,8 @@ class Actions(commands.Cog, name="actions"):
         user_deck_slot = deck_slot if deck_slot != 0 else dm.get_user_deck_slot(member.id)
         user_deck_cards = dm.get_user_deck(member.id, user_deck_slot)
 
-        await ctx.send(f"All the card IDs in Deck #{user_deck_slot}: \n`{' '.join([str(i[0]) for i in user_deck_cards])}`")
+        await ctx.send(
+            f"All the card IDs in Deck #{user_deck_slot}: \n`{' '.join([str(i[0]) for i in user_deck_cards])}`")
 
     @commands.hybrid_command(
         aliases=["replace", "switch", "change", "alter"],
@@ -859,7 +825,7 @@ class Actions(commands.Cog, name="actions"):
     async def swap(self, ctx: commands.Context, new_id: str, old_id: str):
         """Swap a card from your deck with another."""
 
-        member = ctx.message.author
+        member = ctx.author
         user_deck_slot = dm.get_user_deck_slot(member.id)
         error_msg = []
         swap_msg = []
@@ -874,7 +840,8 @@ class Actions(commands.Cog, name="actions"):
 
             if not card_name:
                 error_msg.append(f"You don't have a card with id `{x}`!")
-            elif (card_decks[user_deck_slot-1] == 1 and x == new_id) or (card_decks[user_deck_slot-1] == 0 and x == old_id):
+            elif (card_decks[user_deck_slot - 1] == 1 and x == new_id) or (
+                    card_decks[user_deck_slot - 1] == 0 and x == old_id):
                 error_msg = [f"The correct format is `{u.PREF}swap (card id swap in) (card id swap out)`!"]
                 break
             else:
@@ -893,10 +860,10 @@ class Actions(commands.Cog, name="actions"):
     @commands.command(aliases=["adds", "use", "uses"], brief="Add a card to your deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
-    async def add(self, ctx: commands.Context, * card_id):
+    async def add(self, ctx: commands.Context, *card_id):
         """Add a card to your deck."""
-        
-        member = ctx.message.author
+
+        member = ctx.author
         if not card_id:
             await ctx.send(f"{member.mention}, the correct format is `{u.PREF}add (* card_ids)`!")
             return
@@ -918,7 +885,7 @@ class Actions(commands.Cog, name="actions"):
 
             if not card_name:
                 error_msg.append(f"You don't have a card with id `{x}`!")
-            elif card_decks[user_deck_slot-1] or x in add_ids:
+            elif card_decks[user_deck_slot - 1] or x in add_ids:
                 error_msg.append(f"Id `{x}` is equipped in your deck already!")
             elif user_deck_count + len(add_ids) >= 12:
                 error_msg.append(f"Id `{x}` failed. Deck already at max capacity of 12 cards.")
@@ -939,10 +906,10 @@ class Actions(commands.Cog, name="actions"):
     @commands.command(aliases=["rem"], brief="Remove a card from your deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
-    async def remove(self, ctx: commands.Context, * card_id):
+    async def remove(self, ctx: commands.Context, *card_id):
         """Remove a card from your deck."""
 
-        member = ctx.message.author
+        member = ctx.author
         if not card_id:
             await ctx.send(f"{member.mention}, the correct format is `{u.PREF}add (* card_ids)`!")
             return
@@ -964,7 +931,7 @@ class Actions(commands.Cog, name="actions"):
 
             if not card_name:
                 error_msg.append(f"You don't have a card with id `{x}`!")
-            elif card_decks[user_deck_slot-1] == 0 or x in remove_ids:
+            elif card_decks[user_deck_slot - 1] == 0 or x in remove_ids:
                 error_msg.append(f"Can't remove a card with id `{x}` that isn't already in your current deck!")
             else:
                 remove_ids.append(x)
@@ -986,7 +953,7 @@ class Actions(commands.Cog, name="actions"):
     async def clear(self, ctx: commands.Context):
         """Clear your current deck."""
 
-        member = ctx.message.author
+        member = ctx.author
         user_slot = dm.get_user_deck_slot(member.id)
         equipped_deck = dm.get_user_deck(member.id, user_slot)
 
@@ -1163,7 +1130,7 @@ class Actions(commands.Cog, name="actions"):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="pandemic.png"))
 
-    @commands.hybrid_command(brief="A adventure themed meme template.")
+    @commands.hybrid_command(brief="An Adventure Bot themed meme template.")
     async def kick_meme(
             self, ctx: commands.Context,
             kickee: str = "Me duelling someone", kicker: str = "RNG"
@@ -1195,10 +1162,6 @@ class Actions(commands.Cog, name="actions"):
             await ctx.send(f"Words found: \n{''.join(valid_words)}")
         else:
             await ctx.send("No words found! :frown:")
-
-    @commands.hybrid_command(brief="ephemeral testing")
-    async def ephemeral(self, ctx: commands.Context):
-        await ctx.send("Only you can see this message!!!", ephemeral=True)
 
 
 async def setup(bot):

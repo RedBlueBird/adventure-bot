@@ -19,6 +19,7 @@ from util import PREF
 
 def walk_modules(start: str) -> t.Iterator[ModuleType]:
     """Yield imported modules from the bot.cogs subpackage."""
+
     def on_error(name: str) -> t.NoReturn:
         raise ImportError(name=name)  # pragma: no cover
 
@@ -93,29 +94,19 @@ class AdventurerBot(commands.Bot):
         elif isinstance(error, exceptions.UserSkillIssue):
             embed.description = f"You need to be at least level {error.req_lvl} to unlock this command!"
         elif isinstance(error, commands.MissingPermissions):
-            embed = discord.Embed(
-                title="Error!",
-                description="You are missing the permission(s) `" +
-                            ", ".join(error.missing_permissions) +
-                            "` to execute this command!",
-                color=0xE02B2B
-            )
+            embed.description = "You are missing the permission(s) `" + \
+                                ", ".join(error.missing_permissions) + \
+                                "` to execute this command!"
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = discord.Embed(
-                title="Error!",
-                description="I am missing the permission(s) `" +
-                            ", ".join(error.missing_permissions) +
-                            "` to fully perform this command!",
-                color=0xE02B2B
-            )
+            embed.description = "I am missing the permission(s) `" + \
+                                ", ".join(error.missing_permissions) + \
+                                "` to fully perform this command!"
         elif isinstance(error, commands.MissingRequiredArgument):
-            embed = discord.Embed(
-                title="Error!",
-                description=str(error).capitalize(),
-                color=0xE02B2B
-            )
+            embed.description = str(error).capitalize()
         elif isinstance(error, commands.CommandNotFound):
             return
+        else:
+            embed.description = f"{type(error).__name__}: {error}"
 
         dm.queues.pop(str(ctx.author.id), None)
         await ctx.send(embed=embed)
