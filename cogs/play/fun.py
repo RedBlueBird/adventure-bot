@@ -1,17 +1,13 @@
 import random
-import math
-import datetime as dt
 import asyncio
 import io
-from copy import deepcopy
-import typing as t
 
 from PIL import Image, ImageFont, ImageDraw
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm
 import util as u
+from views import Blackjack
 from helpers import checks
 
 
@@ -21,87 +17,31 @@ class Fun(commands.Cog, name="fun"):
 
     @commands.hybrid_command(aliases=["black", "bj"], brief="Practice your blackjack skills!")
     @checks.not_preoccupied("practicing blackjack")
-    async def blackjack(self, ctx):
-        """Practice your blackjack skills!"""
+    async def blackjack(self, ctx: commands.Context):
+        user = ctx.author
+        view = Blackjack()
 
-        a_id = ctx.author.id
-        mention = ctx.author.mention
+        board = discord.Embed(title="Blackjack")
+        board.set_author(name=user.name, icon_url=user.avatar.url)
 
-        deck = deepcopy(u.DECK)
-        aces = deepcopy(u.ACES)
-        values = [0, 0]
-        cards = [[], []]
-        included_aces = [[], []]
-        end = False
+        board.add_field(name="Cards Left", value=view.deck_size(), inline=False)
 
-        def add_card(card, target):
-            if target == "self":
-                values[0] += deck[card]
-                cards[0].append(card)
-            else:
-                values[1] += deck[card]
-                cards[1].append(card)
-            del deck[card]
+        p_hand, p_val = view.player_vals()
+        player = f"**Value**: {p_val}\n```{' '.join(str(i) for i in p_hand)}```"
+        board.add_field(name="Your Hand", value=player)
 
-        add_card(random.choice(list(deck)), "self")
-        add_card(random.choice(list(deck)), "self")
-        add_card(random.choice(list(deck)), "opponent")
+        d_hand, _ = view.dealer_vals()
+        dealer = f"**Value**: ?\n```{d_hand[0]} ?```"
+        board.add_field(name="Dealer Hand", value=dealer)
+        board.colour = discord.Colour.teal()
 
-        hit = ["hit", "h"]
-        stand = ["stand", "s"]
-        while not end and values[0] < 21:
-            await ctx.send(
-                f"{mention} \nYour total: {values[0]} \n{' '.join(cards[0])}"
-                f" \n------------------------------ \nDealer's total: {values[1]} + ? \n"
-                f"{' '.join(cards[1])} [? ? ?] ```\n{u.PREF}hit -draw a card \n"
-                f"{u.PREF}stand -end your turn```"
-            )
-            try:
-                msg_reply = await self.bot.wait_for(
-                    "message", timeout=30.0,
-                    check=checks.valid_reply(hit + stand, ctx.author, ctx.message.channel)
-                )
-            except asyncio.TimeoutError:
-                values = [1000, 1000]
-                await ctx.send(f"{mention}, you blanked out and lost the game!")
-                return
-            else:
-                action = msg_reply.content[len(u.PREF):].lower()
-                if action in stand:
-                    end = True
-                    add_card(random.choice(list(deck)), "opponent")
-                    while values[1] < 17:
-                        add_card(random.choice(list(deck)), "opponent")
-                        while values[1] > 21 and any(a in cards[1] and a not in included_aces[1] for a in aces):
-                            for x in cards[1]:
-                                if x in aces and x not in included_aces[1]:
-                                    values[1] -= 10
-                                    included_aces[1].append(x)
-                                    break
-
-                elif action in hit:
-                    add_card(random.choice(list(deck)), "self")
-                    while values[0] > 21 and any(a in cards[0] and a not in included_aces[0] for a in aces):
-                        for x in cards[0]:
-                            if x in aces and x not in included_aces[0]:
-                                values[0] -= 10
-                                included_aces[0].append(x)
-                                break
-
-        if len(cards[1]) == 1 and not values == [1000, 1000]:
-            add_card(random.choice(list(deck)), "opponent")
-
-        if values[0] == values[1] and values != [1000, 1000]:
-            game_state = "tied"
-        elif (values[0] > 21 and values[0] > values[1]) or (values[0] < values[1] < 22):
-            game_state = "lost"
-        elif (22 > values[0] > values[1]) or (values[1] > 21 and values[0] < values[1]):
-            game_state = "won"
-
-        await ctx.send(
-            f"{mention}, **You {game_state}!** \nYour total: {values[0]} \n{''.join(cards[0])}"
-            f" \n------------------------------ \nDealer's total: {values[1]} \n{''.join(cards[1])}"
-        )
+        msg = await ctx.send(embed=board, view=view)
+        # very hacky for immediate bj detection but oh well
+        if p_val == 21:
+            board.colour = discord.Colour.green()
+            board.add_field(name="Result", value="You win!", inline=False)
+            await msg.edit(embed=board)
+            view.stop()
 
     @commands.hybrid_command(brief="Test your reflexes and counting ability!")
     @checks.not_preoccupied("testing timing accuracy")

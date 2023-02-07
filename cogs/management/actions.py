@@ -130,33 +130,34 @@ class Actions(commands.Cog, name="actions"):
             "rt3": [6, 0, 5]
         }
 
-        if to_buy.lower() in card_packs:
-            gem_cost = card_packs[to_buy.lower()][0]
-            token_cost = card_packs[to_buy.lower()][1]
-            cards_count = card_packs[to_buy.lower()][2]
-            cards_level = card_packs[to_buy.lower()][3]
+        to_buy = to_buy.lower()
+        if to_buy in card_packs:
+            gem_cost = card_packs[to_buy][0]
+            token_cost = card_packs[to_buy][1]
+            cards_count = card_packs[to_buy][2]
+            cards_level = card_packs[to_buy][3]
 
             if gems >= gem_cost and tokens >= token_cost:
                 if cards_count + card_count > 500:
                     deal_msg = "Purchasing this card pack will exceed the 500 cards capacity for your inventory!"
                 else:
-                    deal_msg = f"Are you sure you want to purchase a {to_buy.lower().title()} Edition card pack?"
+                    deal_msg = f"Are you sure you want to purchase a {to_buy.title()} Edition card pack?"
                     deal_type = "Card"
                     info = [gem_cost, token_cost, cards_count, cards_level]
             else:
                 if token_cost == 0:
-                    deal_msg = f"You need {gem_cost} {u.ICON['gem']} in order to buy a {to_buy.lower().title()} Edition card pack!"
+                    deal_msg = f"You need {gem_cost} {u.ICON['gem']} in order to buy a {to_buy.title()} Edition card pack!"
                 else:
-                    deal_msg = f"You need {token_cost} {u.ICON['token']} in order to buy a {to_buy.lower().title()} Edition card pack!"
+                    deal_msg = f"You need {token_cost} {u.ICON['token']} in order to buy a {to_buy.title()} Edition card pack!"
         
-        elif to_buy.lower() in currency_deals:
-            gem_cost = currency_deals[to_buy.lower()][0]
-            coin_gain = currency_deals[to_buy.lower()][1]
-            ticket_gain = currency_deals[to_buy.lower()][2]
+        elif to_buy in currency_deals:
+            gem_cost = currency_deals[to_buy][0]
+            coin_gain = currency_deals[to_buy][1]
+            ticket_gain = currency_deals[to_buy][2]
 
             if ticket_gain != 0:
                 if gems < gem_cost:
-                    deal_msg = f"You need least {gem_cost} {u.ICON['gem']} to buy {ticket_gain} {u.ICON['tick']}!"
+                    deal_msg = f"Not enough gems!"
                 elif tickets + ticket_gain > max_tickets:
                     deal_msg = f"You can't buy {ticket_gain} {u.ICON['tick']}, it exceeds the maximum amount of {u.ICON['tick']} you can store!"
                 else:
@@ -165,20 +166,20 @@ class Actions(commands.Cog, name="actions"):
                     info = [gem_cost, coin_gain, ticket_gain]
             else:
                 if gems < gem_cost:
-                    deal_msg = f"You need least {gem_cost} {u.ICON['gem']} to buy {coin_gain} {u.ICON['coin']}!"
+                    deal_msg = f"Not enough gems!"
                 else:
                     deal_type = "Currency"
                     deal_msg = f"Are you sure you want to buy {coin_gain} {u.ICON['coin']} with {gem_cost} {u.ICON['gem']}?"
                     info = [gem_cost, coin_gain, ticket_gain]
         
-        elif to_buy.lower() in ["refresh", "ref", "re", "r"]:
+        elif to_buy in ["refresh", "ref", "re", "r"]:
             if coins < 200:
                 deal_msg = f"You need least 200 {u.ICON['coin']} to refresh the shop!"
             else:
                 deal_msg = f"Do you want to refresh the shop for 200 {u.ICON['coin']}?"
                 deal_type = "Refresh"
         
-        elif to_buy.lower() == "all":
+        elif to_buy == "all":
             total_cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
             total_count = sum([1 if i[0] != "-" else 0 for i in deals])
 
@@ -261,14 +262,14 @@ class Actions(commands.Cog, name="actions"):
                 cards_msg = []
                 for x in range(info[2]):
                     card_level = u.log_level_gen(random.randint(1, info[3]))
-                    card_name = u.random_card(card_level, to_buy.lower())
+                    card_name = u.random_card(card_level, to_buy)
                     gained_cards.append((a.id, card_name, card_level))
                     cards_msg.append(f"[{u.rarity_cost(card_name)}] **{card_name}** lv: **{card_level}** \n")
 
                 dm.add_user_cards(gained_cards)
 
                 cards_msg.append("=======================\n")
-                cards_msg.append(f"**From {to_buy.lower().title()} Edition card pack**")
+                cards_msg.append(f"**From {to_buy.title()} Edition card pack**")
                 embed = discord.Embed(
                     title="You got:",
                     description=" ".join(cards_msg),
