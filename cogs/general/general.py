@@ -19,7 +19,6 @@ class General(commands.Cog, name="general"):
         )
         for i in self.bot.cogs:
             cog = self.bot.get_cog(i.lower())
-            print(i, cog)
             data = []
             for cmd in cog.get_commands():
                 description = cmd.description.partition('\n')[0]
