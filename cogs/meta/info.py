@@ -393,7 +393,6 @@ class Info(commands.Cog, name="info"):
     async def shop(self, ctx: Context) -> None:
         """
         The player can buy cards and other things here.
-        :param page: The page of the stop to display.
         """
         embed = discord.Embed(
             title="Welcome to the card shop!",
