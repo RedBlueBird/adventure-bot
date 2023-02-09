@@ -391,9 +391,7 @@ class Info(commands.Cog, name="info"):
     @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)
     async def shop(self, ctx: Context) -> None:
-        """
-        The player can buy cards and other things here.
-        """
+        """The player can buy cards and other things here."""
         embed = discord.Embed(
             title="Welcome to the card shop!",
             description="Click a page to get started."
