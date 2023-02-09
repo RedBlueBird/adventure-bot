@@ -68,6 +68,28 @@ class General(commands.Cog, name="general"):
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
+        name="links",
+        description="Displays an embed containing some official bot info.",
+        aliases=["invite", "support", "guild", "supports", "link", "join"]
+    )
+    async def links(self, ctx: Context) -> None:
+        """Displays an embed containing some official bot info."""
+        embed = discord.Embed(title="Official Links", description=None, color=discord.Color.green())
+        embed.add_field(
+            name="Bot Invite",
+            value=f"[Link](https://discordapp.com/oauth2/authorize?&client_id={self.bot.config['application_id']}&scope=bot+applications.commands&permissions={self.bot.config['permissions']})"
+        )
+        embed.add_field(
+            name="Official Server",
+            value="[Link](https://discord.gg/w2CkRtkj57)"
+        )
+        embed.add_field(
+            name="Official Wiki",
+            value="[Link](https://discord-adventurers-bot.fandom.com)"
+        )
+        await ctx.send(embed=embed)
+
+    @commands.hybrid_command(
         name="ping",
         description="Check if the bot is alive.",
     )

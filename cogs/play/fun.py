@@ -15,7 +15,10 @@ class Fun(commands.Cog, name="fun"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(aliases=["black", "bj"], brief="Practice your blackjack skills!")
+    @commands.hybrid_command(
+        aliases=["black", "bj"],
+        brief="Practice your blackjack skills!"
+    )
     @checks.not_preoccupied("practicing blackjack")
     async def blackjack(self, ctx: commands.Context):
         user = ctx.author

@@ -39,51 +39,51 @@ class Blackjack(discord.ui.View):
     def dealer_vals(self) -> tuple[list[Card], int]:
         return self.dealer, bj_val(self.dealer)
 
-    async def win(self, interaction: discord.Interaction):
-        embed = interaction.message.embeds[0]
+    async def win(self, i: discord.Interaction):
+        embed = i.message.embeds[0]
         embed.colour = discord.Colour.green()
         embed.add_field(name="Result", value="You win!", inline=False)
-        await interaction.edit_original_response(embed=embed)
+        await i.edit_original_response(embed=embed)
         self.stop()
 
-    async def lose(self, interaction: discord.Interaction):
-        embed = interaction.message.embeds[0]
+    async def lose(self, i: discord.Interaction):
+        embed = i.message.embeds[0]
         embed.colour = discord.Colour.red()
         embed.add_field(name="Result", value="You lose...", inline=False)
-        await interaction.edit_original_response(embed=embed)
+        await i.edit_original_response(embed=embed)
         self.stop()
 
-    async def draw(self, interaction: discord.Interaction):
-        embed = interaction.message.embeds[0]
+    async def draw(self, i: discord.Interaction):
+        embed = i.message.embeds[0]
         embed.colour = discord.Colour.orange()
         embed.add_field(name="Result", value="Draw!", inline=False)
-        await interaction.edit_original_response(embed=embed)
+        await i.edit_original_response(embed=embed)
         self.stop()
 
     @discord.ui.button(label="Hit", style=discord.ButtonStyle.green)
-    async def hit(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def hit(self, i: discord.Interaction, button: discord.ui.Button):
         self.player.append(self.deck.draw())
         val = bj_val(self.player)
 
-        board = interaction.message.embeds[0]
+        board = i.message.embeds[0]
         board.set_field_at(0, name="Cards Left", value=len(self.deck), inline=False)
         p_new = f"**Value**: {val}\n```{' '.join(str(i) for i in self.player)}```"
         board.set_field_at(1, name="Player", value=p_new)
 
-        await interaction.response.defer()
-        await interaction.edit_original_response(embed=board)
+        await i.response.defer()
+        await i.edit_original_response(embed=board)
 
         if val == BJ:
-            await self.win(interaction)
+            await self.win(i)
         elif val > BJ:
-            await self.lose(interaction)
+            await self.lose(i)
 
     @discord.ui.button(label="Stand", style=discord.ButtonStyle.red)
-    async def stand(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def stand(self, i: discord.Interaction, button: discord.ui.Button):
         while bj_val(self.dealer) < 17:
             self.dealer.append(self.deck.draw())
 
-        board = interaction.message.embeds[0]
+        board = i.message.embeds[0]
         board.set_field_at(0, name="Cards Left", value=len(self.deck), inline=False)
 
         p_val = bj_val(self.player)
@@ -91,20 +91,20 @@ class Blackjack(discord.ui.View):
         d_new = f"**Value**: {d_val}\n```{' '.join(str(i) for i in self.dealer)}```"
         board.set_field_at(2, name="Dealer", value=d_new)
 
-        await interaction.response.defer()
-        await interaction.edit_original_response(embed=board)
+        await i.response.defer()
+        await i.edit_original_response(embed=board)
 
         if d_val == BJ and len(self.dealer) == 2:
-            await self.lose(interaction)
+            await self.lose(i)
         elif d_val > BJ or BJ - p_val < BJ - d_val:
-            await self.win(interaction)
+            await self.win(i)
         elif BJ - p_val == BJ - d_val:
-            await self.draw(interaction)
+            await self.draw(i)
         else:
-            await self.lose(interaction)
+            await self.lose(i)
 
     @discord.ui.button(label="Help", style=discord.ButtonStyle.blurple)
-    async def help(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def help(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(title="Rules of Blackjack", color=discord.Colour.purple()) \
             .add_field(name="Hit", value="Draw a card and add it to your hand.", inline=False) \
             .add_field(name="Stand", value="Stop drawing cards. The dealer will then reveal their second card "
@@ -112,4 +112,4 @@ class Blackjack(discord.ui.View):
                                            "the player & dealer's hands will be compared.", inline=False) \
             .add_field(name="Win Conditions", value="Whoever's closer to 21 without exceeding it wins.")
         
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await i.response.send_message(embed=embed, ephemeral=True)
