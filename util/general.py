@@ -49,3 +49,7 @@ def log_level_gen(i: int) -> int:
 def level_xp(lvl: int) -> int:
     """:return: The amount of XP required to advance to the next level, given the current one."""
     return math.floor(int((lvl ** 2) * 40 + 60))
+
+
+def clamp(i: int, lo: int, hi: int) -> int:
+    return max(lo, min(i, hi))

@@ -1,4 +1,3 @@
-import typing as t
 import discord
 
 from helpers import db_manager as dm
@@ -78,7 +77,6 @@ CURRENCY = [
 ]
 
 
-
 class Shop(discord.ui.View):
     def __init__(self, uid: int):
         super().__init__()
@@ -86,14 +84,9 @@ class Shop(discord.ui.View):
         self.coins = dm.get_user_coin(uid)
         self.gems = dm.get_user_gem(uid)
         self.tokens = dm.get_user_token(uid)
-        self.last_clicked = None
-        
 
     @discord.ui.button(label="Daily Deals", style=discord.ButtonStyle.green)
     async def daily_deals(self, i: discord.Interaction, button: discord.ui.Button):
-        if self.last_clicked is not None:
-            self.last_clicked.disabled = False
-        
         user_deals = dm.get_user_deals(self.uid).split(",")
         embed = discord.Embed(
             title="Shop - Daily Deals:",
@@ -121,16 +114,10 @@ class Shop(discord.ui.View):
             text=f"Wait {u.time_til_midnight()} or use `{u.PREF}buy r` to refresh the shop"
         )
 
-        await i.response.defer()
-        self.last_clicked = button
-        button.disabled = True
-        await i.edit_original_response(embed=embed)
+        await i.response.edit_message(embed=embed)
 
     @discord.ui.button(label="Card Packs", style=discord.ButtonStyle.green)
     async def card_packs(self, i: discord.Interaction, button: discord.ui.Button):
-        if self.last_clicked is not None:
-            self.last_clicked.disabled = False
-
         embed = discord.Embed(
             title="Shop - Card Packs:",
             description=f"{u.ICON['coin']} **{self.coins}** {u.ICON['gem']} "
@@ -142,16 +129,10 @@ class Shop(discord.ui.View):
             embed.add_field(**p)
         embed.set_footer(text="Let the buyer beware")
 
-        await i.response.defer()
-        self.last_clicked = button
-        button.disabled = True
-        await i.edit_original_response(embed=embed)
+        await i.response.edit_message(embed=embed)
 
     @discord.ui.button(label="Coins & Raid Tickets", style=discord.ButtonStyle.green)
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
-        if self.last_clicked is not None:
-            self.last_clicked.disabled = False
-
         embed = discord.Embed(
             title="Shop - Currencies:",
             description=f"{u.ICON['coin']} **{self.coins}** {u.ICON['gem']} **{self.gems}**",
@@ -160,7 +141,4 @@ class Shop(discord.ui.View):
         for field in CURRENCY:
             embed.add_field(**field)
 
-        await i.response.defer()
-        self.last_clicked = button
-        button.disabled = True
-        await i.edit_original_response(embed=embed)
+        await i.response.edit_message(embed=embed)

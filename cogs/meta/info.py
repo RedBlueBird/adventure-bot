@@ -11,7 +11,7 @@ from discord.ext.commands import Context
 from helpers import db_manager as dm
 import util as u
 from helpers import checks
-from views import Shop
+from views import Shop, CardPages
 
 
 class Info(commands.Cog, name="info"):
@@ -23,7 +23,7 @@ class Info(commands.Cog, name="info"):
         description="Check a player's general information.",
         aliases=["p", "pro"]
     )
-    async def profile(self, ctx: Context, user: discord.Member = None) -> None:
+    async def profile(self, ctx: Context, user: discord.Member = None):
         """Check a player's general information."""
 
         user = ctx.author if user is None else user
@@ -74,7 +74,7 @@ class Info(commands.Cog, name="info"):
         user_daily = dm.get_user_daily(user.id)
         dts = "Right now!" if user_daily.date() != dt.date.today() else u.time_til_midnight()
         embed.add_field(
-            name="Currency: ",
+            name="Currency",
             value=f"{u.ICON['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
                   f"{u.ICON['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
                   f"{u.ICON['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
@@ -85,7 +85,7 @@ class Info(commands.Cog, name="info"):
 
         quests = dm.get_user_quest(user.id)
         embed.add_field(
-            name="Times: ",
+            name="Tasks",
             value=f"{u.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
                   description_msg +
                   f"{u.ICON['timer']}**Next daily: **{dts}\n"
@@ -115,7 +115,7 @@ class Info(commands.Cog, name="info"):
         description="Displays all current quests of a user.",
         aliases=["q", "quest", "qu"]
     )
-    async def quests(self, ctx: Context, user: discord.Member = None) -> None:
+    async def quests(self, ctx: Context, user: discord.Member = None):
         """Displays all current quests of a user."""
 
         user = ctx.author if user is None else user
@@ -140,7 +140,7 @@ class Info(commands.Cog, name="info"):
 
                 quests[-1] = str(int(times.time()) + (900 + 900 * is_premium) - extra_time)
 
-                for y in range(quests_count):
+                for _ in range(quests_count):
                     quest_id = math.ceil(u.log_level_gen(random.randint(1, 2 ** 8)) / 2) - 2
                     award_type = 1
                     if quest_id > 0 and random.randint(1, 100) >= 75:
@@ -175,14 +175,14 @@ class Info(commands.Cog, name="info"):
                     color=discord.Color.gold()
                 )
 
-            for x in range(len(quests) - 1):
-                quest = u.quest_index(quests[x])
+            for q in quests[:-1]:
+                quest = u.quest_index(q)
                 embed.add_field(
-                    name=f"**{quest[2]} {u.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
-                    value=f"Finished {math.floor(100 * int(quests[x].split('.')[2]) / quest[0])}%\n"
+                    name=f"**{quest[2]} {u.quest_str_rep(q.split('.')[1], quest[0])}**",
+                    value=f"Finished {math.floor(100 * int(q.split('.')[2]) / quest[0])}%\n"
                           f"Reward: **{''.join(quest[1::2])} {quest[4]} {u.ICON['exp']}**",
                     inline=False
-                )  # **1 {u.icon['token']}**", inline=False)
+                )
 
         embed.set_thumbnail(url=user.avatar.url)
         time_left = u.time_converter(int(quests[-1]) - int(times.time()))
@@ -192,10 +192,10 @@ class Info(commands.Cog, name="info"):
 
     @commands.hybrid_command(
         name="inventory",
-        description="Displays all the cards in a member's inventory in the form of an embed.",
+        description="Displays all the cards in a member's inventory.",
         aliases=["card", "cards", "i", "inv"]
     )
-    async def inventory(self, ctx: Context, page: int = 1, user: discord.Member = None) -> None:
+    async def inventory(self, ctx: Context, page: int = 1, user: discord.Member = None):
         """
         Displays all the cards in a member's inventory in the form of an embed.
         :param page: The page of cards to display
@@ -204,41 +204,11 @@ class Info(commands.Cog, name="info"):
 
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
-            await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
+            await ctx.reply("That user isn't registered yet!")
             return
 
-        user_deck = dm.get_user_deck(user.id, dm.get_user_deck_slot(user.id))
-        deck_ids = [card[0] for card in user_deck]
-        user_cards = dm.get_user_cards(user.id, start=(page - 1) * 15, length=15)
-        user_cards_count = dm.get_user_cards_count(user.id)
-
-        if len(user_cards) == 0:
-            await ctx.send(f"{ctx.author.mention}, you don't have any cards on page {page}!")
-            return
-
-        all_cards = []
-        for card in user_cards:
-            if card[0] in deck_ids:
-                all_cards.append(
-                    f"**>**[{u.rarity_cost(card[1])}] **{card[1]}**, "
-                    f"lv: **{card[2]}**, id: `{card[0]}` "
-                )
-            else:
-                all_cards.append(
-                    f"[{u.rarity_cost(card[1])}] **{card[1]}**, "
-                    f"lv: **{card[2]}**, id: `{card[0]}` "
-                )
-
-        embed = discord.Embed(
-            title=f"{user.display_name}'s cards:",
-            description="\n".join(all_cards),
-            color=discord.Color.gold()
-        )
-        embed.set_thumbnail(url=user.avatar.url)
-        show_start = (page - 1) * 15 + 1
-        show_end = show_start + len(user_cards) - 1
-        embed.set_footer(text=f"{show_start}-{show_end}/{user_cards_count} cards displayed on page {page}")
-        await ctx.send(embed=embed)
+        view = CardPages(user, page=page - 1)
+        await ctx.send(embed=view.gen_embed(), view=view)
 
     @commands.hybrid_command(
         name="leaderboard",

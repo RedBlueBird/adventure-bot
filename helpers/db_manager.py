@@ -283,7 +283,7 @@ def get_user_cards(
         result = u.order_by_cost(result, 1)
         result = u.order_by_rarity(result, order - 9)
 
-    return result[start:] if length < 0 else result[start:start + length]
+    return result[start:] if length <= 0 else result[start:start + length]
 
 
 def add_user_cards(cards: list[tuple[str | int, str, int]]):
