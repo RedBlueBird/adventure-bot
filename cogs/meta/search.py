@@ -8,122 +8,121 @@ from helpers import db_manager as dm
 import util as u
 
 
+RARITIES = {
+    "C": "Common", "R": "Rare", "E": "Epic", "EX": "Exclusive",
+    "L": "Legendary", "M": "N/A", "NA": "N/A"
+}
+
+
 class Search(commands.Cog, name="search"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
-    @commands.hybrid_command(
-        name="info",
-        description="Looks up entities, from effects to mobs.",
-        aliases=["in", "information", "check"]
-    )
-    async def info(
-            self, ctx: Context,
-            type_: t.Literal["card", "monster", "item", "effect"],
-            name: str, level: int = 1
-    ) -> None:
+
+    @commands.hybrid_group(name="info", description="Looks up info on entities.")
+    async def info(self, ctx: Context):
+        if ctx.invoked_subcommand is None:
+            embed = discord.Embed(title="Here's the things you can search up:") \
+                .add_field(name="Cards", value="`a.info card`") \
+                .add_field(name="Monsters", value="`a.info monster`") \
+                .add_field(name="Items", value="`a.info item`") \
+                .add_field(name="Effects", value="`a.info effect`")
+            await ctx.reply(embed=embed)
+
+    @info.command()
+    async def card(self, ctx: Context, name: str, level: int = 1):
+        card_info = u.cards_dict(level, " ".join(name.lower().split("_")))
+        info_str = [
+            f"**Name:** {card_info['name']}",
+            f"**Level:** {level}",
+            f"**Rarity:** {RARITIES[card_info['rarity']]}",
+            f"**Energy Cost:** {card_info['cost']}",
+            f"**Accuracy:** {card_info['acc']}%",
+            f"**Critical Chance:** {card_info['crit']}%"
+        ]
+
+        if card_info["rarity"] == "M":
+            info_str.insert(len(info_str), "**[Monster Card]** - Unobtainable")
+        if card_info["rarity"] == "EX":
+            info_str.insert(len(info_str), "**[Exclusive Card]** - Obtainable in events")
+
+        embed = discord.Embed(title="Card's info:", description=None, color=discord.Color.green())
+        embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
+        embed.add_field(name="Uses: ", value=u.fill_args(card_info, level), inline=False)
+        embed.add_field(name="Brief: ", value=card_info["brief"], inline=False)
         """
-        Looks up entities, from effects to mobs and displays an embed containing info about it.
-        :param type_: The type of the thing which to look up (can be a card, mob, item, or effect)
-        :param name: The name of the thing to look up
-        :param level: The level of the thing for number crunching
+        if "journal" in card_info:
+            embed.add_field(name="Scout's Journal: ", value="*" + card_info["journal"] + "*", inline=False)
+        embed.set_thumbnail(url=ctx.author.avatar.url)
         """
+        await ctx.send(embed=embed)
 
-        rarity_translator = {
-            "C": "Common", "R": "Rare", "E": "Epic", "EX": "Exclusive",
-            "L": "Legendary", "M": "N/A", "NA": "N/A"
-        }
+    @info.command()
+    async def monster(self, ctx: Context, name: str, level: int = 1):
+        mob_info = u.mobs_dict(level, " ".join(name.lower().split("_")))
+        info_str = [
+            f"**Name:** {mob_info['name']}",
+            f"**Level:** " + str(level),
+            f"**Rarity:** {RARITIES[mob_info['rarity']]}",
+            f"**Energy Lag:** {mob_info['energy_lag']} turns",
+            f"**Health:** {mob_info['health']}",
+            f"**Stamina:** {mob_info['stamina']}"
+        ]
 
-        embed = None
-        if type_ == "card":
-            card_info = u.cards_dict(level, " ".join(name.lower().split("_")))
-            info_str = [
-                f"**Name:** {card_info['name']}",
-                f"**Level:** {level}",
-                f"**Rarity:** {rarity_translator[card_info['rarity']]}",
-                f"**Energy Cost:** {card_info['cost']}",
-                f"**Accuracy:** {card_info['acc']}%",
-                f"**Critical Chance:** {card_info['crit']}%"
-            ]
+        embed = discord.Embed(title="Mob's info:", description=None, color=discord.Color.green())
+        embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
+        embed.add_field(name="Brief: ", value=f"*{mob_info['brief']}*", inline=False)
+        """
+        if "tip" in mob_info:
+            embed.add_field(name="Fighting Tips: ", value="*" + mob_info["tip"] + "*", inline=False)
+        if "journal" in mob_info:
+            embed.add_field(name="Scout's Journal: ", value="*" + mob_info["journal"] + "*", inline=False)
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+        """
+        await ctx.send(embed=embed)
 
-            if card_info["rarity"] == "M":
-                info_str.insert(len(info_str), "**[Monster Card]** - Unobtainable")
-            if card_info["rarity"] == "EX":
-                info_str.insert(len(info_str), "**[Exclusive Card]** - Obtainable in events")
+    @info.command()
+    async def item(self, ctx: Context, name: str):
+        item_info = u.items_dict(" ".join(name.lower().split("_")))
+        name = item_info["name"]
+        info_str = [
+            f"**Name:** {name}",
+            f"**Weight:** {item_info['weight']}",
+            f"**Rarity:** {RARITIES[item_info['rarity']]}",
+            f"**Accuracy:** {item_info['acc']}%",
+            f"**Critical Chance:** {item_info['crit']}%",
+            f"**One Use:** {item_info['one_use']}",
+            f"**Use In Battle:** {item_info['in_battle']}",
+            f"**Sell Price:** {item_info['sell']}gc",
+            f"**Abbreviation:** {item_info['abb']}"
+        ]
 
-            embed = discord.Embed(title="Card's info:", description=None, color=discord.Color.green())
-            embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
-            embed.add_field(name="Uses: ", value=u.fill_args(card_info, level), inline=False)
-            embed.add_field(name="Brief: ", value=card_info["brief"], inline=False)
-            """
-            if "journal" in card_info:
-                embed.add_field(name="Scout's Journal: ", value="*" + card_info["journal"] + "*", inline=False)
-            embed.set_thumbnail(url=ctx.author.avatar.url)
-            """
+        embed = discord.Embed(title="Item's info:", description=None, color=discord.Color.green())
+        embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
+        embed.add_field(name="Uses: ", value=item_info["description"], inline=False)
+        embed.add_field(name="Brief: ", value=f"*{item_info['brief']}*", inline=False)
 
-        elif type_ == "monster":
-            mob_info = u.mobs_dict(level, " ".join(name.lower().split("_")))
-            info_str = [
-                f"**Name:** {mob_info['name']}",
-                f"**Level:** " + str(level),
-                f"**Rarity:** {rarity_translator[mob_info['rarity']]}",
-                f"**Energy Lag:** {mob_info['energy_lag']} turns",
-                f"**Health:** {mob_info['health']}",
-                f"**Stamina:** {mob_info['stamina']}"
-            ]
+        """
+        if "journal" in item_info:  
+            embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
+        embed.set_thumbnail(url=ctx.author.avatar.url)a.
+        """
+        # print(u.ICON[item_info['name'].lower()])
+        if name.lower() in u.ICON:
+            icon = u.ICON[name.lower()]
+            icon_id = icon[icon.rfind(":") + 1:-1]
+            embed.set_image(url=f"https://cdn.discordapp.com/emojis/{icon_id}.png")
+        await ctx.send(embed=embed)
 
-            embed = discord.Embed(title="Mob's info:", description=None, color=discord.Color.green())
-            embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
-            embed.add_field(name="Brief: ", value=f"*{mob_info['brief']}*", inline=False)
-            """
-            if "tip" in mob_info:
-                embed.add_field(name="Fighting Tips: ", value="*" + mob_info["tip"] + "*", inline=False)
-            if "journal" in mob_info:
-                embed.add_field(name="Scout's Journal: ", value="*" + mob_info["journal"] + "*", inline=False)
-            embed.set_thumbnail(url=ctx.author.avatar.url)
-            """
-
-        elif type_ == "item":
-            item_info = u.items_dict(" ".join(name.lower().split("_")))
-            name = item_info["name"]
-            info_str = [
-                f"**Name:** {name}",
-                f"**Weight:** {item_info['weight']}",
-                f"**Rarity:** {rarity_translator[item_info['rarity']]}",
-                f"**Accuracy:** {item_info['acc']}%",
-                f"**Critical Chance:** {item_info['crit']}%",
-                f"**One Use:** {item_info['one_use']}",
-                f"**Use In Battle:** {item_info['in_battle']}",
-                f"**Sell Price:** {item_info['sell']}gc",
-                f"**Abbreviation:** {item_info['abb']}"
-            ]
-
-            embed = discord.Embed(title="Item's info:", description=None, color=discord.Color.green())
-            embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
-            embed.add_field(name="Uses: ", value=item_info["description"], inline=False)
-            embed.add_field(name="Brief: ", value=f"*{item_info['brief']}*", inline=False)
-
-            """
-            if "journal" in item_info:  
-                embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
-            embed.set_thumbnail(url=ctx.author.avatar.url)a.
-            """
-            # print(u.ICON[item_info['name'].lower()])
-            if name.lower() in u.ICON:
-                icon = u.ICON[name.lower()]
-                icon_id = icon[icon.rfind(":") + 1:-1]
-                embed.set_image(url=f"https://cdn.discordapp.com/emojis/{icon_id}.png")
-
-        elif type_ == "effect":
-            fx_info = u.fx_dict(" ".join(name.lower().split("_")))
-            embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
-            embed.add_field(name="Description: ", value=f"**Name:** {fx_info['name']}", inline=False)
-            embed.add_field(name="Uses: ", value=fx_info["description"], inline=False)
-            embed.set_image(
-                url=f"https://cdn.discordapp.com/emojis/"
-                    f"{u.CONVERT[fx_info['name'].lower()][4:-1]}.png"
-            )
-
+    @info.command()
+    async def effect(self, ctx: Context, name: str):
+        fx_info = u.fx_dict(" ".join(name.lower().split("_")))
+        embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
+        embed.add_field(name="Description: ", value=f"**Name:** {fx_info['name']}", inline=False)
+        embed.add_field(name="Uses: ", value=fx_info["description"], inline=False)
+        embed.set_image(
+            url=f"https://cdn.discordapp.com/emojis/"
+                f"{u.CONVERT[fx_info['name'].lower()][4:-1]}.png"
+        )
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(

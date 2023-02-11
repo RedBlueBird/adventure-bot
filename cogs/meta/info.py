@@ -217,7 +217,7 @@ class Info(commands.Cog, name="info"):
     )
     async def leaderboard(
             self, ctx: Context,
-            lb_type: t.Literal["level", "coins", "gems", "medals", "tokens"]
+            lb_type: t.Literal["level", "coins", "gems", "medals", "tokens"] | None
     ) -> None:
         """
         Displays the world's top players.
@@ -283,7 +283,7 @@ class Info(commands.Cog, name="info"):
             return
 
         if slot != 0 and dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-            await ctx.reply("You don't have access to that deck slot yet!")
+            await ctx.reply(f"You need to reach {u.DECK_LVL_REQ[slot]} to get that deck slot!")
             return
 
         view = Decks(user, slot)
