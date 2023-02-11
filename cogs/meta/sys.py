@@ -11,7 +11,7 @@ from helpers import db_manager as dm
 import util as u
 
 
-class Sys(commands.Cog, name="sys"):
+class Sys(commands.cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 

@@ -5,7 +5,7 @@ from discord.ext.commands import Context
 from util import PREF
 
 
-class General(commands.Cog, name="general"):
+class General(commands.cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

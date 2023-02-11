@@ -53,7 +53,7 @@ def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, disco
         return embed, None
 
 
-class Adventure(commands.Cog, name="adventure"):
+class Adventure(commands.cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 

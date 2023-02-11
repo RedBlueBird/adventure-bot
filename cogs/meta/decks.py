@@ -10,7 +10,7 @@ from helpers import checks
 import util as u
 
 
-class Decks(commands.Cog, name="decks"):
+class Decks(commands.cog):
     @commands.hybrid_command(brief="Set the card display order.")
     @checks.is_registered()
     async def order(

@@ -12,7 +12,7 @@ import util as u
 from helpers import db_manager as dm
 
 
-class Admin(commands.Cog, name="admin"):
+class Admin(commands.cog):
     def __init__(self, bot):
         self.bot = bot
 

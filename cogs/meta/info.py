@@ -14,7 +14,7 @@ from helpers import checks
 from views import Shop, CardPages, Decks
 
 
-class Info(commands.Cog, name="info"):
+class Info(commands.cog):
     def __init__(self, bot):
         self.bot = bot
 

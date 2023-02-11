@@ -11,7 +11,7 @@ from helpers import checks
 import util as u
 
 
-class Actions(commands.Cog, name="actions"):
+class Actions(commands.cog):
     def __init__(self, bot):
         self.bot = bot
 

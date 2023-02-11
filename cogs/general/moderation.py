@@ -6,7 +6,7 @@ from discord.ext.commands import Context
 from helpers import checks
 
 
-class Moderation(commands.Cog, name="moderation"):
+class Moderation(commands.cog):
     def __init__(self, bot):
         self.bot = bot
 

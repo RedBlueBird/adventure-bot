@@ -11,7 +11,7 @@ from views import Blackjack
 from helpers import checks
 
 
-class Fun(commands.Cog, name="fun"):
+class Fun(commands.cog):
     def __init__(self, bot):
         self.bot = bot
 

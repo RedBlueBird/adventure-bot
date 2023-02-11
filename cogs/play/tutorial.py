@@ -13,7 +13,7 @@ from helpers.battle import BattleData
 import util as u
 
 
-class Tutorial(commands.Cog, name="tutorial"):
+class Tutorial(commands.cog):
     def __init__(self, bot):
         self.bot = bot
 
