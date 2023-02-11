@@ -11,7 +11,7 @@ from discord.ext.commands import Context
 from helpers import db_manager as dm
 import util as u
 from helpers import checks
-from views import Shop, CardPages
+from views import Shop, CardPages, Decks
 
 
 class Info(commands.Cog, name="info"):
@@ -249,10 +249,7 @@ class Info(commands.Cog, name="info"):
             username = await self.bot.fetch_user(str(player[1]))
             name = f"**[{index + 1}] {username}**\n"
 
-            if len(player) == 3:
-                descr = raw_descr.format(player[2])
-            else:
-                descr = raw_descr.format(player[2], player[3])
+            descr = raw_descr.format(*player[2:])
 
             if str(player[1]) == str(ctx.author.id):
                 descr = f"__{descr}__"
@@ -267,64 +264,30 @@ class Info(commands.Cog, name="info"):
 
     @commands.hybrid_command(
         name="deck",
-        description="Displays the deck in the member's current deck slot"
+        description="Displays the user's currently equipped deck."
     )
     async def deck(self, ctx: Context, slot: int = 0, user: discord.Member = None) -> None:
         """
-        Displays the deck in the member's current deck slot
+        Displays the user's currently equipped deck.
         :param slot: The deck slot to search.
         :param user: The user whose deck slots to search.
         """
 
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
-            await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
+            await ctx.reply(f"That user isn't registered yet!")
             return
 
         if not 0 <= slot <= 6:
-            await ctx.send("The deck slot number must between 1-6!")
+            await ctx.reply("The deck slot number must between 1-6!")
             return
 
-        u_slot = dm.get_user_deck_slot(user.id)
-        slot = slot if slot != 0 else u_slot
-
-        if dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-            await ctx.send("You don't have access to that deck slot yet!")
+        if slot != 0 and dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
+            await ctx.reply("You don't have access to that deck slot yet!")
             return
 
-        user_deck = dm.get_user_deck(user.id, slot)
-        equipped_deck_ids = user_deck if slot == u_slot else dm.get_user_deck(user.id, u_slot)
-        equipped_deck_ids = [i[0] for i in equipped_deck_ids]
-        all_cards = []
-        tot_energy = 0
-        for x in user_deck:
-            card = f"[{u.rarity_cost(x[1])}] **{x[1]}**, lv: **{x[2]}**, id: `{x[0]}` "
-            if x[0] == equipped_deck_ids:
-                card = f"**>**{card}"
-            all_cards.append(card)
-            tot_energy += u.cards_dict(x[2], x[1])["cost"]
-
-        mod_msg = "" if slot == u_slot else f"\n`{u.PREF}select {slot}` to modify this deck"
-        embed = discord.Embed(
-            title=f"{user.display_name}'s Deck #{slot}:",
-            description=f"`{u.PREF}decklist` to display all your decks{mod_msg}\n\n" +
-                        "\n".join(all_cards),
-            color=discord.Color.gold()
-        )
-        embed.set_thumbnail(url=user.avatar.url)
-        if not user_deck:
-            embed.add_field(
-                name="You don't have any cards in your deck!",
-                value=f"`{u.PREF}add (card_id)` to start adding cards!"
-            )
-
-        len_req = 12
-        if len(user_deck) != len_req:
-            embed.set_footer(text=f"{len_req - len(user_deck)}/12 more card(s) to complete this deck.")
-        else:
-            embed.set_footer(text=f"Average energy cost: {round(tot_energy / len_req, 1)}")
-
-        await ctx.send(embed=embed)
+        view = Decks(user, slot)
+        await ctx.send(embed=view.deck_embed(), view=view)
 
     @commands.hybrid_command(
         name="decklist",
@@ -333,30 +296,11 @@ class Info(commands.Cog, name="info"):
     async def decklist(self, ctx: Context, user: discord.Member = None):
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
-            await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
+            await ctx.reply(f"That user isn't registered yet!")
             return
 
-        embed = discord.Embed(
-            title=f"{user.display_name}'s decks",
-            description=f"`{u.PREF}deck #` to view a specific deck",
-            color=discord.Color.gold()
-        )
-
-        for i in range(6):
-            name = f"**Deck {i + 1}**"
-            if dm.get_user_deck_slot(user.id) == i + 1:
-                name += " - selected"
-
-            if dm.get_user_level(user.id) < u.DECK_LVL_REQ[i + 1]:
-                card_info = f"Unlocked at level {u.DECK_LVL_REQ[i + 1]}"
-            else:
-                deck_lens = dm.get_user_deck_count(user.id, i + 1)
-                card_info = f"{deck_lens}/12 cards"
-
-            embed.add_field(name=name, value=card_info, inline=False)
-
-        embed.set_thumbnail(url=user.avatar.url)
-        await ctx.send(embed=embed)
+        view = Decks(user)
+        await ctx.send(embed=view.decklist_embed(), view=view)
 
     @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)

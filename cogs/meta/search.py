@@ -1,8 +1,4 @@
 import typing as t
-import random
-import math
-import time as times
-import datetime as dt
 
 import discord
 from discord.ext import commands
@@ -10,7 +6,6 @@ from discord.ext.commands import Context
 
 from helpers import db_manager as dm
 import util as u
-from helpers import checks
 
 
 class Search(commands.Cog, name="search"):

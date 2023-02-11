@@ -36,9 +36,10 @@ class General(commands.Cog, name="general"):
     async def serverinfo(self, ctx: Context) -> None:
         """Get some info about the server."""
         roles = [role.name for role in ctx.guild.roles]
-        if len(roles) > 50:
-            roles = roles[:50]
-            roles.append(f">>>> Displaying[50/{len(roles)}] Roles")
+        role_lim = 50
+        if len(roles) > role_lim:
+            roles = roles[:role_lim]
+            roles.append(f">>>> Displaying[{role_lim}/{len(roles)}] Roles")
         roles = ", ".join(roles)
 
         embed = discord.Embed(

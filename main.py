@@ -43,14 +43,14 @@ class AdventurerBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
     async def on_ready(self) -> None:
-        print(f"Logged in as {bot.user.name}")
+        print(f"Logged in as {self.user.name}")
         print(f"discord.py API version: {discord.__version__}")
         print(f"Python version: {platform.python_version()}")
         print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
         print("-------------------")
         if config["sync_commands_globally"]:
             print("Syncing commands globally...")
-            await bot.tree.sync()
+            await self.tree.sync()
             print("Finished syncing!")
 
     async def on_command_completion(self, ctx: Context) -> None:
