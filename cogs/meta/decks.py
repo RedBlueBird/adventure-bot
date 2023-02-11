@@ -113,31 +113,31 @@ class Decks(commands.Cog):
         dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card1}")
         card1 = dm.cur.fetchall()[0]
         if not card1:
-            await ctx.send(f"{mention}, you don't have the first card!")
+            await ctx.reply("You don't have the first card!")
             return
 
         dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card2}")
         card2 = dm.cur.fetchall()[0]
         if not card2:
-            await ctx.send(f"{mention}, you don't have the second card!")
+            await ctx.reply("You don't have the second card!")
             return
 
         if card1[2] != str(a_id) or card2[2] != str(a_id):
-            await ctx.send(f"{mention}, you have to own both cards!")
+            await ctx.reply("You have to own both cards!")
             return
 
         if card1[1] != card2[1] or \
                 u.cards_dict(1, card1[0])["rarity"] != u.cards_dict(1, card2[0])["rarity"]:
-            await ctx.send(f"{mention}, both cards need to be the same level and rarity!")
+            await ctx.reply("Both cards need to be the same level and rarity!")
             return
 
         if card1[1] >= 15:
-            await ctx.send(f"{mention}, the card to merge is maxed out!")
+            await ctx.reply("The card to merge is maxed out!")
             return
 
         if card2 in decks:
-            await ctx.send(
-                f"{mention}, the sacrificial card you chose "
+            await ctx.reply(
+                "The sacrificial card you chose "
                 "is currently in one of your deck slots- \n"
                 f"`{u.PREF}remove (* card_ids)` first before you merge it away!"
             )
@@ -148,11 +148,10 @@ class Decks(commands.Cog):
 
         merge_cost = math.floor(((card1[1] + 1) ** 2) * 10)
         if player_info[0][5] < merge_cost:
-            await ctx.send(f"{mention} You don't have enough coins ({merge_cost} coins) to complete this merge!")
+            await ctx.reply(f"You don't have enough coins ({merge_cost} coins) to complete this merge!")
             return
 
-        msg = await ctx.send(
-            f"{mention}, \n"
+        msg = await ctx.reply(
             f"**[{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}**\n"
             f"**[{u.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}**\n"
             f"merging cost {merge_cost} {u.ICON['coin']}."
@@ -205,16 +204,15 @@ class Decks(commands.Cog):
 
         a = ctx.author
         if not 1 <= slot <= 6:
-            await ctx.send("{member.mention} The deck slot number must between 1-6!")
+            await ctx.reply("The deck slot number must between 1-6!")
             return
 
-        user_level = dm.get_user_level(a.id)
-        if user_level < u.DECK_LVL_REQ[slot]:
-            await ctx.send(f"{a.mention} Deck #{slot} is unlocked at {u.DECK_LVL_REQ[slot]}!")
+        if dm.get_user_level(a.id) < u.DECK_LVL_REQ[slot]:
+            await ctx.reply(f"Deck #{slot} is unlocked at {u.DECK_LVL_REQ[slot]}!")
             return
 
         dm.set_user_deck_slot(a.id, slot)
-        await ctx.send(f"{a.mention} Deck #{slot} is now selected!")
+        await ctx.reply(f"Deck #{slot} is now selected!")
 
     @commands.hybrid_command(brief="Returns the card IDs of your current deck.")
     @checks.is_registered()
@@ -223,12 +221,12 @@ class Decks(commands.Cog):
 
         a = ctx.author
         if not 0 <= slot <= 6:
-            await ctx.send(f"{a.mention} The deck slot number must be between 1-6!")
+            await ctx.reply("The deck slot number must be between 1-6!")
             return
 
         slot = slot if slot != 0 else dm.get_user_deck_slot(a.id)
         cards = dm.get_user_deck(a.id, slot)
-        await ctx.send(
+        await ctx.reply(
             f"All the card IDs in Deck #{slot}: "
             f"\n`{' '.join([str(c[0]) for c in cards])}`"
         )
@@ -244,7 +242,7 @@ class Decks(commands.Cog):
 
         a = ctx.author
         slot = dm.get_user_deck_slot(a.id)
-        err = []
+        err = None
         swap = []
 
         for x in [new, old]:
@@ -253,23 +251,21 @@ class Decks(commands.Cog):
             decks = dm.get_card_decks(x)
 
             if not name:
-                err.append(f"You don't have a card #`{x}`!")
+                err = f"You don't have a card #`{x}`!"
             elif decks[slot - 1] == 1 and x == new:
                 err = f"Card #{new} is already in a deck of yours!"
-                break
             elif decks[slot - 1] == 0 and x == old:
                 err = f"Card #{old} isn't in your deck!"
-                break
             else:
                 swap.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{x}`")
 
-        if err:
-            await ctx.reply(err)
-            return
+            if err is not None:
+                await ctx.reply(err)
+                return
 
         dm.set_user_card_deck(a.id, slot, 1, new)
         dm.set_user_card_deck(a.id, slot, 0, old)
-        await ctx.send(
+        await ctx.reply(
             f"You swapped\n{swap[0]} with\n{swap[1]}\nin deck #{slot}!"
         )
 
@@ -323,7 +319,7 @@ class Decks(commands.Cog):
         """Remove a card from your deck."""
 
         if not cards:
-            await ctx.reply(f"You haven't provided any cards to remove!")
+            await ctx.reply("You haven't provided any cards to remove!")
             return
 
         a = ctx.author
