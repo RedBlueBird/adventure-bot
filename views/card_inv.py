@@ -11,13 +11,16 @@ def chunks(lst: list, n: int):
 
 
 class CardPages(discord.ui.View):
-    def __init__(self, user: discord.Member, page_len: int = 15, page: int = 0):
+    def __init__(
+            self, user: discord.Member,
+            page_len: int = 15, page: int = 0,
+            override: list | None = None
+    ):
         super().__init__()
 
         self.user = user
-        deck = dm.get_user_deck(user.id)
-        self.deck_ids = {card[0] for card in deck}
-        cards = dm.get_user_cards(user.id)
+        self.deck_ids = {card[0] for card in dm.get_user_deck(user.id)}
+        cards = dm.get_user_cards(user.id) if override is None else override
         self.card_amt = len(cards)
 
         self.pages = list(chunks(cards, page_len))
@@ -30,7 +33,7 @@ class CardPages(discord.ui.View):
         if self.page == 0:
             return
         self.page -= 1
-        await i.edit_original_response(embed=self.gen_embed())
+        await i.edit_original_response(embed=self.page_embed())
         
     @discord.ui.button(label="Next", style=discord.ButtonStyle.green)
     async def next_page(self, i: discord.Interaction, button: discord.ui.Button):
@@ -38,9 +41,9 @@ class CardPages(discord.ui.View):
         if self.page == len(self.pages) - 1:
             return
         self.page += 1
-        await i.edit_original_response(embed=self.gen_embed())
+        await i.edit_original_response(embed=self.page_embed())
 
-    def gen_embed(self) -> discord.Embed:
+    def page_embed(self) -> discord.Embed:
         all_cards = []
         for card in self.pages[self.page]:
             c_str = ("**>**" if card[0] in self.deck_ids else "") + \

@@ -14,7 +14,7 @@ from helpers import checks
 from views import Shop, CardPages, Decks
 
 
-class Info(commands.cog):
+class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -208,7 +208,7 @@ class Info(commands.cog):
             return
 
         view = CardPages(user, page=page - 1)
-        await ctx.send(embed=view.gen_embed(), view=view)
+        await ctx.send(embed=view.page_embed(), view=view)
 
     @commands.hybrid_command(
         name="leaderboard",

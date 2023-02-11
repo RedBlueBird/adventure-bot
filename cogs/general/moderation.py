@@ -3,10 +3,8 @@ from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import checks
 
-
-class Moderation(commands.cog):
+class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

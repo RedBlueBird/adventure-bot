@@ -5,14 +5,13 @@ import typing as t
 
 import discord
 from discord.ext import commands
-from discord import app_commands
 
 from helpers import checks
 import util as u
 from helpers import db_manager as dm
 
 
-class Admin(commands.cog):
+class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

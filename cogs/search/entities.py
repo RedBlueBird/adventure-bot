@@ -15,7 +15,7 @@ class EntitySearch(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_group(name="info", aliases=["in", "check"], description="Looks up info on entities.")
+    @commands.hybrid_group(aliases=["in", "check"], description="Looks up info on entities.")
     async def info(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can search up:") \

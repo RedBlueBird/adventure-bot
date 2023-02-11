@@ -6,110 +6,85 @@ from discord.ext.commands import Context
 
 from helpers import db_manager as dm
 import util as u
+from views import CardPages
 
 
-RARITIES = {
-    "C": "Common", "R": "Rare", "E": "Epic", "EX": "Exclusive",
-    "L": "Legendary", "M": "N/A", "NA": "N/A"
-}
+def res_display(user: discord.Member, res: list) -> tuple[discord.Embed, discord.ui.View | None]:
+    if not res:
+        embed = discord.Embed(
+            title="Nothing came up! :(",
+            color=discord.Color.red()
+        )
+        return embed, None
+
+    view = CardPages(user, override=res)
+    return view.page_embed(), view
 
 
 class CardSearch(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(
-        name="card_search",
-        description="Searches your cards according to a query.",
-        aliases=["cardsearch", "cs", "search"]
-    )
-    async def card_search(
+    @commands.hybrid_group(aliases=["cs", "cardsearch", "search"], description="Searches your cards.")
+    async def card_search(self, ctx: Context):
+        if ctx.invoked_subcommand is None:
+            embed = discord.Embed(title="Here's the things you can search by:") \
+                .add_field(name="Level", value="`a.card_search level`") \
+                .add_field(name="Name", value="`a.card_search name`") \
+                .add_field(name="Rarity", value="`a.card_search rarity`") \
+                .add_field(name="Energy cost", value="`a.card_search energy`")
+            await ctx.reply(embed=embed)
+
+    @card_search.command()
+    async def level(self, ctx: Context, level: int | None = None):
+        additional = "" if level is None else f"AND card_level = {level}"
+        res = dm.get_user_cards(ctx.author.id, add_rules=additional)
+
+        embed, view = res_display(ctx.author, res)
+        await ctx.send(embed=embed, view=view)
+
+    @card_search.command()
+    async def name(self, ctx: Context, name: str | None = None):
+        res = dm.get_user_cards(
+            ctx.author.id, add_rules="" if name is None else f"AND card_name LIKE '%{name}%'"
+        )
+        embed, view = res_display(ctx.author, res)
+        await ctx.send(embed=embed, view=view)
+
+    @card_search.command()
+    async def rarity(
             self, ctx: Context,
-            search_type: t.Literal["level", "name", "rarity", "energy cost"],
-            query: str | None = None,
-            page: int = 1
-    ) -> None:
-        """
-        Searches your cards according to a query.
-        :param search_type: What to search by
-        :param query: The actual search query that the bot will search by
-        :param page: The page of the card results to go to.
-        """
-        p_len = 15
+            rarity: t.Literal["legendary", "exclusive", "epic", "rare", "common", "monster"]
+    ):
+        cards = dm.get_user_cards(ctx.author.id)
+        rarity_terms = {
+            "L": "legendary",
+            "EX": "exclusive",
+            "E": "epic",
+            "R": "rare",
+            "C": "common",
+            "M": "monster"
+        }
 
-        page = max(page, 1)
+        if rarity is None:
+            res = cards
+        else:
+            res = [c for c in cards if rarity == rarity_terms.get(u.cards_dict(c[2], c[1])["rarity"], None)]
 
-        a = ctx.author
-        deck_ids = [card[0] for card in dm.get_user_deck(a.id, dm.get_user_deck_slot(a.id))]
+        embed, view = res_display(ctx.author, res)
+        await ctx.send(embed=embed, view=view)
 
-        res = []
-        search_type = search_type.lower()
-        if search_type == "level":
-            additional = "" if query is None else f"AND card_level = {query}"
-            res = dm.get_user_cards(a.id, add_rules=additional)
+    @card_search.command()
+    async def energy(self, ctx: Context, energy: int = None):
+        user_cards = dm.get_user_cards(ctx.author.id)
 
-        elif search_type == "name":
-            res = dm.get_user_cards(
-                a.id, add_rules="" if query is None else f"AND card_name LIKE '%{query}%'"
-            )
+        if energy is None:
+            res = user_cards
+        else:
+            res = [c for c in user_cards if energy == str(u.cards_dict(c[2], c[1])["cost"])]
 
-        elif search_type == "rarity":
-            user_cards = dm.get_user_cards(a.id)
-            rarity_terms = {
-                "L": ["legendary", "legend", "leg", "le", "l"],
-                "EX": ["exclusive", "exclu", "exc", "ex"],
-                "E": ["epic", "ep", "e"],
-                "R": ["rare", "ra", "rr", "r"],
-                "C": ["common", "com", "co", "c"],
-                "M": ["monsters", "monster", "mon", "mons", "mo", "most", "mosts", "m", "ms"],
-                "NA": ["not_available", "notavailable", "not_ava", "notava", "not", "no", "na", "n/a", "n"]
-            }
-
-            if query is None:
-                res = user_cards
-            else:
-                for x in user_cards:
-                    if query.lower() in rarity_terms[u.cards_dict(x[2], x[1])["rarity"]]:
-                        res.append(x)
-
-        elif search_type == "energy cost":
-            user_cards = dm.get_user_cards(a.id)
-
-            if query is None:
-                res = user_cards
-            else:
-                for x in user_cards:
-                    if query == str(u.cards_dict(x[2], x[1])["cost"]):
-                        res.append(x)
-
-        if not res:
-            await ctx.send(f"{ctx.author.mention}, nothing matched your search!")
-            return
-        elif len(res) <= (page - 1) * p_len:
-            await ctx.send(f"{ctx.author.mention}, you don't have any cards on page {page}!")
-            return
-
-        all_cards = []
-
-        for x in res[(page - 1) * p_len:(page - 1) * p_len + p_len]:
-            card = f"[{u.rarity_cost(x[1])}] **{x[1]}**, " \
-                   f"lv: **{x[2]}**, id: `{x[0]}` "
-            if x[0] in deck_ids:
-                card = f"**>**{card}"
-            all_cards.append(card)
-
-        embed = discord.Embed(
-            title="Results",
-            description="\n".join(all_cards),
-            color=discord.Color.gold()
-        )
-
-        show_start = (page - 1) * p_len + 1
-        show_end = min(show_start + 14, len(res))
-        embed.set_footer(
-            text=f"{show_start}-{show_end}/{len(res)} cards displayed in page {page}"
-        )
-        await ctx.send(embed=embed)
+        embed, view = res_display(ctx.author, res)
+        await ctx.send(embed=embed, view=view)
 
 
 async def setup(bot: commands.Bot):

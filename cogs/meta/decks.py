@@ -10,7 +10,10 @@ from helpers import checks
 import util as u
 
 
-class Decks(commands.cog):
+class Decks(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
     @commands.hybrid_command(brief="Set the card display order.")
     @checks.is_registered()
     async def order(
@@ -241,7 +244,7 @@ class Decks(commands.cog):
 
         a = ctx.author
         slot = dm.get_user_deck_slot(a.id)
-        err = None
+        err = []
         swap = []
 
         for x in [new, old]:
@@ -260,7 +263,7 @@ class Decks(commands.cog):
             else:
                 swap.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{x}`")
 
-        if err is not None:
+        if err:
             await ctx.reply(err)
             return
 
