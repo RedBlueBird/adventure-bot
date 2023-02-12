@@ -33,12 +33,12 @@ class Purchase(commands.Cog):
     async def buy(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can buy:") \
-                .add_field(name="Card Packs", value="`a.buy (card pack name)`") \
-                .add_field(name="Coins", value="`a.buy coins (coin deal name)`") \
-                .add_field(name="Tickets", value="`a.buy coins (ticket deal name)`") \
-                .add_field(name="Shop Refresh", value="`a.buy r`") \
-                .add_field(name="Single Card", value="`a.buy all`") \
-                .add_field(name="All Cards", value="`a.buy (card #)`")
+                .add_field(name="Card Packs", value=f"`{u.PREF}buy (card pack name)`") \
+                .add_field(name="Coins", value=f"`{u.PREF}buy coins (coin deal name)`") \
+                .add_field(name="Tickets", value=f"`{u.PREF}buy coins (ticket deal name)`") \
+                .add_field(name="Shop Refresh", value=f"`{u.PREF}buy r`") \
+                .add_field(name="Single Card", value=f"`{u.PREF}buy all`") \
+                .add_field(name="All Cards", value=f"`{u.PREF}buy (card #)`")
             await ctx.reply(embed=embed)
 
     @buy.command()

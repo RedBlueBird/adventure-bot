@@ -50,10 +50,16 @@ class Tutorial(commands.Cog):
         hand_msg = await ctx.send(embed=loading_embed_message)
 
         tutorial = deepcopy(u.TUTORIAL)
+        tutorial["procedure"] = [msg.format(prefix=u.PREF) for msg in tutorial["procedure"]]
+        tutorial["triggered_message"] = {
+            step: [msg.format(prefix=u.PREF) for msg in msgs] for step, msgs in tutorial["triggered_message"].items()
+        }
+        tutorial["players"][0] = author
+        tutorial["p_ids"][0] = a_id
         dd = BattleData(
             tutorial["teams"],
-            [author] + tutorial["players"][1:],
-            [a_id] + tutorial["p_ids"][1:],
+            tutorial["players"],
+            tutorial["p_ids"],
             tutorial["decks"],
             tutorial["backpacks"],
             tutorial["hps"],

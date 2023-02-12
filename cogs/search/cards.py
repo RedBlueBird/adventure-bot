@@ -29,10 +29,10 @@ class CardSearch(commands.Cog):
     async def card_search(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can search by:") \
-                .add_field(name="Level", value="`a.card_search level`") \
-                .add_field(name="Name", value="`a.card_search name`") \
-                .add_field(name="Rarity", value="`a.card_search rarity`") \
-                .add_field(name="Energy cost", value="`a.card_search energy`")
+                .add_field(name="Level", value=f"`{u.PREF}card_search level`") \
+                .add_field(name="Name", value=f"`{u.PREF}card_search name`") \
+                .add_field(name="Rarity", value=f"`{u.PREF}card_search rarity`") \
+                .add_field(name="Energy cost", value=f"`{u.PREF}card_search energy`")
             await ctx.reply(embed=embed)
 
     @card_search.command()

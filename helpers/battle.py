@@ -1112,7 +1112,7 @@ class BattleData:
         if not valid_play(move_numbers):
             return (f"{reply_author} that's an invalid play! "
                     f"Type your play in the format `{u.PREF}card#target#`, "
-                    f"eg. `a.23` where 2 is your card number and 3 is your target number.")
+                    f"eg. `{u.PREF}23` where 2 is your card number and 3 is your target number.")
 
         elif len(move_numbers) > 4:
             return f"{reply_author}, you can't play more than 4 cards a turn!"

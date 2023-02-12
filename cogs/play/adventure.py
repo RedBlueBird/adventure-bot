@@ -967,7 +967,7 @@ class Adventure(commands.Cog):
                     (100 * u.SCALE[1] ** math.floor(p_datas[3] / 2)) * u.SCALE[0]))
                 if choices["trap"] == "reaction":
                     await ctx.send(
-                        'Reply `a.react` as fast as you can when you see the message "Now!"!')
+                        f'Reply `{u.PREF}react` as fast as you can when you see the message "Now!"!')
                     await asyncio.sleep(trap_time)
                     trap_msg = await ctx.send('Now!')
                     try:

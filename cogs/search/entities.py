@@ -19,10 +19,10 @@ class EntitySearch(commands.Cog):
     async def info(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can search up:") \
-                .add_field(name="Cards", value="`a.info card`") \
-                .add_field(name="Monsters", value="`a.info monster`") \
-                .add_field(name="Items", value="`a.info item`") \
-                .add_field(name="Effects", value="`a.info effect`")
+                .add_field(name="Cards", value=f"`{u.PREF}info card`") \
+                .add_field(name="Monsters", value=f"`{u.PREF}info monster`") \
+                .add_field(name="Items", value=f"`{u.PREF}info item`") \
+                .add_field(name="Effects", value=f"`{u.PREF}info effect`")
             await ctx.reply(embed=embed)
 
     @info.command()
@@ -106,7 +106,7 @@ class EntitySearch(commands.Cog):
         """
         if "journal" in item_info:  
             embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
-        embed.set_thumbnail(url=ctx.author.avatar.url)a.
+        embed.set_thumbnail(url=ctx.author.avatar.url)
         """
         # print(u.ICON[item_info['name'].lower()])
         if name.lower() in u.ICON:

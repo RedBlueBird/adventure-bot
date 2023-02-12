@@ -52,10 +52,6 @@ with open("resources/text/tutorial.json") as json_file:
         json_file,
         object_pairs_hook=lambda x: {int(k) if k.isdigit() else k: v for k, v in x},
     )
-TUTORIAL["procedure"] = [msg.replace("{prefix}", PREF) for msg in TUTORIAL["procedure"]]
-TUTORIAL["triggered_message"] = {
-    step: [msg.replace("{prefix}", PREF) for msg in msgs] for step, msgs in TUTORIAL["triggered_message"].items()
-}
 
 CONVERT: t.Final = {
     "burn": ICON["burn"],
