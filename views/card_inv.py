@@ -27,7 +27,7 @@ class CardPages(discord.ui.View):
         self.page_len = page_len
         self.page = u.clamp(page, 0, len(self.pages) - 1)
 
-    @discord.ui.button(label="Prev", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Prev", style=discord.ButtonStyle.blurple)
     async def prev_page(self, i: discord.Interaction, button: discord.ui.Button):
         await i.response.defer()
         if self.page == 0:
@@ -35,7 +35,7 @@ class CardPages(discord.ui.View):
         self.page -= 1
         await i.edit_original_response(embed=self.page_embed())
         
-    @discord.ui.button(label="Next", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
     async def next_page(self, i: discord.Interaction, button: discord.ui.Button):
         await i.response.defer()
         if self.page == len(self.pages) - 1:
