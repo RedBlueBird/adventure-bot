@@ -75,27 +75,21 @@ class Decks(commands.Cog):
             msg += "You sure you want to discard:\n" + \
                    "\n".join(discard_msg) + \
                    f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
-        msg = await ctx.reply(msg)
-        await msg.add_reaction("✅")
-        await msg.add_reaction("❎")
 
-        try:
-            reaction, _ = await self.bot.wait_for(
-                "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
-            )
-        except asyncio.TimeoutError:
-            await msg.edit(content="Discarding cancelled")
-            await msg.clear_reactions()
+        view = Confirm()
+        msg = await ctx.reply(msg, view=view)
+        await view.wait()
+
+        if view.value is None:
+            await msg.edit(content="Discarding timed out")
             return
-        
-        await msg.clear_reactions()
-        if reaction.emoji == "❎":
+        if not view.value:
             await msg.edit(content="Discarding cancelled")
             return
 
         dm.delete_user_cards(to_discard)
-        await msg.edit(content=f"{len(to_discard)} card(s) discarded successfully!")
+        s = 's' if len(to_discard) > 1 else ''
+        await msg.edit(content=f"{len(to_discard)} card{s} discarded successfully!")
 
     @commands.hybrid_command(aliases=["mer"], brief="Upgrade a card with two others.")
     @checks.is_registered()
@@ -153,6 +147,9 @@ class Decks(commands.Cog):
         )
         await view.wait()
 
+        if view.value is None:
+            await msg.edit(content="Merging timed out")
+            return
         if not view.value:
             await msg.edit(content="Merging cancelled")
             return
@@ -347,22 +344,15 @@ class Decks(commands.Cog):
             await ctx.reply(f"Your deck's already empty!")
             return
 
-        msg = await ctx.reply(f"Do you really want to clear deck #{slot}?")
-        await msg.add_reaction("✅")
-        await msg.add_reaction("❎")
-        try:
-            reaction, _ = await self.bot.wait_for(
-                "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
-            )
-        except asyncio.TimeoutError:
-            await msg.edit(content=f"Clearing deck cancelled")
-            return
-        finally:
-            await msg.clear_reactions()
+        view = Confirm()
+        msg = await ctx.reply(f"Do you really want to clear deck #{slot}?", view=view)
+        await view.wait()
 
-        if reaction.emoji == "❎":
-            await msg.edit(content=f"Clearing deck cancelled")
+        if view.value is None:
+            await msg.edit(content="Clearing timed out")
+            return
+        if not view.value:
+            await msg.edit(content="Clearing cancelled")
             return
 
         for i in deck:
