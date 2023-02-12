@@ -218,12 +218,13 @@ class Info(commands.Cog):
     )
     async def leaderboard(
             self, ctx: Context,
-            name: t.Literal["Level", "Coins", "Gems", "Medals", "Tokens"]
+            name: t.Literal["level", "coins", "gems", "medals", "tokens"]
     ) -> None:
         """
         Displays the world's top players.
         :param name: The leaderboard to display
         """
+
         view = Leaderboard(name, ctx.author.id, self.bot)
         await ctx.send(embed=await view.generate_embed(), view=view)
 
