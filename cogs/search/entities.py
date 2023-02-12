@@ -27,6 +27,11 @@ class EntitySearch(commands.Cog):
 
     @info.command()
     async def card(self, ctx: Context, name: str, level: int = 1):
+        max_level = 15
+        if not 1 <= level <= max_level:
+            await ctx.reply(f"The card level has to be between 1 and {max_level}!")
+            return
+
         card_info = u.cards_dict(level, " ".join(name.lower().split("_")))
         info_str = [
             f"**Name:** {card_info['name']}",

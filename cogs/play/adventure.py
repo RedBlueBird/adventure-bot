@@ -58,8 +58,8 @@ class Adventure(commands.Cog):
         self.bot = bot
 
     @commands.command(pass_context=True, aliases=["ad", "adv"], description="Go on an adventure!")
-    @checks.is_registered()
     @checks.not_preoccupied("on an adventure")
+    @checks.is_registered()
     async def adventure(self, ctx: commands.Context):
         mention = ctx.author.mention
         a_id = ctx.author.id

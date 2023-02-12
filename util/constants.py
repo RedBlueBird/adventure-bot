@@ -3,7 +3,9 @@ import typing as t
 
 PREF: t.Final = "a."
 SCALE: t.Final = 50, 1.05
+
 DECK_LVL_REQ: t.Final = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
+MAX_CARDS = 500
 
 DECK: t.Final = {
     "[♠ Ace]": 11, "[♠ Two]": 2, "[♠ Three]": 3, "[♠ Four]": 4, "[♠ Five]": 5,

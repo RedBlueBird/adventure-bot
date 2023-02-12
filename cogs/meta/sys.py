@@ -68,6 +68,9 @@ class Sys(commands.Cog):
             ms = int(self.bot.latency * 1000)
             await message.channel.send(f'Pong! {ms} ms. Bot command prefix is `{u.PREF}`!')
 
+        if not dm.is_registered(message.author.id):
+            return
+
         # region Give the user XP through messages
         a = message.author
         user_level = dm.get_user_level(a.id)

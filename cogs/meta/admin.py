@@ -16,8 +16,8 @@ class Admin(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command(description="Gives users the specified items in the arguments.")
-    @checks.is_registered()
     @checks.is_owner()
+    @checks.is_registered()
     async def redeem(
             self, ctx: commands.Context,
             item_type: t.Literal["card", "item"],

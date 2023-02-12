@@ -12,10 +12,12 @@ class Confirm(discord.ui.View):
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
     async def confirm(self, i: discord.Interaction, button: discord.ui.Button):
         self.value = True
+        await i.response.defer()
         self.stop()
 
     # This one is similar to the confirmation button except sets the inner value to `False`
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
     async def cancel(self, i: discord.Interaction, button: discord.ui.Button):
         self.value = False
+        await i.response.defer()
         self.stop()

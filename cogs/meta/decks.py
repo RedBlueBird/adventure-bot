@@ -44,8 +44,8 @@ class Decks(commands.Cog):
         await ctx.reply(f"The order had been set to {card_property} {order_by}.")
 
     @commands.command(aliases=["dis"], description="cards")
-    @checks.is_registered()
     @checks.not_preoccupied("discarding cards")
+    @checks.is_registered()
     async def discard(self, ctx: commands.Context, cards: commands.Greedy[int]):
         """Deletes unwanted cards."""
 
@@ -81,10 +81,10 @@ class Decks(commands.Cog):
         await view.wait()
 
         if view.value is None:
-            await msg.edit(content="Discarding timed out")
+            await msg.edit(content="Discarding timed out", view=None)
             return
         if not view.value:
-            await msg.edit(content="Discarding cancelled")
+            await msg.edit(content="Discarding cancelled", view=None)
             return
 
         dm.delete_user_cards(to_discard)
@@ -92,8 +92,8 @@ class Decks(commands.Cog):
         await msg.edit(content=f"{len(to_discard)} card{s} discarded successfully!")
 
     @commands.hybrid_command(aliases=["mer"], description="Upgrade a card with two others.")
-    @checks.is_registered()
     @checks.not_preoccupied("trying to merge cards")
+    @checks.is_registered()
     async def merge(self, ctx: commands.Context, card1: int, card2: int):
         """Upgrade a card to next level with two other cards."""
 
@@ -148,10 +148,10 @@ class Decks(commands.Cog):
         await view.wait()
 
         if view.value is None:
-            await msg.edit(content="Merging timed out")
+            await msg.edit(content="Merging timed out", view=None)
             return
         if not view.value:
-            await msg.edit(content="Merging cancelled")
+            await msg.edit(content="Merging cancelled", view=None)
             return
 
         dm.log_quest(7, 1, a_id)
@@ -214,8 +214,8 @@ class Decks(commands.Cog):
         aliases=["replace", "switch", "change", "alter"],
         description="Swap a card from your deck with another."
     )
-    @checks.is_registered()
     @checks.not_preoccupied()
+    @checks.is_registered()
     async def swap(self, ctx: commands.Context, new: int, old: int):
         """Swap a card from your deck with another."""
 
@@ -249,8 +249,8 @@ class Decks(commands.Cog):
         )
 
     @commands.command(aliases=["use"], description="Add a card to your deck.")
-    @checks.is_registered()
     @checks.not_preoccupied()
+    @checks.is_registered()
     async def add(self, ctx: commands.Context, cards: commands.Greedy[int]):
         """Add a card to your deck."""
 
@@ -292,8 +292,8 @@ class Decks(commands.Cog):
         await ctx.reply(msg)
 
     @commands.command(aliases=["rem"], description="Remove a card from your deck.")
-    @checks.is_registered()
     @checks.not_preoccupied()
+    @checks.is_registered()
     async def remove(self, ctx: commands.Context, cards: commands.Greedy[int]):
         """Remove a card from your deck."""
 
@@ -349,10 +349,10 @@ class Decks(commands.Cog):
         await view.wait()
 
         if view.value is None:
-            await msg.edit(content="Clearing timed out")
+            await msg.edit(content="Clearing timed out", view=None)
             return
         if not view.value:
-            await msg.edit(content="Clearing cancelled")
+            await msg.edit(content="Clearing cancelled", view=None)
             return
 
         for i in deck:
