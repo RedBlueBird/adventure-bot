@@ -9,7 +9,9 @@ import util as u
 from views import CardPages
 
 
-def res_display(user: discord.Member, res: list) -> tuple[discord.Embed, discord.ui.View | None]:
+def res_display(
+        user: discord.Member, res: list
+) -> tuple[discord.Embed, discord.ui.View | None]:
     if not res:
         embed = discord.Embed(
             title="Nothing came up! :(",
@@ -25,28 +27,28 @@ class CardSearch(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_group(aliases=["cs", "cardsearch", "search"], description="Searches your cards.")
+    @commands.hybrid_group(aliases=["cs", "search"], description="Search your cards.")
     async def card_search(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can search by:") \
-                .add_field(name="Level", value=f"`{u.PREF}card_search level`") \
-                .add_field(name="Name", value=f"`{u.PREF}card_search name`") \
-                .add_field(name="Rarity", value=f"`{u.PREF}card_search rarity`") \
-                .add_field(name="Energy cost", value=f"`{u.PREF}card_search energy`")
+                .add_field(name="Level", value=f"`{u.PREF}card_search (level)`") \
+                .add_field(name="Name", value=f"`{u.PREF}card_search (name)`") \
+                .add_field(name="Rarity", value=f"`{u.PREF}card_search (rarity)`") \
+                .add_field(name="Energy cost", value=f"`{u.PREF}card_search (energy)`")
             await ctx.reply(embed=embed)
 
     @card_search.command()
-    async def level(self, ctx: Context, level: int | None = None):
-        additional = "" if level is None else f"AND card_level = {level}"
-        res = dm.get_user_cards(ctx.author.id, add_rules=additional)
-
+    async def level(self, ctx: Context, level: int):
+        res = dm.get_user_cards(
+            ctx.author.id, add_rules=f"AND card_level = {level}"
+        )
         embed, view = res_display(ctx.author, res)
         await ctx.send(embed=embed, view=view)
 
     @card_search.command()
-    async def name(self, ctx: Context, name: str | None = None):
+    async def name(self, ctx: Context, name: str):
         res = dm.get_user_cards(
-            ctx.author.id, add_rules="" if name is None else f"AND card_name LIKE '%{name}%'"
+            ctx.author.id, add_rules=f"AND card_name LIKE '%{name}%'"
         )
         embed, view = res_display(ctx.author, res)
         await ctx.send(embed=embed, view=view)
@@ -66,23 +68,18 @@ class CardSearch(commands.Cog):
             "M": "monster"
         }
 
-        if rarity is None:
-            res = cards
-        else:
-            res = [c for c in cards if rarity == rarity_terms.get(u.cards_dict(c[2], c[1])["rarity"], None)]
-
+        res = [
+            c for c in cards
+            if rarity == rarity_terms.get(u.cards_dict(c[2], c[1])["rarity"], None)
+        ]
         embed, view = res_display(ctx.author, res)
         await ctx.send(embed=embed, view=view)
 
     @card_search.command()
-    async def energy(self, ctx: Context, energy: int = None):
+    async def energy(self, ctx: Context, energy: int):
         user_cards = dm.get_user_cards(ctx.author.id)
 
-        if energy is None:
-            res = user_cards
-        else:
-            res = [c for c in user_cards if energy == str(u.cards_dict(c[2], c[1])["cost"])]
-
+        res = [c for c in user_cards if energy == u.cards_dict(c[2], c[1])["cost"]]
         embed, view = res_display(ctx.author, res)
         await ctx.send(embed=embed, view=view)
 

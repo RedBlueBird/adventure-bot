@@ -258,18 +258,20 @@ class Purchase(commands.Cog):
         count = sum([1 if i[0] != "-" else 0 for i in deals])
 
         if count + dm.get_user_cards_count(a.id) > u.MAX_CARDS:
-            await ctx.reply("You don't have enough space to buy all the cards!")
+            await ctx.reply("You don't have enough space to buy everything!")
             return
         if count == 0:
-            await ctx.reply("You don't have enough space to buy all the cards!")
+            await ctx.reply("You've already bought everything!")
             return
         if coins < cost:
-            await ctx.reply(f"You need {cost} {u.ICON['coin']} to buy all cards in the shop!")
+            await ctx.reply(f"You need {cost} {u.ICON['coin']} to buy everything!")
             return
 
+        cards = f"all {count} cards" if count > 1 else "the one remaining card"
         msg, confirm = await confirm_purchase(
             ctx,
-            f"Do you want to buy all {count} card(s) in the shop for {cost} {u.ICON['coin']}?"
+            f"Do you want to buy {cards} "
+            f"in the shop for {cost} {u.ICON['coin']}?"
         )
         if not confirm:
             return
@@ -277,13 +279,13 @@ class Purchase(commands.Cog):
         gained_cards = []
         cards_msg = []
         total_cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
-        for x in deals:
-            if x[0] == "-":
+        for d in deals:
+            if d[0] == "-":
                 continue
-            gained_cards.append((a.id, x[1], int(x[0])))
+            gained_cards.append((a.id, d[1], int(d[0])))
             cards_msg.append(
-                f"[{u.rarity_cost(x[1])}] **{x[1]}** lv: **{int(x[0])}** - "
-                f"**{u.compute_card_cost(x[1], int(x[0]))}** {u.ICON['coin']} \n"
+                f"[{u.rarity_cost(d[1])}] **{d[1]}** lv: **{int(d[0])}** - "
+                f"**{u.compute_card_cost(d[1], int(d[0]))}** {u.ICON['coin']} \n"
             )
 
         dm.add_user_cards(gained_cards)
@@ -297,7 +299,6 @@ class Purchase(commands.Cog):
             color=discord.Color.gold()
         )
         embed.set_footer(text=f"You have {coins - total_cost} golden coins left")
-        embed.set_thumbnail(url=ctx.author.avatar.url)
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command()

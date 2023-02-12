@@ -1,10 +1,11 @@
+import json
 import math
 import datetime as dt
 import os
-import typing as t
 
 import discord
 from discord.ext import commands
+from discord.ext.commands import Context
 
 from helpers import checks
 import util as u
@@ -15,62 +16,63 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(description="Gives users the specified items in the arguments.")
+    @commands.hybrid_group(description="Redeem something! (Admin only)")
     @checks.is_owner()
     @checks.is_registered()
-    async def redeem(
-            self, ctx: commands.Context,
-            item_type: t.Literal["card", "item"],
-            name: str, level: int, target: discord.Member
-    ):
-        """
-        Gives users the specified items in the arguments.
-        :param item_type: The type of item to give
-        :param name: The specific name of the item to give
-        :param level: The level/amount of the card/item to give.
-        :param target: Who to give the item to
-        """
-        mention = ctx.author.mention
+    async def redeem(self, ctx: Context):
+        if ctx.invoked_subcommand is None:
+            embed = discord.Embed(title="Here's the things you can redeem:") \
+                .add_field(name="Cards", value=f"`{u.PREF}redeem card (card name) (card level) (recipient)`") \
+                .add_field(name="Items", value=f"`{u.PREF}redeem coins (item name) (item amt) (recipient)`")
+            await ctx.reply(embed=embed)
 
+    @redeem.command()
+    @checks.is_owner()
+    @checks.is_registered()
+    async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
         with open("resources/text/bot_log.txt", "a") as log:
             log.write(f">>>{ctx.message.content}\n")
             log.write(f"{ctx.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
-        if item_type == "card":
-            card_name = " ".join(name.split("_")).title()
+        card = card.replace("_", " ").title()
 
-            dm.add_user_cards([(target.id, card_name, math.floor(int(level)))])
-            await ctx.reply(
-                f"{target.mention}, you received a **[{u.rarity_cost(card_name)}] "
-                f"{card_name} lv: {math.floor(int(level))}** from {mention}"
-            )
+        dm.add_user_cards([(recipient.id, card, math.floor(int(level)))])
+        await ctx.send(
+            f"{recipient.mention}, you received a **[{u.rarity_cost(card)}] "
+            f"{card} lv: {math.floor(int(level))}** from {ctx.author.mention}"
+        )
 
-        elif item_type == "item":
-            item_name = u.items_dict(" ".join(name.split("_")))["name"]
-            inventory_data = eval(dm.get_user_inventory(target.id))
+    @redeem.command()
+    @checks.is_owner()
+    @checks.is_registered()
+    async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
+        with open("resources/text/bot_log.txt", "a") as log:
+            log.write(f">>>{ctx.message.content}\n")
+            log.write(f"{ctx.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
-            if math.floor(int(level)) > 0 and not item_name.lower() in inventory_data:
-                inventory_data[item_name.lower()] = {"items": math.floor(int(level))}
-            else:
-                inventory_data[item_name.lower()]["items"] += math.floor(int(level))
+        item = u.items_dict(item.replace("_", " "))["name"].lower()
+        inv = json.loads(dm.get_user_inventory(recipient.id))
 
-            inv_delete = []
-            for x in inventory_data:
-                if not inventory_data[x]["items"] == "x":
-                    if inventory_data[x]["items"] <= 0:
-                        inv_delete.append(x)
-            for x in inv_delete:
-                del inventory_data[x]
+        if amt > 0 and item not in inv:
+            inv[item] = {"items": amt}
+        else:
+            inv[item]["items"] += amt
 
-            inv_json = str(inventory_data).replace("'", "\"")
-            dm.set_user_inventory(target.id, inv_json)
-            await ctx.reply(
-                f"{target.mention}, you received "
-                f"**[{u.items_dict(item_name)['rarity']}/"
-                f"{u.items_dict(item_name)['weight']}] "
-                f"{item_name}** x{math.floor(int(level))} "
-                f"from {mention}"
-            )
+        inv_delete = []
+        for i in inv:
+            if inv[i]["items"] != "x" and inv[i]["items"] <= 0:
+                inv_delete.append(i)
+        for i in inv_delete:
+            del inv[i]
+
+        dm.set_user_inventory(recipient.id, json.dumps(inv))
+        await ctx.reply(
+            f"{recipient.mention}, you received "
+            f"**[{u.items_dict(item)['rarity']}/"
+            f"{u.items_dict(item)['weight']}] "
+            f"{item}** x{math.floor(int(amt))} "
+            f"from {ctx.author.mention}"
+        )
 
     @commands.hybrid_command(
         aliases=["endseason"],
@@ -107,10 +109,10 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.message.channel.send(str(ctx.author) + u.ICON['load'])
+        loading = await ctx.send(f"{ctx.author} {u.ICON['load']}")
 
-        def print_all(tables_name):
-            dm.cur.execute(f"SELECT * FROM {tables_name}")
+        def print_all(table: str) -> None:
+            dm.cur.execute(f"SELECT * FROM {table}")
             result = dm.cur.fetchall()
             for r in result:
                 print(r)

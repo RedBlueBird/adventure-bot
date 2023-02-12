@@ -5,7 +5,6 @@ import time as times
 import datetime as dt
 
 import discord
-from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
 
@@ -197,12 +196,6 @@ class Info(commands.Cog):
         aliases=["card", "cards", "i", "inv"]
     )
     async def inventory(self, ctx: Context, page: int = 1, user: discord.Member = None):
-        """
-        Displays all the cards in a member's inventory in the form of an embed.
-        :param page: The page of cards to display
-        :param user: The user whose cards to display
-        """
-
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
             await ctx.reply("That user isn't registered yet!")
@@ -220,25 +213,14 @@ class Info(commands.Cog):
             self, ctx: Context,
             name: t.Literal["level", "coins", "gems", "medals", "tokens"]
     ) -> None:
-        """
-        Displays the world's top players.
-        :param name: The leaderboard to display
-        """
-
         view = Leaderboard(name, ctx.author.id, self.bot)
-        await ctx.send(embed=await view.generate_embed(), view=view)
+        await ctx.send(embed=await view.lb_embed(), view=view)
 
     @commands.hybrid_command(
         name="deck",
         description="Displays the user's currently equipped deck."
     )
     async def deck(self, ctx: Context, slot: int = 0, user: discord.Member = None) -> None:
-        """
-        Displays the user's currently equipped deck.
-        :param slot: The deck slot to search.
-        :param user: The user whose deck slots to search.
-        """
-
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
             await ctx.reply(f"That user isn't registered yet!")
@@ -262,7 +244,7 @@ class Info(commands.Cog):
     async def decklist(self, ctx: Context, user: discord.Member = None):
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
-            await ctx.reply(f"That user isn't registered yet!")
+            await ctx.reply(f"That user isn't registered!")
             return
 
         view = Decks(user)
@@ -271,7 +253,6 @@ class Info(commands.Cog):
     @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)
     async def shop(self, ctx: Context) -> None:
-        """The player can buy cards and other things here."""
         embed = discord.Embed(
             title="Welcome to the card shop!",
             description="Click a page to get started."
