@@ -15,7 +15,7 @@ class Decks(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(brief="Set the card display order.")
+    @commands.hybrid_command(description="Set the card display order.")
     @checks.is_registered()
     async def order(
             self, ctx: commands.Context,
@@ -43,7 +43,7 @@ class Decks(commands.Cog):
         dm.set_user_order(ctx.author.id, order)
         await ctx.reply(f"The order had been set to {card_property} {order_by}.")
 
-    @commands.command(aliases=["dis"], brief="cards")
+    @commands.command(aliases=["dis"], description="cards")
     @checks.is_registered()
     @checks.not_preoccupied("discarding cards")
     async def discard(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -91,7 +91,7 @@ class Decks(commands.Cog):
         s = 's' if len(to_discard) > 1 else ''
         await msg.edit(content=f"{len(to_discard)} card{s} discarded successfully!")
 
-    @commands.hybrid_command(aliases=["mer"], brief="Upgrade a card with two others.")
+    @commands.hybrid_command(aliases=["mer"], description="Upgrade a card with two others.")
     @checks.is_registered()
     @checks.not_preoccupied("trying to merge cards")
     async def merge(self, ctx: commands.Context, card1: int, card2: int):
@@ -175,7 +175,7 @@ class Decks(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["selectdeck", "sel", "se"],
-        brief="Get a deck from your deck slots."
+        description="Get a deck from your deck slots."
     )
     @checks.is_registered()
     async def select(self, ctx: commands.Context, slot: int = 0):
@@ -193,7 +193,7 @@ class Decks(commands.Cog):
         dm.set_user_deck_slot(a.id, slot)
         await ctx.reply(f"Deck #{slot} is now selected!")
 
-    @commands.hybrid_command(brief="Returns the card IDs of your current deck.")
+    @commands.hybrid_command(description="Returns the card IDs of your current deck.")
     @checks.is_registered()
     async def deck_ids(self, ctx: commands.Context, slot: int = 0):
         """Returns the card IDs of your current deck."""
@@ -212,7 +212,7 @@ class Decks(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["replace", "switch", "change", "alter"],
-        brief="Swap a card from your deck with another."
+        description="Swap a card from your deck with another."
     )
     @checks.is_registered()
     @checks.not_preoccupied()
@@ -248,7 +248,7 @@ class Decks(commands.Cog):
             f"You swapped\n{swap[0]} with\n{swap[1]}\nin deck #{slot}!"
         )
 
-    @commands.command(aliases=["use"], brief="Add a card to your deck.")
+    @commands.command(aliases=["use"], description="Add a card to your deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
     async def add(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -291,7 +291,7 @@ class Decks(commands.Cog):
                    f"\n".join(add_msg)
         await ctx.reply(msg)
 
-    @commands.command(aliases=["rem"], brief="Remove a card from your deck.")
+    @commands.command(aliases=["rem"], description="Remove a card from your deck.")
     @checks.is_registered()
     @checks.not_preoccupied()
     async def remove(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -330,7 +330,7 @@ class Decks(commands.Cog):
                    f"\n".join(remove_msg)
         await ctx.reply(msg)
 
-    @commands.hybrid_command(aliases=["cleardeck"], brief="Clear your current deck.")
+    @commands.hybrid_command(aliases=["cleardeck"], description="Clear your current deck.")
     @checks.is_registered()
     @checks.not_preoccupied("clearing a deck slot")
     async def clear(self, ctx: commands.Context):

@@ -17,7 +17,7 @@ class Tutorial(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(aliases=["tutorials", "tutor"], brief="actions")
+    @commands.hybrid_command(aliases=["tutorials", "tutor"], description="New to the bot? Here's a tutorial!")
     @checks.is_registered()
     async def tutorial(self, ctx: commands.Context):
         """A battle simulator that gives people new to the bot a simple tutorial."""

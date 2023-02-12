@@ -15,7 +15,7 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(brief="Gives users the specified items in the arguments.")
+    @commands.hybrid_command(description="Gives users the specified items in the arguments.")
     @checks.is_registered()
     @checks.is_owner()
     async def redeem(
@@ -74,7 +74,7 @@ class Admin(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["endseason"],
-        brief="Resets the PVP season and gives each player their medals."
+        description="Resets the PVP season and gives each player their medals."
     )
     @commands.is_owner()
     async def end_season(self, ctx: commands.Context):
@@ -103,7 +103,7 @@ class Admin(commands.Cog):
 
         await ctx.reply("Season Ended!")
 
-    @commands.hybrid_command(brief="Prints some debugging info for the devs.")
+    @commands.hybrid_command(description="Prints some debugging info for the devs.")
     @commands.is_owner()
     async def test(self, ctx: commands.Context):
         """Prints some debugging info for the devs."""

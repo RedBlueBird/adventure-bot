@@ -57,7 +57,7 @@ class Adventure(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=["ad", "adv"], brief="Go on an adventure!")
+    @commands.command(pass_context=True, aliases=["ad", "adv"], description="Go on an adventure!")
     @checks.is_registered()
     @checks.not_preoccupied("on an adventure")
     async def adventure(self, ctx: commands.Context):

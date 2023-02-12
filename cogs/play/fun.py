@@ -17,7 +17,7 @@ class Fun(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["black", "bj"],
-        brief="Practice your blackjack skills!"
+        description="Practice your blackjack skills!"
     )
     @checks.not_preoccupied("practicing blackjack")
     async def blackjack(self, ctx: commands.Context):
@@ -46,7 +46,7 @@ class Fun(commands.Cog):
             await msg.edit(embed=board)
             view.stop()
 
-    @commands.hybrid_command(brief="Test your reflexes and counting ability!")
+    @commands.hybrid_command(description="Test your reflexes and counting ability!")
     @checks.not_preoccupied("testing timing accuracy")
     async def reaction(self, ctx: commands.Context, wait_time: float = -1.0):
         """Test your reflexes and counting ability!"""
@@ -69,7 +69,7 @@ class Fun(commands.Cog):
                 f"is {off} seconds off from {wait_time} seconds"
             )
 
-    @commands.hybrid_command(brief="Have Crispy agree with anything!")
+    @commands.hybrid_command(description="Have Crispy agree with anything!")
     async def agree(self, ctx: commands.Context, statement: str = "but u said u are stupid"):
         """Have Crispy agree with anything!"""
         img = Image.open("resources/img/crispy_reply.png")
@@ -81,7 +81,7 @@ class Fun(commands.Cog):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="crispy_reply.png"))
 
-    @commands.hybrid_command(brief="Mock the bot's creator.")
+    @commands.hybrid_command(description="Mock the bot's creator.")
     async def birb(self, ctx: commands.Context, stuff: str = "1 + 1 = 3"):
         """Mock the bot's creator."""
         img = Image.open("resources/img/birb_logic.png")
@@ -93,7 +93,7 @@ class Fun(commands.Cog):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="birb_logic.png"))
 
-    @commands.hybrid_command(brief="This is fine.")
+    @commands.hybrid_command(description="This is fine.")
     async def dead(self, ctx: commands.Context, msg: str = "Should I be scared?"):
         """Kind of like the 'this is fine' meme, except you can make the dog say whatever you want."""
         img = Image.open("resources/img/pandemic.png")
@@ -105,7 +105,7 @@ class Fun(commands.Cog):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="pandemic.png"))
 
-    @commands.hybrid_command(brief="An Adventure Bot themed meme template.")
+    @commands.hybrid_command(description="An Adventure Bot themed meme template.")
     async def kick_meme(
             self, ctx: commands.Context,
             kickee: str = "Me dueling someone", kicker: str = "RNG"
@@ -121,7 +121,7 @@ class Fun(commands.Cog):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="kick.png"))
 
-    @commands.hybrid_command(aliases=["find_words", "findwords", "fw"], brief="Finds words with given letters.")
+    @commands.hybrid_command(aliases=["find_words", "findwords", "fw"], description="Finds words with given letters.")
     async def find_word(self, ctx: commands.Context, letters: str, limit: int = 5):
         """Finds words with given letters."""
         with open("resources/text/search.txt") as file:

@@ -15,7 +15,7 @@ class Actions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(aliases=["d"], brief="Get your daily rewards!")
+    @commands.hybrid_command(aliases=["d"], description="Get your daily rewards!")
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
         """Get your daily rewards!"""
@@ -89,7 +89,7 @@ class Actions(commands.Cog):
         dm.set_user_daily(a.id, dt.date.today())
         dm.set_user_streak(a.id, streak)
 
-    @commands.hybrid_command(brief="actions")
+    @commands.hybrid_command(description="Buy items in the shop.")
     @checks.is_registered()
     @checks.not_preoccupied("in the shop")
     @checks.level_check(3)
@@ -337,7 +337,7 @@ class Actions(commands.Cog):
             deals[selection][0] = "-"
             dm.set_user_deals(a.id, ",".join([".".join(i[:]) for i in deals]))
 
-    @commands.hybrid_command(brief="Trade with other players!")
+    @commands.hybrid_command(description="Trade with other players!")
     @checks.is_registered()
     @checks.not_preoccupied("trading")
     @checks.level_check(7)
