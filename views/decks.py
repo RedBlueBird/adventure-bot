@@ -6,7 +6,7 @@ import util as u
 
 class DeckButton(discord.ui.Button["Decks"]):
     def __init__(self, slot: int):
-        super().__init__(style=discord.ButtonStyle.green)
+        super().__init__(style=discord.ButtonStyle.blurple)
         self.slot = slot
         self.label = f"Deck {slot}"
 

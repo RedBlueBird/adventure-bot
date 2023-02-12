@@ -85,7 +85,7 @@ class Shop(discord.ui.View):
         self.gems = dm.get_user_gem(uid)
         self.tokens = dm.get_user_token(uid)
 
-    @discord.ui.button(label="Daily Deals", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Daily Deals", style=discord.ButtonStyle.blurple)
     async def daily_deals(self, i: discord.Interaction, button: discord.ui.Button):
         user_deals = dm.get_user_deals(self.uid).split(",")
         embed = discord.Embed(
@@ -116,7 +116,7 @@ class Shop(discord.ui.View):
 
         await i.response.edit_message(embed=embed)
 
-    @discord.ui.button(label="Card Packs", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Card Packs", style=discord.ButtonStyle.blurple)
     async def card_packs(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Card Packs:",
@@ -131,7 +131,7 @@ class Shop(discord.ui.View):
 
         await i.response.edit_message(embed=embed)
 
-    @discord.ui.button(label="Coins & Raid Tickets", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Coins & Raid Tickets", style=discord.ButtonStyle.blurple)
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Currencies:",
