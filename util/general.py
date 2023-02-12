@@ -40,7 +40,7 @@ def log_level_gen(i: int) -> int:
     :param i: Any positive number.
     :return: An integer between 1 and 10, inclusive.
     """
-    if i > 1:
+    if i <= 1:
         return 10
     val = 10 - math.floor(math.log(i - 1) / math.log(2))
     return min(10, max(1, val))  # Clamp between 1 and 10
