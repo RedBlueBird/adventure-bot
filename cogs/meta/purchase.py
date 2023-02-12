@@ -35,7 +35,7 @@ class Purchase(commands.Cog):
             embed = discord.Embed(title="Here's the things you can buy:") \
                 .add_field(name="Card Packs", value=f"`{u.PREF}buy (card pack name)`") \
                 .add_field(name="Coins", value=f"`{u.PREF}buy coins (coin deal name)`") \
-                .add_field(name="Tickets", value=f"`{u.PREF}buy coins (ticket deal name)`") \
+                .add_field(name="Tickets", value=f"`{u.PREF}buy tickets (ticket deal name)`") \
                 .add_field(name="Shop Refresh", value=f"`{u.PREF}buy r`") \
                 .add_field(name="Single Card", value=f"`{u.PREF}buy all`") \
                 .add_field(name="All Cards", value=f"`{u.PREF}buy (card #)`")
@@ -127,7 +127,10 @@ class Purchase(commands.Cog):
     @checks.not_preoccupied("in the shop")
     @checks.level_check(3)
     @checks.is_registered()
-    async def coins(self, ctx: Context, deal: str):
+    async def coins(
+            self, ctx: Context,
+            deal: t.Literal["gc1", "gc2", "gc3"]
+    ):
         # gem payment & coin gain
         deals = {
             "gc1": [3, 1000],
@@ -175,7 +178,10 @@ class Purchase(commands.Cog):
     @checks.not_preoccupied("in the shop")
     @checks.level_check(3)
     @checks.is_registered()
-    async def tickets(self, ctx: Context, deal: str):
+    async def tickets(
+            self, ctx: Context,
+            deal: t.Literal["rt1", "rt2", "rt3"]
+    ):
         deals = {
             "rt1": [2, 1],
             "rt2": [4, 3],
@@ -261,7 +267,7 @@ class Purchase(commands.Cog):
             await ctx.reply(f"You need {cost} {u.ICON['coin']} to buy all cards in the shop!")
             return
 
-        msg, confirm = confirm_purchase(
+        msg, confirm = await confirm_purchase(
             ctx,
             f"Do you want to buy all {count} card(s) in the shop for {cost} {u.ICON['coin']}?"
         )

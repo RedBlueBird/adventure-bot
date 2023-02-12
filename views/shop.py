@@ -7,38 +7,38 @@ PACKS = [
     {
         "name": "**Basic Pack**",
         "value": f"Cost: **3** {u.ICON['gem']}\n"
-                    "• contains 3 (lv 4-10) cards\n"
-                    f"`{u.PREF}buy basic`"
+                 "• contains 3 (lv 4-10) cards\n"
+                 f"`{u.PREF}buy basic`"
     },
     {
         "name": "**Fire Pack**",
         "value": f"Cost: **5** {u.ICON['gem']}\n"
-                    "• contains 4 (lv 4-10) cards with a\nhigher chance of fire cards\n"
-                    f"`{u.PREF}buy fire`"
+                 "• contains 4 (lv 4-10) cards with a\nhigher chance of fire cards\n"
+                 f"`{u.PREF}buy fire`"
     },
     {
         "name": "**Evil Pack**",
         "value": f"Cost: **5** {u.ICON['gem']}\n"
-                    "• contains 4 (lv 4-10) cards with a\nhigher chance of curse cards\n"
-                    f"`{u.PREF}buy evil`"
+                 "• contains 4 (lv 4-10) cards with a\nhigher chance of curse cards\n"
+                 f"`{u.PREF}buy evil`"
     },
     {
         "name": "**Electric Pack**",
         "value": f"Cost: **5** {u.ICON['gem']}\n"
-                    "• contains 4 (lv 4-10) cards with a\nhigher chance of electric cards\n"
-                    f"`{u.PREF}buy electric`"
+                 "• contains 4 (lv 4-10) cards with a\nhigher chance of electric cards\n"
+                 f"`{u.PREF}buy electric`"
     },
     {
         "name": "**Defensive Pack**",
         "value": f"Cost: **5** {u.ICON['gem']}\n"
-                    "• contains 4 (lv 4-10) cards with a\nhigher chance of defense cards\n"
-                    f"`{u.PREF}buy defensive`"
+                 "• contains 4 (lv 4-10) cards with a\nhigher chance of defense cards\n"
+                 f"`{u.PREF}buy defensive`"
     },
     {
         "name": "**Pro Pack**",
         "value": f"Cost: **24** {u.ICON['gem']}\n"
-                    "• contains 6 (lv 7-10) cards\n"
-                    f"`{u.PREF}buy pro`"
+                 "• contains 6 (lv 7-10) cards\n"
+                 f"`{u.PREF}buy pro`"
     },
     # {
     #     "name": "**Anniversary Pack**",
@@ -48,31 +48,30 @@ PACKS = [
     # }
 ]
 
-
 CURRENCY = [
     {
         "name": "**1000 Golden Coins**",
-        "value": f"Cost: **3** {u.ICON['gem']}\n`{u.PREF}buy gc1`"
+        "value": f"Cost: **3** {u.ICON['gem']}\n`{u.PREF}buy coins gc1`"
     },
     {
         "name": "**2250 Golden Coins**",
-        "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy gc2`"
+        "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy coins gc2`"
     },
     {
         "name": "**11000 Golden Coins**",
-        "value": f"Cost: **24** {u.ICON['gem']}\n`{u.PREF}buy gc3`"
+        "value": f"Cost: **24** {u.ICON['gem']}\n`{u.PREF}buy coins gc3`"
     },
     {
         "name": "**1 Raid Ticket**",
-        "value": f"Cost: **2** {u.ICON['gem']}\n`{u.PREF}buy rt1`"
+        "value": f"Cost: **2** {u.ICON['gem']}\n`{u.PREF}buy tickets rt1`"
     },
     {
         "name": "**2 Raid Ticket**",
-        "value": f"Cost: **4** {u.ICON['gem']}\n`{u.PREF}buy rt2`"
+        "value": f"Cost: **4** {u.ICON['gem']}\n`{u.PREF}buy tickets rt2`"
     },
     {
         "name": "**3 Raid Ticket**",
-        "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy rt3`"
+        "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy tickets rt3`"
     }
 ]
 
@@ -109,7 +108,7 @@ class Shop(discord.ui.View):
                     name=f"**[{rarity}] {card[1]} lv: {card[0][1:]}**",
                     value="Sold out"
                 )
-        
+
         embed.set_footer(
             text=f"Wait {u.time_til_midnight()} or use `{u.PREF}buy r` to refresh the shop"
         )
