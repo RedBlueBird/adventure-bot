@@ -108,7 +108,7 @@ class Fun(commands.Cog):
     @commands.hybrid_command(brief="An Adventure Bot themed meme template.")
     async def kick_meme(
             self, ctx: commands.Context,
-            kickee: str = "Me duelling someone", kicker: str = "RNG"
+            kickee: str = "Me dueling someone", kicker: str = "RNG"
     ):
         """A adventurers themed meme generator."""
         img = Image.open("resources/img/meme_template.png")

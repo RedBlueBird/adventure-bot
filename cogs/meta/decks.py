@@ -8,6 +8,7 @@ from discord.ext import commands
 from helpers import db_manager as dm
 from helpers import checks
 import util as u
+from views import Confirm
 
 
 class Decks(commands.Cog):
@@ -49,53 +50,46 @@ class Decks(commands.Cog):
         """Deletes unwanted cards."""
 
         a = ctx.author
-
         to_discard = []
         discard_msg = []
         error_msg = []
         for c in cards:
-            card_name = dm.get_card_name(a.id, c)
-            card_level = dm.get_card_level(a.id, c)
-            card_decks = dm.get_card_decks(c)
+            name = dm.get_card_name(a.id, c)
+            lvl = dm.get_card_level(a.id, c)
+            decks = dm.get_card_decks(c)
 
-            if not card_name or c in to_discard:
+            if not name or c in to_discard:
                 error_msg.append(f"You don't have a Card #{c}`!")
-            elif sum(card_decks):
+            elif any(decks):
                 error_msg.append(f"Card #`{c}` is in one of your decks!")
             else:
                 to_discard.append((c, a.id))
                 discard_msg.append(
-                    f"**[{u.rarity_cost(card_name)}] {card_name} lv: {card_level}** #`{c}`"
+                    f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`"
                 )
 
-        msg = f" \n".join(error_msg) + "\n"
+        msg = "\n".join(error_msg) + "\n"
         if len(to_discard) == 0:
             return
         else:
-            msg += f"You sure you want to discard: \n" + \
-                   f" \n".join(discard_msg) + \
+            msg += "You sure you want to discard:\n" + \
+                   "\n".join(discard_msg) + \
                    f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
-        msg = await ctx.reply(msg)
-        await msg.add_reaction("✅")
-        await msg.add_reaction("❎")
 
-        try:
-            reaction, _ = await self.bot.wait_for(
-                "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
-            )
-        except asyncio.TimeoutError:
-            await msg.edit(content=f"Discarding cancelled")
-            await msg.clear_reactions()
+        view = Confirm()
+        msg = await ctx.reply(msg, view=view)
+        await view.wait()
+
+        if view.value is None:
+            await msg.edit(content="Discarding timed out")
             return
-        
-        await msg.clear_reactions()
-        if reaction.emoji == "❎":
-            await msg.edit(content=f"Discarding cancelled")
+        if not view.value:
+            await msg.edit(content="Discarding cancelled")
             return
 
         dm.delete_user_cards(to_discard)
-        await msg.edit(content=f"{len(to_discard)} card(s) discarded successfully!")
+        s = 's' if len(to_discard) > 1 else ''
+        await msg.edit(content=f"{len(to_discard)} card{s} discarded successfully!")
 
     @commands.hybrid_command(aliases=["mer"], brief="Upgrade a card with two others.")
     @checks.is_registered()
@@ -104,95 +98,80 @@ class Decks(commands.Cog):
         """Upgrade a card to next level with two other cards."""
 
         a_id = ctx.author.id
-        mention = ctx.author.mention
 
-        dm.cur.execute(
-            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{a_id}'")
-        decks = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
-
-        dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card1}")
-        card1 = dm.cur.fetchall()[0]
-        if not card1:
+        c1_id = card1
+        card1 = dm.get_card_name(a_id, c1_id), dm.get_card_level(a_id, c1_id)
+        if card1[0] is None:
             await ctx.reply("You don't have the first card!")
             return
 
-        dm.cur.execute(f"SELECT card_name, card_level, owned_user FROM cardsinfo WHERE id = {card2}")
-        card2 = dm.cur.fetchall()[0]
-        if not card2:
-            await ctx.reply("You don't have the second card!")
+        c2_id = card2
+        card2 = dm.get_card_name(a_id, c2_id), dm.get_card_level(a_id, c2_id)
+        if card1[0] is None or card2[0] is None:
+            missing = 'first' if card1[0] is None else 'second'
+            await ctx.reply(f"You don't have the {missing} card!")
             return
 
-        if card1[2] != str(a_id) or card2[2] != str(a_id):
-            await ctx.reply("You have to own both cards!")
+        if card1[1] != card2[1]:
+            await ctx.reply("Both cards need to be the same level!")
             return
 
-        if card1[1] != card2[1] or \
-                u.cards_dict(1, card1[0])["rarity"] != u.cards_dict(1, card2[0])["rarity"]:
-            await ctx.reply("Both cards need to be the same level and rarity!")
+        if u.cards_dict(1, card1[0])["rarity"] != u.cards_dict(1, card2[0])["rarity"]:
+            await ctx.reply("Both cards need to be the same rarity!")
             return
 
         if card1[1] >= 15:
             await ctx.reply("The card to merge is maxed out!")
             return
 
-        if card2 in decks:
+        if any(dm.get_card_decks(c2_id)):
             await ctx.reply(
                 "The sacrificial card you chose "
                 "is currently in one of your deck slots- \n"
-                f"`{u.PREF}remove (* card_ids)` first before you merge it away!"
+                f"Use `{u.PREF}remove (* card_ids)` first before you merge it away!"
             )
             return
 
-        dm.cur.execute("SELECT * FROM playersinfo WHERE userid = " + str(a_id))
-        player_info = dm.cur.fetchall()
-
         merge_cost = math.floor(((card1[1] + 1) ** 2) * 10)
-        if player_info[0][5] < merge_cost:
+        coins = dm.get_user_coin(a_id)
+        if coins < merge_cost:
             await ctx.reply(f"You don't have enough coins ({merge_cost} coins) to complete this merge!")
             return
 
+        view = Confirm()
         msg = await ctx.reply(
             f"**[{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}**\n"
             f"**[{u.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}**\n"
-            f"merging cost {merge_cost} {u.ICON['coin']}."
+            f"merging cost {merge_cost} {u.ICON['coin']}.",
+            view=view
         )
-        await msg.add_reaction("✅")
-        await msg.add_reaction("❎")
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
-            )
-        except asyncio.TimeoutError:
-            await msg.edit(content=f"{mention}, merging timed out")
-            await msg.clear_reactions()
-        else:
-            if reaction.emoji == "❎":
-                await msg.edit(content=f"{mention}, merging timed out")
-                await msg.clear_reactions()
-            else:
-                await msg.delete()
-                dm.log_quest(7, 1, a_id)
-                sql = "UPDATE playersinfo SET coins = coins - %s, exps = exps + %s WHERE userid = %s"
-                value = (math.floor(((card1[1] + 1) ** 2) * 10), (card1[1] + 1) * 10, a_id)
-                dm.cur.execute(sql, value)
-                dm.cur.execute(f"DELETE FROM cardsinfo WHERE id = {card2}")
-                dm.cur.execute(f"UPDATE cardsinfo SET card_level = card_level + 1 WHERE id = {card1}")
-                dm.db.commit()
+        await view.wait()
 
-                embed = discord.Embed(
-                    title="Cards merged successfully!",
-                    description=f"-{math.floor(((card1[1] + 1) ** 2) * 10)} {u.ICON['coin']} "
-                                f"+{(card1[1] + 1) * 10} {u.ICON['exp']}",
-                    color=discord.Color.green()
-                )
-                embed.add_field(
-                    name=f"You got a [{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1] + 1} from:",
-                    value=f"[{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]} \n"
-                          f"[{u.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}"
-                )
-                embed.set_thumbnail(url=ctx.author.avatar.url)
-                await ctx.send(embed=embed)
+        if view.value is None:
+            await msg.edit(content="Merging timed out")
+            return
+        if not view.value:
+            await msg.edit(content="Merging cancelled")
+            return
+
+        dm.log_quest(7, 1, a_id)
+        dm.set_user_coin(a_id, coins - merge_cost)
+        dm.delete_user_cards([(c2_id, a_id)])
+        dm.set_card_level(a_id, c1_id, card1[1] + 1)
+
+        embed = discord.Embed(
+            title="Cards merged successfully!",
+            description=f"-{merge_cost} {u.ICON['coin']} "
+                        f"+{(card1[1] + 1) * 10} {u.ICON['exp']}",
+            color=discord.Color.green()
+        )
+        embed.add_field(
+            name=f"You got a [{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1] + 1} from:",
+            value=f"[{u.rarity_cost(card1[0])}] {card1[0]} lv: {card1[1]}\n"
+                  f"[{u.rarity_cost(card2[0])}] {card2[0]} lv: {card2[1]}"
+        )
+        embed.set_thumbnail(url=ctx.author.avatar.url)
+        await msg.edit(content=None, embed=embed, view=None)
 
     @commands.hybrid_command(
         aliases=["selectdeck", "sel", "se"],
@@ -365,22 +344,15 @@ class Decks(commands.Cog):
             await ctx.reply(f"Your deck's already empty!")
             return
 
-        msg = await ctx.reply(f"Do you really want to clear deck #{slot}?")
-        await msg.add_reaction("✅")
-        await msg.add_reaction("❎")
-        try:
-            reaction, _ = await self.bot.wait_for(
-                "reaction_add", timeout=30.0,
-                check=checks.valid_reaction(["❎", "✅"], ctx.author, msg)
-            )
-        except asyncio.TimeoutError:
-            await msg.edit(content=f"Clearing deck cancelled")
-            return
-        finally:
-            await msg.clear_reactions()
+        view = Confirm()
+        msg = await ctx.reply(f"Do you really want to clear deck #{slot}?", view=view)
+        await view.wait()
 
-        if reaction.emoji == "❎":
-            await msg.edit(content=f"Clearing deck cancelled")
+        if view.value is None:
+            await msg.edit(content="Clearing timed out")
+            return
+        if not view.value:
+            await msg.edit(content="Clearing cancelled")
             return
 
         for i in deck:

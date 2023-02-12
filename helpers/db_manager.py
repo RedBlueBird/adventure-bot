@@ -48,13 +48,13 @@ def is_registered(uid: int) -> bool:
 
 
 def log_quest(quest_type: int, value: int, userid):
-    cur.execute(f"select quests from playersinfo where userid = {userid}")
+    cur.execute(f"SELECT quests FROM temp2 WHERE userid = {userid}")
     quests = cur.fetchall()[0][0].split(",")
     for x in range(len(quests) - 1):
         if quests[x].split(".")[1] == str(quest_type):
             quests[x] = ".".join(quests[x].split(".")[0:2]) + "." + str(int(quests[x].split(".")[2]) + value)
             break
-    cur.execute(f"update playersinfo set quests = '{','.join(quests[:])}' where userid = {userid}")
+    cur.execute(f"UPDATE temp2 SET quests = '{','.join(quests[:])}' WHERE userid = {userid}")
     db.commit()
 
 
@@ -237,9 +237,10 @@ def get_user_deck(uid: int, slot: int = -1) -> list[tuple[int, str, int]]:
     elif order == 6:
         order_by = "id desc, card_name"
 
+    db_deck = f"deck{slot}"
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
-        f"owned_user = {uid} AND deck{slot} = 1 ORDER BY {order_by}"
+        f"owned_user = {uid} AND {db_deck} = 1 ORDER BY {order_by}"
     )
     result = cur.fetchall()
     if order in [7, 8]:
@@ -300,29 +301,37 @@ def delete_user_cards(cards: list[tuple[int, int]]):
     db.commit()
 
 
-def get_card_name(uid: int, id: int) -> str:
-    cur.execute(f"SELECT card_name FROM temp_cards WHERE id = {id} AND owned_user = {uid}")
-    result = cur.fetchall()
-    return None if len(result) == 0 else result[0][0]
-
-def get_card_level(uid: int, id: int) -> int:
-    cur.execute(f"SELECT card_level FROM temp_cards WHERE id = {id} AND owned_user = {uid}")
+def get_card_name(uid: int, cid: int) -> str | None:
+    cur.execute(f"SELECT card_name FROM temp_cards WHERE id = {cid} AND owned_user = {uid}")
     result = cur.fetchall()
     return None if len(result) == 0 else result[0][0]
 
 
-def get_card_decks(id: int) -> list[int]:
-    cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM temp_cards WHERE id = {id}")
+def get_card_level(uid: int, cid: int) -> int | None:
+    cur.execute(f"SELECT card_level FROM temp_cards WHERE id = {cid} AND owned_user = {uid}")
+    result = cur.fetchall()
+    return None if len(result) == 0 else result[0][0]
+
+
+def set_card_level(uid: int, cid: int, lvl: int):
+    cur.execute(f"UPDATE temp_cards SET card_level = {lvl} WHERE id = {cid}")
+    db.commit()
+
+
+def get_card_decks(cid: int) -> list[int]:
+    cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM temp_cards WHERE id = {cid}")
     result = cur.fetchall()
     return None if len(result) == 0 else result[0]
+
 
 def add_user(uid: int):
     cur.execute(f"INSERT INTO temp2 (userid) VALUES ({uid})")
     db.commit()
 
 
-def set_user_card_deck(uid: int, slot: int, value: int, id: int):
-    cur.execute(f"UPDATE temp_cards SET deck{slot} = {value} WHERE id = {id} AND owned_user = {uid}")
+def set_user_card_deck(uid: int, slot: int, value: int, cid: int):
+    db_deck = f"deck{slot}"
+    cur.execute(f"UPDATE temp_cards SET {db_deck} = {value} WHERE id = {cid} AND owned_user = {uid}")
     db.commit()
 
 
