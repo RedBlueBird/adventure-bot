@@ -5,13 +5,14 @@ import time as times
 import datetime as dt
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
 import util as u
 from helpers import checks
-from views import Shop, CardPages, Decks
+from views import Shop, CardPages, Decks, Leaderboard
 
 
 class Info(commands.Cog):
@@ -217,50 +218,14 @@ class Info(commands.Cog):
     )
     async def leaderboard(
             self, ctx: Context,
-            lb_type: t.Literal["level", "coins", "gems", "medals", "tokens"] | None
+            name: t.Literal["Level", "Coins", "Gems", "Medals", "Tokens"]
     ) -> None:
         """
         Displays the world's top players.
-        :param lb_type: The type of leaderboard to display
+        :param name: The leaderboard to display
         """
-
-        lim = 10
-        raw_descr = None
-        if lb_type == "level":
-            lb_type = "XP"
-            raw_descr = "• Level: {}, Exp: {}"
-        elif lb_type == "coins":
-            lb_type = "Golden Coins"
-            raw_descr = "• Golden Coins: {}, Shiny Gems: {}"
-        elif lb_type == "gems":
-            lb_type = "Shiny Gems"
-            raw_descr = "• Shiny Gems: {}, Golden Coins: {}"
-        elif lb_type == "medals":
-            lb_type = "Medals"
-            raw_descr = "• Medals: {}"
-        elif lb_type == "tokens":
-            lb_type = "Tokens"
-            raw_descr = "• Tokens: {}"
-        assert raw_descr is not None
-
-        selected_players = []
-        players = dm.get_leaderboard(lb_type, lim)
-        for index, player in enumerate(players):
-            username = await self.bot.fetch_user(str(player[1]))
-            name = f"**[{index + 1}] {username}**\n"
-
-            descr = raw_descr.format(*player[2:])
-
-            if str(player[1]) == str(ctx.author.id):
-                descr = f"__{descr}__"
-            selected_players.append("".join([name, descr + "\n"]))
-
-        embed = discord.Embed(
-            title=f"Leaderboard - most {lb_type}",
-            description="".join(selected_players),
-            color=discord.Color.gold()
-        )
-        await ctx.send(embed=embed)
+        view = Leaderboard(name, ctx.author.id, self.bot)
+        await ctx.send(embed=await view.generate_embed(), view=view)
 
     @commands.hybrid_command(
         name="deck",
