@@ -18,7 +18,7 @@ class General(commands.Cog):
             title="Help", description="List of available commands:", color=0x9C84EF
         )
         for i in self.bot.cogs:
-            cog = self.bot.get_cog(i.lower())
+            cog = self.bot.get_cog(i)
             data = []
             for cmd in cog.get_commands():
                 description = cmd.description.partition('\n')[0]
