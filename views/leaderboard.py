@@ -16,7 +16,7 @@ class Leaderboard(discord.ui.View):
     def change_select_default(self):
         select = self.children[0]
         for index, option in enumerate(select.options):
-            if option.value == self.name:
+            if option.value.lower() == self.name:
                 select.options[index].default = True
             else:
                 select.options[index].default = False
@@ -25,19 +25,19 @@ class Leaderboard(discord.ui.View):
         limit = 10
         description_format = None
         match self.name:
-            case "Level":
+            case "level":
                 order_by = "XP"
                 description_format = "• Level: {}, Exp: {}"
-            case "Coins":
+            case "coins":
                 order_by = "Golden Coins"
                 description_format = "• Golden Coins: {}, Shiny Gems: {}"
-            case "Gems":
+            case "gems":
                 order_by = "Shiny Gems"
                 description_format = "• Shiny Gems: {}, Golden Coins: {}"
-            case "Medals":
+            case "medals":
                 order_by = "Medals"
                 description_format = "• Medals: {}"
-            case "Tokens":
+            case "tokens":
                 order_by = "Tokens"
                 description_format = "• Tokens: {}"
         assert description_format is not None
@@ -67,6 +67,6 @@ class Leaderboard(discord.ui.View):
         ]
     )
     async def select_leaderboard(self, interaction: discord.Interaction, select: discord.ui.Select):
-        self.name = select.values[0]
+        self.name = select.values[0].lower()
         self.change_select_default()
         await interaction.response.edit_message(embed=await self.generate_embed(), view=self)
