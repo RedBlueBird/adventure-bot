@@ -121,7 +121,10 @@ class Fun(commands.Cog):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="kick.png"))
 
-    @commands.hybrid_command(aliases=["find_words", "findwords", "fw"], description="Finds words with given letters.")
+    @commands.hybrid_command(
+        aliases=["find_words", "findwords", "fw"],
+        description="Finds words with given letters."
+    )
     async def find_word(self, ctx: commands.Context, letters: str, limit: int = 5):
         """Finds words with given letters."""
         with open("resources/text/search.txt") as file:

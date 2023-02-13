@@ -14,7 +14,7 @@ class Classify:
     Only has an info field containing everything about the given in a single dict.
     Indices start at 1, not 0.
     """
-    def __init__(self, given: List):
+    def __init__(self, given: list):
         self.info = {i + 1: given[i] for i in range(len(list(given)))}
 
 

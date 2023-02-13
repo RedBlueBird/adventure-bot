@@ -427,7 +427,7 @@ def get_leaderboard(order_by: str, limit: int) -> list[tuple[int, str, int] | tu
     elif order_by == "Tokens":
         select = ["id", "userid", "event_token"]
         order = ["event_token DESC"]
-    cur.execute(f"SELECT {','.join(select)} FROM playersinfo ORDER BY {','.join(order)} LIMIT {limit}")
+    cur.execute(f"SELECT {','.join(select)} FROM temp2 ORDER BY {','.join(order)} LIMIT {limit}")
     return cur.fetchall()
 
 

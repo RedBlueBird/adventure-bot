@@ -66,11 +66,11 @@ CURRENCY = [
         "value": f"Cost: **2** {u.ICON['gem']}\n`{u.PREF}buy tickets rt1`"
     },
     {
-        "name": "**2 Raid Ticket**",
+        "name": "**2 Raid Tickets**",
         "value": f"Cost: **4** {u.ICON['gem']}\n`{u.PREF}buy tickets rt2`"
     },
     {
-        "name": "**3 Raid Ticket**",
+        "name": "**3 Raid Tickets**",
         "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy tickets rt3`"
     }
 ]
