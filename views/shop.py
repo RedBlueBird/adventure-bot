@@ -101,7 +101,8 @@ class Shop(discord.ui.View):
                 cost = round(1.6 ** int(card[0]) * 50 * u.price_factor(card[1]))
                 embed.add_field(
                     name=f"**[{rarity}] {card[1]} lv: {card[0]}**",
-                    value=f"Cost: **{cost}** {u.ICON['coin']}\n`{u.PREF}buy {v + 1}`"
+                    value=f"Cost: **{cost}** {u.ICON['coin']}\n"
+                          f"`{u.PREF}buy card {v + 1}`"
                 )
             else:
                 embed.add_field(
@@ -110,7 +111,7 @@ class Shop(discord.ui.View):
                 )
 
         embed.set_footer(
-            text=f"Wait {u.time_til_midnight()} or use `{u.PREF}buy r` to refresh the shop"
+            text=f"Wait {u.time_til_midnight()} or do `{u.PREF}buy r` to refresh the shop"
         )
 
         await i.response.edit_message(embed=embed)

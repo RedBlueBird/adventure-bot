@@ -314,7 +314,8 @@ class Purchase(commands.Cog):
         if not (0 < card + 1 < len(deals)):
             await ctx.reply(f"The deal number must be between 1 and {len(deals)}!")
             return
-        if deals[card][0] == "-":
+        
+        if deals[card][0][0] == "-":
             await ctx.reply("You already bought this card!")
             return
         if dm.get_user_cards_count(a.id) == u.MAX_CARDS:
@@ -336,6 +337,7 @@ class Purchase(commands.Cog):
 
         dm.add_user_cards([(a.id, deals[card][1], int(deals[card][0]))])
         dm.set_user_coin(a.id, coins - card_cost)
+        deals[card][0] = f"-{deals[card][0]}"
         dm.set_user_deals(a.id, ",".join([".".join(i) for i in deals]))
         await msg.edit(
             content="You successfully bought a "
@@ -344,7 +346,6 @@ class Purchase(commands.Cog):
                     f"{card_cost} {u.ICON['coin']}!",
             view=None
         )
-        deals[card][0] = "-"
 
 
 async def setup(bot):
