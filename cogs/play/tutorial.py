@@ -9,7 +9,7 @@ from discord.ext import commands
 from helpers import checks
 from helpers import db_manager as dm
 from helpers.checks import valid_reaction, valid_reply
-from helpers.battle import BattleData
+from helpers import BattleData
 import util as u
 from views import Confirm
 

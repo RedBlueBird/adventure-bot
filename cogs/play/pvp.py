@@ -9,7 +9,7 @@ from discord.ext import commands
 import util as u
 from helpers import checks
 from helpers import db_manager as dm
-from helpers.battle import BattleData
+from helpers import BattleData
 from views import PvpInvite
 
 
