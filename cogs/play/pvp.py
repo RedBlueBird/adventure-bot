@@ -129,13 +129,6 @@ class Pvp(commands.Cog):
 
         await ctx.send(embed=embed)
 
-        print(teams)
-        print(names)
-        print(c_ids)
-        print(decks)
-        print(bps)
-        print(hps)
-
         # START THE BATTLE!
         offset = len(c_ids) - len(joined_users)
         dd = BattleData(
