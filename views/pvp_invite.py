@@ -15,7 +15,9 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
     async def callback(self, i: discord.Interaction):
         assert self.view is not None
         id_ = i.user.id
-        if id_ in dm.queues and i.user not in self.view.rejected:
+
+        not_host = id_ != self.view.host.id
+        if not_host and id_ in dm.queues and i.user not in self.view.rejected:
             await i.response.send_message(
                 f"You can't accept the request- you're still {dm.queues[id_]}!",
                 ephemeral=True
@@ -95,7 +97,9 @@ class PvpInvite(discord.ui.View):
             return
 
         if i.user == self.host:
-            await i.response.send_message("The host cancelled the battle!")
+            await i.response.edit_message(
+                content="The host cancelled the battle!", view=None
+            )
             self.stop()
             return
 
@@ -110,5 +114,8 @@ class PvpInvite(discord.ui.View):
             self.rejected.add(i.user)
             await i.response.send_message(f"{i.user} rejected the battle...")
             if len(self.rejected) == len(self.invited) - 1:
-                await i.channel.send("Everyone rejected the battle...")
+                await i.response.edit_message(
+                    content="Everyone rejected the battle...",
+                    view=None
+                )
                 self.stop()

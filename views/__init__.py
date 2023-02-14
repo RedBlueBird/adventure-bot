@@ -5,3 +5,4 @@ from .decks import Decks
 from .confirm import Confirm
 from .leaderboard import Leaderboard
 from .pvp_invite import PvpInvite
+from .battle_select import BattleSelect

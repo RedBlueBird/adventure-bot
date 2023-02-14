@@ -10,20 +10,22 @@ import util as u
 from helpers import checks
 from helpers import db_manager as dm
 from helpers import BattleData
-from views import PvpInvite
+from views import BattleSelect, PvpInvite
 
 
 class Pvp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["challenge", "battles", "bat", "pvp"], description="Battle with other players!")
+    @commands.command(
+        aliases=["challenge", "battles", "bat", "pvp"],
+        description="Battle with other players!"
+    )
     @checks.level_check(5)
     @checks.not_preoccupied("in a friendly battle")
     @checks.is_registered()
     async def battle(
             self, ctx: commands.Context,
-            people: commands.Greedy[discord.Member],
             gamble_medals: int = 0,
     ):
         a = ctx.author
@@ -32,43 +34,48 @@ class Pvp(commands.Cog):
             await ctx.reply("You can't bet that amount of medals!")
             return
 
-        if not 1 <= len(people) <= 5:
-            await ctx.reply("You need to invite at least 1 player and at most 5 players!")
-            return
+        view = BattleSelect(a)
+        msg = await ctx.reply(view=view)
+        while True:
+            await view.wait()
+            people = view.selected
+            for p in people:
+                id_ = p.id
+                if not dm.is_registered(id_):
+                    await ctx.reply("That user doesn't exist in the bot yet!")
+                    break
 
-        c_ids = [a.id] + [i.id for i in people]
+                if id_ in dm.queues and id_ != a.id:
+                    await ctx.reply(f"{p.mention} is still {dm.queues[id_]}!")
+                    break
+
+                level = dm.get_user_level(id_)
+                # if level < 5:
+                #     await ctx.reply(f"{u.mention} isn't level 5 yet!")
+                #     break
+
+                if dm.get_user_medal(id_) < gamble_medals:
+                    await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
+                    break
+
+                if dm.get_user_deck_count(id_) != 12:
+                    await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
+                    break
+            else:
+                break
+            
+            view = BattleSelect(a)
+            msg.edit(view=view)
+
+        c_ids = [a.id] + [p.id for p in people]
         people = [ctx.author] + people
         names = []
         decks = []
         hps = []
         bps = []
 
-        # performs some checks on the user seeing if they're valid
         for p in people:
-            id_ = p.id
-            # checks if the people that you challenged are valid
-            if not dm.is_registered(id_):
-                await ctx.reply("That user doesn't exist in the bot's database yet!")
-                return
-
-            if id_ in dm.queues and id_ != a.id:
-                await ctx.reply(f"{p.mention} is still {dm.queues[id_]}!")
-                return
-
-            level = dm.get_user_level(id_)
-            # if level < 5:
-            #     await ctx.reply(f"{p.mention} isn't level 5 yet!")
-            #     return
-
-            if dm.get_user_medal(id_) < gamble_medals:
-                await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
-                return
-
-            deck = dm.get_user_deck(id_)
-            if len(deck) != 12:
-                await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
-                return
-            deck = [f"{c[2]}.{c[1]}" for c in deck]
+            deck = [f"{c[2]}.{c[1]}" for c in dm.get_user_deck(p.id)]
             random.shuffle(deck)
             decks.append(deck)
 
@@ -83,10 +90,9 @@ class Pvp(commands.Cog):
             req_msg += f"{a.mention} wants to battle with {gamble_medals} {u.ICON['medal']}!\n"
         else:
             req_msg += f"{a.mention} wants to have a friendly battle!\n"
-        req_msg += "Host ✅ to start the battle, ❎ to cancel"
 
         view = PvpInvite(ctx.author, people, 6)
-        await ctx.send(content=req_msg, view=view)
+        await msg.edit(content=req_msg, view=view)
         await view.wait()
 
         if not view.start:
@@ -107,10 +113,11 @@ class Pvp(commands.Cog):
                 counter += 1
 
         if gamble_medals > 0:
+            desc = " vs ".join([str(x) for x in names[len(c_ids) - len(joined_users):]])
+            s = "s" if gamble_medals > 1 else ""
             embed = discord.Embed(
-                title=f"A {gamble_medals} Medal(s) Battle Just Started!",
-                description=" vs ".join(
-                    [str(x) for x in names[len(c_ids) - len(joined_users):]]),
+                title=f"A {gamble_medals}-Medal{s} Battle Just Started!",
+                description=desc,
                 color=discord.Color.gold()
             )
         else:
@@ -121,6 +128,13 @@ class Pvp(commands.Cog):
             )
 
         await ctx.send(embed=embed)
+
+        print(teams)
+        print(names)
+        print(c_ids)
+        print(decks)
+        print(bps)
+        print(hps)
 
         # START THE BATTLE!
         offset = len(c_ids) - len(joined_users)

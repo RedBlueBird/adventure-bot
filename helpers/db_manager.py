@@ -213,7 +213,8 @@ def get_user_cards_count(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck_count(uid: int, slot: int) -> int:
+def get_user_deck_count(uid: int, slot: int | None = None) -> int:
+    slot = get_user_deck_slot(uid) if slot is None else slot
     db_deck = f"deck{slot}"
     cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid} AND {db_deck} = 1")
     return cur.fetchall()[0][0]
