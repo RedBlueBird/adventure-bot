@@ -50,44 +50,44 @@ def level_check(lvl: int):
 
 
 def valid_reply(
-        valid_replies: list[str] | str,
-        valid_authors: list[discord.Member] | discord.Member,
-        valid_channels: list[discord.TextChannel] | discord.TextChannel
+        replies: list[str] | str,
+        authors: list[discord.Member] | discord.Member,
+        channels: list[discord.TextChannel] | discord.TextChannel
 ):
-    if not isinstance(valid_replies, list):
-        valid_replies = [valid_replies]
-    if not isinstance(valid_authors, list):
-        valid_authors = [valid_authors]
-    if not isinstance(valid_channels, list):
-        valid_channels = [valid_channels]
+    if not isinstance(replies, list):
+        replies = [replies]
+    if not isinstance(authors, list):
+        authors = [authors]
+    if not isinstance(channels, list):
+        channels = [channels]
 
     def _valid_reply(msg: discord.Message):
-        if msg.channel not in valid_channels:
+        if msg.channel not in channels:
             return False
-        if msg.author not in valid_authors:
+        if msg.author not in authors:
             return False
-        return any(msg.content.lower().startswith(f"{u.PREF}{s}") for s in valid_replies)
+        return any(msg.content.lower().startswith(f"{u.PREF}{s}") for s in replies)
 
     return _valid_reply
 
 
 def valid_reaction(
-        valid_reactions: list[str] | str,
-        valid_reactors: list[discord.Member] | discord.Member,
-        valid_messages: list[discord.Message] | discord.Message
+        reactions: list[str] | str,
+        reactors: list[discord.Member] | discord.Member,
+        msg: list[discord.Message] | discord.Message
 ):
-    if not isinstance(valid_reactions, list):
-        valid_reactions = [valid_reactions]
-    if not isinstance(valid_reactors, list):
-        valid_reactors = [valid_reactors]
-    if not isinstance(valid_messages, list):
-        valid_messages = [valid_messages]
+    if not isinstance(reactions, list):
+        reactions = [reactions]
+    if not isinstance(reactors, list):
+        reactors = [reactors]
+    if not isinstance(msg, list):
+        msg = [msg]
 
     def _valid_reaction(rct: discord.Reaction, author: discord.Member):
-        if str(rct.emoji) not in valid_reactions:
+        if str(rct.emoji) not in reactions:
             return False
-        if author not in valid_reactors:
+        if author not in reactors:
             return False
-        return rct.message.id in [m.id for m in valid_messages]
+        return rct.message.id in [m.id for m in msg]
 
     return _valid_reaction
