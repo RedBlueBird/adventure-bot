@@ -385,20 +385,20 @@ class Pvp(commands.Cog):
                 embed = discord.Embed(
                     title="Battle Ended!",
                     description=f"**Team {dd.pps[dd.afk]} won!**\n\n"
-                                f"Each winner gained {medal_amt} medals \n"
-                                f"Everyone else lost {gamble_medals} medals \n"
-                                f"Everyone gained {dd.turns * 2} experience points \n"
-                                f"This battle took {dd.turns} turns",
+                                f"Each winner gained {medal_amt} medals\n"
+                                f"Everyone else lost {gamble_medals} medals\n"
+                                f"Everyone gained {dd.turns * 2} XP",
                     color=discord.Color.green()
                 )
             else:
                 embed = discord.Embed(
                     title="Battle Ended!",
-                    description=f"**Team {dd.pps[dd.afk]} won the friendly battle!** \n"
-                                f"\nEveryone gained {dd.turns * 2} experience points \n"
-                                f"This battle took {dd.turns} turns",
+                    description=f"**Team {dd.pps[dd.afk]} won the friendly battle!**\n\n"
+                                f"Everyone gained {dd.turns * 2} XP",
                     color=discord.Color.green()
                 )
+            
+            embed.set_footer(f"This battle took {dd.turns} turns")
             await ctx.send(embed=embed)
 
         else:
@@ -412,14 +412,15 @@ class Pvp(commands.Cog):
 
             embed = discord.Embed(
                 title="Battle Ended!",
-                description=f"**It's a Tie!**\n\nNo one gained or lost any medals!"
-                            f"\nEveryone gained {dd.turns * 2} experience points"
-                            f"\nThis battle took {dd.turns} turns",
+                description=f"**It's a Tie!**\n\n"
+                            f"No one gained or lost any medals!\n"
+                            f"Everyone gained {dd.turns * 2} experience points",
                 color=discord.Color.green()
             )
+            embed.set_footer(f"This battle took {dd.turns} turns")
             await ctx.send(embed=embed)
 
-        for u_ in list(set(list(dd.p_ids.info.values()))):
+        for u_ in set(dd.p_ids.info.values()):
             del dm.queues[u_]
 
 
