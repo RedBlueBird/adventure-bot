@@ -11,40 +11,39 @@ from helpers import db_manager as dm
 from helpers.checks import valid_reaction, valid_reply
 from helpers.battle import BattleData
 import util as u
+from views import Confirm
 
 
 class Tutorial(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(aliases=["tutorials", "tutor"], description="New to the bot? Here's a tutorial!")
+    @commands.hybrid_command(
+        aliases=["tutorials", "tutor"],
+        description="New to the bot? Here's a tutorial!"
+    )
     @checks.is_registered()
+    @checks.not_preoccupied("learning how to play the bot")
     async def tutorial(self, ctx: commands.Context):
-        """A battle simulator that gives people new to the bot a simple tutorial."""
-
         author = ctx.author
         mention = author.mention
         a_id = author.id
-        start_msg = await ctx.send(
-            f"{mention}, Hello! \nYou want to learn the basics of battling in this bot? :smiley:"
+
+        view = Confirm("Yeah!", "No thanks.")
+        start_msg = await ctx.reply(
+            "Hello!\nYou want to learn the basics of battling in this bot? :smiley:",
+            view=view
         )
-        await start_msg.add_reaction("✅")
-        await start_msg.add_reaction("❎")
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", timeout=30.0, check=valid_reaction(["✅", "❎"], [author], [start_msg])
-            )
-        except asyncio.TimeoutError:
-            await start_msg.clear_reactions()
-            await start_msg.edit(content=f"{mention}, afk? :weary:")
+        await view.wait()
+
+        if view.value is None:
+            await start_msg.edit(content="did you go afk? :weary:", view=None)
             return
-        if reaction.emoji == "❎":
-            await start_msg.clear_reactions()
-            await start_msg.edit(content=f"{mention}, oh man. :frowning:")
+        if not view.value:
+            await start_msg.edit(content="oh well. :frowning:", view=None)
             return
-        await start_msg.clear_reactions()
-        await start_msg.edit(content=f"{mention}, let's get started then! :smile:")
-        dm.queues[a_id] = "learning how to play the bot"
+
+        await start_msg.edit(content="Alright, let's get started then! :smile:", view=None)
         loading_embed_message = discord.Embed(title="Loading...", description=u.ICON["load"])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hand_msg = await ctx.send(embed=loading_embed_message)
@@ -52,7 +51,8 @@ class Tutorial(commands.Cog):
         tutorial = deepcopy(u.TUTORIAL)
         tutorial["procedure"] = [msg.format(prefix=u.PREF) for msg in tutorial["procedure"]]
         tutorial["triggered_message"] = {
-            step: [msg.format(prefix=u.PREF) for msg in msgs] for step, msgs in tutorial["triggered_message"].items()
+            step: [msg.format(prefix=u.PREF) for msg in msgs]
+            for step, msgs in tutorial["triggered_message"].items()
         }
         tutorial["players"][0] = author
         tutorial["p_ids"][0] = a_id
@@ -79,33 +79,28 @@ class Tutorial(commands.Cog):
 
         await stats_msg.edit(embed=dd.show_stats())
         await hand_msg.edit(embed=dd.show_hand())
-        msg = await ctx.send(procedure[step])
+
+        view = Confirm("Continue", "Exit tutorial")
+        msg = await ctx.reply(procedure[step], view=view)
         while step < 4:
-            await msg.add_reaction("✅")
-            await msg.add_reaction("❎")
-            try:
-                reaction, user = await self.bot.wait_for(
-                    "reaction_add", timeout=120.0, check=valid_reaction(["✅", "❎"], [author], [msg])
-                )
-            except asyncio.TimeoutError:
-                await msg.clear_reactions()
-                await msg.edit(content=f"{mention}, how DAre you sLeEp dUring my lEcTuRe! :triumph:")
+            await view.wait()
+            if view.value is None:
+                await msg.edit(content="how DAre you sLeEp dUring my lEcTuRe! :triumph:", view=None)
                 return
-            if reaction.emoji == "❎":
-                await msg.clear_reactions()
-                await msg.edit(content=f"{mention}, you exited the tutorial! :cry:")
+            if not view.value:
+                await msg.edit(content="You exited the tutorial! :cry:", view=None)
                 return
 
             step += 1
-            await msg.clear_reactions()
-            await msg.edit(content=procedure[step])
+            view = Confirm("Continue", "Exit tutorial")
+            await msg.edit(content=procedure[step], view=view)
 
         def check_status():
             alive = []
-            for x in dd.teams:
-                for y in dd.teams[x]:
-                    if dd.hps.info[y][0] > 0 and dd.staminas.info[y] > 0:
-                        alive.append(x)
+            for team in dd.teams:
+                for p in dd.teams[team]:
+                    if dd.hps.info[p][0] > 0 and dd.staminas.info[p] > 0:
+                        alive.append(team)
                         break
             if not alive:
                 dd.afk = 7
@@ -125,26 +120,26 @@ class Tutorial(commands.Cog):
             ):
                 try:
                     reply = await self.bot.wait_for(
-                        "message", timeout=120.0, check=valid_reply([""], [author], [ctx.message.channel])
+                        "message", timeout=120.0,
+                        check=valid_reply("", author, ctx.channel)
                     )
                     await reply.delete()
                 except asyncio.TimeoutError:
                     dd.hps.info[1][0] = 0
                     dd.staminas.info[1] = 0
                     dd.descriptions.info[1].append("Went afk!")
-                    await ctx.send(f"{mention}, really...? Afk? :weary:")
+                    await ctx.reply("did you go afk? :weary:")
                     return
+
                 action = dd.interpret_message(reply.content[len(u.PREF):], str(dd.players.info[1]), 1)
-                if reply.content[len(u.PREF):].lower() == "exit":
+                content = reply.content[len(u.PREF):].lower()
+                if content == "exit":
                     action = "exit"
-                elif reply.content[len(u.PREF):].lower().startswith("info"):
-                    action = "info"
 
                 if action == "exit":
                     await ctx.send("You exited the tutorial!")
                     return
-                if action == "info":
-                    pass
+
                 elif (
                     step < 21
                     and action != "refresh"
@@ -578,20 +573,18 @@ class Tutorial(commands.Cog):
             final_step = 34
 
         await msg.delete()
-        msg = await ctx.send(procedure[step])
+        view = Confirm("Continue", "Exit")
+        msg = await ctx.send(procedure[step], view=view)
         while step < final_step:
-            await msg.add_reaction("✅")
-            try:
-                reaction, user = await self.bot.wait_for(
-                    "reaction_add", timeout=120.0, check=valid_reaction(["✅"], [author], [msg])
-                )
-            except asyncio.TimeoutError:
-                await msg.clear_reactions()
-                break
-            else:
-                step += 1
-                await msg.clear_reactions()
-                await msg.edit(content=procedure[step], embed=None)
+            await view.wait()
+            if view.value is None:
+                await msg.edit(content="You went afk and the tutorial ended.", view=None)
+            elif not view.value:
+                await msg.edit(content="You exited the tutorial!", view=None)
+
+            step += 1
+            view = Confirm("Continue", "Exit")
+            await msg.edit(content=procedure[step], embed=None, view=view)
 
 
 async def setup(bot):
