@@ -68,7 +68,7 @@ class AdventurerBot(commands.Bot):
                 f"Executed {executed_command} command by {ctx.author} "
                 f"(ID: {ctx.author.id}) in DMs"
             )
-        dm.queues.pop(str(ctx.author.id), None)
+        dm.queues.pop(ctx.author.id, None)
 
     async def on_command_error(self, ctx: Context, error) -> None:
         """Executed every time a normal valid command catches an error."""
@@ -110,7 +110,7 @@ class AdventurerBot(commands.Bot):
         else:
             embed.description = f"{type(error).__name__}: {error}"
 
-        dm.queues.pop(str(ctx.author.id), None)
+        dm.queues.pop(ctx.author.id, None)
         await ctx.send(embed=embed)
         raise error
 

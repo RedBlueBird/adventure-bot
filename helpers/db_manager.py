@@ -47,7 +47,7 @@ def is_registered(uid: int) -> bool:
     return bool(cur.fetchall())
 
 
-def log_quest(quest_type: int, value: int, userid):
+def log_quest(quest_type: int, value: int, userid: int):
     cur.execute(f"SELECT quests FROM temp2 WHERE userid = {userid}")
     quests = cur.fetchall()[0][0].split(",")
     for x in range(len(quests) - 1):
@@ -287,17 +287,15 @@ def get_user_cards(
     return result[start:] if length <= 0 else result[start:start + length]
 
 
-def add_user_cards(cards: list[tuple[str | int, str, int]]):
+def add_user_cards(cards: list[tuple[int, str, int]]):
     sql = "INSERT INTO temp_cards (owned_user, card_name, card_level) VALUES (%s, %s, %s)"
-    val = [(c[0], c[1], c[2]) for c in cards]
-    cur.executemany(sql, val)
+    cur.executemany(sql, cards)
     db.commit()
 
 
 def delete_user_cards(cards: list[tuple[int, int]]):
     sql = "DELETE FROM temp_cards WHERE id = (%s) AND owned_user = (%s)"
-    val = [(i[0], i[1]) for i in cards]
-    cur.executemany(sql, val)
+    cur.executemany(sql, cards)
     db.commit()
 
 
@@ -375,7 +373,7 @@ def set_user_map(uid: int, value: bool):
     db.commit()
 
 
-def get_user_badge(uid: int | str) -> int:
+def get_user_badge(uid: int) -> int:
     cur.execute(f"SELECT all_badges FROM temp2 WHERE userid = {uid}")
     return cur.fetchall()[0][0]
 

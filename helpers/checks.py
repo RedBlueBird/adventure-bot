@@ -22,7 +22,7 @@ def is_owner() -> t.Callable[[T], T]:
 
 def not_preoccupied(action: str = "doing something"):
     async def predicate(ctx: commands.Context) -> bool:
-        a_id = str(ctx.author.id)
+        a_id = ctx.author.id
         if a_id in dm.queues:
             raise UserPreoccupied(dm.queues[a_id])
         dm.queues[a_id] = action

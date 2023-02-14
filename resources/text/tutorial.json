@@ -9,14 +9,14 @@
         ]
     },
     "players": [
-        "{Player}",
+        "Player",
         "Dummy",
         "Dummy"
     ],
     "p_ids": [
-        "{Player ID}",
-        "123",
-        "1234"
+        0,
+        123,
+        1234
     ],
     "decks": [
         [

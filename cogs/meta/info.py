@@ -46,7 +46,7 @@ class Info(commands.Cog):
         if lvl >= 4:
             tick_msg = f"{u.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
 
-        descr = f"```{dm.queues[str(user.id)]}```\n" if str(user.id) in dm.queues else None
+        descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
         embed = discord.Embed(
             title=f"{user.display_name}'s profile:",
             description=descr,

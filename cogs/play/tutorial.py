@@ -24,7 +24,7 @@ class Tutorial(commands.Cog):
 
         author = ctx.author
         mention = author.mention
-        a_id = str(author.id)
+        a_id = author.id
         start_msg = await ctx.send(
             f"{mention}, Hello! \nYou want to learn the basics of battling in this bot? :smiley:"
         )

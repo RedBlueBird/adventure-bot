@@ -35,7 +35,7 @@ class Pvp(commands.Cog):
             await ctx.reply("You need to invite at least 1 player and at most 5 players!")
             return
 
-        challenger_ids = [str(a.id)] + [str(i.id) for i in people]
+        challenger_ids = [a.id] + [i.id for i in people]
         people = [ctx.author] + people
         challenger_names = []
         challenger_decks = []
@@ -88,8 +88,8 @@ class Pvp(commands.Cog):
                            f"{a} joined `team #1` :smiley:"
 
         await request_msg.edit(content=request_content)
-        joined_users = [str(a.id)]
-        teams = {1: [str(a.id)]}
+        joined_users = [a.id]
+        teams = {1: [a.id]}
         rejected_users = []
         team_assign = {'1️⃣': 1, '2️⃣': 2, '3️⃣': 3, '4️⃣': 4, '5️⃣': 5, '6️⃣': 6}
         host_ready = False
@@ -110,7 +110,7 @@ class Pvp(commands.Cog):
                     del dm.queues[u_]
                 return
 
-            if reaction.emoji == '✅' and str(user.id) == str(a.id):
+            if reaction.emoji == '✅' and user.id == a.id:
                 if len(joined_users) < 2:
                     await ctx.reply("No one joined your battle yet, feels bad man :grimacing:")
 
@@ -131,17 +131,17 @@ class Pvp(commands.Cog):
                             counter += 1
                     break
 
-            elif reaction.emoji == '❎' and str(user.id) not in rejected_users:
+            elif reaction.emoji == '❎' and user.id not in rejected_users:
                 inv_teams = {i: k for k, v in teams.items() for i in v}
-                rejected_users.append(str(user.id))
+                rejected_users.append(user.id)
 
-                if str(user.id) == str(a.id):  # well, the host cancelled the battle, call it off
+                if user.id == a.id:  # well, the host cancelled the battle, call it off
                     await ctx.send(f"{user} the host, cancelled the battle :scream: ")
                     for u_ in joined_users:
                         del dm.queues[u_]
                     return
 
-                elif str(user.id) not in joined_users:
+                elif user.id not in joined_users:
                     await ctx.send(f"{user} rejected the battle request :frowning: ")
                     if len(rejected_users) == len(challenger_names):  # ok call it off, no one joined
                         await ctx.send(f"All players rejected the invite from {user}...")
@@ -150,14 +150,14 @@ class Pvp(commands.Cog):
                         return
 
                 else:
-                    joined_users.remove(str(user.id))
-                    teams[inv_teams[str(user.id)]].remove(str(user.id))
-                    # await ctx.send(f"\n{user} joined `team #{inv_teams[str(user.id)]}` :smiley: ")
+                    joined_users.remove(user.id)
+                    teams[inv_teams[user.id]].remove(user.id)
+                    # await ctx.send(f"\n{user} joined `team #{inv_teams[user.id]}` :smiley: ")
                     request_content = request_content.replace(
-                        f"\n{user} joined `team #{inv_teams[str(user.id)]}` :smiley: ", "")
+                        f"\n{user} joined `team #{inv_teams[user.id]}` :smiley: ", "")
                     await request_msg.edit(content=request_content)
-                    await ctx.send(f"{user} joined, then left `team #{inv_teams[str(user.id)]}`...")
-                    del dm.queues[str(user.id)]
+                    await ctx.send(f"{user} joined, then left `team #{inv_teams[user.id]}`...")
+                    del dm.queues[user.id]
 
                     if len(rejected_users) == len(challenger_names):
                         await ctx.send(f"All players rejected the invites from the host {user} :woozy_face")
@@ -165,31 +165,31 @@ class Pvp(commands.Cog):
                             del dm.queues[u_]
                         return
 
-            elif reaction.emoji in team_assign and user.id in dm.queues and str(user.id) not in rejected_users:
-                rejected_users.append(str(user.id))
+            elif reaction.emoji in team_assign and user.id in dm.queues and user.id not in rejected_users:
+                rejected_users.append(user.id)
                 await ctx.send(f"<@{user.id}> can't accept the battling request :frowning: "
-                               f"\n`They're still {dm.queues[str(user.id)]}!`")
+                               f"\n`They're still {dm.queues[user.id]}!`")
 
-            elif str(user.id) not in joined_users and reaction.emoji in team_assign:
-                joined_users.append(str(user.id))
+            elif user.id not in joined_users and reaction.emoji in team_assign:
+                joined_users.append(user.id)
 
                 if team_assign[reaction.emoji] not in teams:
-                    teams[team_assign[reaction.emoji]] = [str(user.id)]
+                    teams[team_assign[reaction.emoji]] = [user.id]
                 else:
-                    teams[team_assign[reaction.emoji]].append(str(user.id))
+                    teams[team_assign[reaction.emoji]].append(user.id)
 
-                dm.queues[str(user.id)] = "in a battle"
+                dm.queues[user.id] = "in a battle"
                 request_content += f"\n{user} joined `team #{team_assign[reaction.emoji]}` :smiley: "
                 await request_msg.edit(content=request_content)
 
-                if str(user.id) not in rejected_users:
+                if user.id not in rejected_users:
                     await ctx.send(f"{user} joined `team #{team_assign[reaction.emoji]}` :smiley: ")
                 else:
-                    rejected_users.remove(str(user.id))
+                    rejected_users.remove(user.id)
                     await ctx.send(
                         f"{user} rejected at first, but joined again anyway on `team #{team_assign[reaction.emoji]}` :thinking:")
 
-            elif reaction.emoji == '⏬' and str(user.id) == str(a.id):
+            elif reaction.emoji == '⏬' and user.id == a.id:
                 request_msg = await ctx.send(u.ICON['load'])
                 for r in ['✅', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '❎', '⏬']:
                     await request_msg.add_reaction(r)
@@ -277,7 +277,7 @@ class Pvp(commands.Cog):
                 try:
                     check = lambda m: (
                             m.content.startswith(u.PREF)
-                            and str(m.author.id) in players
+                            and m.author.id in players
                             and m.channel == ctx.channel
                     )
                     replied_message = await self.bot.wait_for(
@@ -292,7 +292,7 @@ class Pvp(commands.Cog):
                     players = []
 
                 else:
-                    index = list(dd.p_ids.info.values()).index(str(replied_message.author.id)) + 1
+                    index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
                     the_message = dd.interpret_message(replied_message.content[len(u.PREF):],
                                                        str(dd.players.info[index]), index)
 
@@ -305,7 +305,7 @@ class Pvp(commands.Cog):
 
                     elif the_message == "skip":
                         # dd.staminas.info[index] += 1
-                        players.remove(str(replied_message.author.id))
+                        players.remove(replied_message.author.id)
 
                         for y in range(dd.hand_sizes.info[index]):
                             if not dd.decks.info[index][y] in [".".join(x.split(".")[0:2]) for x in
@@ -321,7 +321,7 @@ class Pvp(commands.Cog):
                         dd.descriptions.info[index].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
 
                     elif the_message == "flee":
-                        players.remove(str(replied_message.author.id))
+                        players.remove(replied_message.author.id)
                         dd.hps.info[index][0] = 0
                         dd.staminas.info[index] = 0
                         dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
@@ -331,7 +331,7 @@ class Pvp(commands.Cog):
                                                                 "Backpack"))
 
                     else:
-                        players.remove(str(replied_message.author.id))
+                        players.remove(replied_message.author.id)
                         dd.staminas.info[index] -= len(the_message)
                         dd.move_numbers.info[index] = the_message
                         dd.used_cards.info[index] = [dd.decks.info[index][int(str(x)[0]) - 1] + "." + str(x)[1:] for x

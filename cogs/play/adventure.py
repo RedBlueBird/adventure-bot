@@ -63,9 +63,9 @@ class Adventure(commands.Cog):
     async def adventure(self, ctx: commands.Context):
         mention = ctx.author.mention
         a_id = ctx.author.id
-        dm.cur.execute("select * from adventuredatas where userid = " + str(a_id))
+        dm.cur.execute(f"select * from adventuredatas where userid = {a_id}")
         a_datas = dm.cur.fetchall()
-        dm.cur.execute("select * from playersinfo where userid = " + str(a_id))
+        dm.cur.execute(f"select * from playersinfo where userid = {a_id}")
         p_datas = list(dm.cur.fetchall()[0])
         p_hp = round((100 * u.SCALE[1] ** math.floor(p_datas[3] / 2)) * u.SCALE[0])
         p_max_hp = p_hp
@@ -73,7 +73,7 @@ class Adventure(commands.Cog):
         p_distance = 0
         deck_slot = p_datas[17]
         db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"select {db_deck}, badges from playersachivements where userid = " + str(a_id))
+        dm.cur.execute(f"select {db_deck}, badges from playersachivements where userid = {a_id}")
         result = dm.cur.fetchall()[0]
         deck = result[0].split(",")
         badges = result[1]
@@ -99,7 +99,7 @@ class Adventure(commands.Cog):
         adventure = False
 
         # HOMETOWN EXPLORATION
-        dm.queues[str(a_id)] = "exploring in the Hometown"
+        dm.queues[a_id] = "exploring in the Hometown"
 
         loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
         adventure_msg = await ctx.send(embed=loading_embed_message)
@@ -246,7 +246,7 @@ class Adventure(commands.Cog):
 
                             else:
                                 dm.cur.execute(
-                                    f"update playersinfo set coins = coins + {item['sell'] * counts} where userid = '{a_id}'")
+                                    f"update playersinfo set coins = coins + {item['sell'] * counts} where userid = {a_id}")
                                 dm.db.commit()
                                 if p_inv[item['name'].lower()]["items"] == counts:
                                     del p_inv[item['name'].lower()]
@@ -261,7 +261,7 @@ class Adventure(commands.Cog):
 
             elif pos[1] == "buying" and not afk and not leave:
                 exiting = False
-                dm.cur.execute(f"select coins from playersinfo where userid = '{a_id}'")
+                dm.cur.execute(f"select coins from playersinfo where userid = {a_id}")
                 coins = dm.cur.fetchall()[0][0]
                 purchasables = ["Forest Fruit", "Fruit Salad", "Raft", "Torch", "Herb", "Health Potion", "Power Potion",
                                 "Large Health Potion",
@@ -433,14 +433,14 @@ class Adventure(commands.Cog):
                                         f"{mention} You can only do `" + u.PREF + "backpack`, `" + u.PREF + "chest`, `" + u.PREF + "close`, or `" + u.PREF + "withdraw/deposit (item_name) (amount)`!")
 
             elif pos[1] == "mini game" and not afk and not leave:
-                dm.queues[str(a_id)] = "playing a mini game"
+                dm.queues[a_id] = "playing a mini game"
                 exit_game = False
                 earned_loots = [0, 0, 0]
                 random_number = random.randint(1, 1000)
 
                 def reset(earned_loots):
                     sql = "update playersinfo set coins = coins + %s, gems = gems + %s, exps = exps + %s where userid = %s"
-                    value = (earned_loots[0], earned_loots[1], earned_loots[2], str(a_id))
+                    value = (earned_loots[0], earned_loots[1], earned_loots[2], a_id)
                     dm.cur.execute(sql, value)
                     p_datas[4] += earned_loots[2]
                     p_datas[5] += earned_loots[0]
@@ -591,13 +591,13 @@ class Adventure(commands.Cog):
                                         if round(reply_ms) == 0:  # BRUH HOW DID THEY DO IT RIGHT ON TIME
                                             earned_loots[0] += 100 * award_multiplier * 4
                                             earned_loots[2] += 50
-                                            dm.log_quest(8, 1, str(a_id))
+                                            dm.log_quest(8, 1, a_id)
                                             to_send = f"{mention} ```You replied in EXACTLY {reply_ms} SECONDS!!! \n " \
                                                       f"0.000 SECONDS OFF FROM {waits} SECONDS!!! \n"
                                         else:
                                             earned_loots[0] += 100 * award_multiplier
                                             earned_loots[2] += 5
-                                            dm.log_quest(8, 1, str(a_id))
+                                            dm.log_quest(8, 1, a_id)
                                             to_send = f"{mention} ```You replied in {reply_ms} seconds \n" \
                                                       f"{reply_time} seconds off from {waits} seconds! \n"
 
@@ -729,14 +729,14 @@ class Adventure(commands.Cog):
                             else:  # jeff this code LITERALLY CANNOT BE REACHED
                                 await ctx.send(f"{mention} ```The bar's BlackJack service went bankrupt!```")
                             """
-                    dm.queues[str(a_id)] = "exploring in the Hometown"
-                dm.queues[str(a_id)] = "exploring in the Hometown"
+                    dm.queues[a_id] = "exploring in the Hometown"
+                dm.queues[a_id] = "exploring in the Hometown"
 
             elif pos[1] == "adventure" and not afk and not leave:
-                dm.cur.execute("select deck_slot from playersinfo where userid = " + str(a_id))
+                dm.cur.execute(f"select deck_slot from playersinfo where userid = {a_id}")
                 db_deck = f"deck{dm.cur.fetchall()[0][0]}"
                 dm.cur.execute(
-                    f"select {db_deck} from playersachivements where userid = " + str(a_id))
+                    f"select {db_deck} from playersachivements where userid = {a_id}")
                 deck = dm.cur.fetchall()[0][0].split(",")
                 dm.cur.execute(
                     f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(deck)[1:-1]})")
@@ -773,7 +773,7 @@ class Adventure(commands.Cog):
                                     raid_levels = {"1️⃣": 1, "2️⃣": 5, "3️⃣": 10, "4️⃣": 15}[reaction.emoji]
 
                                     dm.cur.execute(
-                                        "update playersinfo set tickets = tickets - 1 where userid = " + str(a_id))
+                                        f"update playersinfo set tickets = tickets - 1 where userid = {a_id}")
                                     dm.db.commit()
                                     adventure = True
                     else:
@@ -782,7 +782,7 @@ class Adventure(commands.Cog):
                     await ctx.send(f"{mention}, you need 12 cards in your deck in order to go on an adventure!")
 
         sql = "update adventuredatas set position = %s, inventory = %s, show_map = %s, storage = %s where userid = %s"
-        val = (p_pos, str(p_inv), 'true' if show_map else 'false', str(p_stor), str(a_id))
+        val = (p_pos, str(p_inv), 'true' if show_map else 'false', str(p_stor), a_id)
         dm.cur.execute(sql, val)
         dm.db.commit()
 
@@ -1653,7 +1653,7 @@ class Adventure(commands.Cog):
                                 p_inv = u.clear_bp(p_inv)
 
                 sql = "update playersinfo set exps = exps + %s, coins = coins + %s, gems = gems + %s where userid = %s"
-                val = (gained_exps, gained_coins, gained_gems, str(a_id))
+                val = (gained_exps, gained_coins, gained_gems, a_id)
                 if gained_coins > 0:
                     dm.log_quest(5, gained_coins, a_id)
                 dm.cur.execute(sql, val)
@@ -1716,7 +1716,7 @@ class Adventure(commands.Cog):
                 await adventure_msg.edit(embed=embed)
 
         sql = "update adventuredatas set inventory = %s where userid = %s"
-        val = (str(p_inv), str(a_id))
+        val = (str(p_inv), a_id)
         dm.cur.execute(sql, val)
         dm.db.commit()
 

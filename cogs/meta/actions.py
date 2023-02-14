@@ -140,9 +140,9 @@ class Actions(commands.Cog):
             if reaction.emoji == "✅" and user == target:
                 break
 
-        if str(target.id) in dm.queues:
+        if target.id in dm.queues:
             await deal_msg.edit(
-                content=f"{mention}, trade cancelled! The target user is currently {dm.queues[str(target.id)]}!")
+                content=f"{mention}, trade cancelled! The target user is currently {dm.queues[target.id]}!")
             await deal_msg.clear_reactions()
             return
 
@@ -154,7 +154,7 @@ class Actions(commands.Cog):
         decks2 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
         dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{author.id}'")
         author_info = dm.cur.fetchall()[0]
-        dm.queues[str(target.id)] = "trading"
+        dm.queues[target.id] = "trading"
         author_coins = 0
         target_coins = 0
         author_cards = {}
