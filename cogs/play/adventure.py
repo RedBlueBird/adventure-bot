@@ -78,7 +78,7 @@ class Adventure(commands.Cog):
         deck = result[0].split(",")
         badges = result[1]
         dm.cur.execute(
-            f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(deck)[1:-1]})")
+            f"select card_name, card_level from cardsinfo where owned_user = {a_id} and id in ({str(deck)[1:-1]})")
         deck = dm.cur.fetchall()
         p_hand = random.sample([f"{x[1]}.{x[0]}" for x in deck], len(deck))
         p_hand_size = 4
@@ -192,7 +192,7 @@ class Adventure(commands.Cog):
 
             elif pos[1] == "selling" and not afk and not leave:
                 exiting = False
-                # dm.cur.execute(f"select coins from playersinfo where userid = '{a_id}'")
+                # dm.cur.execute(f"select coins from playersinfo where userid = {a_id}")
                 await adventure_msg.edit(
                     content=f"`{u.PREF}sell (item_name) (amount)` to sell items \n"
                             f"`{u.PREF}backpack` to check your backpack \n"
@@ -320,7 +320,7 @@ class Adventure(commands.Cog):
                                 continue
                             else:
                                 dm.cur.execute(
-                                    f"update playersinfo set coins = coins - {item['buy'] * counts} where userid = '{a_id}'")
+                                    f"update playersinfo set coins = coins - {item['buy'] * counts} where userid = {a_id}")
                                 dm.db.commit()
                                 if item["name"].lower() in p_inv:
                                     p_inv[item["name"].lower()]["items"] += counts
@@ -739,7 +739,7 @@ class Adventure(commands.Cog):
                     f"select {db_deck} from playersachivements where userid = {a_id}")
                 deck = dm.cur.fetchall()[0][0].split(",")
                 dm.cur.execute(
-                    f"select card_name, card_level from cardsinfo where owned_user = '{a_id}' and id in ({str(deck)[1:-1]})")
+                    f"select card_name, card_level from cardsinfo where owned_user = {a_id} and id in ({str(deck)[1:-1]})")
                 deck = dm.cur.fetchall()
 
                 if len(deck) == 12:
@@ -942,13 +942,13 @@ class Adventure(commands.Cog):
                     elif perk_list[choice - 1] == 'chunk of gold':
                         dm.log_quest(5, 250, a_id)
 
-                        dm.cur.execute(f"update playersinfo set coins = coins + 250 where userid = '{a_id}'")
+                        dm.cur.execute(f"update playersinfo set coins = coins + 250 where userid = {a_id}")
                         dm.db.commit()
                     elif perk_list[choice - 1] == "book of knowledge":
-                        dm.cur.execute(f"update playersinfo set exps = exps + 150 where userid = '{a_id}'")
+                        dm.cur.execute(f"update playersinfo set exps = exps + 150 where userid = {a_id}")
                         dm.db.commit()
                     elif perk_list[choice - 1] == "hidden gem":
-                        dm.cur.execute(f"update playersinfo set gems = gems + 1 where userid = '{a_id}'")
+                        dm.cur.execute(f"update playersinfo set gems = gems + 1 where userid = {a_id}")
                         dm.db.commit()
 
                     section = "start"
