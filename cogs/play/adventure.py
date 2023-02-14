@@ -73,7 +73,7 @@ class Adventure(commands.Cog):
         p_distance = 0
         deck_slot = p_datas[17]
         db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"select {db_deck}, badges from playersachivements where userid = {a_id}")
+        dm.cur.execute(f"select {db_deck}, badges from playersachievements where userid = {a_id}")
         result = dm.cur.fetchall()[0]
         deck = result[0].split(",")
         badges = result[1]
@@ -736,7 +736,7 @@ class Adventure(commands.Cog):
                 dm.cur.execute(f"select deck_slot from playersinfo where userid = {a_id}")
                 db_deck = f"deck{dm.cur.fetchall()[0][0]}"
                 dm.cur.execute(
-                    f"select {db_deck} from playersachivements where userid = {a_id}")
+                    f"select {db_deck} from playersachievements where userid = {a_id}")
                 deck = dm.cur.fetchall()[0][0].split(",")
                 dm.cur.execute(
                     f"select card_name, card_level from cardsinfo where owned_user = {a_id} and id in ({str(deck)[1:-1]})")
@@ -1707,7 +1707,7 @@ class Adventure(commands.Cog):
                     )
                     if location == "enchanted forest" and badges[5] == "0":
                         badges[5] = '1'
-                        dm.cur.execute(f"update playersachivements set badges = '{badges}'")
+                        dm.cur.execute(f"update playersachievements set badges = '{badges}'")
                         dm.db.commit()
 
                 embed.add_field(name="Result:", value="Total distance traveled - " + str(p_distance) + " meters")

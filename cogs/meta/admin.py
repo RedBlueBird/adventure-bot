@@ -119,7 +119,7 @@ class Admin(commands.Cog):
 
         print_all("cardsinfo")
         print_all("playersinfo")
-        print_all("playersachivements")
+        print_all("playersachievements")
         print(u.ADMINS)
         print(dm.queues)
         guilds = list(self.bot.guilds)

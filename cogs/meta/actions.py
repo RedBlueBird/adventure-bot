@@ -147,10 +147,10 @@ class Actions(commands.Cog):
             return
 
         dm.cur.execute(
-            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{target.id}'")
+            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachievements WHERE userid = '{target.id}'")
         decks1 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
         dm.cur.execute(
-            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachivements WHERE userid = '{author.id}'")
+            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachievements WHERE userid = '{author.id}'")
         decks2 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
         dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{author.id}'")
         author_info = dm.cur.fetchall()[0]
