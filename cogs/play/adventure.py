@@ -63,7 +63,7 @@ class Adventure(commands.Cog):
     async def adventure(self, ctx: commands.Context):
         mention = ctx.author.mention
         a_id = ctx.author.id
-        dm.cur.execute(f"select * from adventuredatas where userid = {a_id}")
+        dm.cur.execute(f"select * from adventuredata where userid = {a_id}")
         a_datas = dm.cur.fetchall()
         dm.cur.execute(f"select * from playersinfo where userid = {a_id}")
         p_datas = list(dm.cur.fetchall()[0])
@@ -781,7 +781,7 @@ class Adventure(commands.Cog):
                 else:
                     await ctx.send(f"{mention}, you need 12 cards in your deck in order to go on an adventure!")
 
-        sql = "update adventuredatas set position = %s, inventory = %s, show_map = %s, storage = %s where userid = %s"
+        sql = "update adventuredata set position = %s, inventory = %s, show_map = %s, storage = %s where userid = %s"
         val = (p_pos, str(p_inv), 'true' if show_map else 'false', str(p_stor), a_id)
         dm.cur.execute(sql, val)
         dm.db.commit()
@@ -1715,7 +1715,7 @@ class Adventure(commands.Cog):
                 embed.set_footer(text=f"Type {u.PREF}adventure to restart!")
                 await adventure_msg.edit(embed=embed)
 
-        sql = "update adventuredatas set inventory = %s where userid = %s"
+        sql = "update adventuredata set inventory = %s where userid = %s"
         val = (str(p_inv), a_id)
         dm.cur.execute(sql, val)
         dm.db.commit()
