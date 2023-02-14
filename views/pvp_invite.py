@@ -5,7 +5,11 @@ from helpers import db_manager as dm
 
 class TeamButton(discord.ui.Button["PvpInvite"]):
     def __init__(self, team: int):
-        super().__init__(label=f"Team {team}", style=discord.ButtonStyle.blurple)
+        super().__init__(
+            label=f"Team {team}",
+            style=discord.ButtonStyle.blurple,
+            row=1 + (team - 1) // 3
+        )
         self.team = team
 
     async def callback(self, i: discord.Interaction):
