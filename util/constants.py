@@ -3,8 +3,6 @@ import typing as t
 import os
 
 dirname = os.path.join(os.path.dirname(__file__), "..", "resources/text")
-print("********************")
-print(dirname)
 
 PREF: t.Final = "a."
 SCALE: t.Final = 50, 1.05
