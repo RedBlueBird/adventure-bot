@@ -34,8 +34,9 @@ class Info(commands.Cog):
 
         user_premium = dm.get_user_premium(user.id)
         if user_premium > dt.datetime.today():
+            days_left = (user_premium - dt.datetime.today()).days
             description_msg = f"14\n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
-                              f"{(user_premium - dt.datetime.today()).days} days remaining\n"
+                              f"{days_left} days remaining\n"
             tickets = 10
         else:
             description_msg = "7\n"

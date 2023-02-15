@@ -19,7 +19,7 @@ class Decks(commands.Cog):
     @checks.is_registered()
     async def order(
             self, ctx: commands.Context,
-            card_property: t.Literal["level", "id", "name", "energy", "rarity"],
+            card_property: t.Literal["level", "ID", "name", "energy", "rarity"],
             order_by: t.Literal["ascending", "descending"]
     ):
         """Set the card display order."""
@@ -29,7 +29,7 @@ class Decks(commands.Cog):
             order = 1
         elif card_property == "name":
             order = 3
-        elif card_property == "id":
+        elif card_property == "ID":
             order = 5
         elif card_property == "energy":
             order = 7
@@ -89,24 +89,27 @@ class Decks(commands.Cog):
 
         dm.delete_user_cards(to_discard)
         s = 's' if len(to_discard) > 1 else ''
-        await msg.edit(content=f"{len(to_discard)} card{s} discarded successfully!")
+        await msg.edit(content=f"{len(to_discard)} card{s} discarded.")
 
-    @commands.hybrid_command(aliases=["mer"], description="Upgrade a card with two others.")
+    @commands.hybrid_command(
+        aliases=["mer"],
+        description="Upgrade a card with two others."
+    )
     @checks.not_preoccupied("trying to merge cards")
     @checks.is_registered()
     async def merge(self, ctx: commands.Context, card1: int, card2: int):
-        """Upgrade a card to next level with two other cards."""
+        """Upgrade a card with two others."""
 
-        a_id = ctx.author.id
+        a = ctx.author
 
         c1_id = card1
-        card1 = dm.get_card_name(a_id, c1_id), dm.get_card_level(a_id, c1_id)
+        card1 = dm.get_card_name(a.id, c1_id), dm.get_card_level(a.id, c1_id)
         if card1[0] is None:
             await ctx.reply("You don't have the first card!")
             return
 
         c2_id = card2
-        card2 = dm.get_card_name(a_id, c2_id), dm.get_card_level(a_id, c2_id)
+        card2 = dm.get_card_name(a.id, c2_id), dm.get_card_level(a.id, c2_id)
         if card1[0] is None or card2[0] is None:
             missing = 'first' if card1[0] is None else 'second'
             await ctx.reply(f"You don't have the {missing} card!")
@@ -128,12 +131,12 @@ class Decks(commands.Cog):
             await ctx.reply(
                 "The sacrificial card you chose "
                 "is currently in one of your deck slots- \n"
-                f"Use `{u.PREF}remove (* card_ids)` first before you merge it away!"
+                f"Use `{u.PREF}remove (* card_ids)` first before you merge it!"
             )
             return
 
         merge_cost = math.floor(((card1[1] + 1) ** 2) * 10)
-        coins = dm.get_user_coin(a_id)
+        coins = dm.get_user_coin(a.id)
         if coins < merge_cost:
             await ctx.reply(f"You don't have enough coins ({merge_cost} coins) to complete this merge!")
             return
@@ -154,10 +157,10 @@ class Decks(commands.Cog):
             await msg.edit(content="Merging cancelled", view=None)
             return
 
-        dm.log_quest(7, 1, a_id)
-        dm.set_user_coin(a_id, coins - merge_cost)
-        dm.delete_user_cards([(c2_id, a_id)])
-        dm.set_card_level(a_id, c1_id, card1[1] + 1)
+        dm.log_quest(7, 1, a.id)
+        dm.set_user_coin(a.id, coins - merge_cost)
+        dm.delete_user_cards([(c2_id, a.id)])
+        dm.set_card_level(a.id, c1_id, card1[1] + 1)
 
         embed = discord.Embed(
             title="Cards merged successfully!",
@@ -206,8 +209,8 @@ class Decks(commands.Cog):
         slot = slot if slot != 0 else dm.get_user_deck_slot(a.id)
         cards = dm.get_user_deck(a.id, slot)
         await ctx.reply(
-            f"All the card IDs in Deck #{slot}: "
-            f"\n`{' '.join([str(c[0]) for c in cards])}`"
+            f"All the card IDs in Deck #{slot}:\n"
+            f"```{' '.join([str(c[0]) for c in cards])}```"
         )
 
     @commands.hybrid_command(
@@ -275,12 +278,13 @@ class Decks(commands.Cog):
                 error_msg.append(f"You don't have a card #`{c}`!")
             elif decks[slot - 1] or c in add_ids:
                 error_msg.append(f"Card #`{c}` is already in your deck!")
-            elif deck_size + len(add_ids) >= 12:
-                await ctx.reply("Your deck can't have that many cards!")
-                return
             else:
                 add_ids.append(c)
                 add_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
+
+        if deck_size + len(add_ids) >= 12:
+            await ctx.reply("Your deck can't have that many cards!")
+            return
 
         for i in add_ids:
             dm.set_user_card_deck(a.id, slot, 1, i)
