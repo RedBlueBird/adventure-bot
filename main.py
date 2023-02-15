@@ -30,7 +30,7 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
             yield importlib.import_module(module.name)
 
 
-config_path = f"{os.path.realpath(os.path.dirname(__file__))}/config.json"
+config_path = dirname = os.path.join(os.path.dirname(__file__), "config.json")
 if not os.path.isfile(config_path):
     sys.exit("'config.json' not found! Please add it and try again.")
 else:
