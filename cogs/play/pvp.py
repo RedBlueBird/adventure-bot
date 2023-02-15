@@ -41,10 +41,10 @@ class Pvp(commands.Cog):
             for p in people:
                 id_ = p.id
 
-                # level_req = 5
-                # if dm.get_user_level(id_) < level_req:
-                #     await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
-                #     break
+                level_req = 5
+                if dm.get_user_level(id_) < level_req:
+                    await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
+                    break
 
                 if dm.get_user_medal(id_) < gamble_medals:
                     await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")

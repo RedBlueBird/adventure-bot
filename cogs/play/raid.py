@@ -39,14 +39,14 @@ class Raid(commands.Cog):
             for p in people:
                 id_ = p.id
 
-                # level_req = 4
-                # if dm.get_user_level(id_) < level_req:
-                #     await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
-                #     break
+                level_req = 4
+                if dm.get_user_level(id_) < level_req:
+                    await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
+                    break
 
-                # if dm.get_user_ticket(id_) == 0:
-                #     await ctx.reply(f"{p.mention} doesn't have any raid tickets!")
-                #     break
+                if dm.get_user_ticket(id_) == 0:
+                    await ctx.reply(f"{p.mention} doesn't have any raid tickets!")
+                    break
 
                 if dm.get_user_deck_count(id_) != 12:
                     await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
