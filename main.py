@@ -12,6 +12,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
+import cogs
 
 import exceptions
 from util import PREF
@@ -25,7 +26,7 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
 
     # The mock prevents asyncio.get_event_loop() from being called.
     prefix = f"{start}."
-    for module in pkgutil.walk_packages([start], prefix, onerror=on_error):
+    for module in pkgutil.walk_packages(cogs.__path__, prefix, onerror=on_error):
         if not module.ispkg:
             yield importlib.import_module(module.name)
 
