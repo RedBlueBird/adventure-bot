@@ -17,7 +17,7 @@ class Pvp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(
+    @commands.hybrid_command(
         aliases=["challenge", "battles", "bat", "pvp"],
         description="Battle with other players!"
     )
@@ -41,16 +41,10 @@ class Pvp(commands.Cog):
             people = view.selected
             for p in people:
                 id_ = p.id
-                if not dm.is_registered(id_):
-                    await ctx.reply("That user doesn't exist in the bot yet!")
-                    break
 
-                if id_ in dm.queues and id_ != a.id:
-                    await ctx.reply(f"{p.mention} is still {dm.queues[id_]}!")
-                    break
-
-                # if dm.get_user_level(id_) < 5:
-                #     await ctx.reply(f"{u.mention} isn't level 5 yet!")
+                # level_req = 5
+                # if dm.get_user_level(id_) < level_req:
+                #     await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
                 #     break
 
                 if dm.get_user_medal(id_) < gamble_medals:
