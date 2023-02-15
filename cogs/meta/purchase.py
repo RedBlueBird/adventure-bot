@@ -281,7 +281,6 @@ class Purchase(commands.Cog):
 
         gained_cards = []
         cards_msg = []
-        total_cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
         for lvl, name in deals:
             if lvl[0] == "-":
                 continue
@@ -294,7 +293,7 @@ class Purchase(commands.Cog):
             )
 
         dm.add_user_cards(gained_cards)
-        dm.set_user_coin(a.id, coins - total_cost)
+        dm.set_user_coin(a.id, coins - cost)
         dm.set_user_deals(a.id, ",".join(["-." + i[1] for i in deals]))
 
         embed = discord.Embed(
@@ -304,9 +303,9 @@ class Purchase(commands.Cog):
         )
         embed.add_field(
             name="Total Cost",
-            value=f"{total_cost} {u.ICON['coin']}"
+            value=f"{cost} {u.ICON['coin']}"
         )
-        embed.set_footer(text=f"You have {coins - total_cost} golden coins left")
+        embed.set_footer(text=f"You have {coins - cost} golden coins left")
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command()
