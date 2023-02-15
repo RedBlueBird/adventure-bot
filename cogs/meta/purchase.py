@@ -254,9 +254,12 @@ class Purchase(commands.Cog):
         coins = dm.get_user_coin(a.id)
         deals = [i.split(".") for i in dm.get_user_deals(a.id).split(',')]
 
-        cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
-        count = sum([1 if i[0] != "-" else 0 for i in deals])
+        cost = sum(
+            [u.compute_card_cost(card, int(lvl))
+             if lvl[0] != "-" else 0 for lvl, card in deals]
+        )
 
+        count = sum([lvl[0] != "-" for lvl, _ in deals])
         if count + dm.get_user_cards_count(a.id) > u.MAX_CARDS:
             await ctx.reply("You don't have enough space to buy everything!")
             return
@@ -278,27 +281,31 @@ class Purchase(commands.Cog):
 
         gained_cards = []
         cards_msg = []
-        total_cost = sum([u.compute_card_cost(i[1], int(i[0])) if i != "-" else 0 for i in deals])
-        for d in deals:
-            if d[0] == "-":
+        for lvl, name in deals:
+            if lvl[0] == "-":
                 continue
-            gained_cards.append((a.id, d[1], int(d[0])))
+                
+            lvl = int(lvl)
+            gained_cards.append((a.id, name, lvl))
             cards_msg.append(
-                f"[{u.rarity_cost(d[1])}] **{d[1]}** lv: **{int(d[0])}** - "
-                f"**{u.compute_card_cost(d[1], int(d[0]))}** {u.ICON['coin']} \n"
+                f"[{u.rarity_cost(name)}] **{name}** lv: **{lvl}** - "
+                f"**{u.compute_card_cost(name, lvl)}** {u.ICON['coin']}"
             )
 
         dm.add_user_cards(gained_cards)
-        dm.set_user_coin(a.id, coins - total_cost)
-        cards_msg.append("=======================\n")
-        cards_msg.append(f"**Total Cost - {total_cost} {u.ICON['coin']}**")
+        dm.set_user_coin(a.id, coins - cost)
         dm.set_user_deals(a.id, ",".join(["-." + i[1] for i in deals]))
+
         embed = discord.Embed(
             title="You Bought:",
-            description=" ".join(cards_msg),
+            description="\n".join(cards_msg),
             color=discord.Color.gold()
         )
-        embed.set_footer(text=f"You have {coins - total_cost} golden coins left")
+        embed.add_field(
+            name="Total Cost",
+            value=f"{cost} {u.ICON['coin']}"
+        )
+        embed.set_footer(text=f"You have {coins - cost} golden coins left")
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command()
@@ -309,20 +316,21 @@ class Purchase(commands.Cog):
         a = ctx.author
         coins = dm.get_user_coin(a.id)
         deals = [i.split(".") for i in dm.get_user_deals(a.id).split(',')]
-
-        card -= 1
-        if not (0 < card + 1 < len(deals)):
-            await ctx.reply(f"The deal number must be between 1 and {len(deals)}!")
+        
+        if not 1 <= card < len(deals):
+            await ctx.reply(f"The card number must be between 1 and {len(deals)}!")
             return
         
-        if deals[card][0][0] == "-":
+        card -= 1
+        lvl, name = deals[card]
+        if lvl[0] == "-":
             await ctx.reply("You already bought this card!")
             return
         if dm.get_user_cards_count(a.id) == u.MAX_CARDS:
             await ctx.reply("You don't have space for this card!")
             return
 
-        card_cost = u.compute_card_cost(deals[card][1], int(deals[card][0]))
+        card_cost = u.compute_card_cost(name, int(lvl))
         if coins < card_cost:
             await ctx.reply("You don't have enough golden coins to buy that card!")
             return
@@ -330,22 +338,23 @@ class Purchase(commands.Cog):
         msg, confirm = await confirm_purchase(
             ctx,
             f"Are you sure you want to purchase "
-            f"**[{u.rarity_cost(deals[card][1])}] {deals[card][1]} lv: {deals[card][0]}**?"
+            f"**[{u.rarity_cost(name)}] {name} lv: {lvl}**?"
         )
         if not confirm:
             return
 
-        dm.add_user_cards([(a.id, deals[card][1], int(deals[card][0]))])
-        dm.set_user_coin(a.id, coins - card_cost)
-        deals[card][0] = f"-{deals[card][0]}"
-        dm.set_user_deals(a.id, ",".join([".".join(i) for i in deals]))
         await msg.edit(
             content="You successfully bought a "
-                    f"**[{u.rarity_cost(deals[card][1])}] {deals[card][1]} "
-                    f"lv: {deals[card][0]}** with "
+                    f"**[{u.rarity_cost(name)}] {name} "
+                    f"lv: {lvl}** with "
                     f"{card_cost} {u.ICON['coin']}!",
             view=None
         )
+
+        dm.add_user_cards([(a.id, deals[card][1], int(lvl))])
+        dm.set_user_coin(a.id, coins - card_cost)
+        deals[card][0] = f"-{lvl}"
+        dm.set_user_deals(a.id, ",".join([".".join(i) for i in deals]))
 
 
 async def setup(bot):

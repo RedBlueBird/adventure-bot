@@ -12,6 +12,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
+import cogs
 
 import exceptions
 from util import PREF
@@ -24,13 +25,15 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
         raise ImportError(name=name)  # pragma: no cover
 
     # The mock prevents asyncio.get_event_loop() from being called.
+    # The first parameter has to be cogs.__path__ otherwise when main.py executed through
+    # absolute path  no cogs will be appended
     prefix = f"{start}."
-    for module in pkgutil.walk_packages([start], prefix, onerror=on_error):
+    for module in pkgutil.walk_packages(cogs.__path__, prefix, onerror=on_error):
         if not module.ispkg:
             yield importlib.import_module(module.name)
 
 
-config_path = f"{os.path.realpath(os.path.dirname(__file__))}/config.json"
+config_path = dirname = os.path.join(os.path.dirname(__file__), "config.json")
 if not os.path.isfile(config_path):
     sys.exit("'config.json' not found! Please add it and try again.")
 else:

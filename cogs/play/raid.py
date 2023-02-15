@@ -1,0 +1,529 @@
+import asyncio
+import random
+import math
+import typing as t
+from ast import literal_eval
+
+import discord
+from discord.ext import commands
+
+from helpers import db_manager as dm
+from helpers import checks, BattleData
+from views import BattleSelect, RaidInvite
+import util as u
+
+
+class Raid(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        super().__init__()
+        self.bot = bot
+
+    @commands.hybrid_command(
+        description="Band with other players to fight an OP boss!"
+    )
+    @checks.level_check(4)
+    @checks.is_registered()
+    @checks.not_preoccupied("raiding a boss")
+    async def raid(
+            self, ctx: commands.Context,
+            difficulty: t.Literal[1, 2, 3, 4]
+    ):
+        a = ctx.author
+
+        members = 2
+        view = BattleSelect(a, members - 1, members - 1)
+        msg = await ctx.reply(view=view)
+        while True:
+            await view.wait()
+            people = view.selected
+            for p in people:
+                id_ = p.id
+
+                level_req = 4
+                if dm.get_user_level(id_) < level_req:
+                    await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
+                    break
+
+                if dm.get_user_ticket(id_) == 0:
+                    await ctx.reply(f"{p.mention} doesn't have any raid tickets!")
+                    break
+
+                if dm.get_user_deck_count(id_) != 12:
+                    await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
+                    break
+            else:
+                break
+
+            view = BattleSelect(a)
+            await msg.edit(view=view)
+
+        people = [ctx.author] + people
+        req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n" \
+                  f"Wanna raid a level {difficulty} boss with {a.mention}?\n" \
+                  f"Keep in mind that you'll need one {u.ICON['tick']}."
+        view = RaidInvite(ctx.author, people)
+        await msg.edit(content=req_msg, view=view)
+        await view.wait()
+
+        if not view.start:
+            return
+
+        ids = []
+        names = []
+        decks = []
+        hps = []
+        bps = []
+        for p in people:
+            ids.append(p.id)
+            names.append(p.name)
+
+            deck = [f"{c[2]}.{c[1]}" for c in dm.get_user_deck(p.id)]
+            random.shuffle(deck)
+            decks.append(deck)
+
+            level = dm.get_user_level(p.id)
+            hp = round((100 * u.SCALE[1] ** math.floor(level / 2)) * u.SCALE[0])
+            hps.append([hp, 0, hp, 0, 0])
+
+            bps.append(literal_eval(dm.get_user_inventory(p.id)))
+
+        for i in ids:
+            dm.queues[i] = "raiding a boss"
+
+        embed = discord.Embed(
+            title="A Raid Has Begun!",
+            description=", ".join([str(x) for x in names]),
+            color=discord.Color.gold()
+        )
+        await ctx.send(embed=embed)
+
+        levels = [1, 15, 20, 30, 45][difficulty]
+        enemies = ["Lich Lord"]
+        ad_decks = [
+            random.sample(
+                [f"{levels}.{x}" for x in u.mobs_dict(levels, e)["deck"]],
+                len(u.mobs_dict(levels, e)['deck'])
+            )
+            for e in enemies
+        ]
+        ad_hps = [
+            [u.mobs_dict(levels, e)["health"], 0, u.mobs_dict(levels, e)['health'], 0, 0]
+            for e in enemies
+        ]
+
+        # Initialize the battlefield
+        teams = {
+            1: [i + 1 for i in range(members)],
+            2: [i + members + 1 for i in range(len(enemies))]
+        }
+        dd = BattleData(
+            teams=teams,
+            players=names + enemies,
+            p_ids=ids + [123 for _ in range(len(enemies))],
+            decks=decks + ad_decks,
+            backpacks=bps + [{} for _ in range(len(enemies))],
+            hps=hps + ad_hps,
+            stamina=[35 for _ in range(members)] + [u.mobs_dict(levels, i)["stamina"] for i in enemies],
+            counts=len(enemies) + members
+        )
+
+        loading_embed = discord.Embed(title="Loading...", description=u.ICON['load'])
+        stats_msg = await ctx.send(embed=loading_embed)
+        hands_msg = await ctx.send(embed=loading_embed)
+
+        def stats_check() -> bool:
+            alive = 0
+            alive_list = []
+
+            for team in dd.teams:
+                for p in dd.teams[team]:
+                    if dd.hps.info[p][0] > 0 and dd.staminas.info[p] > 0:
+                        alive += 1
+                        alive_list.append(team)
+                        break
+
+            if alive < 2:
+                if not alive_list:
+                    dd.afk = 7
+                else:
+                    dd.afk = alive_list[0]
+            return alive > 1
+
+        # region Battle simulation
+        while stats_check() and dd.afk == 0:
+            dd.turns += 1
+            hand_embed = dd.show_hand()
+            stats_embed = dd.show_stats()
+            await stats_msg.edit(embed=stats_embed)
+            await hands_msg.edit(embed=hand_embed)
+
+            # Process the freeze effects for everyone
+            for i in range(len(dd.descriptions.info)):
+                dd.descriptions.info[i + 1] = []
+                if "freeze" in dd.effects.info[i + 1]:
+                    if dd.effects.info[i + 1]["freeze"] >= 0:
+                        dd.freeze_skips.info[i + 1] = True
+
+            players = []
+            for ind in range(1, members + 1):
+                if dd.afk == 0 and not dd.freeze_skips.info[ind] and dd.hps.info[ind][0] > 0 and \
+                        dd.staminas.info[ind] > 0:
+                    players.append(dd.p_ids.info[ind])
+
+                elif dd.hps.info[ind][0] < 0 or dd.staminas.info[ind] < 0:
+                    dd.descriptions.info[ind].append(f"•{u.ICON['dead']}")
+                    dd.effects.info[ind] = {}
+
+            print(players)
+            # Process player commands
+            while len(players) > 0:
+                try:
+                    replied_message = await self.bot.wait_for(
+                        "message", timeout=120.0,
+                        check=checks.valid_reply("", people, ctx.channel)
+                    )
+                except asyncio.TimeoutError:
+                    for p in players:
+                        index = list(dd.p_ids.info.values()).index(p) + 1
+                        dd.hps.info[index][0] = 0
+                        dd.staminas.info[index] = 0
+                        dd.descriptions.info[index].append("Went afk!")
+
+                    players = []
+
+                else:
+                    index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
+                    msg = dd.interpret_message(
+                        replied_message.content[len(u.PREF):],
+                        str(dd.players.info[index]), index
+                    )
+
+                    if type(msg) is str and msg not in ["skip", "flee", "refresh", "backpack"]:
+                        await ctx.send(msg)
+
+                    elif msg == "refresh":
+                        stats_msg = await ctx.send(embed=stats_embed)
+                        hands_msg = await ctx.send(embed=hand_embed)
+
+                    elif msg == "skip":
+                        # dd.staminas.infos[index] += 1
+                        players.remove(replied_message.author.id)
+
+                        for y in range(dd.hand_sizes.info[index]):
+                            if dd.decks.info[index][y] not in [".".join(x.split(".")[0:2])
+                                                               for x in dd.used_cards.info[index]]:
+                                card = dd.decks.info[index][y].split(".")
+
+                                if "on_hand" in u.cards_dict(card[0], card[1]):
+                                    dd.execute_card_offense(int(card[0]), card[1], index, index, "on_hand")
+
+                        if not dd.hand_sizes.info[index] == 6:
+                            dd.hand_sizes.info[index] += 1
+
+                        dd.descriptions.info[index].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
+
+                    elif msg == "flee":
+                        players.remove(replied_message.author.id)
+                        dd.hps.info[index][0] = 0
+                        dd.staminas.info[index] = 0
+                        dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
+
+                    elif msg == "backpack":
+                        await ctx.send(embed=u.display_backpack(dd.backpacks.info[index],
+                                                                dd.players.info[index],
+                                                                "Backpack"))
+                    else:
+                        players.remove(replied_message.author.id)
+                        dd.staminas.info[index] -= len(msg)
+                        dd.move_numbers.info[index] = msg
+                        dd.used_cards.info[index] = [dd.decks.info[index][int(str(x)[0]) - 1] + "." + str(x)[1:] for x
+                                                     in dd.move_numbers.info[index]]
+                        dd.stored_energies.info[index] -= \
+                            sum([u.cards_dict(int(dd.decks.info[index][int(str(x)[0]) - 1].split(".")[0]),
+                                              dd.decks.info[index][int(str(x)[0]) - 1].split(".")[1])["cost"]
+                                 for x in dd.move_numbers.info[index]])
+                        dd.move_numbers.info[index].sort()
+                        z = 0
+
+                        for y in range(dd.hand_sizes.info[index]):
+                            if not dd.decks.info[index][y] in [".".join(x.split(".")[0:2]) for x in
+                                                               dd.used_cards.info[index]]:
+                                card = dd.decks.info[index][y].split(".")
+
+                                if "on_hand" in u.cards_dict(card[0], card[1]):
+                                    dd.execute_card_offense(int(card[0]), card[1], index, index, "on_hand")
+
+                        for y in range(len(dd.move_numbers.info[index])):
+                            x = int(str(dd.move_numbers.info[index][y])[0]) - y + z
+                            card = dd.decks.info[index][x - 1].split('.')
+                            card_info = u.cards_dict(card[0], card[1])
+
+                            if card[1] not in dd.temporary_cards:
+                                if "rewrite" in card_info:
+                                    re_name = u.cards_dict(1, card[1])['rewrite']
+                                    dd.descriptions.info[index].append(
+                                        f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* rewritten as *[{u.rarity_cost(re_name)}] {re_name} lv:{card[0]}*")
+                                    dd.decks.info[index][x - 1] = dd.decks.info[index][x - 1].split(".")[0] + "." + \
+                                                                  card_info["rewrite"]
+
+                                if "stay" in card_info:
+                                    if random.randint(1, 100) <= card_info['stay']:
+                                        z += 1
+                                        dd.descriptions.info[index].append(
+                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!")
+                                    else:
+                                        dd.decks.info[index].insert(len(dd.decks.info[index]),
+                                                                    dd.decks.info[index].pop(x - 1))
+                                else:
+                                    dd.decks.info[index].insert(len(dd.decks.info[index]),
+                                                                dd.decks.info[index].pop(x - 1))
+                            else:
+                                if "stay" in card_info:
+                                    if random.randint(1, 100) <= card_info['stay']:
+                                        z += 1
+                                        dd.descriptions.info[index].append(
+                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!")
+                                    else:
+                                        dd.decks.info[index].pop(x - 1)
+                                else:
+                                    dd.decks.info[index].pop(x - 1)
+
+                        dd.hand_sizes.info[index] -= len(dd.move_numbers.info[index]) - z - 1
+                    await replied_message.delete()
+
+            alive_players = []
+            for ind in range(1, members + 1):
+                if dd.afk == 0 and dd.hps.info[ind][0] > 0 and dd.staminas.info[ind] > 0:
+                    alive_players.append(ind)
+
+            for e_index in range(members + 1, len(enemies) + members + 1):
+                if dd.afk == 0 and dd.freeze_skips.info[e_index] == False and dd.hps.info[e_index][0] > 0 and \
+                        dd.staminas.info[e_index] > 0:
+                    rng_move = random.randint(1, dd.hand_sizes.info[e_index])
+                    if dd.stored_energies.info[e_index] >= \
+                            u.cards_dict(int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
+                                         dd.decks.info[e_index][rng_move - 1].split(".")[1])["cost"]:
+                        msg = [rng_move]
+                        for x in range(3):
+                            rng_move = random.randint(1, dd.hand_sizes.info[e_index])
+                            if dd.stored_energies.info[e_index] >= sum([u.cards_dict(
+                                    int(dd.decks.info[e_index][x - 1].split(".")[0]),
+                                    dd.decks.info[e_index][x - 1].split(".")[1])["cost"] for x in msg]) + \
+                                    u.cards_dict(int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
+                                                 dd.decks.info[e_index][rng_move - 1].split(".")[1])["cost"]:
+                                msg.append(rng_move)
+                    else:
+                        msg = "skip"
+                    if msg == "skip":
+                        # dd.stamina[1] += 1
+                        for y in range(dd.hand_sizes.info[e_index]):
+                            if not dd.decks.info[e_index][y] in dd.used_cards.info[e_index]:
+                                if "on_hand" in u.cards_dict(dd.decks.info[e_index][y].split(".")[0],
+                                                             dd.decks.info[e_index][y].split(".")[1]):
+                                    dd.execute_card_offense(int(dd.decks.info[e_index][y].split(".")[0]),
+                                                            dd.decks.info[e_index][y].split(".")[1], e_index, e_index,
+                                                            "on_hand")
+                        if not dd.hand_sizes.info[e_index] == 6:
+                            dd.hand_sizes.info[e_index] += 1
+                        dd.descriptions.info[e_index].insert(len(dd.descriptions.info[e_index]),
+                                                             f"{u.ICON['ski']}{u.ICON['kip']}\n")
+                        correct_format = True
+                    elif msg == "flee":
+                        dd.afk = len(dd.players.info) + e_index
+                        break
+                    else:
+                        dd.staminas.info[e_index] -= 1
+                        dd.move_numbers.info[e_index] = list(dict.fromkeys(msg))
+                        correct_format = True
+                        defense_cards = [
+                            "shield", "absorb", "heal", "aid", "aim", "relic", "meditate", "heavy shield",
+                            "reckless assault", "seed", "sprout", "sapling", "holy tree", "cache",
+                            "blessed clover", "dark resurrection", "battle cry", "enrage", "devour",
+                            "reform", "harden scales", "prideful flight", "rejuvenate", "regenerate"
+                        ]
+                        # a = [print(dd.decks.info[e_index][x - 1].lower().split(".")[1]) for x in dd.move_numbers.info[e_index]]
+                        dd.used_cards.info[e_index] = [f"{dd.decks.info[e_index][x - 1]}.{e_index}" if
+                                                       dd.decks.info[e_index][x - 1].lower().split(".")[
+                                                           1] in defense_cards else f"{dd.decks.info[e_index][x - 1]}.{random.choice(dd.decks.info[e_index][x - 1])}"
+                                                       for x in dd.move_numbers.info[e_index]]
+                        dd.stored_energies.info[e_index] -= sum([
+                            u.cards_dict(int(dd.decks.info[e_index][x - 1].split(".")[0]),
+                                         dd.decks.info[e_index][x - 1].split(".")[1])["cost"]
+                            for x in dd.move_numbers.info[e_index]
+                        ])
+                        dd.move_numbers.info[e_index].sort()
+                        z = 0
+                        for y in range(dd.hand_sizes.info[e_index]):
+                            if not dd.decks.info[e_index][y] in dd.used_cards.info[e_index]:
+                                if "on_hand" in u.cards_dict(dd.decks.info[e_index][y].split(".")[0],
+                                                             dd.decks.info[e_index][y].split(".")[1]):
+                                    dd.execute_card_offense(int(dd.decks.info[e_index][y].split(".")[0]),
+                                                            dd.decks.info[e_index][y].split(".")[1], e_index, e_index,
+                                                            "on_hand")
+                        for y in range(len(dd.move_numbers.info[e_index])):
+                            x = dd.move_numbers.info[e_index][y] - y + z
+                            card = dd.decks.info[e_index][x - 1].split('.')
+                            card_info = u.cards_dict(card[0], card[1])
+
+                            if not card[1] in dd.temporary_cards:
+                                if "rewrite" in card_info:
+                                    re_name = u.cards_dict(1, card[1])['rewrite']
+                                    dd.descriptions.info[e_index].append(f"*{card[1]}* rewritten as *{re_name}*")
+                                    dd.decks.info[e_index][x - 1] = card[0] + "." + card_info["rewrite"]
+                                if "stay" in card_info:
+                                    if random.randint(1, 100) <= card_info['stay']:
+                                        z += 1
+                                        dd.descriptions.info[e_index].append(
+                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!")
+                                    # dd.new_line(e_index)
+                                    else:
+                                        dd.decks.info[e_index].insert(len(dd.decks.info[e_index]),
+                                                                      dd.decks.info[e_index].pop(x - 1))
+                                else:
+                                    dd.decks.info[e_index].insert(len(dd.decks.info[e_index]),
+                                                                  dd.decks.info[e_index].pop(x - 1))
+                            else:
+                                if "stay" in card_info:
+                                    if random.randint(1, 100) <= card_info['stay']:
+                                        z += 1
+                                        dd.descriptions.info[e_index].append(
+                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!")
+                                    # dd.new_line(e_index)
+                                    else:
+                                        dd.decks.info[e_index].pop(x - 1)
+                                else:
+                                    dd.decks.info[e_index].pop(x - 1)
+                        dd.hand_sizes.info[e_index] -= len(dd.move_numbers.info[e_index]) - z - 1
+                # dd.deck_index.insert(dd.move_numbere_index - 1, dd.deck_index.pop(dd.hand_size[1]-1))
+                elif dd.hps.info[e_index][0] <= 0 or dd.staminas.info[e_index] <= 0:
+                    dd.descriptions.info[e_index].append(f"•{u.ICON['dead']}")
+                    dd.effects.info[e_index] = {}
+            if dd.afk == 0:
+                cards_length = [len(i) for i in list(dd.used_cards.info.values())]
+                cards_length.sort()
+                for x in dd.item_used.info:
+                    if dd.item_used.info[x][0] != "None":
+                        dd.execute_card_defense(-1, dd.item_used.info[x][0], x, dd.item_used.info[x][1])
+                        dd.execute_card_offense(-1, dd.item_used.info[x][0], x, dd.item_used.info[x][1])
+                        dd.execute_card_special(-1, dd.item_used.info[x][0], x, dd.item_used.info[x][1])
+                for x in range(cards_length[-1]):
+                    for y in range(1, len(dd.used_cards.info) + 1):
+                        if len(dd.used_cards.info[y]) > x:
+                            dd.execute_card_defense(int(dd.used_cards.info[y][x].split(".")[0]),
+                                                    dd.used_cards.info[y][x].split(".")[1], y,
+                                                    int(dd.used_cards.info[y][x].split(".")[2]))
+                    for y in range(1, len(dd.used_cards.info) + 1):
+                        if len(dd.used_cards.info[y]) > x:
+                            dd.execute_card_offense(int(dd.used_cards.info[y][x].split(".")[0]),
+                                                    dd.used_cards.info[y][x].split(".")[1], y,
+                                                    int(dd.used_cards.info[y][x].split(".")[2]))
+                    for y in range(1, len(dd.used_cards.info) + 1):
+                        if len(dd.used_cards.info[y]) > x:
+                            dd.execute_card_special(int(dd.used_cards.info[y][x].split(".")[0]),
+                                                    dd.used_cards.info[y][x].split(".")[1], y,
+                                                    int(dd.used_cards.info[y][x].split(".")[2]))
+                for i in range(1, len(dd.effects.info) + 1):
+                    dd.execute_effects(i)
+                for i in range(1, len(dd.used_cards.info) + 1):
+                    dd.used_cards.info[i] = []
+                for i in range(1, len(dd.players.info) + 1):
+                    energy_lags = u.mobs_dict(1, dd.players.info[i])["energy_lag"] if i > members else 4
+                    if dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags) > 12:
+                        dd.stored_energies.info[i] = 12
+                    else:
+                        dd.stored_energies.info[i] += math.ceil(dd.turns / energy_lags)
+                    dd.hps.info[i][0] -= dd.total_damages.info[i]
+                    if dd.hps.info[i][0] > dd.hps.info[i][2]:
+                        dd.hps.info[i][0] = dd.hps.info[i][2]
+                    if dd.hps.info[i][0] <= 0:
+                        dd.hps.info[i][0] = 0
+                    dd.item_used.info[i] = ["None", i]
+                    dd.multipliers.info[i] = [0, 0, 0, 0, 0]
+                    dd.total_damages.info[i] = 0
+                    dd.hps.info[i][3] = 0
+                    dd.hps.info[i][4] = 0
+                    dd.freeze_skips.info[i] = False
+                if dd.turns >= 50:
+                    for i in range(1, len(dd.players.info) + 1):
+                        dd.hps.info[i][2] = 0
+                        dd.hps.info[i][0] = 0
+        # endregion
+
+        loot_factor = [1, 2, 4, 6, 8][difficulty]
+        if dd.afk <= 6:
+            if dd.afk == 1:
+                await stats_msg.edit(embed=dd.show_stats())
+                await hands_msg.edit(embed=dd.show_hand())
+
+                coin_loot = loot_factor * sum([
+                    random.randint(*u.mobs_dict(levels, e)["death reward"]['coins'])
+                    for e in enemies
+                ])
+                exp_loot = loot_factor * sum([
+                    random.randint(*u.mobs_dict(levels, e)["death reward"]['exps'])
+                    for e in enemies
+                ])
+                gem_loot = loot_factor * sum([
+                    random.randint(*u.mobs_dict(levels, e)["death reward"]['gems'])
+                    for e in enemies
+                ]) // 100
+
+                death_award_msg = [
+                    f"+{coin_loot} golden coins",
+                    f"+{exp_loot} XP",
+                    f"+{gem_loot} shiny gems!"
+                ]
+
+                for i in ids:
+                    dm.set_user_coin(i, dm.get_user_coin(i) + coin_loot)
+                    dm.set_user_exp(i, dm.get_user_exp(i) + exp_loot)
+                    dm.set_user_gem(i, dm.get_user_gem(i) + gem_loot)
+                    dm.set_user_ticket(i, dm.get_user_ticket(i) - 1)
+
+                embed = discord.Embed(
+                    title="Battle Ended!",
+                    description=f"**You defeated {','.join(list(dict.fromkeys(enemies)))}!**\n\n"
+                                f"Everyone gained: "
+                                + "\n".join(death_award_msg),
+                    color=discord.Color.green()
+                )
+            else:
+                await stats_msg.edit(embed=dd.show_stats())
+                await hands_msg.edit(embed=dd.show_hand())
+
+                exp_loot = dd.turns * 2
+                for i in dd.p_ids.info:
+                    dm.set_user_exp(i, dm.get_user_exp(i) + exp_loot)
+                    dm.set_user_ticket(i, dm.get_user_ticket(i) - 1)
+
+                embed = discord.Embed(
+                    title="Battle Ended!",
+                    description=f"**You failed to beat the boss!**\n"
+                                f"Everyone gained {exp_loot} XP",
+                    color=discord.Color.gold()
+                )
+        else:
+            await stats_msg.edit(embed=dd.show_stats())
+            await hands_msg.edit(embed=dd.show_hand())
+
+            exp_loot = dd.turns * 2
+            for i in dd.p_ids.info:
+                dm.set_user_exp(i, dm.get_user_exp(i) + exp_loot)
+                dm.set_user_ticket(i, dm.get_user_ticket(i) - 1)
+
+            embed = discord.Embed(
+                title="Battle Ended!",
+                description=f"**It's a Tie!**\n"
+                            f"Everyone gained {exp_loot} XP",
+                color=discord.Color.gold()
+            )
+
+        embed.set_footer(text=f"This battle took {dd.turns} turns")
+        await ctx.send(embed=embed)
+
+        for i in ids:
+            del dm.queues[i]
+
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(Raid(bot))

@@ -1,11 +1,14 @@
 import discord
 from discord.ui import UserSelect
 
+from helpers import db_manager as dm
+
 
 class BattleSelectMenu(UserSelect["BattleSelect"]):
-    def __init__(self, max_players: int):
+    def __init__(self, min_players: int, max_players: int):
+        # min_players doesn't include the host
         super().__init__(
-            min_values=1,
+            min_values=min_players,
             max_values=max_players,
             placeholder="Who do you want to invite?"
         )
@@ -18,17 +21,37 @@ class BattleSelectMenu(UserSelect["BattleSelect"]):
                 ephemeral=True
             )
             return
-        
+
+        for u in self.values:
+            if not dm.is_registered(u.id):
+                await i.response.send_message(
+                    "That user doesn't exist in the bot yet!",
+                    ephemeral=True
+                )
+                return
+
+            if u.id in dm.queues and u.id != self.view.host.id:
+                await i.response.send_message(
+                    f"{u.mention} is still {dm.queues[u.id]}!",
+                    ephemeral=True
+                )
+                return
+
         self.view.selected = self.values
-        await i.response.send_message("Processing...", ephemeral=True)
+        await i.response.defer()
         self.view.stop()
 
 
 class BattleSelect(discord.ui.View):
-    def __init__(self, host: discord.Member, max_players: int = 5):
+    def __init__(
+            self,
+            host: discord.Member,
+            min_players: int = 1,
+            max_players: int = 5
+    ):
         super().__init__()
         self.host = host
-        self.add_item(BattleSelectMenu(max_players))
+        self.add_item(BattleSelectMenu(min_players, max_players))
         self.selected = None
 
     async def interaction_check(self, i: discord.Interaction) -> bool:

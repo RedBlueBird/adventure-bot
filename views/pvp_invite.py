@@ -14,8 +14,8 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
 
     async def callback(self, i: discord.Interaction):
         assert self.view is not None
-        id_ = i.user.id
 
+        id_ = i.user.id
         not_host = id_ != self.view.host.id
         if not_host and id_ in dm.queues and i.user not in self.view.rejected:
             await i.response.send_message(
@@ -24,8 +24,12 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
             )
             return
 
+        if self.view.user_team.get(i.user, None) == self.team:
+            await i.response.defer()
+            return
+
         if i.user in self.view.user_team:
-            self.view.teams[self.team].remove(i.user)
+            self.view.teams[self.view.user_team[i.user]].remove(i.user)
 
         self.view.user_team[i.user] = self.team
         self.view.teams[self.team].add(i.user)
@@ -57,20 +61,22 @@ class PvpInvite(discord.ui.View):
             self.teams[team] = set()
             self.add_item(TeamButton(team))
         self.user_team: dict[discord.Member, int] = {}
-        self.start = False
+        self.start = None
 
     @discord.ui.button(label="Start!", style=discord.ButtonStyle.green)
-    async def start(self, i: discord.Interaction, button: discord.ui.Button):
-        if i.user not in self.invited:
-            await i.response.defer()
-            return
-
+    async def start_pvp(self, i: discord.Interaction, button: discord.ui.Button):
         if i.user != self.host:
             await i.response.send_message(
                 "Only the host can start the battle!",
                 ephemeral=True
             )
             return
+
+        if self.host not in self.user_team:
+            await i.response.send_message(
+                "The host has to join a team first!",
+                ephemeral=True
+            )
 
         if len(self.user_team) < 2:
             await i.response.send_message(
@@ -92,13 +98,13 @@ class PvpInvite(discord.ui.View):
 
     @discord.ui.button(label="Reject", style=discord.ButtonStyle.red)
     async def reject(self, i: discord.Interaction, button: discord.ui.Button):
-        if i.user in self.rejected or i.user not in self.invited:
+        if i.user in self.rejected:
             await i.response.defer()
             return
 
         if i.user == self.host:
             await i.response.edit_message(
-                content="The host cancelled the battle!", view=None
+                content="The host cancelled the battle.", view=None
             )
             self.stop()
             return
@@ -119,3 +125,6 @@ class PvpInvite(discord.ui.View):
                     view=None
                 )
                 self.stop()
+
+    async def interaction_check(self, i: discord.Interaction) -> bool:
+        return i.user in self.invited
