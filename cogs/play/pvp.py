@@ -83,7 +83,7 @@ class Pvp(commands.Cog):
         teams = {}
         for t_id, t in view.teams.items():
             teams[t_id] = []
-            for v, p in enumerate(t):
+            for p in t:
                 if p not in view.user_team:
                     continue
 
@@ -181,7 +181,8 @@ class Pvp(commands.Cog):
                             and m.channel == ctx.channel
                     )
                     replied_message = await self.bot.wait_for(
-                        "message", timeout=120.0, check=check
+                        "message", timeout=120.0,
+                        check=check
                     )
                 except asyncio.TimeoutError:
                     for p in players:
@@ -193,8 +194,10 @@ class Pvp(commands.Cog):
 
                 else:
                     index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
-                    the_message = dd.interpret_message(replied_message.content[len(u.PREF):],
-                                                       str(dd.players.info[index]), index)
+                    the_message = dd.interpret_message(
+                        replied_message.content[len(u.PREF):],
+                        str(dd.players.info[index]), index
+                    )
 
                     if type(the_message) is str and the_message not in ["skip", "flee", "refresh", "backpack"]:
                         await ctx.send(the_message)
