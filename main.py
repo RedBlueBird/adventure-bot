@@ -115,6 +115,7 @@ class AdventurerBot(commands.Bot):
         raise error
 
     async def setup_hook(self):
+        print("setting up cogs?")
         for ext in walk_modules("cogs"):
             name = ext.__name__
             try:
