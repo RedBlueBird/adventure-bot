@@ -72,6 +72,12 @@ class PvpInvite(discord.ui.View):
             )
             return
 
+        if self.host not in self.user_team:
+            await i.response.send_message(
+                "The host has to join a team first!",
+                ephemeral=True
+            )
+
         if len(self.user_team) < 2:
             await i.response.send_message(
                 "At least two people have to join the battle!",

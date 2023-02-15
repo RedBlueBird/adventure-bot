@@ -1,7 +1,7 @@
 import random
 import math
 import asyncio
-import json
+from ast import literal_eval
 
 import discord
 from discord.ext import commands
@@ -49,8 +49,7 @@ class Pvp(commands.Cog):
                     await ctx.reply(f"{p.mention} is still {dm.queues[id_]}!")
                     break
 
-                level = dm.get_user_level(id_)
-                # if level < 5:
+                # if dm.get_user_level(id_) < 5:
                 #     await ctx.reply(f"{u.mention} isn't level 5 yet!")
                 #     break
 
@@ -65,25 +64,9 @@ class Pvp(commands.Cog):
                 break
             
             view = BattleSelect(a)
-            msg.edit(view=view)
+            await msg.edit(view=view)
 
-        c_ids = [a.id] + [p.id for p in people]
         people = [ctx.author] + people
-        names = []
-        decks = []
-        hps = []
-        bps = []
-
-        for p in people:
-            deck = [f"{c[2]}.{c[1]}" for c in dm.get_user_deck(p.id)]
-            random.shuffle(deck)
-            decks.append(deck)
-
-            hp = round((100 * u.SCALE[1] ** math.floor(level / 2)) * u.SCALE[0])
-            hps.append([hp, 0, hp, 0, 0])
-
-            bps.append(json.loads(dm.get_user_inventory(id_)))
-            names.append(p.name)
 
         req_msg = "Hey " + '\n'.join(c.mention for c in people[1:]) + "!\n"
         if gamble_medals > 0:
@@ -98,48 +81,58 @@ class Pvp(commands.Cog):
         if not view.start:
             return
 
-        teams = {k: [m.id for m in v] for k, v in view.teams.items()}
-        joined_users = list(view.user_team)
+        ids = []
+        names = []
+        decks = []
+        hps = []
+        bps = []
         counter = 1
-        for t in teams:  # initialize the pvp fields
-            for id_ in teams[t]:
-                k = c_ids.index(id_)
-                teams[t][teams[t].index(id_)] = counter
-                c_ids.append(c_ids.pop(k))
-                names.append(names.pop(k))
-                decks.append(decks.pop(k))
-                hps.append(hps.pop(k))
-                bps.append(bps.pop(k))
+        teams = {}
+        for t_id, t in view.teams.items():
+            teams[t_id] = []
+            for v, p in enumerate(t):
+                if p not in view.user_team:
+                    continue
+
+                teams[t_id].append(counter)
                 counter += 1
 
-        if gamble_medals > 0:
-            desc = " vs ".join([str(x) for x in names[len(c_ids) - len(joined_users):]])
-            s = "s" if gamble_medals > 1 else ""
-            embed = discord.Embed(
-                title=f"A {gamble_medals}-Medal{s} Battle Just Started!",
-                description=desc,
-                color=discord.Color.gold()
-            )
-        else:
-            embed = discord.Embed(
-                title="A Friendly Battle Just Started!",
-                description=" vs ".join([str(x) for x in names]),
-                color=discord.Color.gold()
-            )
+                ids.append(p.id)
+                names.append(p.name)
 
+                deck = [f"{c[2]}.{c[1]}" for c in dm.get_user_deck(p.id)]
+                random.shuffle(deck)
+                decks.append(deck)
+
+                level = dm.get_user_level(p.id)
+                hp = round((100 * u.SCALE[1] ** math.floor(level / 2)) * u.SCALE[0])
+                hps.append([hp, 0, hp, 0, 0])
+
+                bps.append(literal_eval(dm.get_user_inventory(p.id)))
+
+        if gamble_medals > 0:
+            s = "s" if gamble_medals > 1 else ""
+            title = f"A {gamble_medals}-Medal{s} Battle Just Started!"
+        else:
+            title = "A Friendly Battle Just Started!"
+        desc = " vs ".join([str(x) for x in names])
+        embed = discord.Embed(
+            title=title,
+            description=desc,
+            color=discord.Color.gold()
+        )
         await ctx.send(embed=embed)
 
         # START THE BATTLE!
-        offset = len(c_ids) - len(joined_users)
         dd = BattleData(
             teams,  # teams
-            names[offset:],  # [str(x) for x in challenger_names], #players
-            c_ids[offset:],  # players ids
-            decks[offset:],  # decks
-            bps[offset:],  # backpack
-            hps[offset:],  # hps
-            [35 for _ in range(len(joined_users))],  # stamina
-            len(joined_users)
+            names,  # [str(x) for x in challenger_names], #players
+            ids,  # players ids
+            decks,  # decks
+            bps,  # backpack
+            hps,  # hps
+            [35 for _ in range(len(ids))],  # stamina
+            len(ids)
         )
 
         loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
@@ -398,7 +391,7 @@ class Pvp(commands.Cog):
                     color=discord.Color.green()
                 )
             
-            embed.set_footer(f"This battle took {dd.turns} turns")
+            embed.set_footer(text=f"This battle took {dd.turns} turns")
             await ctx.send(embed=embed)
 
         else:
@@ -417,7 +410,7 @@ class Pvp(commands.Cog):
                             f"Everyone gained {dd.turns * 2} experience points",
                 color=discord.Color.green()
             )
-            embed.set_footer(f"This battle took {dd.turns} turns")
+            embed.set_footer(text=f"This battle took {dd.turns} turns")
             await ctx.send(embed=embed)
 
         for u_ in set(dd.p_ids.info.values()):
