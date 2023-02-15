@@ -25,6 +25,8 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
         raise ImportError(name=name)  # pragma: no cover
 
     # The mock prevents asyncio.get_event_loop() from being called.
+    # The first parameter has to be cogs.__path__ otherwise when main.py executed through
+    # absolute path  no cogs will be appended
     prefix = f"{start}."
     for module in pkgutil.walk_packages(cogs.__path__, prefix, onerror=on_error):
         if not module.ispkg:
@@ -116,11 +118,7 @@ class AdventurerBot(commands.Bot):
         raise error
 
     async def setup_hook(self):
-        print("setting up cogs?")
-        print(list(walk_modules("cogs")))
-        print([i.__name__ for i in list(walk_modules("cogs"))])
         for ext in walk_modules("cogs"):
-            print("ok there are at least cogs being found")
             name = ext.__name__
             try:
                 await bot.load_extension(name)
