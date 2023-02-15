@@ -254,11 +254,21 @@ def get_user_deck(uid: int, slot: int = -1) -> list[tuple[int, str, int]]:
 
 
 def get_user_cards(
-        uid: int, order: int | None = None, add_rules: str = "",
-        start: int = 0, length: int = -1,
+        uid: int,
+        order: int | None = None,
+        name: str | None = None,
+        level: int | None = None,
+        energy: int | None = None,
+        rarity: str | None = None,
 ) -> list[tuple[int, str, int]]:
-    order_by = ""
-    order = get_user_order(uid) if order is None else order
+    conditions = []
+    if name is not None:
+        conditions.append(f"AND card_name LIKE '%{name}%'")
+    if level is not None:
+        conditions.append(f"AND card_level = {level}")
+    
+    if order is None:
+        order = get_user_order(uid)
     if order == 1:
         order_by = "card_level, card_name"
     elif order in [2, 7, 8, 9, 10]:
@@ -274,10 +284,26 @@ def get_user_cards(
 
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
-        f"owned_user = {uid} {add_rules} ORDER BY {order_by}"
+        f"owned_user = {uid} {conditions} ORDER BY {order_by}"
     )
-
     result = cur.fetchall()
+
+    if energy is not None:
+        result = [card for card in result if energy == u.cards_dict(card[2], card[1])["cost"]]
+    if rarity is not None:
+        rarity_terms = {
+                "L": "legendary",
+                "EX": "exclusive",
+                "E": "epic",
+                "R": "rare",
+                "C": "common",
+                "M": "monster"
+            }
+        result = [
+            card for card in result
+            if rarity == rarity_terms.get(u.cards_dict(card[2], card[1])["rarity"])
+        ]
+
     if order in [7, 8]:
         result = u.order_by_rarity(result, 1)
         result = u.order_by_cost(result, order - 7)
@@ -285,7 +311,7 @@ def get_user_cards(
         result = u.order_by_cost(result, 1)
         result = u.order_by_rarity(result, order - 9)
 
-    return result[start:] if length <= 0 else result[start:start + length]
+    return result
 
 
 def add_user_cards(cards: list[tuple[int, str, int]]):
