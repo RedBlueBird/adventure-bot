@@ -10,8 +10,7 @@ from PIL import Image
 import discord
 from discord.ext import commands
 
-from helpers import BattleData
-from helpers import checks
+from helpers import checks, BattleData
 from helpers.checks import valid_reaction, valid_reply
 from helpers import db_manager as dm
 import util as u

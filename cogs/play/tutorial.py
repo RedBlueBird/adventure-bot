@@ -6,10 +6,8 @@ from copy import deepcopy
 import discord
 from discord.ext import commands
 
-from helpers import checks
-from helpers import db_manager as dm
-from helpers.checks import valid_reaction, valid_reply
-from helpers import BattleData
+from helpers import checks, BattleData
+from helpers.checks import valid_reply
 import util as u
 from views import Confirm
 
