@@ -82,17 +82,18 @@ class Admin(commands.Cog):
     async def end_season(self, ctx: commands.Context):
         """Resets the PVP season and gives each player their medals."""
         for d in dm.get_all_userid():
-            user_medal = dm.get_user_medal(d)
+            medals = dm.get_user_medal(d)
 
-            earned_coins = user_medal * 5
-            earned_gems = math.floor(user_medal / 100)
+            earned_coins = medals * 5
+            earned_gems = math.floor(medals / 100)
             if dm.has_premium(d):
                 earned_coins *= 2
                 earned_gems *= 2
 
-            medals = math.ceil((user_medal - 500) / 2) + 500 if user_medal > 500 else user_medal
+            new_medals = (medals - 500) // 2 + 500 if medals > 500 else medals
 
-            msg = f"The season ended! You now have {medals} {u.ICON['medal']} (from {user_medal}) "\
+            msg = f"The season ended!" \
+                  f"You now have {new_medals} {u.ICON['medal']} (from {medals}) "\
                   f"\n+{earned_coins} {u.ICON['coin']}!"
             if earned_gems > 0:
                 msg += f"\n + {earned_gems} {u.ICON['gem']}"
@@ -101,7 +102,7 @@ class Admin(commands.Cog):
             await user.send(msg)
             dm.set_user_coin(d, dm.get_user_coin(d) + earned_coins)
             dm.set_user_gem(d, dm.get_user_gem(d) + earned_gems)
-            dm.set_user_medal(d, medals)
+            dm.set_user_medal(d, new_medals)
 
         await ctx.reply("Season Ended!")
 
