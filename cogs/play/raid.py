@@ -101,14 +101,14 @@ class Raid(commands.Cog):
         enemies = ["Lich Lord"]
         ad_decks = [
             random.sample(
-                [f"{levels}.{x}" for x in u.mobs_dict(levels, i)["deck"]],
-                len(u.mobs_dict(levels, i)['deck'])
+                [f"{levels}.{x}" for x in u.mobs_dict(levels, e)["deck"]],
+                len(u.mobs_dict(levels, e)['deck'])
             )
-            for i in enemies
+            for e in enemies
         ]
         ad_hps = [
-            [u.mobs_dict(levels, i)["health"], 0, u.mobs_dict(levels, i)['health'], 0, 0]
-            for i in enemies
+            [u.mobs_dict(levels, e)["health"], 0, u.mobs_dict(levels, e)['health'], 0, 0]
+            for e in enemies
         ]
 
         # Initialize the battlefield
@@ -119,7 +119,7 @@ class Raid(commands.Cog):
         dd = BattleData(
             teams=teams,
             players=names + enemies,
-            p_ids=ids + [123] * len(enemies),
+            p_ids=ids + [123 for _ in range(len(enemies))],
             decks=decks + ad_decks,
             backpacks=bps + [{} for _ in range(len(enemies))],
             hps=hps + ad_hps,
@@ -127,9 +127,9 @@ class Raid(commands.Cog):
             counts=len(enemies) + members
         )
 
-        loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
-        stats_msg = await ctx.send(embed=loading_embed_message)
-        hands_msg = await ctx.send(embed=loading_embed_message)
+        loading_embed = discord.Embed(title="Loading...", description=u.ICON['load'])
+        stats_msg = await ctx.send(embed=loading_embed)
+        hands_msg = await ctx.send(embed=loading_embed)
 
         def stats_check() -> bool:
             alive = 0
