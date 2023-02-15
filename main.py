@@ -117,6 +117,7 @@ class AdventurerBot(commands.Bot):
     async def setup_hook(self):
         print("setting up cogs?")
         for ext in walk_modules("cogs"):
+            print("ok there are at least cogs being found")
             name = ext.__name__
             try:
                 await bot.load_extension(name)
