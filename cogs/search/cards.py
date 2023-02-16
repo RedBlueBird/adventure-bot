@@ -5,7 +5,6 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import db_manager as dm
-import util as u
 from views import CardPages
 
 
@@ -20,8 +19,14 @@ class CardSearch(commands.Cog):
             level: int | None = None,
             energy: int | None = None,
             rarity: t.Literal["legendary", "exclusive", "epic", "rare", "common", "monster"] | None = None
-        ):
-        cards = dm.get_user_cards(ctx.author.id, name=name, level=level, energy=energy, rarity=rarity)
+    ):
+        cards = dm.get_user_cards(
+            ctx.author.id,
+            name=name,
+            level=level,
+            energy=energy,
+            rarity=rarity
+        )
         if cards:
             view = CardPages(ctx.author, cards=cards)
             await ctx.send(embed=view.page_embed(), view=view)
@@ -30,7 +35,8 @@ class CardSearch(commands.Cog):
                 title="Nothing came up! :(",
                 color=discord.Color.red()
             )
-            await ctx.send(embed)
+            await ctx.send(embed=embed)
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(CardSearch(bot))
