@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33214.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "discord-adventurers-bot", "discord-adventurers-bot.pyproj", "{61AA841E-6A35-4C55-BF29-681E39AA3427}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{61AA841E-6A35-4C55-BF29-681E39AA3427}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61AA841E-6A35-4C55-BF29-681E39AA3427}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {97035909-F05E-4C85-8A3A-A6E7DEBD2198}
+	EndGlobalSection
+EndGlobal

@@ -396,7 +396,7 @@
         ],
         "mod": {},
         "description": "Deals ${damage} damage and spawns 2 temporary **[NA/1] Distraction lv: ${level}** cards into your opponent's cards",
-        "brief": "CHEERS! Adventurers bot anniversary event exclusive card. Shoot off some confetti, distracting your opponent in the process!"
+        "brief": "CHEERS! Adventure bot anniversary event exclusive card. Shoot off some confetti, distracting your opponent in the process!"
     },
     "tsunami wave": {
         "name": "Tsunami Wave",
