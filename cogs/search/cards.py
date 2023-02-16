@@ -28,7 +28,7 @@ class CardSearch(commands.Cog):
             rarity=rarity
         )
         if cards:
-            view = CardPages(ctx.author, cards=cards)
+            view = CardPages(ctx.author, ctx.author, cards=cards)
             await ctx.send(embed=view.page_embed(), view=view)
         else:
             embed = discord.Embed(

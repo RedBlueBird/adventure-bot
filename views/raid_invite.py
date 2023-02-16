@@ -91,4 +91,10 @@ class RaidInvite(discord.ui.View):
             self.stop()
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
-        return i.user in self.invited
+        if i.user in self.invited:
+            await i.response.send_message(
+                "You must be invited to interact with this message.",
+                ephemeral=True
+            )
+            return False
+        return True

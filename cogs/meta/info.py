@@ -202,7 +202,7 @@ class Info(commands.Cog):
             await ctx.reply("That user isn't registered yet!")
             return
 
-        view = CardPages(user, page=page - 1)
+        view = CardPages(ctx.author, user, page=page - 1)
         await ctx.send(embed=view.page_embed(), view=view)
 
     @commands.hybrid_command(

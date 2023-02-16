@@ -13,6 +13,7 @@ def chunks(lst: list, n: int):
 class CardPages(discord.ui.View):
     def __init__(
             self,
+            author: discord.Member,
             user: discord.Member,
             cards: list | None = None,
             per_page: int = 15,
@@ -20,10 +21,10 @@ class CardPages(discord.ui.View):
     ):
         super().__init__()
 
+        self.author = author
         self.user = user
         self.deck_ids = {card[0] for card in dm.get_user_deck(user.id)}
-        if cards is None:
-            cards = dm.get_user_cards(user.id)
+        cards = cards if cards is not None else dm.get_user_cards(user.id)
         self.num_cards = len(cards)
 
         self.per_page = per_page
@@ -66,8 +67,8 @@ class CardPages(discord.ui.View):
         )
         return embed
 
-    async def interaction_check(self, i: discord.Interaction):
-        if i.user != self.user:
+    async def interaction_check(self, i: discord.Interaction) -> bool:
+        if i.user != self.author:
             await i.response.send_message(
                 "You must be the command sender to interact with this message.",
                 ephemeral=True
