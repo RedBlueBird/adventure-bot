@@ -80,11 +80,11 @@ class CardPages(discord.ui.View):
         self.page -= 1
         self.update_buttons()
         await i.response.defer()
-        await i.edit_original_response(embed=self.page_embed())
+        await i.edit_original_response(embed=self.page_embed(), view=self)
         
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
     async def next_page(self, i: discord.Interaction, button: discord.ui.Button):
         self.page += 1
         self.update_buttons()
         await i.response.defer()
-        await i.edit_original_response(embed=self.page_embed())
+        await i.edit_original_response(embed=self.page_embed(), view=self)

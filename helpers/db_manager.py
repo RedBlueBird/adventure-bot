@@ -284,7 +284,7 @@ def get_user_cards(
 
     cur.execute(
         f"SELECT id, card_name, card_level FROM temp_cards WHERE "
-        f"owned_user = {uid} {conditions} ORDER BY {order_by}"
+        f"owned_user = {uid} {' '.join(conditions)} ORDER BY {order_by}"
     )
     result = cur.fetchall()
 
