@@ -23,6 +23,10 @@ class Sys(commands.Cog):
         """Registers the author of the message."""
         a = ctx.author
 
+        if dm.is_registered(a.id):
+            await ctx.send("You are already registered!")
+            return
+
         await ctx.send(f"*registering {ctx.author.mention}...*")
 
         card_names = [
