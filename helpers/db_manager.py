@@ -43,7 +43,7 @@ def init():
 
 
 def is_registered(uid: int) -> bool:
-    cur.execute(f"SELECT EXISTS(SELECT * FROM temp WHERE userid = {uid})")
+    cur.execute(f"SELECT EXISTS(SELECT * FROM temp WHERE userid = {uid}")
     return bool(cur.fetchall()[0][0])
 
 
