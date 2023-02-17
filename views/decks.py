@@ -6,9 +6,8 @@ import util as u
 
 class DeckButton(discord.ui.Button["Decks"]):
     def __init__(self, slot: int):
-        super().__init__(style=discord.ButtonStyle.blurple)
+        super().__init__(label=f"Deck {slot}", style=discord.ButtonStyle.blurple, row=0)
         self.slot = slot
-        self.label = f"Deck {slot}"
 
     async def callback(self, i: discord.Interaction):
         assert self.view is not None
@@ -30,7 +29,7 @@ class Decks(discord.ui.View):
             if level >= u.DECK_LVL_REQ[s]:
                 self.add_item(DeckButton(s))
 
-    @discord.ui.button(label="All Decks", style=discord.ButtonStyle.gray)
+    @discord.ui.button(label="All Decks", style=discord.ButtonStyle.gray, row=1)
     async def all(self, i: discord.Interaction, button: discord.ui.Button):
         await i.response.edit_message(embed=self.decklist_embed())
 

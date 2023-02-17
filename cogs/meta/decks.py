@@ -282,7 +282,7 @@ class Decks(commands.Cog):
                 add_ids.append(c)
                 add_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
 
-        if deck_size + len(add_ids) >= 12:
+        if deck_size + len(add_ids) > 12:
             await ctx.reply("Your deck can't have that many cards!")
             return
 
