@@ -55,7 +55,7 @@ class Info(commands.Cog):
         )
         embed.set_thumbnail(url=user.avatar.url)
 
-        hp = round((100 * u.SCALE[1] ** math.floor(lvl / 2)) * u.SCALE[0])
+        hp = u.level_hp(lvl)
         xp = dm.get_user_exp(user.id)
         if lvl < 30:
             embed.add_field(

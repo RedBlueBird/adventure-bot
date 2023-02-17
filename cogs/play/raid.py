@@ -41,7 +41,7 @@ class Raid(commands.Cog):
 
                 level_req = 4
                 if dm.get_user_level(id_) < level_req:
-                    await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
+                    await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break
 
                 if dm.get_user_ticket(id_) == 0:
@@ -81,11 +81,10 @@ class Raid(commands.Cog):
             random.shuffle(deck)
             decks.append(deck)
 
-            level = dm.get_user_level(p.id)
-            hp = round((100 * u.SCALE[1] ** math.floor(level / 2)) * u.SCALE[0])
+            hp = u.level_hp(dm.get_user_level(p.id))
             hps.append([hp, 0, hp, 0, 0])
 
-            bps.append(literal_eval(dm.get_user_inventory(p.id)))
+            bps.append(dm.get_user_inventory(p.id))
 
         for i in ids:
             dm.queues[i] = "raiding a boss"

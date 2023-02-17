@@ -51,7 +51,7 @@ class Admin(commands.Cog):
             log.write(f"{ctx.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
 
         item = u.items_dict(item.replace("_", " "))["name"].lower()
-        inv = json.loads(dm.get_user_inventory(recipient.id))
+        inv = dm.get_user_inventory(recipient.id)
 
         if amt > 0 and item not in inv:
             inv[item] = {"items": amt}

@@ -34,7 +34,10 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
 
 
 def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
-    embed = discord.Embed(title=f"Mini Game - {game_name}!", color=discord.Color.gold())
+    embed = discord.Embed(
+        title=f"Mini Game - {game_name}!",
+        color=discord.Color.gold()
+    )
 
     logs = [f"• {r}" for r in u.MINIGAMES[game_name]["rules"]]
     embed.add_field(name="Rules", value=" \n".join(logs))
@@ -56,42 +59,31 @@ class Adventure(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=["ad", "adv"], description="Go on an adventure!")
+    @commands.command(
+        aliases=["ad", "adv"],
+        description="Go on an adventure!"
+    )
     @checks.not_preoccupied("on an adventure")
     @checks.is_registered()
     async def adventure(self, ctx: commands.Context):
         mention = ctx.author.mention
         a_id = ctx.author.id
-        dm.cur.execute(f"select * from adventuredata where userid = {a_id}")
-        a_datas = dm.cur.fetchall()
-        dm.cur.execute(f"select * from playersinfo where userid = {a_id}")
-        p_datas = list(dm.cur.fetchall()[0])
-        p_hp = round((100 * u.SCALE[1] ** math.floor(p_datas[3] / 2)) * u.SCALE[0])
+
+        p_lvl = dm.get_user_level(a_id)
+        p_hp = u.level_hp(p_lvl)
         p_max_hp = p_hp
         p_sta = 100
         p_distance = 0
-        deck_slot = p_datas[17]
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"select {db_deck}, badges from playersachievements where userid = {a_id}")
-        result = dm.cur.fetchall()[0]
-        deck = result[0].split(",")
-        badges = result[1]
-        dm.cur.execute(
-            f"select card_name, card_level from cardsinfo where owned_user = {a_id} and id in ({str(deck)[1:-1]})")
-        deck = dm.cur.fetchall()
-        p_hand = random.sample([f"{x[1]}.{x[0]}" for x in deck], len(deck))
-        p_hand_size = 4
-        p_effect = {}
+        badges = dm.get_user_badge(a_id)
+        deck = dm.get_user_deck(a_id)
+        hand = [f"{c[2]}.{c[1]}" for c in deck]
+        random.shuffle(hand)
         raid_levels = 1
 
-        # p_inv = {"teleportation stone":{"items":"x"}}
-        p_inv = eval(a_datas[0][3])
-        p_stor = eval(a_datas[0][5])
-        p_pos = a_datas[0][2]
-        if a_datas[0][4] == 'false':
-            show_map = False
-        else:
-            show_map = True
+        p_inv = dm.get_user_inventory(a_id)
+        p_stor = dm.get_user_storage(a_id)
+        p_pos = dm.get_user_position(a_id)
+        show_map = dm.get_user_map(a_id)
 
         afk = False
         leave = False
@@ -100,8 +92,8 @@ class Adventure(commands.Cog):
         # HOMETOWN EXPLORATION
         dm.queues[a_id] = "exploring in the Hometown"
 
-        loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
-        adventure_msg = await ctx.send(embed=loading_embed_message)
+        loading = discord.Embed(title="Loading...", description=u.ICON['load'])
+        adventure_msg = await ctx.send(embed=loading)
 
         while not leave and not afk and not adventure:
             embed = discord.Embed(
@@ -191,7 +183,6 @@ class Adventure(commands.Cog):
 
             elif pos[1] == "selling" and not afk and not leave:
                 exiting = False
-                # dm.cur.execute(f"select coins from playersinfo where userid = {a_id}")
                 await adventure_msg.edit(
                     content=f"`{u.PREF}sell (item_name) (amount)` to sell items \n"
                             f"`{u.PREF}backpack` to check your backpack \n"
@@ -244,9 +235,7 @@ class Adventure(commands.Cog):
                                 continue
 
                             else:
-                                dm.cur.execute(
-                                    f"update playersinfo set coins = coins + {item['sell'] * counts} where userid = {a_id}")
-                                dm.db.commit()
+                                dm.set_user_coin(a_id, dm.get_user_coin(a_id) + item["sell"] * counts)
                                 if p_inv[item['name'].lower()]["items"] == counts:
                                     del p_inv[item['name'].lower()]
                                 else:
@@ -260,33 +249,40 @@ class Adventure(commands.Cog):
 
             elif pos[1] == "buying" and not afk and not leave:
                 exiting = False
-                dm.cur.execute(f"select coins from playersinfo where userid = {a_id}")
-                coins = dm.cur.fetchall()[0][0]
-                purchasables = ["Forest Fruit", "Fruit Salad", "Raft", "Torch", "Herb", "Health Potion", "Power Potion",
-                                "Large Health Potion",
-                                "Large Power Potion", "Resurrection Amulet", "Teleportation Stone"]
+                coins = dm.get_user_coin(a_id)
+                items = [
+                    "Forest Fruit", "Fruit Salad", "Raft", "Torch", "Herb",
+                    "Health Potion", "Power Potion", "Large Health Potion",
+                    "Large Power Potion", "Resurrection Amulet", "Teleportation Stone"
+                ]
+
                 offers = []
-                for offer in purchasables:
+                for offer in items:
                     item = u.items_dict(offer)
                     offers.append(f"[{item['rarity']}/{item['weight']}] {item['name']} - {item['buy']} gc")
-                embed = discord.Embed(title="Jessie's Shop:",
-                                      description="I have all the essential items you're going to need! \n" + \
-                                                  "```" + "\n".join(offers[:]) + "```",
-                                      color=discord.Color.gold())
-                await adventure_msg.edit(content=f"`{u.PREF}purchase (item_name) (amount)` to purchase items \n" +
-                                                 f"`{u.PREF}backpack` to check your backpack \n" +
-                                                 f"`{u.PREF}refresh` to resend the items price list \n" +
-                                                 f"`{u.PREF}exit` to exit the shops",
-                                         embed=embed)
+
+                embed = discord.Embed(
+                    title="Jessie's Shop:",
+                    description="I have everything adventurers need!\n"
+                                "```" + "\n".join(offers) + "```",
+                    color=discord.Color.gold()
+                )
+                await adventure_msg.edit(
+                    content=f"`{u.PREF}purchase (item_name) (amount)` to purchase items\n"
+                            f"`{u.PREF}backpack` to check your backpack\n"
+                            f"`{u.PREF}refresh` to resend the items price list\n"
+                            f"`{u.PREF}exit` to exit the shops",
+                    embed=embed
+                )
                 while not exiting:
                     try:
-                        msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=valid_reply([''], [ctx.author],
-                                                                              [ctx.message.channel]))
+                        msg_reply = await self.bot.wait_for(
+                            "message", timeout=60.0,
+                            check=valid_reply("", ctx.author, ctx.channel)
+                        )
                     except asyncio.TimeoutError:
                         exiting = True
-                        await ctx.send(
-                            f"{mention} You went idle and decided to exit the shops")
+                        await ctx.reply("You decided to exit the shop.")
                         break
 
                     msg_reply = msg_reply.content[len(u.PREF):].split(" ")
@@ -306,7 +302,7 @@ class Adventure(commands.Cog):
                         try:
                             item = u.items_dict(" ".join(msg_reply[1].split("_")[:]))
                             counts = max(int(msg_reply[2]), 1)
-                            if not item['name'] in purchasables:
+                            if not item['name'] in items:
                                 await ctx.send("The selected item(s) is not in the offer!")
                                 continue
                             elif item["weight"] * counts > 100 - u.get_bp_weight(p_inv):
@@ -318,9 +314,7 @@ class Adventure(commands.Cog):
                                     "You don't have enough coins to afford the selected item(s)!")
                                 continue
                             else:
-                                dm.cur.execute(
-                                    f"update playersinfo set coins = coins - {item['buy'] * counts} where userid = {a_id}")
-                                dm.db.commit()
+                                dm.set_user_coin(a_id, dm.get_user_coin(a_id) - item['buy'] * counts)
                                 if item["name"].lower() in p_inv:
                                     p_inv[item["name"].lower()]["items"] += counts
                                 else:
@@ -338,13 +332,14 @@ class Adventure(commands.Cog):
                                                  u.PREF + "close` to close your chest and exit \n`" +
                                                  u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
                                          embed=u.display_backpack(p_stor, ctx.author, "Chest",
-                                                                  level=p_datas[3]))
+                                                                  level=p_lvl))
                 if u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
-                            msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply([''], [ctx.author],
-                                                                                  [ctx.message.channel]))
+                            msg_reply = await self.bot.wait_for(
+                                "message", timeout=60.0,
+                                check=valid_reply("", ctx.author, ctx.channel)
+                            )
                         except asyncio.TimeoutError:
                             exiting = True
                             await ctx.send(
@@ -372,7 +367,7 @@ class Adventure(commands.Cog):
                                                 f"`{u.PREF}chest` to check your chest \n" +
                                                 f"`{u.PREF}close` to close your chest and exit \n" +
                                                 f"`{u.PREF}withdraw/deposit (item_name) (amount) to take or put items from your backpack and chest",
-                                        embed=u.display_backpack(p_stor, ctx.author, "Chest", level=p_datas[3]))
+                                        embed=u.display_backpack(p_stor, ctx.author, "Chest", level=p_lvl))
 
                                 elif inputs[0] in ["backpack", "bp", "b"]:
                                     embed = u.display_backpack(p_inv, ctx.author, "Backpack")
@@ -401,7 +396,7 @@ class Adventure(commands.Cog):
                                                 f"{mention} You don't have {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** in your {target}!")
 
                                         elif (location == p_inv and u.get_bp_weight(
-                                                p_stor) + total_weight > u.chest_storage(p_datas[3])) \
+                                                p_stor) + total_weight > u.chest_storage(p_lvl)) \
                                                 or (location == p_stor and u.get_bp_weight(
                                             p_inv) + total_weight > 100):
                                             await ctx.send(
@@ -451,10 +446,10 @@ class Adventure(commands.Cog):
                 if pos[0] == "coin flip":
                     while not exit_game:
                         try:
-                            msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply(['flip', 'f', 'exit'],
-                                                                                  [ctx.author],
-                                                                                  [ctx.message.channel]))
+                            msg_reply = await self.bot.wait_for(
+                                "message", timeout=60.0,
+                                check=valid_reply(["flip", "f", "exit"], ctx.author, ctx.channel)
+                            )
                         except asyncio.TimeoutError:
                             exit_game = True
                             await ctx.send(
@@ -963,7 +958,7 @@ class Adventure(commands.Cog):
                 section = choices['to'][0]
                 trap_time = random.randint(choices["time"][0], choices["time"][1])
                 trap_dmg = round(random.randint(choices["damage"][0], choices['damage'][1]) / 100 * round(
-                    (100 * u.SCALE[1] ** math.floor(p_datas[3] / 2)) * u.SCALE[0]))
+                    (100 * u.SCALE[1] ** math.floor(p_lvl / 2)) * u.SCALE[0]))
                 if choices["trap"] == "reaction":
                     await ctx.send(
                         f'Reply `{u.PREF}react` as fast as you can when you see the message "Now!"!')
@@ -1061,7 +1056,7 @@ class Adventure(commands.Cog):
                     levels = math.floor((p_distance - 500) / 200) if p_distance > 500 else 1
                     if pos[0] == "boss raid":
                         levels = raid_levels
-                    ad_decks = [p_hand] + [random.sample(
+                    ad_decks = [hand] + [random.sample(
                         [f"{levels + random.randint(0, 3)}.{x}" for x in u.mobs_dict(levels, i)["deck"]],
                         len(u.mobs_dict(levels, i)['deck'])) for i in enemynames]
                     ad_hps = [[p_hp, 0, p_max_hp, 0, 0]] + \
@@ -1075,9 +1070,9 @@ class Adventure(commands.Cog):
                                     ad_hps,  # hps
                                     [p_sta] + [u.mobs_dict(levels, i)["stamina"] for i in enemynames],  # stamina
                                     len(enemynames) + 1)
-                    loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
-                    stats_msg = await ctx.send(embed=loading_embed_message)
-                    hands_msg = await ctx.send(embed=loading_embed_message)
+                    loading = discord.Embed(title="Loading...", description=u.ICON['load'])
+                    stats_msg = await ctx.send(embed=loading)
+                    hands_msg = await ctx.send(embed=loading)
 
                     def stats_check():
                         alive = 0
@@ -1427,7 +1422,7 @@ class Adventure(commands.Cog):
 
                     p_hp = dd.hps.info[1][0]
                     p_sta = dd.staminas.info[1]
-                    p_hand = dd.decks.info[1]
+                    hand = dd.decks.info[1]
                     p_hand_size = dd.hand_sizes.info[1]
                     p_effect = dd.effects.info[1]
                     p_inv = dd.backpacks.info[1]
@@ -1525,7 +1520,8 @@ class Adventure(commands.Cog):
 
                 if index[2] == "end":
                     if index[0] == "coin loss":
-                        coin_loss = random.randint(u.ADVENTURES["end"]["coin loss"][0], u.ADVENTURES["end"]["coin loss"][1])
+                        coin_loss = random.randint(u.ADVENTURES["end"]["coin loss"][0],
+                                                   u.ADVENTURES["end"]["coin loss"][1])
                         if p_datas[5] < abs(coin_loss) and coin_loss < 0:
                             coin_loss = p_datas[5]
                             p_datas[5] = 0
@@ -1651,10 +1647,11 @@ class Adventure(commands.Cog):
                                     p_inv[translator]["items"] -= trade_items_to_take[translator]
                                 p_inv = u.clear_bp(p_inv)
 
-                sql = "update playersinfo set exps = exps + %s, coins = coins + %s, gems = gems + %s where userid = %s"
-                val = (gained_exps, gained_coins, gained_gems, a_id)
                 if gained_coins > 0:
                     dm.log_quest(5, gained_coins, a_id)
+
+                sql = "update playersinfo set exps = exps + %s, coins = coins + %s, gems = gems + %s where userid = %s"
+                val = (gained_exps, gained_coins, gained_gems, a_id)
                 dm.cur.execute(sql, val)
                 dm.db.commit()
 
@@ -1704,20 +1701,16 @@ class Adventure(commands.Cog):
                             pre_message) + "CONGRATULATIONS! You have endured and survived all the obstacles stood in your way. You achieved what many failed to acomplish!```",
                         color=discord.Color.green()
                     )
-                    if location == "enchanted forest" and badges[5] == "0":
-                        badges[5] = '1'
-                        dm.cur.execute(f"update playersachievements set badges = '{badges}'")
-                        dm.db.commit()
+                    if location == "enchanted forest" and (badges & (1 << 5)) == 0:
+                        badges |= 1 << 5
+                        dm.set_user_badge(a_id, badges)
 
-                embed.add_field(name="Result:", value="Total distance traveled - " + str(p_distance) + " meters")
+                embed.add_field(name="Result:", value=f"Total distance traveled - {p_distance} meters")
                 embed.set_thumbnail(url=ctx.author.avatar.url)
                 embed.set_footer(text=f"Type {u.PREF}adventure to restart!")
                 await adventure_msg.edit(embed=embed)
 
-        sql = "update adventuredata set inventory = %s where userid = %s"
-        val = (str(p_inv), a_id)
-        dm.cur.execute(sql, val)
-        dm.db.commit()
+        dm.set_user_inventory(a_id, p_inv)
 
 
 async def setup(bot):

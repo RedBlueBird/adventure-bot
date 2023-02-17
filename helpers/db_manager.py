@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+from ast import literal_eval
 import datetime as dt
 
 import util as u
@@ -370,19 +371,19 @@ def set_user_position(uid: int, value: str):
     db.commit()
 
 
-def get_user_inventory(uid: int) -> str:
+def get_user_inventory(uid: int) -> dict:
     cur.execute(f"SELECT inventory FROM temp WHERE userid = {uid}")
-    return cur.fetchall()[0][0]
+    return literal_eval(cur.fetchall()[0][0])
 
 
-def set_user_inventory(uid: int, value: str):
+def set_user_inventory(uid: int, value):
     cur.execute(f"UPDATE temp SET inventory = '{value}' WHERE userid = {uid}")
     db.commit()
 
 
-def get_user_storage(uid: int) -> str:
+def get_user_storage(uid: int) -> dict:
     cur.execute(f"SELECT storage FROM temp WHERE userid = {uid}")
-    return cur.fetchall()[0][0]
+    return literal_eval(cur.fetchall()[0][0])
 
 
 def set_user_storage(uid: int, value: str):

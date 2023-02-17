@@ -43,7 +43,7 @@ class Pvp(commands.Cog):
 
                 level_req = 5
                 if dm.get_user_level(id_) < level_req:
-                    await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
+                    await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break
 
                 if dm.get_user_medal(id_) < gamble_medals:
@@ -61,7 +61,7 @@ class Pvp(commands.Cog):
 
         people = [ctx.author] + people
 
-        req_msg = "Hey " + '\n'.join(c.mention for c in people[1:]) + "!\n"
+        req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
         if gamble_medals > 0:
             req_msg += f"{a.mention} wants to battle with {gamble_medals} {u.ICON['medal']}!\n"
         else:
@@ -97,11 +97,10 @@ class Pvp(commands.Cog):
                 random.shuffle(deck)
                 decks.append(deck)
 
-                level = dm.get_user_level(p.id)
-                hp = round((100 * u.SCALE[1] ** math.floor(level / 2)) * u.SCALE[0])
+                hp = u.level_hp(dm.get_user_level(p.id))
                 hps.append([hp, 0, hp, 0, 0])
 
-                bps.append(literal_eval(dm.get_user_inventory(p.id)))
+                bps.append(dm.get_user_inventory(p.id))
 
         if gamble_medals > 0:
             s = "s" if gamble_medals > 1 else ""

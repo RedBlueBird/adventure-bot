@@ -1,6 +1,8 @@
 import math
 import datetime as dt
 
+from .constants import SCALE
+
 
 def time_converter(seconds: str | int) -> str:
     """
@@ -47,8 +49,15 @@ def log_level_gen(i: int) -> int:
 
 
 def level_xp(lvl: int) -> int:
-    """:return: The amount of XP required to advance to the next level, given the current one."""
+    """
+    :return: The amount of XP required to advance to the
+    next level, given the current one.
+    """
     return math.floor(int((lvl ** 2) * 40 + 60))
+
+
+def level_hp(lvl: int) -> int:
+    return round((100 * SCALE[1] ** math.floor(lvl / 2)) * SCALE[0])
 
 
 def clamp(i: int, lo: int, hi: int) -> int:
