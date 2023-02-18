@@ -11,7 +11,7 @@ import util as u
 from views import Confirm
 
 
-class Decks(commands.Cog):
+class Deck(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -234,4 +234,4 @@ class Decks(commands.Cog):
         )
 
 async def setup(bot):
-    await bot.add_cog(Decks(bot))
+    await bot.add_cog(Deck(bot))
