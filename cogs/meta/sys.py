@@ -162,7 +162,7 @@ class Sys(commands.Cog):
 
         # region Gold Spawn Logic
         by_jeff = message.content.lower() == "spawn" and a.id == 344292024486330371
-        if random.randint(1, 250) == 1 or by_jeff:
+        if random.randint(1, 250) == 0 or by_jeff:
             if random.randint(1, 30) == 1:
                 amt = random.randint(250, 500)
             else:
