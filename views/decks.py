@@ -5,14 +5,21 @@ import util as u
 
 
 class DeckButton(discord.ui.Button["Decks"]):
-    def __init__(self, slot: int, row: int):
-        super().__init__(label=f"Deck {slot}", style=discord.ButtonStyle.blurple, row=row)
+    def __init__(self, slot: int):
+        super().__init__(label=f"Deck {slot}", style=discord.ButtonStyle.blurple, row=(slot-1)//3)
         self.slot = slot
 
     async def callback(self, i: discord.Interaction):
         assert self.view is not None
         self.view.slot = self.slot
         await i.response.edit_message(embed=self.view.deck_embed())
+
+class OverviewButton(discord.ui.Button["Decks"]):
+    def __init__(self, row: int):
+        super().__init__(label="Overview", style=discord.ButtonStyle.gray, row=row)
+    
+    async def callback(self, i: discord.Interaction):
+        await i.response.edit_message(embed=self.view.overview_embed())
 
 
 class Decks(discord.ui.View):
@@ -26,15 +33,11 @@ class Decks(discord.ui.View):
 
         self.unlocked = 0
         level = dm.get_user_level(user.id)
-        for slot in range(1, 6 + 1):
-            if level >= u.DECK_LVL_REQ[slot]:
+        for s in range(1, 6 + 1):
+            if level >= u.DECK_LVL_REQ[s]:
                 self.unlocked += 1
-                self.add_item(DeckButton(slot, (slot-1)//3))
-        self.children[0].row = (self.unlocked+2)//3
-
-    @discord.ui.button(label="Overview", style=discord.ButtonStyle.gray)
-    async def overview(self, i: discord.Interaction, button: discord.ui.Button):
-        await i.response.edit_message(embed=self.overview_embed())
+                self.add_item(DeckButton(s))
+        self.add_item(OverviewButton((self.unlocked+2)//3))
 
     def overview_embed(self) -> discord.Embed:
         embed = discord.Embed(
@@ -43,15 +46,15 @@ class Decks(discord.ui.View):
             color=discord.Color.gold()
         )
 
-        for slot in range(1, 6 + 1):
-            name = f"**Deck {slot}**"
-            if slot == self.user_slot:
+        for s in range(1, 6 + 1):
+            name = f"**Deck {s}**"
+            if s == self.user_slot:
                 name += " - Selected"
 
-            if slot > self.unlocked:
-                value = f"Unlocked at level {u.DECK_LVL_REQ[slot]}"
+            if s > self.unlocked:
+                value = f"Unlocked at level {u.DECK_LVL_REQ[s]}"
             else:
-                deck_count = dm.get_user_deck_count(self.user.id, slot)
+                deck_count = dm.get_user_deck_count(self.user.id, s)
                 value = f"{deck_count}/12 cards"
 
             embed.add_field(name=name, value=value, inline=False)

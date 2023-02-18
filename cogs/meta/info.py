@@ -233,7 +233,7 @@ class Info(commands.Cog):
                 return
 
             if dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-                await ctx.reply(f"You need to reach {u.DECK_LVL_REQ[slot]} to get that deck slot!")
+                await ctx.reply(f"You need to reach level {u.DECK_LVL_REQ[slot]} to get that deck slot!")
                 return
 
         view = Decks(user, slot)
