@@ -1,7 +1,6 @@
 import random
 import math
 import asyncio
-from ast import literal_eval
 
 import discord
 from discord.ext import commands
@@ -41,7 +40,7 @@ class Pvp(commands.Cog):
             for p in people:
                 id_ = p.id
 
-                level_req = 5
+                level_req = 1
                 if dm.get_user_level(id_) < level_req:
                     await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break
@@ -229,8 +228,13 @@ class Pvp(commands.Cog):
                         dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
 
                     elif the_message == "backpack":
-                        await ctx.send(embed=u.display_backpack(dd.backpacks.info[index], dd.players.info[index],
-                                                                "Backpack"))
+                        await ctx.send(
+                            embed=u.display_backpack(
+                                dd.backpacks.info[index],
+                                dd.players.info[index],
+                                "Backpack"
+                            )
+                        )
 
                     else:
                         players.remove(replied_message.author.id)
