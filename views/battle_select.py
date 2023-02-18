@@ -55,4 +55,10 @@ class BattleSelect(discord.ui.View):
         self.selected = None
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
-        return i.user == self.host
+        if i.user != self.host:
+            await i.response.send_message(
+                "You must be the host to interact with this message.",
+                ephemeral=True
+            )
+            return False
+        return True

@@ -2,7 +2,6 @@ import random
 import math
 import string
 import asyncio
-import json
 from copy import deepcopy
 import io
 
@@ -20,7 +19,7 @@ def choices_list(choices) -> str:
     logs = []
     for c in choices:
         logs.append(f"**[{len(logs) + 1}]** {c}")
-    return " \n".join(logs)
+    return "\n".join(logs)
 
 
 def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
@@ -34,10 +33,13 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
 
 
 def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
-    embed = discord.Embed(title=f"Mini Game - {game_name}!", color=discord.Color.gold())
+    embed = discord.Embed(
+        title=f"Mini Game - {game_name}!",
+        color=discord.Color.gold()
+    )
 
     logs = [f"• {r}" for r in u.MINIGAMES[game_name]["rules"]]
-    embed.add_field(name="Rules", value=" \n".join(logs))
+    embed.add_field(name="Rules", value="\n".join(logs))
 
     embed.set_footer(text=f"{u.PREF}exit -quit mini game")
     if show_map:
@@ -56,123 +58,104 @@ class Adventure(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=["ad", "adv"], description="Go on an adventure!")
+    @commands.command(
+        aliases=["ad", "adv"],
+        description="Go on an adventure!"
+    )
     @checks.not_preoccupied("on an adventure")
     @checks.is_registered()
     async def adventure(self, ctx: commands.Context):
-        mention = ctx.author.mention
-        a_id = ctx.author.id
-        dm.cur.execute(f"select * from adventuredata where userid = {a_id}")
-        a_datas = dm.cur.fetchall()
-        dm.cur.execute(f"select * from playersinfo where userid = {a_id}")
-        p_datas = list(dm.cur.fetchall()[0])
-        p_hp = round((100 * u.SCALE[1] ** math.floor(p_datas[3] / 2)) * u.SCALE[0])
-        p_max_hp = p_hp
-        p_sta = 100
-        p_distance = 0
-        deck_slot = p_datas[17]
-        db_deck = f"deck{deck_slot}"
-        dm.cur.execute(f"select {db_deck}, badges from playersachievements where userid = {a_id}")
-        result = dm.cur.fetchall()[0]
-        deck = result[0].split(",")
-        badges = result[1]
-        dm.cur.execute(
-            f"select card_name, card_level from cardsinfo where owned_user = {a_id} and id in ({str(deck)[1:-1]})")
-        deck = dm.cur.fetchall()
-        p_hand = random.sample([f"{x[1]}.{x[0]}" for x in deck], len(deck))
-        p_hand_size = 4
-        p_effect = {}
-        raid_levels = 1
+        a = ctx.author
+        mention = a.mention
 
-        # p_inv = {"teleportation stone":{"items":"x"}}
-        p_inv = eval(a_datas[0][3])
-        p_stor = eval(a_datas[0][5])
-        p_pos = a_datas[0][2]
-        if a_datas[0][4] == 'false':
-            show_map = False
-        else:
-            show_map = True
+        lvl = dm.get_user_level(a.id)
+        hp = u.level_hp(lvl)
+        max_hp = hp
+        stamina = 100
+        dist = 0
+        badges = dm.get_user_badge(a.id)
+        deck = dm.get_user_deck(a.id)
+        hand = [f"{c[2]}.{c[1]}" for c in deck]
+        random.shuffle(hand)
+
+        coins = dm.get_user_coin(a.id)
+        gems = dm.get_user_gem(a.id)
+        xp = dm.get_user_exp(a.id)
+
+        inv = dm.get_user_inventory(a.id)
+        storage = dm.get_user_storage(a.id)
+        pos = dm.get_user_position(a.id)
+        show_map = dm.get_user_map(a.id)
 
         afk = False
         leave = False
         adventure = False
 
         # HOMETOWN EXPLORATION
-        dm.queues[a_id] = "exploring in the Hometown"
-
-        loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
-        adventure_msg = await ctx.send(embed=loading_embed_message)
+        loading = discord.Embed(title="Loading...", description=u.ICON['load'])
+        adventure_msg = await ctx.send(embed=loading)
 
         while not leave and not afk and not adventure:
             embed = discord.Embed(
-                description=f"```{u.HTOWN[p_pos]['description']}```",
+                description=f"```{u.HTOWN[pos]['description']}```",
                 color=discord.Color.gold()
             )
-            embed.add_field(name="Choices", value=choices_list(u.HTOWN[p_pos]["choices"]))
-            embed.set_thumbnail(url=ctx.author.avatar.url)
+            embed.add_field(name="Choices", value=choices_list(u.HTOWN[pos]["choices"]))
+            embed.set_thumbnail(url=a.avatar.url)
 
             always = ["exit", "map", "backpack", "home", "refresh"]
             embed.set_footer(text=" | ".join(f"{u.PREF}{c}" for c in always))
 
+            file = None
             if show_map:
                 file = discord.File(
-                    mark_location("hometown_map", u.HTOWN[p_pos]["coordinate"][0], u.HTOWN[p_pos]["coordinate"][1]),
+                    mark_location("hometown_map", *u.HTOWN[pos]["coordinate"]),
                     filename="hometown_map.png"
                 )
-                await adventure_msg.edit(embed=embed, attachments=[file])
-            else:
-                await adventure_msg.edit(embed=embed)
+            await adventure_msg.edit(embed=embed, attachments=[file])
 
             decision = 0
             while True:
                 try:
                     msg_reply = await self.bot.wait_for(
                         "message", timeout=60.0,
-                        check=valid_reply("", ctx.author, ctx.message.channel)
+                        check=valid_reply("", a, ctx.message.channel)
                     )
                 except asyncio.TimeoutError:
                     afk = True
-                    await ctx.send(f"{mention}, you went idling and the adventure was ended.")
+                    await ctx.reply("You spaced out and the adventure was ended.")
                     break
 
                 content = msg_reply.content[len(u.PREF):]
                 if content.isdigit():
                     decision = int(content)
-                    if 1 <= decision <= len(u.HTOWN[p_pos]["choices"]):
+                    if 1 <= decision <= len(u.HTOWN[pos]["choices"]):
                         await msg_reply.delete()
                         break
                     else:
-                        await ctx.send(f"You can only enter numbers `1-{len(u.HTOWN[p_pos]['choices'])}`!")
+                        await ctx.send(f"You can only enter numbers `1-{len(u.HTOWN[pos]['choices'])}`!")
                 else:
                     decision = 0
                     if content == "exit":
                         leave = True
-                        await ctx.send(f"{mention}, you quit this adventure")
+                        await ctx.reply("You quit this adventure.")
                         break
 
                     elif "map".startswith(content):
-                        if show_map:
-                            show_map = False
-                            await ctx.send(f"{mention}, map now hidden")
-                        else:
-                            show_map = True
-                            await ctx.send(f"{mention}, map now shown")
+                        show_map = not show_map
+                        await ctx.reply(f"Map {'shown' if show_map else 'hidden'}")
 
                     elif content in ["bp", "backpack"]:
-                        await ctx.send(embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
+                        await ctx.send(embed=u.display_backpack(inv, a, "Backpack"))
 
                     elif "home".startswith(content):
-                        p_pos = "south street"
+                        pos = "south street"
                         decision = 6
 
                     elif "refresh".startswith(content):
                         if show_map:
-                            file = discord.File(
-                                mark_location(
-                                    "hometown_map", u.HTOWN[p_pos]["coordinate"][0], u.HTOWN[p_pos]["coordinate"][1]
-                                ),
-                                filename="hometown_map.png"
-                            )
+                            img = mark_location("hometown_map", *u.HTOWN[pos]["coordinate"])
+                            file = discord.File(img, filename="hometown_map.png")
                             adventure_msg = await ctx.send(embed=embed, file=file)
                         else:
                             adventure_msg = await ctx.send(embed=embed)
@@ -181,32 +164,32 @@ class Adventure(commands.Cog):
                         await ctx.send("That's an invalid option!")
                         break
 
-            pos = u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]]
+            state = u.HTOWN[pos]["choices"][list(u.HTOWN[pos]["choices"])[decision - 1]]
 
-            if pos[1] == "self" and not afk and not leave:
-                if pos[0] in u.HTOWN:
-                    p_pos = pos[0]
+            if state[1] == "self" and not afk and not leave:
+                if state[0] in u.HTOWN:
+                    pos = state[0]
                 else:
-                    await ctx.send(f"{mention} Sorry, this route is still in development! (stupid devs)")
+                    await ctx.reply("This route is still in development!")
 
-            elif pos[1] == "selling" and not afk and not leave:
+            elif state[1] == "selling" and not afk and not leave:
                 exiting = False
-                # dm.cur.execute(f"select coins from playersinfo where userid = {a_id}")
                 await adventure_msg.edit(
-                    content=f"`{u.PREF}sell (item_name) (amount)` to sell items \n"
-                            f"`{u.PREF}backpack` to check your backpack \n"
-                            f"`{u.PREF}info item (item_name)` to check the item sell price \n"
+                    content=f"`{u.PREF}sell (item_name) (amount)` to sell items\n"
+                            f"`{u.PREF}backpack` to check your backpack\n"
+                            f"`{u.PREF}info item (item_name)` to check the item sell price\n"
                             f"`{u.PREF}exit` to exit the shops",
-                    embed=u.display_backpack(p_inv, ctx.author, "Backpack")
+                    embed=u.display_backpack(inv, a, "Backpack")
                 )
                 while not exiting:
                     try:
-                        msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=valid_reply([''], [ctx.author],
-                                                                              [ctx.message.channel]))
+                        msg_reply = await self.bot.wait_for(
+                            "message", timeout=60.0,
+                            check=valid_reply("", a, ctx.channel)
+                        )
                     except asyncio.TimeoutError:
                         exiting = True
-                        await ctx.send(f"{mention} You went idle and decided to exit the shops")
+                        await ctx.reply("You went idle and decided to exit the shop.")
                         break
 
                     msg_reply = msg_reply.content[len(u.PREF):].lower().split(" ")
@@ -217,15 +200,17 @@ class Adventure(commands.Cog):
                         break
 
                     elif msg_reply[0] in ["backpack", "bp"]:
-                        await ctx.send(embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
+                        await ctx.send(embed=u.display_backpack(inv, a, "Backpack"))
                         continue
 
                     elif msg_reply[0] in ['r', 'ref', 'refresh']:
-                        adventure_msg = await ctx.send(content=f"`{u.PREF}sell (item_name) (amount)` to sell items \n" +
-                                                               f"`{u.PREF}backpack` to check your backpack \n" +
-                                                               f"`{u.PREF}info item (item_name)` to check the item sell price \n" +
-                                                               f"`{u.PREF}exit` to exit the shops",
-                                                       embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
+                        adventure_msg = await ctx.send(
+                            content=f"`{u.PREF}sell (item_name) (amount)` to sell items\n"
+                                    f"`{u.PREF}backpack` to check your backpack\n"
+                                    f"`{u.PREF}info item (item_name)` to check the item sell price\n"
+                                    f"`{u.PREF}exit` to exit the shops",
+                            embed=u.display_backpack(inv, a, "Backpack")
+                        )
                         continue
 
                     elif len(msg_reply) < 3:
@@ -235,22 +220,20 @@ class Adventure(commands.Cog):
                         try:
                             item = u.items_dict(" ".join(msg_reply[1].split("_")[:]))
                             counts = max(int(msg_reply[2]), 1)
-                            if not item['name'].lower() in p_inv:
+                            if not item['name'].lower() in inv:
                                 await ctx.send("The selected item(s) is not in your backpack!")
                                 continue
 
-                            elif p_inv[item['name'].lower()]["items"] < counts:
+                            elif inv[item['name'].lower()]["items"] < counts:
                                 await ctx.send("You don't have these much items in your backpack!")
                                 continue
 
                             else:
-                                dm.cur.execute(
-                                    f"update playersinfo set coins = coins + {item['sell'] * counts} where userid = {a_id}")
-                                dm.db.commit()
-                                if p_inv[item['name'].lower()]["items"] == counts:
-                                    del p_inv[item['name'].lower()]
+                                coins += item["sell"] * counts
+                                if inv[item['name'].lower()]["items"] == counts:
+                                    del inv[item['name'].lower()]
                                 else:
-                                    p_inv[item['name'].lower()]["items"] -= counts
+                                    inv[item['name'].lower()]["items"] -= counts
                                 await ctx.send(
                                     f"You just sold **[{item['rarity']}/{item['weight']}] {item['name']} x{counts}** "
                                     f"for {item['sell'] * counts} {u.ICON['coin']}!")
@@ -258,35 +241,42 @@ class Adventure(commands.Cog):
                         except:
                             continue
 
-            elif pos[1] == "buying" and not afk and not leave:
+            elif state[1] == "buying" and not afk and not leave:
                 exiting = False
-                dm.cur.execute(f"select coins from playersinfo where userid = {a_id}")
-                coins = dm.cur.fetchall()[0][0]
-                purchasables = ["Forest Fruit", "Fruit Salad", "Raft", "Torch", "Herb", "Health Potion", "Power Potion",
-                                "Large Health Potion",
-                                "Large Power Potion", "Resurrection Amulet", "Teleportation Stone"]
+                coins = dm.get_user_coin(a.id)
+                items = [
+                    "Forest Fruit", "Fruit Salad", "Raft", "Torch", "Herb",
+                    "Health Potion", "Power Potion", "Large Health Potion",
+                    "Large Power Potion", "Resurrection Amulet", "Teleportation Stone"
+                ]
+
                 offers = []
-                for offer in purchasables:
+                for offer in items:
                     item = u.items_dict(offer)
                     offers.append(f"[{item['rarity']}/{item['weight']}] {item['name']} - {item['buy']} gc")
-                embed = discord.Embed(title="Jessie's Shop:",
-                                      description="I have all the essential items you're going to need! \n" + \
-                                                  "```" + "\n".join(offers[:]) + "```",
-                                      color=discord.Color.gold())
-                await adventure_msg.edit(content=f"`{u.PREF}purchase (item_name) (amount)` to purchase items \n" +
-                                                 f"`{u.PREF}backpack` to check your backpack \n" +
-                                                 f"`{u.PREF}refresh` to resend the items price list \n" +
-                                                 f"`{u.PREF}exit` to exit the shops",
-                                         embed=embed)
+
+                embed = discord.Embed(
+                    title="Jessie's Shop:",
+                    description="I have everything adventurers need!\n"
+                                "```" + "\n".join(offers) + "```",
+                    color=discord.Color.gold()
+                )
+                await adventure_msg.edit(
+                    content=f"`{u.PREF}purchase (item_name) (amount)` to purchase items\n"
+                            f"`{u.PREF}backpack` to check your backpack\n"
+                            f"`{u.PREF}refresh` to resend the items price list\n"
+                            f"`{u.PREF}exit` to exit the shops",
+                    embed=embed
+                )
                 while not exiting:
                     try:
-                        msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                            check=valid_reply([''], [ctx.author],
-                                                                              [ctx.message.channel]))
+                        msg_reply = await self.bot.wait_for(
+                            "message", timeout=60.0,
+                            check=valid_reply("", a, ctx.channel)
+                        )
                     except asyncio.TimeoutError:
                         exiting = True
-                        await ctx.send(
-                            f"{mention} You went idle and decided to exit the shops")
+                        await ctx.reply("You decided to exit the shop.")
                         break
 
                     msg_reply = msg_reply.content[len(u.PREF):].split(" ")
@@ -295,7 +285,7 @@ class Adventure(commands.Cog):
                     elif msg_reply[0].lower() == "exit":
                         break
                     elif msg_reply[0].lower() in ["backpack", "back", "bpack", "bp", "b"]:
-                        await ctx.send(embed=u.display_backpack(p_inv, ctx.author, "Backpack"))
+                        await ctx.send(embed=u.display_backpack(inv, a, "Backpack"))
                         continue
                     elif msg_reply[0].lower() in ["refresh", "ref", "re", "r"]:
                         adventure_msg = await ctx.send(embed=embed)
@@ -306,55 +296,55 @@ class Adventure(commands.Cog):
                         try:
                             item = u.items_dict(" ".join(msg_reply[1].split("_")[:]))
                             counts = max(int(msg_reply[2]), 1)
-                            if not item['name'] in purchasables:
+                            if not item['name'] in items:
                                 await ctx.send("The selected item(s) is not in the offer!")
                                 continue
-                            elif item["weight"] * counts > 100 - u.get_bp_weight(p_inv):
-                                await ctx.send(
-                                    "You don't have enough space in your backpack to buy these much!")
+                            elif item["weight"] * counts > 100 - u.get_bp_weight(inv):
+                                await ctx.send("You don't have enough space in your backpack!")
                                 continue
                             elif item["buy"] * counts > coins:
-                                await ctx.send(
-                                    "You don't have enough coins to afford the selected item(s)!")
+                                await ctx.send("You don't have enough coins to afford this stuff!")
                                 continue
                             else:
-                                dm.cur.execute(
-                                    f"update playersinfo set coins = coins - {item['buy'] * counts} where userid = {a_id}")
-                                dm.db.commit()
-                                if item["name"].lower() in p_inv:
-                                    p_inv[item["name"].lower()]["items"] += counts
+                                coins -= item["buy"] * counts
+                                if item["name"].lower() in inv:
+                                    inv[item["name"].lower()]["items"] += counts
                                 else:
-                                    p_inv[item["name"].lower()] = {"items": counts}
+                                    inv[item["name"].lower()] = {"items": counts}
                                 await ctx.send(
-                                    f"You just bought **[{item['rarity']}/{item['weight']}] {item['name']} x{counts}** for {item['buy'] * counts} {u.ICON['coin']}!")
+                                    f"You just bought "
+                                    f"**[{item['rarity']}/{item['weight']}] {item['name']} x{counts}** "
+                                    f"for {item['buy'] * counts} {u.ICON['coin']}!"
+                                )
                                 continue
                         except:
                             continue
 
-            elif pos[1] == "chest" and not afk and not leave:
+            elif state[1] == "chest" and not afk and not leave:
                 exiting = False
-                await adventure_msg.edit(content=f"`{u.PREF}backpack` to check your backpack \n`" +
-                                                 u.PREF + "chest` to check your chest \n`" +
-                                                 u.PREF + "close` to close your chest and exit \n`" +
-                                                 u.PREF + "withdraw/deposit (item_name) (amount)` to take or put items from your backpack and chest",
-                                         embed=u.display_backpack(p_stor, ctx.author, "Chest",
-                                                                  level=p_datas[3]))
-                if u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0] == "chest":
+                await adventure_msg.edit(
+                    content=f"`{u.PREF}backpack` to check your backpack\n`"
+                            f"`{u.PREF}chest` to check your chest\n`"
+                            f"`{u.PREF}close` to close your chest and exit\n`"
+                            f"`{u.PREF}withdraw/deposit (item_name) (amount)` "
+                            f"to take or put items from your backpack and chest",
+                    embed=u.display_backpack(storage, a, "Chest", level=lvl)
+                )
+                if u.HTOWN[pos]["choices"][list(u.HTOWN[pos]["choices"])[decision - 1]][0] == "chest":
                     while not exiting:
                         try:
-                            msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply([''], [ctx.author],
-                                                                                  [ctx.message.channel]))
+                            msg_reply = await self.bot.wait_for(
+                                "message", timeout=60.0,
+                                check=valid_reply("", a, ctx.channel)
+                            )
                         except asyncio.TimeoutError:
                             exiting = True
-                            await ctx.send(
-                                f"{mention} You went idle and decided to close your treasure chest")
+                            await ctx.reply("You went idle and decided to close your treasure chest")
                         else:
                             if msg_reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit" \
                                     or msg_reply.content[len(u.PREF):len(u.PREF) + 5].lower() == "close":
                                 exiting = True
-                                await ctx.send(
-                                    f"{mention}, you closed your treasure chest")
+                                await ctx.reply("You closed your treasure chest")
                             else:
                                 inputs = msg_reply.content[len(u.PREF):].lower().split(" ")
                                 item = u.items_dict("Glitches")
@@ -368,111 +358,116 @@ class Adventure(commands.Cog):
 
                                 if inputs[0] in ['r', 'ref', 'refresh']:
                                     adventure_msg = await ctx.send(
-                                        content=f"`{u.PREF}backpack` to check your backpack \n" +
-                                                f"`{u.PREF}chest` to check your chest \n" +
-                                                f"`{u.PREF}close` to close your chest and exit \n" +
-                                                f"`{u.PREF}withdraw/deposit (item_name) (amount) to take or put items from your backpack and chest",
-                                        embed=u.display_backpack(p_stor, ctx.author, "Chest", level=p_datas[3]))
+                                        content=f"`{u.PREF}backpack` to check your backpack\n"
+                                                f"`{u.PREF}chest` to check your chest\n"
+                                                f"`{u.PREF}close` to close your chest and exit\n"
+                                                f"`{u.PREF}withdraw/deposit (item_name) (amount) "
+                                                f"to take or put items from your backpack and chest",
+                                        embed=u.display_backpack(storage, a, "Chest", level=lvl)
+                                    )
 
                                 elif inputs[0] in ["backpack", "bp", "b"]:
-                                    embed = u.display_backpack(p_inv, ctx.author, "Backpack")
-                                    embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n"
-                                                                         f"Stamina - {p_sta} \n"
-                                                                         f"Traveled {p_distance} meters", inline=False)
-                                    # if perks:
-                                    #     embed.add_field(name="Perks:",
-                                    #                     value="".join([f"**{all_perks[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{all_perks[i.lower()]['description']}*\n"
-                                    #                                    for i in perks][:]))
+                                    embed = u.display_backpack(inv, a, "Backpack")
+                                    embed.add_field(
+                                        name="Stats:",
+                                        value=f"Health - {hp}/{max_hp}\n"
+                                              f"Stamina - {stamina}\n"
+                                              f"Traveled {dist} meters",
+                                        inline=False
+                                    )
                                     await ctx.send(embed=embed)
 
                                 elif inputs[0] in ["chest", "ch", "c"]:
-                                    await ctx.send(embed=u.display_backpack(p_stor, ctx.author, "Chest"))
+                                    await ctx.send(embed=u.display_backpack(storage, a, "Chest"))
 
                                 elif len(inputs) < 3 or amount < 1:
-                                    await ctx.send(
-                                        f"{mention} You can only do `" + u.PREF + "backpack`, `" + u.PREF + "chest`, `" + u.PREF + "close`, or `" + u.PREF + "withdraw/deposit (item_name) (amount)`!")
+                                    await ctx.reply(
+                                        f"You can only do `" + u.PREF + "backpack`, `" + u.PREF + "chest`, `" + u.PREF + "close`, or `" + u.PREF + "withdraw/deposit (item_name) (amount)`!")
 
                                 elif inputs[0] in ["withdraw", "deposit", "with", "wd", "w", "dep", "de"]:
-                                    location = p_inv if inputs[0] in ["deposit", "dep", "de"] else p_stor
+                                    location = inv if inputs[0] in ["deposit", "dep", "de"] else storage
                                     target = "Backpack" if inputs[0] in ['deposit', 'dep', 'de'] else 'Chest'
                                     if item["name"].lower() in location:
                                         if location[item["name"].lower()]["items"] < amount:
-                                            await ctx.send(
-                                                f"{mention} You don't have {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** in your {target}!")
+                                            await ctx.reply(
+                                                f"You don't have {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** in your {target}!")
 
-                                        elif (location == p_inv and u.get_bp_weight(
-                                                p_stor) + total_weight > u.chest_storage(p_datas[3])) \
-                                                or (location == p_stor and u.get_bp_weight(
-                                            p_inv) + total_weight > 100):
-                                            await ctx.send(
-                                                f"{mention} Your {'Backpack' if location != p_inv else 'Chest'} don't have enough space for {amount} **[{item['rarity']}/{item['weight']}] {item['name']}**!")
+                                        elif (location == inv and u.get_bp_weight(
+                                                storage) + total_weight > u.chest_storage(lvl)) \
+                                                or (location == storage and u.get_bp_weight(
+                                            inv) + total_weight > 100):
+                                            await ctx.reply(
+                                                f"Your {'Backpack' if location != inv else 'Chest'} doesn't have enough space for {amount} **[{item['rarity']}/{item['weight']}] {item['name']}**!")
                                         else:
                                             location[item['name'].lower()]['items'] -= amount
-                                            if location == p_inv:
-                                                if not item['name'].lower() in p_stor:
-                                                    p_stor[item['name'].lower()] = {"items": amount}
+                                            if location == inv:
+                                                if not item['name'].lower() in storage:
+                                                    storage[item['name'].lower()] = {"items": amount}
                                                 else:
-                                                    p_stor[item['name'].lower()]['items'] += amount
-                                                p_inv = u.clear_bp(p_inv)
+                                                    storage[item['name'].lower()]['items'] += amount
+                                                inv = u.clear_bp(inv)
                                                 await ctx.send(
                                                     f"{mention} You put {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** into your Chest from your backpack!")
                                             else:
-                                                if not item['name'].lower() in p_inv:
-                                                    p_inv[item['name'].lower()] = {"items": amount}
+                                                if not item['name'].lower() in inv:
+                                                    inv[item['name'].lower()] = {"items": amount}
                                                 else:
-                                                    p_inv[item['name'].lower()]['items'] += amount
-                                                p_stor = u.clear_bp(p_stor)
+                                                    inv[item['name'].lower()]['items'] += amount
+                                                storage = u.clear_bp(storage)
                                                 await ctx.send(
                                                     f"{mention} You put {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** into your backpack from your chest!")
                                     else:
-                                        await ctx.send(
-                                            f"{mention} **[{item['rarity']}/{item['weight']}] {item['name']}** doesn't exist in your {target}!")
+                                        await ctx.reply(
+                                            f"**[{item['rarity']}/{item['weight']}] {item['name']}** doesn't exist in your {target}!")
                                 else:
-                                    await ctx.send(
-                                        f"{mention} You can only do `" + u.PREF + "backpack`, `" + u.PREF + "chest`, `" + u.PREF + "close`, or `" + u.PREF + "withdraw/deposit (item_name) (amount)`!")
+                                    await ctx.reply(
+                                        f"You can only do `{u.PREF}backpack`, `{u.PREF}chest`, `{u.PREF}close`, or `{u.PREF}withdraw/deposit (item_name) (amount)`!")
 
-            elif pos[1] == "mini game" and not afk and not leave:
-                dm.queues[a_id] = "playing a mini game"
+            elif state[1] == "mini game" and not afk and not leave:
+                dm.queues[a.id] = "playing a mini game"
                 exit_game = False
                 earned_loots = [0, 0, 0]
                 random_number = random.randint(1, 1000)
 
                 def reset(earned_loots):
-                    sql = "update playersinfo set coins = coins + %s, gems = gems + %s, exps = exps + %s where userid = %s"
-                    value = (earned_loots[0], earned_loots[1], earned_loots[2], a_id)
-                    dm.cur.execute(sql, value)
-                    p_datas[4] += earned_loots[2]
-                    p_datas[5] += earned_loots[0]
-                    p_datas[6] += earned_loots[1]
+                    nonlocal xp, coins, gems
 
-                embed, img = setup_minigame(u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0],
-                                            show_map)
+                    xp += earned_loots[2]
+                    coins += earned_loots[0]
+                    gems += earned_loots[1]
+
+                    dm.set_user_coin(a.id, coins)
+                    dm.set_user_exp(a.id, xp)
+                    dm.set_user_gem(a.id, gems)
+
+                embed, img = setup_minigame(
+                    u.HTOWN[pos]["choices"][list(u.HTOWN[pos]["choices"])[decision - 1]][0],
+                    show_map
+                )
                 await adventure_msg.edit(embed=embed, attachments=[img])
-                if pos[0] == "coin flip":
+                if state[0] == "coin flip":
                     while not exit_game:
                         try:
-                            msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply(['flip', 'f', 'exit'],
-                                                                                  [ctx.author],
-                                                                                  [ctx.message.channel]))
+                            msg_reply = await self.bot.wait_for(
+                                "message", timeout=60.0,
+                                check=valid_reply(["flip", "f", "exit"], a, ctx.channel)
+                            )
                         except asyncio.TimeoutError:
                             exit_game = True
-                            await ctx.send(
-                                f"{mention} ```You accidentally fell asleep and got left ouf of the game.```")
+                            await ctx.reply("```You accidentally fell asleep and got left out of the game.```")
                         else:
                             if msg_reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit":
                                 exit_game = True
-                                await ctx.send(f"{mention}, you quit this mini game")
+                                await ctx.reply("You quit this mini game")
                             elif not (msg_reply.content[len(u.PREF + "flip "):].lower() in ["head", "tail", "edge", "h",
                                                                                             "t", "e"] or
                                       msg_reply.content[len(u.PREF + "f "):].lower() in ["head", "tail", "edge", "h",
                                                                                          "t", "e"]):
-                                await ctx.send(
-                                    f"{mention} ```You can only input {u.PREF}exit or {u.PREF}flip (head/tail/edge)```")
+                                await ctx.reply(
+                                    f"```You can only input {u.PREF}exit or {u.PREF}flip (head/tail/edge)```")
                             else:
-                                print(p_datas[5])
-                                if p_datas[5] < 100:
-                                    await ctx.send(f"{mention} ```You need least 100 golden coins to place a bet!```")
+                                if coins < 100:
+                                    await ctx.reply("```You need least 100 golden coins to place a bet!```")
                                 else:
                                     bet = msg_reply.content[len(u.PREF + choice[1] + " "):].lower()
                                     if msg_reply.content.lower().startswith(u.PREF + "flip "):
@@ -492,49 +487,56 @@ class Adventure(commands.Cog):
                                     if result != choice[0]:
                                         earned_loots[0] -= 100
                                         earned_loots[2] += 2
-                                        await ctx.send(f"{mention} \n```You bet on {choice[0]} \n"
-                                                       f"The coin landed on {result} \n"
-                                                       f"You lost {abs(earned_loots[0])} golden coins! \n"
-                                                       f"You still gained {earned_loots[2]} exp though... \n"
-                                                       f"Better luck next time!``````>flip (head/tail/edge) -try again \n"
-                                                       f">exit -quit the mini game```")
+                                        await ctx.reply(
+                                            f"```You bet on {choice[0]}\n"
+                                            f"The coin landed on {result}\n"
+                                            f"You lost {abs(earned_loots[0])} golden coins!\n"
+                                            f"You still gained {earned_loots[2]} exp though...\n"
+                                            f"Better luck next time!```"
+                                            f"```>flip (head/tail/edge) -try again\n"
+                                            f">exit -quit the mini game```"
+                                        )
                                     else:
                                         if result != "edge":
                                             earned_loots[0] += 100
                                             earned_loots[2] += 3
-                                            await ctx.send(f"{mention} \n```You bet on {choice[0]} \n"
-                                                           f"The coins landed on {result} \n"
-                                                           f"You won {earned_loots[0]} golden coins and {earned_loots[2]} experience points!```"
-                                                           "```>flip (head/tail/edge) -try again \n"
-                                                           ">exit -quit the mini game```")
+                                            await ctx.reply(
+                                                f"```You bet on {choice[0]}\n"
+                                                f"The coins landed on {result}\n"
+                                                f"You won {earned_loots[0]} golden coins and {earned_loots[2]} XP!```"
+                                                "```>flip (head/tail/edge) -try again\n"
+                                                ">exit -quit the mini game```"
+                                            )
                                         else:
                                             earned_loots[0] += 50000
                                             earned_loots[2] += 100
-                                            await ctx.send(f"{mention} \n```You bet on {choice[0]} \n"
-                                                           f"The coins landed on {result} \n"
-                                                           f"You won {earned_loots[0]} GOLDEN COINS and {earned_loots[2]} experience points!"
-                                                           f"``````>flip (head/tail/edge) -try again \n"
-                                                           f">exit -quit the mini game```")
+                                            await ctx.reply(
+                                                f"```You bet on {choice[0]}\n"
+                                                f"The coins landed on {result}\n"
+                                                f"You won {earned_loots[0]} GOLDEN COINS and {earned_loots[2]} XP!"
+                                                f"``````>flip (head/tail/edge) -try again\n"
+                                                f">exit -quit the mini game```"
+                                            )
                                     reset(earned_loots)
                                     earned_loots = [0, 0, 0]
                                     random_number = random.randint(1, 1000)
 
-                if pos[0] == "fishing":
+                if state[0] == "fishing":
                     while not exit_game:
                         try:
-                            msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply(['exit', 'fish', 'f'],
-                                                                                  [ctx.author],
-                                                                                  [ctx.message.channel]))
+                            msg_reply = await self.bot.wait_for(
+                                "message", timeout=60.0,
+                                check=valid_reply(["exit", "fish", "f"], a, ctx.channel)
+                            )
                         except asyncio.TimeoutError:
                             exit_game = True
                             await ctx.send(f"{mention} ```You went idle and decided to quit this mini game```")
                         else:
                             if msg_reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit":
                                 exit_game = True
-                                await ctx.send(f"{mention}, you quit this mini game")
-                            elif p_datas[5] < 50:
-                                await ctx.send(f"{mention} ```You need least 50 golden coins to buy bait!```")
+                                await ctx.reply(f"You quit this mini game")
+                            elif coins < 50:
+                                await ctx.reply("```You need least 50 golden coins to buy bait!```")
                             else:
                                 fish_dict = {
                                     'c': ['Carp', 'Tuna', 'Cod', 'Herring', 'Salmon', 'Trout', 'Bass', 'Minnow'],
@@ -558,16 +560,18 @@ class Adventure(commands.Cog):
                                     award_multiplier = 4.5
                                     waits = 24 + random_number % 5
                                     rarity = 'LEGENDARY'
-                                msg2 = await ctx.send(
-                                    f"{mention} ```You saw a {rarity} fish! Try to reply {u.PREF}bait in exactly {waits} seconds!```")
+                                msg2 = await ctx.reply(
+                                    f"```You saw a {rarity} fish!"
+                                    f"Try to reply {u.PREF}bait in exactly {waits} seconds!```"
+                                )
 
                                 try:
-                                    msg_reply2 = await self.bot.wait_for("message", timeout=30.0,
-                                                                         check=valid_reply(['bait', 'b'],
-                                                                                           [ctx.author],
-                                                                                           [ctx.message.channel]))
+                                    msg_reply2 = await self.bot.wait_for(
+                                        "message", timeout=30.0,
+                                        check=valid_reply(["bait", "b"], a, ctx.channel)
+                                    )
                                 except asyncio.TimeoutError:
-                                    await ctx.send(f"{mention} ```the fish got away!```")
+                                    await ctx.reply("```The fish got away!```")
                                 else:
                                     earned_loots[0] -= 50
                                     success_rate = 0
@@ -590,54 +594,50 @@ class Adventure(commands.Cog):
                                         if round(reply_ms) == 0:  # BRUH HOW DID THEY DO IT RIGHT ON TIME
                                             earned_loots[0] += 100 * award_multiplier * 4
                                             earned_loots[2] += 50
-                                            dm.log_quest(8, 1, a_id)
-                                            to_send = f"{mention} ```You replied in EXACTLY {reply_ms} SECONDS!!! \n " \
-                                                      f"0.000 SECONDS OFF FROM {waits} SECONDS!!! \n"
+                                            dm.log_quest(8, 1, a.id)
+                                            to_send = f"```You replied in EXACTLY {reply_ms} SECONDS!!!\n " \
+                                                      f"0.000 SECONDS OFF FROM {waits} SECONDS!!!\n"
                                         else:
                                             earned_loots[0] += 100 * award_multiplier
                                             earned_loots[2] += 5
-                                            dm.log_quest(8, 1, a_id)
-                                            to_send = f"{mention} ```You replied in {reply_ms} seconds \n" \
-                                                      f"{reply_time} seconds off from {waits} seconds! \n"
+                                            dm.log_quest(8, 1, a.id)
+                                            to_send = f"```You replied in {reply_ms} seconds\n" \
+                                                      f"{reply_time} seconds off from {waits} seconds!\n"
 
                                         to_send += f"You caught a {random.choice(fish_dict[{1: 'c', 1.5: 'r', 2.5: 'e', 4.5: 'l'}[award_multiplier]])}, " \
-                                                   f"gaining {int(earned_loots[0])} golden coins and {earned_loots[2]} experience points in total! \n" \
-                                                   f"``````{u.PREF}fish -try again \n{u.PREF}exit -quit the mini game```"
-                                        await ctx.send(to_send)
+                                                   f"gaining {int(earned_loots[0])} golden coins and {earned_loots[2]} experience points in total!\n" \
+                                                   f"``````{u.PREF}fish -try again\n{u.PREF}exit -quit the mini game```"
+                                        await ctx.reply(to_send)
                                     else:
                                         earned_loots[2] += 2
-                                        await ctx.send(
-                                            f"{mention} ```You replied in {reply_ms} seconds \n{reply_time} seconds off from {waits} seconds! \n" +
-                                            f"The fish fled and you wasted {abs(earned_loots[0])} golden coins on the bait \n"
-                                            f"You only gained {earned_loots[2]} experience points \n"
-                                            f"Better luck next time! \n``````{u.PREF}fish -try again \n{u.PREF}exit -quit the mini game```"
+                                        await ctx.reply(
+                                            f"```You replied in {reply_ms} seconds\n{reply_time} seconds off from {waits} seconds!\n" +
+                                            f"The fish fled and you wasted {abs(earned_loots[0])} golden coins on the bait\n"
+                                            f"You only gained {earned_loots[2]} experience points\n"
+                                            f"Better luck next time!\n``````{u.PREF}fish -try again\n{u.PREF}exit -quit the mini game```"
                                         )
                                     reset(earned_loots)
                                     earned_loots = [0, 0, 0]
                                     random_number = random.randint(1, 1000)
-                            """
-                            else:
-                                await ctx.send(f"{mention} ```All the fishies in this river went extinct!```")
-                            """
 
-                if pos[0] == "blackjack":
+                if state[0] == "blackjack":
                     while not exit_game:
                         try:
-                            msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply(['exit', 'start', 's'],
-                                                                                  [ctx.author],
-                                                                                  [ctx.message.channel]))
+                            msg_reply = await self.bot.wait_for(
+                                "message", timeout=60.0,
+                                check=valid_reply(["exit", "start", "s"], a, ctx.channel)
+                            )
                         except asyncio.TimeoutError:
                             exit_game = True
-                            await ctx.send(f"{mention} ```You dozed off and got kicked out of the blackjack table```")
+                            await ctx.reply("```You dozed off and got kicked out of the blackjack table```")
                         else:
                             deck = deepcopy(u.DECK)
                             aces = deepcopy(u.ACES)
                             if msg_reply.content.lower().startswith(f"{u.PREF}exit"):
                                 exit_game = True
-                                await ctx.send(f"{mention}, you quit this mini game")
-                            elif p_datas[5] < 100:
-                                await ctx.send(f"{mention} ```You need least 100 golden coins to play!```")
+                                await ctx.reply("You quit this mini game")
+                            elif coins < 100:
+                                await ctx.reply("```You need least 100 golden coins to play!```")
                             else:
                                 values = [0, 0]
                                 cards = [[], []]
@@ -657,17 +657,20 @@ class Adventure(commands.Cog):
                                 add_card(random.choice(list(deck)), "self")
                                 add_card(random.choice(list(deck)), "opponent")
                                 while not end and values[0] < 21:
-                                    await ctx.send(f"{mention} \nYour total: {values[0]} \n{' '.join(cards[0])}"
-                                                   f" \n------------------------------ \n"
-                                                   f"Dealer's total: {values[1]} + ? \n"
-                                                   f"{' '.join(cards[1])} [? ? ?] ```\n{u.PREF}hit -draw a card \n"
-                                                   f"{u.PREF}stand -end your turn```")
+                                    await ctx.reply(
+                                        f"Your total: {values[0]}\n"
+                                        f"{' '.join(cards[0])}\n"
+                                        "------------------------------\n"
+                                        f"Dealer's total: {values[1]} + ?\n"
+                                        f"{' '.join(cards[1])} [? ? ?] ```\n"
+                                        f"{u.PREF}hit -draw a card\n"
+                                        f"{u.PREF}stand -end your turn```"
+                                    )
                                     try:
-                                        msg_reply = await self.bot.wait_for("message", timeout=30.0,
-                                                                            check=valid_reply(
-                                                                                ['hit', 'h', 'stand', 's'],
-                                                                                [ctx.author],
-                                                                                [ctx.message.channel]))
+                                        msg_reply = await self.bot.wait_for(
+                                            "message", timeout=30.0,
+                                            check=valid_reply(["hit", "stand", "h", "s"], a, ctx.channel)
+                                        )
                                     except asyncio.TimeoutError:
                                         values = [1000, 1000]
                                         await ctx.send(f"{mention}, you lost due to idle")
@@ -701,126 +704,93 @@ class Adventure(commands.Cog):
                                 if values[0] == values[1] and not values == [1000, 1000]:
                                     earned_loots[2] += 3
                                     await ctx.send(
-                                        f"{mention}, **You Tied!** \n__At least you gained {earned_loots[2]} experience points__ \n"
-                                        f"Your total: {values[0]} \n" + " ".join(
-                                            cards[0]) + f" \n-------------------------------- \n"
-                                                        f"Dealer's total: {values[1]} \n{' '.join(cards[1])}" +
-                                        f" ```{u.PREF}start -try again \n{u.PREF}exit -quit the mini game```")
+                                        f"{mention}, **You Tied!**\n__At least you gained {earned_loots[2]} experience points__\n"
+                                        f"Your total: {values[0]}\n" + " ".join(
+                                            cards[0]) + f"\n--------------------------------\n"
+                                                        f"Dealer's total: {values[1]}\n{' '.join(cards[1])}" +
+                                        f" ```{u.PREF}start -try again\n{u.PREF}exit -quit the mini game```")
                                 elif (values[0] > 21 and values[0] > values[1]) or (values[0] < values[1] < 22):
                                     earned_loots[0] -= 100
                                     earned_loots[2] += 2
                                     await ctx.send(
-                                        f"{mention}, **Bust!** \n__You lost {abs(earned_loots[0])} golden coins and only received {earned_loots[2]} experience points! \n"
-                                        f"Better luck next time!__ \nYour total: {values[0]} \n" + " ".join(cards[0]) +
-                                        f" \n-------------------------------- \nDealer's total: {values[1]} \n{' '.join(cards[1])}" +
-                                        f" ```{u.PREF}start -try again \n{u.PREF}exit -quit the mini game```")
+                                        f"{mention}, **Bust!**\n__You lost {abs(earned_loots[0])} golden coins and only received {earned_loots[2]} experience points!\n"
+                                        f"Better luck next time!__\nYour total: {values[0]}\n" + " ".join(cards[0]) +
+                                        f"\n--------------------------------\nDealer's total: {values[1]}\n{' '.join(cards[1])}" +
+                                        f" ```{u.PREF}start -try again\n{u.PREF}exit -quit the mini game```")
                                 elif (22 > values[0] > values[1]) or (values[1] > 21 and values[0] < values[1]):
                                     earned_loots[0] += 100
                                     earned_loots[2] += 5
                                     await ctx.send(
-                                        f"{mention}, **You Won!** \n__You gained {earned_loots[0]} golden coins "
-                                        f"and {earned_loots[2]} experience points!__ \nYour total: {values[0]}\n" +
-                                        " ".join(cards[0]) + " \n-------------------------------- \nDealer's total: " +
-                                        f"{values[1]}\n{''.join(cards[1])} ```{u.PREF}start -try again \n{u.PREF}exit -quit the mini game```")
+                                        f"{mention}, **You Won!**\n__You gained {earned_loots[0]} golden coins "
+                                        f"and {earned_loots[2]} experience points!__\nYour total: {values[0]}\n" +
+                                        " ".join(cards[0]) + "\n--------------------------------\nDealer's total: " +
+                                        f"{values[1]}\n{''.join(cards[1])} ```{u.PREF}start -try again\n{u.PREF}exit -quit the mini game```")
                                 reset(earned_loots)
                                 earned_loots = [0, 0, 0]
                             """
                             else:  # jeff this code LITERALLY CANNOT BE REACHED
                                 await ctx.send(f"{mention} ```The bar's BlackJack service went bankrupt!```")
                             """
-                    dm.queues[a_id] = "exploring in the Hometown"
-                dm.queues[a_id] = "exploring in the Hometown"
+                    dm.queues[a.id] = "exploring in the Hometown"
+                dm.queues[a.id] = "exploring in the Hometown"
 
-            elif pos[1] == "adventure" and not afk and not leave:
-                dm.cur.execute(f"select deck_slot from playersinfo where userid = {a_id}")
-                db_deck = f"deck{dm.cur.fetchall()[0][0]}"
-                dm.cur.execute(
-                    f"select {db_deck} from playersachievements where userid = {a_id}")
-                deck = dm.cur.fetchall()[0][0].split(",")
-                dm.cur.execute(
-                    f"select card_name, card_level from cardsinfo where owned_user = {a_id} and id in ({str(deck)[1:-1]})")
-                deck = dm.cur.fetchall()
-
-                if len(deck) == 12:
-                    if pos[0] == "boss raid":
-                        dm.cur.execute(f"select level, tickets from playersinfo where userid = {a_id}")
-                        result = dm.cur.fetchall()[0]
-
-                        if result[0] < 9:
-                            await ctx.send(f"{mention}, you need to be at least level 9 to start a boss raid!")
-                        elif result[1] == 0:
-                            await ctx.send(f"{mention}, you need a Raid Ticket to start a boss raid!")
+            elif state[1] == "adventure" and not afk and not leave:
+                if dm.get_user_deck_count(a.id) == 12:
+                    if state[0] == "boss raid":
+                        if lvl < 9:
+                            await ctx.send("You need to be at least level 9 to start a boss raid!")
+                        elif dm.get_user_ticket(a.id) < 1:
+                            await ctx.reply("You need a Raid Ticket to start a boss raid!")
                         else:
-                            diff_msg = await ctx.send("Select Mob cards Level: \n"
-                                                      "**[1]** Easy - Lv 1 \n"
-                                                      "**[2]** Moderate - Lv 5 \n"
-                                                      "**[3]** Difficult - Lv 10 \n"
-                                                      "**[4]** Insane - Lv 15 \n"
+                            diff_msg = await ctx.send("Select Mob cards Level:\n"
+                                                      "**[1]** Easy - Lv 1\n"
+                                                      "**[2]** Moderate - Lv 5\n"
+                                                      "**[3]** Difficult - Lv 10\n"
+                                                      "**[4]** Insane - Lv 15\n"
                                                       "**[5]** Go Back")
                             for r in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
-                                await diff_msg.add_reaction(emoji=r)
+                                await diff_msg.add_reaction(r)
 
                             try:
                                 reaction, user = await self.bot.wait_for("reaction_add", timeout=120.0,
                                                                          check=valid_reaction(
                                                                              ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"],
-                                                                             [ctx.author], [diff_msg]))
+                                                                             [a], [diff_msg]))
                             except asyncio.TimeoutError:
-                                await ctx.send(f"{ctx.author} the host, went afk... :man_facepalming: ")
+                                await ctx.send(f"{a} the host, went afk... :man_facepalming: ")
                             else:
                                 if reaction.emoji != "5️⃣":
                                     raid_levels = {"1️⃣": 1, "2️⃣": 5, "3️⃣": 10, "4️⃣": 15}[reaction.emoji]
-
-                                    dm.cur.execute(
-                                        f"update playersinfo set tickets = tickets - 1 where userid = {a_id}")
-                                    dm.db.commit()
+                                    dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
                                     adventure = True
                     else:
                         adventure = True
                 else:
-                    await ctx.send(f"{mention}, you need 12 cards in your deck in order to go on an adventure!")
+                    await ctx.reply("You need 12 cards in your deck first!")
 
-        sql = "update adventuredata set position = %s, inventory = %s, show_map = %s, storage = %s where userid = %s"
-        val = (p_pos, str(p_inv), 'true' if show_map else 'false', str(p_stor), a_id)
-        dm.cur.execute(sql, val)
-        dm.db.commit()
+        dm.set_user_map(a.id, show_map)
+        dm.set_user_inventory(a.id, inv)
+        dm.set_user_storage(a.id, storage)
 
-        if adventure:
-            location = u.HTOWN[p_pos]["choices"][list(u.HTOWN[p_pos]["choices"])[decision - 1]][0]
-            event = "main"
-            section = "start"
-            distance = 0
-            travel_speed = 1
-            perk_turn = 5
-            perks = {}
-            boss_spawn = False
-            pre_message = []
+        if not adventure:
+            return
 
-        ##############################################################################################################################################
-        all_perks = json.load(open('resources/text/perks.json'))
-        # "hysterical maniac": {
-        #     "name": "Hysterical Maniac",
-        #     "description": "Use a card from your hand for 0 energy to a random enemy automatically every turn",
-        #     "multiplier": [0, 0, 0, 0, 0]
-        # },
-        # "energized charge": {
-        #     "name": "Energized Charge",
-        #     "description": "Receive 2 max energy limit increase",
-        #     "multiplier": [0, 0, 0, 0, 0]
-        # },
-        # "incarnation of god": {
-        #     "name": "Incarnation of God",
-        #     "description": "Receive 1000% damage, defense, accuracy, critical and effect chance increase",
-        #     "multiplier": [10, 10, 1000, 1000, 1000]
-        # }
-        perk_list = list(all_perks.keys())
+        location = u.HTOWN[pos]["choices"][list(u.HTOWN[pos]["choices"])[decision - 1]][0]
+        event = "main"
+        section = "start"
+        travel_speed = 1
+        perk_turn = 5
+        perks = {}
+        pre_message = []
+
+        perk_list = list(u.PERKS.keys())
 
         def option_decider(path, traveled_distance, boss, msg=None, option=None):
             while option is None:
                 if not boss:
                     for x, n in enumerate(path):
-                        for a, b, c in n["spawn rate"]:
-                            if a <= traveled_distance <= b and c >= random.randint(1, 10000):
+                        for a_, b, c in n["spawn rate"]:
+                            if a_ <= traveled_distance <= b and c >= random.randint(1, 10000):
                                 option = x
                                 break
                         if option is not None:
@@ -836,7 +806,7 @@ class Adventure(commands.Cog):
                                       color=discord.Color.gold())
             if "choices" in path[option]:
                 embed.add_field(name="Choices", value=choices_list(path[option]["choices"]))
-            embed.set_thumbnail(url=ctx.author.avatar.url)
+            embed.set_thumbnail(url=a.avatar.url)
             embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack | {u.PREF}refresh")
             return [embed, option]
 
@@ -849,20 +819,20 @@ class Adventure(commands.Cog):
             embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack | {u.PREF}refresh")
             return [embed]
 
-        while not leave and not afk and adventure and p_hp > 0 and p_sta > 0:
+        while not leave and not afk and adventure and hp > 0 and stamina > 0:
             boss_spawn = False
             if section == "start":
                 perk_turn -= 1
-                p_sta -= random.randint(3, 6)
+                stamina -= random.randint(3, 6)
                 t_dis = round(travel_speed * random.randint(100, 200))
-                if math.floor(p_distance / 1000) < math.floor((p_distance + t_dis) / 1000):
+                if math.floor(dist / 1000) < math.floor((dist + t_dis) / 1000):
                     boss_spawn = True
                     perk_turn = 0
-                p_distance += t_dis
-            dm.log_quest(3, t_dis, a_id)
+                dist += t_dis
+            dm.log_quest(3, t_dis, a.id)
 
             if perk_turn != 0:
-                options = option_decider(u.ADVENTURES[location][event][section], p_distance, boss_spawn, pre_message)
+                options = option_decider(u.ADVENTURES[location][event][section], dist, boss_spawn, pre_message)
                 pre_message = []
                 option = options[1]
                 choices = u.ADVENTURES[location][event][section][option]
@@ -874,10 +844,10 @@ class Adventure(commands.Cog):
                 await adventure_msg.edit(embed=options[0])
 
             choice = 0
-            while not leave and not afk and p_hp > 0 and p_sta > 0 and "choices" in choices:
+            while not leave and not afk and hp > 0 and stamina > 0 and "choices" in choices:
                 try:
                     msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                        check=valid_reply([''], [ctx.author],
+                                                        check=valid_reply([''], [a],
                                                                           [ctx.message.channel]))
                 except asyncio.TimeoutError:
                     afk = True
@@ -893,13 +863,13 @@ class Adventure(commands.Cog):
                         await ctx.send(f"{mention}, you quit this adventure")
                         break
                     elif msg_reply in ["bp", "backpack"]:
-                        embed = u.display_backpack(p_inv, ctx.author, "Backpack")
-                        embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n" + \
-                                                             f"Stamina - {p_sta} \n" + \
-                                                             f"Traveled {p_distance} meters", inline=False)
+                        embed = u.display_backpack(inv, a, "Backpack")
+                        embed.add_field(name="Stats:", value=f"Health - {hp}/{max_hp}\n"
+                                                             f"Stamina - {stamina}\n"
+                                                             f"Traveled {dist} meters", inline=False)
                         if perks != {}:
                             embed.add_field(name="Perks:", value="".join([
-                                                                             f"**{all_perks[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{all_perks[i.lower()]['description']}*\n"
+                                                                             f"**{u.PERKS[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{u.PERKS[i.lower()]['description']}*\n"
                                                                              for i in perks][:]))
                         await ctx.send(embed=embed)
                     elif msg_reply in ['r', 'ref', 'refresh']:
@@ -911,18 +881,18 @@ class Adventure(commands.Cog):
                     if not (msg_reply in ['exit', 'bp', 'backpack', 'r', 'refresh', 'ref']):
                         await ctx.send(f"You can only enter numbers `1-{len(choices['choices'])}`!")
                 elif perk_turn != 0:
-                    feed = u.fulfill_requirement(list(choices["choices"].values())[choice - 1], p_inv)
+                    feed = u.fulfill_requirement(list(choices["choices"].values())[choice - 1], inv)
 
                     if feed[0]:
                         if not feed[2] is None:
                             pre_message.append(feed[2])
-                        p_inv = feed[1]
+                        inv = feed[1]
                         await msg_reply.delete()
                         break
                     else:
                         if not feed[2] is None:
                             pre_message.append(feed[2])
-                        options = option_decider(u.ADVENTURES[location][event][section], p_distance, boss_spawn,
+                        options = option_decider(u.ADVENTURES[location][event][section], dist, boss_spawn,
                                                  pre_message, option)
                         pre_message = []
                         await adventure_msg.edit(embed=options[0])
@@ -933,22 +903,19 @@ class Adventure(commands.Cog):
                         perks[perk_list[choice - 1]] = 1
 
                     if perk_list[choice - 1] == 'vigorous endurance':
-                        p_max_hp = round(p_max_hp * 1.2)
+                        max_hp = round(max_hp * 1.2)
                     elif perk_list[choice - 1] == 'hot spring':
-                        p_sta += 40
+                        stamina += 40
                     elif perk_list[choice - 1] == "feathered shoe":
                         travel_speed += 0.4
                     elif perk_list[choice - 1] == 'chunk of gold':
-                        dm.log_quest(5, 250, a_id)
-
-                        dm.cur.execute(f"update playersinfo set coins = coins + 250 where userid = {a_id}")
+                        dm.log_quest(5, 250, a.id)
+                        dm.set_user_coin(a.id, dm.get_user_coin(a.id) + 250)
                         dm.db.commit()
                     elif perk_list[choice - 1] == "book of knowledge":
-                        dm.cur.execute(f"update playersinfo set exps = exps + 150 where userid = {a_id}")
-                        dm.db.commit()
+                        dm.set_user_exp(a.id, dm.get_user_exp(a.id) + 150)
                     elif perk_list[choice - 1] == "hidden gem":
-                        dm.cur.execute(f"update playersinfo set gems = gems + 1 where userid = {a_id}")
-                        dm.db.commit()
+                        dm.set_user_gem(a.id, dm.get_user_gem(a.id) + 1)
 
                     section = "start"
                     await msg_reply.delete()
@@ -963,7 +930,7 @@ class Adventure(commands.Cog):
                 section = choices['to'][0]
                 trap_time = random.randint(choices["time"][0], choices["time"][1])
                 trap_dmg = round(random.randint(choices["damage"][0], choices['damage'][1]) / 100 * round(
-                    (100 * u.SCALE[1] ** math.floor(p_datas[3] / 2)) * u.SCALE[0]))
+                    (100 * u.SCALE[1] ** math.floor(lvl / 2)) * u.SCALE[0]))
                 if choices["trap"] == "reaction":
                     await ctx.send(
                         f'Reply `{u.PREF}react` as fast as you can when you see the message "Now!"!')
@@ -971,11 +938,11 @@ class Adventure(commands.Cog):
                     trap_msg = await ctx.send('Now!')
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=20.0,
-                                                            check=valid_reply(['react'], [ctx.author],
+                                                            check=valid_reply(['react'], [a],
                                                                               [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
-                        p_hp -= trap_dmg * 2
+                        hp -= trap_dmg * 2
                     else:
                         offset = round((msg_reply.created_at - trap_msg.created_at).total_seconds() * 1000) / 1000
                         pre_message.append(f"You reacted in {offset} seconds")
@@ -983,7 +950,7 @@ class Adventure(commands.Cog):
                             pre_message.append(f"You successfully dodged the trap!")
                         else:
                             pre_message.append(f"You received {trap_dmg} damage!")
-                            p_hp -= trap_dmg
+                            hp -= trap_dmg
                 elif choices['trap'] == "memorize":
                     sequence_em = [f':regional_indicator_{s}:' for s in string.ascii_lowercase]
                     sequence_le = list(string.ascii_lowercase)
@@ -991,25 +958,25 @@ class Adventure(commands.Cog):
                              range(random.randint(choices['length'][0], choices['length'][1]))]
                     seq_msg = await ctx.send(f'Memorize the sequence {"".join([sequence_em[i] for i in rands])}!')
                     await asyncio.sleep(trap_time)
-                    await seq_msg.edit(content=f"Retype the sequence begin with `{u.PREF}`! \nEx: `{u.PREF}abcdefg`")
+                    await seq_msg.edit(content=f"Retype the sequence begin with `{u.PREF}`!\nEx: `{u.PREF}abcdefg`")
                     try:
                         msg_reply = await self.bot.wait_for("message", timeout=20.0,
-                                                            check=valid_reply([''], [ctx.author],
+                                                            check=valid_reply([''], [a],
                                                                               [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
-                        p_hp -= trap_dmg * 2
+                        hp -= trap_dmg * 2
                     else:
                         seq = msg_reply.content[len(u.PREF):].lower()
                         correct_seq = "".join([sequence_le[i] for i in rands])
-                        pre_message.append(f'The correct sequence is "{correct_seq}" \nYour sequence is "{seq}"')
+                        pre_message.append(f'The correct sequence is "{correct_seq}"\nYour sequence is "{seq}"')
                         if seq == correct_seq:
                             pre_message.append("You successfully avoided the trap!")
                         else:
                             pre_message.append(f"You received {trap_dmg} damage!")
-                            p_hp -= trap_dmg
+                            hp -= trap_dmg
 
-            elif not leave and not afk and p_hp > 0 and p_sta > 0:
+            elif not leave and not afk and hp > 0 and stamina > 0:
                 gained_coins = 0
                 gained_exps = 0
                 gained_gems = 0
@@ -1022,25 +989,25 @@ class Adventure(commands.Cog):
                     item_index = choices["items"][list(choices['items'].keys())[0]]["items"]
                     item_amount = random.randint(item_index[0], item_index[1])
                     items_to_take = 1
-                    if u.get_bp_weight(p_inv) + u.items_dict(item_info["name"])["weight"] * item_amount <= 100:
+                    if u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * item_amount <= 100:
                         items_to_take = item_amount
                         pre_message.append(f"You successfully obtained {item_info['name'].title()} x{item_amount}!")
-                    elif u.get_bp_weight(p_inv) + u.items_dict(item_info["name"])["weight"] <= 100:
+                    elif u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] <= 100:
                         items_to_take = math.floor(
-                            (100 - u.get_bp_weight(p_inv)) / u.items_dict(item_info["name"])["weight"])
+                            (100 - u.get_bp_weight(inv)) / u.items_dict(item_info["name"])["weight"])
                         pre_message.append(
-                            f"You successfully obtained {item_info['name'].title()} x{math.floor((100 - u.get_bp_weight(p_inv)) / u.items_dict(item_info['name'])['weight'])}!")
+                            f"You successfully obtained {item_info['name'].title()} x{math.floor((100 - u.get_bp_weight(inv)) / u.items_dict(item_info['name'])['weight'])}!")
                     else:
                         items_to_take = 0
                         pre_message.append(f"Your backpack is full, failed to obtain {item_info['name'].title()}!")
-                    if not item_info['name'].lower() in p_inv and items_to_take != 0:
+                    if not item_info['name'].lower() in inv and items_to_take != 0:
                         dm.log_quest(2, u.items_dict(item_info["name"])["weight"] * items_to_take,
-                                     a_id)
-                        p_inv[item_info['name'].lower()] = {"items": items_to_take}
+                                     a.id)
+                        inv[item_info['name'].lower()] = {"items": items_to_take}
                     elif items_to_take != 0:
                         dm.log_quest(2, u.items_dict(item_info['name'])["weight"] * items_to_take,
-                                     a_id)
-                        p_inv[item_info['name'].lower()]["items"] += items_to_take
+                                     a.id)
+                        inv[item_info['name'].lower()]["items"] += items_to_take
 
                 if index[2] == "fight":
                     def mob_generator(requirements):
@@ -1058,26 +1025,26 @@ class Adventure(commands.Cog):
                         return mob
 
                     enemynames = mob_generator(choices["encounters"])
-                    levels = math.floor((p_distance - 500) / 200) if p_distance > 500 else 1
+                    levels = math.floor((dist - 500) / 200) if dist > 500 else 1
                     if pos[0] == "boss raid":
                         levels = raid_levels
-                    ad_decks = [p_hand] + [random.sample(
+                    ad_decks = [hand] + [random.sample(
                         [f"{levels + random.randint(0, 3)}.{x}" for x in u.mobs_dict(levels, i)["deck"]],
                         len(u.mobs_dict(levels, i)['deck'])) for i in enemynames]
-                    ad_hps = [[p_hp, 0, p_max_hp, 0, 0]] + \
+                    ad_hps = [[hp, 0, max_hp, 0, 0]] + \
                              [[u.mobs_dict(levels, i)["health"], 0, u.mobs_dict(levels, i)['health'], 0, 0] for i in
                               enemynames]
                     dd = BattleData({1: [1], 2: [i + 2 for i in range(len(enemynames))]},  # teams
-                                    [ctx.author] + enemynames,  # names
-                                    [a_id] + [123] * len(enemynames),  # ids
+                                    [a] + enemynames,  # names
+                                    [a.id] + [123] * len(enemynames),  # ids
                                     ad_decks,  # decks
-                                    [p_inv] + [{} for i in range(len(enemynames))],  # backpack
+                                    [inv] + [{} for i in range(len(enemynames))],  # backpack
                                     ad_hps,  # hps
-                                    [p_sta] + [u.mobs_dict(levels, i)["stamina"] for i in enemynames],  # stamina
+                                    [stamina] + [u.mobs_dict(levels, i)["stamina"] for i in enemynames],  # stamina
                                     len(enemynames) + 1)
-                    loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
-                    stats_msg = await ctx.send(embed=loading_embed_message)
-                    hands_msg = await ctx.send(embed=loading_embed_message)
+                    loading = discord.Embed(title="Loading...", description=u.ICON['load'])
+                    stats_msg = await ctx.send(embed=loading)
+                    hands_msg = await ctx.send(embed=loading)
 
                     def stats_check():
                         alive = 0
@@ -1115,28 +1082,35 @@ class Adventure(commands.Cog):
                                     dd.freeze_skips.info[i + 1] = True
                         correct_format = False
 
-                        while not correct_format and dd.afk == 0 and not dd.freeze_skips.info[1] and \
-                                dd.hps.info[1][0] > 0 and dd.staminas.info[1] > 0:
+                        while (
+                                not correct_format
+                                and dd.afk == 0
+                                and not dd.freeze_skips.info[1]
+                                and dd.hps.info[1][0] > 0
+                                and dd.staminas.info[1] > 0
+                        ):
                             try:
-                                replied_message = await self.bot.wait_for("message", timeout=120.0,
-                                                                          check=valid_reply([''], [ctx.author],
-                                                                                            [ctx.message.channel]))
+                                replied_message = await self.bot.wait_for(
+                                    "message", timeout=120.0,
+                                    check=valid_reply("", a, ctx.channel)
+                                )
                             except asyncio.TimeoutError:
                                 dd.hps.info[1][0] = 0
                                 dd.staminas.info[1] = 0
                                 dd.descriptions.info[1].append("Went afk!")
                             else:
-                                the_message = dd.interpret_message(replied_message.content[len(u.PREF):],
-                                                                   str(dd.players.info[1]), 1)
-                                if isinstance(the_message, str) and the_message not in ["skip", "flee", "refresh",
-                                                                                        "backpack"]:
-                                    await ctx.send(the_message)
+                                msg = dd.interpret_message(
+                                    replied_message.content[len(u.PREF):],
+                                    str(dd.players.info[1]), 1
+                                )
+                                if isinstance(msg, str) and msg not in ["skip", "flee", "refresh", "backpack"]:
+                                    await ctx.send(msg)
 
-                                elif the_message == "refresh":
+                                elif msg == "refresh":
                                     stats_msg = await ctx.send(embed=stats_embed)
                                     hands_msg = await ctx.send(embed=hand_embed)
 
-                                elif the_message == "skip":
+                                elif msg == "skip":
                                     # dd.stamina[0] += 1
                                     for y in range(dd.hand_sizes.info[1]):
                                         if not dd.decks.info[1][y] in [".".join(x.split(".")[0:2]) for x in
@@ -1151,7 +1125,7 @@ class Adventure(commands.Cog):
                                     dd.descriptions.info[1].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
                                     correct_format = True
 
-                                elif the_message == "flee":
+                                elif msg == "flee":
                                     for y in range(dd.hand_sizes.info[1]):
                                         if not dd.decks.info[1][y] in [".".join(x.split(".")[0:2]) for x in
                                                                        dd.used_cards.info[1]]:
@@ -1170,20 +1144,30 @@ class Adventure(commands.Cog):
                                         dd.descriptions.info[1].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
                                         dd.afk = 8
 
-                                elif the_message == "backpack":
+                                elif msg == "backpack":
                                     embed = u.display_backpack(dd.backpacks.info[1], dd.players.info[1], "Backpack")
-                                    embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n" + \
-                                                                         f"Stamina - {p_sta} \n" + \
-                                                                         f"Traveled {p_distance} meters", inline=False)
+                                    embed.add_field(
+                                        name="Stats:",
+                                        value=f"Health - {hp}/{max_hp}\n"
+                                              f"Stamina - {stamina}\n"
+                                              f"Traveled {dist} meters",
+                                        inline=False
+                                    )
                                     if perks != {}:
-                                        embed.add_field(name="Perks:", value="".join([
-                                                                                         f"**{all_perks[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{all_perks[i.lower()]['description']}*\n"
-                                                                                         for i in perks][:]))
+                                        embed.add_field(
+                                            name="Perks:",
+                                            value="".join([
+                                                f"**{u.PERKS[p]['name']}** x{perks[p]}\n"
+                                                f"{u.ICON['alpha']}"
+                                                f"*{u.PERKS[p.lower()]['description']}*\n"
+                                                for p in perks
+                                            ])
+                                        )
                                     await ctx.send(embed=embed)
 
                                 else:
-                                    dd.staminas.info[1] -= len(the_message)
-                                    dd.move_numbers.info[1] = the_message
+                                    dd.staminas.info[1] -= len(msg)
+                                    dd.move_numbers.info[1] = msg
                                     correct_format = True
                                     dd.used_cards.info[1] = [dd.decks.info[1][int(str(x)[0]) - 1] + "." + str(x)[1:]
                                                              for x in dd.move_numbers.info[1]]
@@ -1193,6 +1177,7 @@ class Adventure(commands.Cog):
                                                                        dd.move_numbers.info[1]])
                                     dd.move_numbers.info[1].sort()
                                     z = 0
+
                                     for y in range(dd.hand_sizes.info[1]):
                                         if not dd.decks.info[1][y] in [".".join(x.split(".")[0:2]) for x in
                                                                        dd.used_cards.info[1]]:
@@ -1201,6 +1186,7 @@ class Adventure(commands.Cog):
                                                 dd.execute_card_offense(int(dd.decks.info[1][y].split(".")[0]),
                                                                         dd.decks.info[1][y].split(".")[1], 1, 1,
                                                                         "on_hand")
+
                                     for y in range(len(dd.move_numbers.info[1])):
                                         translator = int(str(dd.move_numbers.info[1][y])[0]) - y + z
                                         card = dd.decks.info[1][translator - 1].split(".")
@@ -1234,6 +1220,7 @@ class Adventure(commands.Cog):
                                             else:
                                                 dd.decks.info[1].pop(translator - 1)
                                     dd.hand_sizes.info[1] -= len(dd.move_numbers.info[1]) - z - 1
+
                                 await replied_message.delete()
 
                         for e_index in range(2, len(enemynames) + 2):
@@ -1243,20 +1230,20 @@ class Adventure(commands.Cog):
                                 if dd.stored_energies.info[e_index] >= \
                                         u.cards_dict(int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
                                                      dd.decks.info[e_index][rng_move - 1].split(".")[1])["cost"]:
-                                    the_message = [rng_move]
+                                    msg = [rng_move]
                                     for translator in range(3):
                                         rng_move = random.randint(1, dd.hand_sizes.info[e_index])
                                         if dd.stored_energies.info[e_index] >= sum([u.cards_dict(
                                                 int(dd.decks.info[e_index][x - 1].split(".")[0]),
                                                 dd.decks.info[e_index][x - 1].split(".")[1])["cost"] for x in
-                                                                                    the_message]) + \
+                                                                                    msg]) + \
                                                 u.cards_dict(
                                                     int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
                                                     dd.decks.info[e_index][rng_move - 1].split(".")[1])["cost"]:
-                                            the_message.append(rng_move)
+                                            msg.append(rng_move)
                                 else:
-                                    the_message = "skip"
-                                if the_message == "skip":
+                                    msg = "skip"
+                                if msg == "skip":
                                     # dd.stamina[1] += 1
                                     for y in range(dd.hand_sizes.info[e_index]):
                                         if not dd.decks.info[e_index][y] in dd.used_cards.info[e_index]:
@@ -1272,12 +1259,12 @@ class Adventure(commands.Cog):
                                     dd.descriptions.info[e_index].insert(len(dd.descriptions.info[e_index]),
                                                                          f"{u.ICON['ski']}{u.ICON['kip']}\n")
                                     correct_format = True
-                                elif the_message == "flee":
+                                elif msg == "flee":
                                     dd.afk = len(dd.players.info) + e_index
                                     break
                                 else:
                                     dd.staminas.info[e_index] -= 1
-                                    dd.move_numbers.info[e_index] = list(dict.fromkeys(the_message))
+                                    dd.move_numbers.info[e_index] = list(dict.fromkeys(msg))
                                     correct_format = True
                                     defense_cards = ["shield", "absorb", "heal", "aid", "aim", "relic", "meditate",
                                                      "heavy shield", "reckless assault", "seed", "sprout", "sapling",
@@ -1357,7 +1344,7 @@ class Adventure(commands.Cog):
 
                             for translator in perks:
                                 dd.multipliers.info[1] = [
-                                    all_perks[translator.lower()]['multiplier'][i] * perks[translator] +
+                                    u.PERKS[translator.lower()]['multiplier'][i] * perks[translator] +
                                     dd.multipliers.info[1][i] for i in range(5)]
                             for translator in dd.item_used.info:
                                 if dd.item_used.info[translator][0] != "None":
@@ -1425,12 +1412,12 @@ class Adventure(commands.Cog):
                                     dd.hps.info[i][2] = 0
                                     dd.hps.info[i][0] = 0
 
-                    p_hp = dd.hps.info[1][0]
-                    p_sta = dd.staminas.info[1]
-                    p_hand = dd.decks.info[1]
+                    hp = dd.hps.info[1][0]
+                    stamina = dd.staminas.info[1]
+                    hand = dd.decks.info[1]
                     p_hand_size = dd.hand_sizes.info[1]
                     p_effect = dd.effects.info[1]
-                    p_inv = dd.backpacks.info[1]
+                    inv = dd.backpacks.info[1]
 
                     if dd.afk <= 6:
                         if dd.hps.info[1][0] > 1 and dd.staminas.info[1] > 1:
@@ -1450,7 +1437,7 @@ class Adventure(commands.Cog):
                                 "You successfully defeated " + ','.join(list(dict.fromkeys(enemynames))[:]) + "!")
 
                             if dd.hps.info[2][0] < 1:
-                                dm.log_quest(1, len(dd.players.info), a_id)
+                                dm.log_quest(1, len(dd.players.info), a.id)
 
                             loot_factor = 1
                             golden_greed = 1
@@ -1464,13 +1451,13 @@ class Adventure(commands.Cog):
                                 u.mobs_dict(levels, i)["death reward"]['coins'][0],
                                 u.mobs_dict(levels, i)["death reward"]['coins'][1]) for i in enemynames])
                             gained_coins += coin_loot
-                            p_datas[5] += coin_loot
+                            coins += coin_loot
                             pre_message.append("Gained " + str(coin_loot) + " golden coins")
                             exp_loot = loot_factor * sum([random.randint(
                                 u.mobs_dict(levels, i)["death reward"]['exps'][0],
                                 u.mobs_dict(levels, i)["death reward"]['exps'][1]) for i in enemynames])
                             gained_exps += exp_loot
-                            p_datas[4] += exp_loot
+                            xp += exp_loot
                             pre_message.append("Gained " + str(exp_loot) + " experience points")
                             try:
                                 gem_loot = loot_factor * round(sum([random.randint(
@@ -1478,7 +1465,7 @@ class Adventure(commands.Cog):
                                     u.mobs_dict(levels, i)["death reward"]['gems'][1]) for i in
                                     enemynames]) / 100)
                                 gained_gems += gem_loot
-                                p_datas[6] += gem_loot
+                                gems += gem_loot
                                 pre_message.append("Gained " + str(gem_loot) + " shiny gems!")
                             except:
                                 pass
@@ -1488,27 +1475,27 @@ class Adventure(commands.Cog):
                                     if random.randint(1, 10000) <= death_award[translator][1]:
                                         item_info = u.items_dict(translator)
                                         items_to_take = 1
-                                        if u.get_bp_weight(p_inv) + u.items_dict(item_info["name"])["weight"] * \
+                                        if u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * \
                                                 death_award[translator][0] <= 100:
                                             items_to_take = death_award[translator][0]
                                             pre_message.append(
                                                 "Obtained " + translator.title() + " x" + str(
                                                     death_award[translator][0]) + "!")
-                                        elif u.get_bp_weight(p_inv) + u.items_dict(item_info["name"])["weight"] <= 100:
-                                            items_to_take = math.floor((100 - u.get_bp_weight(p_inv)) /
+                                        elif u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] <= 100:
+                                            items_to_take = math.floor((100 - u.get_bp_weight(inv)) /
                                                                        u.items_dict(item_info["name"])[
                                                                            "weight"])
                                             pre_message.append("Obtained " + translator.title() + " x" + str(math.floor(
-                                                (100 - u.get_bp_weight(p_inv)) /
+                                                (100 - u.get_bp_weight(inv)) /
                                                 u.items_dict(item_info["name"])["weight"])) + "!")
                                         else:
                                             items_to_take = 0
                                             pre_message.append(
                                                 "Your backpack is full, failed to obtain " + translator.title() + "!")
-                                        if not translator.lower() in p_inv and items_to_take != 0:
-                                            p_inv[translator.lower()] = {"items": items_to_take}
+                                        if not translator.lower() in inv and items_to_take != 0:
+                                            inv[translator.lower()] = {"items": items_to_take}
                                         elif items_to_take != 0:
-                                            p_inv[translator.lower()]["items"] += items_to_take
+                                            inv[translator.lower()]["items"] += items_to_take
 
                         else:
                             await stats_msg.edit(embed=dd.show_stats())
@@ -1525,23 +1512,24 @@ class Adventure(commands.Cog):
 
                 if index[2] == "end":
                     if index[0] == "coin loss":
-                        coin_loss = random.randint(u.ADVENTURES["end"]["coin loss"][0], u.ADVENTURES["end"]["coin loss"][1])
-                        if p_datas[5] < abs(coin_loss) and coin_loss < 0:
-                            coin_loss = p_datas[5]
-                            p_datas[5] = 0
+                        coin_loss = random.randint(u.ADVENTURES["end"]["coin loss"][0],
+                                                   u.ADVENTURES["end"]["coin loss"][1])
+                        if coins < abs(coin_loss) and coin_loss < 0:
+                            coin_loss = coins
+                            coins = 0
                             pre_message.append("You lost all your " + str(
                                 coin_loss) + " golden coins! You are as poor as a rat now! Even the thief felt sympathy for you.")
                         else:
-                            p_datas[5] += coin_loss
+                            coins += coin_loss
                             pre_message.append(
                                 "You lost " + str(abs(coin_loss)) + " golden coins, you still have " + str(
-                                    p_datas[5]) + " more golden coins left!")
+                                    coins) + " more golden coins left!")
                         gained_coins = coin_loss
 
                 if index[2] == "trade":
                     finished = False
                     offers = {}
-                    trader = u.mobs_dict(math.floor(p_distance / 200), choices['name'])
+                    trader = u.mobs_dict(math.floor(dist / 200), choices['name'])
                     trading_pre_message = ""
                     while len(offers) < 2:
                         for translator in range(len(trader["offers"])):
@@ -1567,7 +1555,7 @@ class Adventure(commands.Cog):
                                                   description="```" + msg + "\n\n" + choices['name'] + "'s offers:```",
                                                   color=discord.Color.gold())
                         embed.add_field(name="Choices", value="\n".join(logs[:]))
-                        embed.set_thumbnail(url=ctx.author.avatar.url)
+                        embed.set_thumbnail(url=a.avatar.url)
                         embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack")
                         return embed
 
@@ -1577,7 +1565,7 @@ class Adventure(commands.Cog):
                         while not leave and not afk:
                             try:
                                 msg_reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                    check=valid_reply([''], [ctx.author],
+                                                                    check=valid_reply([''], [a],
                                                                                       [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 afk = True
@@ -1593,14 +1581,14 @@ class Adventure(commands.Cog):
                                     await ctx.send(f"{mention}, you quit this adventure")
                                     break
                                 elif msg_reply in ["bp", "backpack"]:
-                                    embed = u.display_backpack(p_inv, ctx.author, "Backpack")
-                                    embed.add_field(name="Stats:", value=f"Health - {p_hp}/{p_max_hp} \n"
-                                                                         f"Stamina - {p_sta} \n"
-                                                                         f"Traveled {p_distance} meters", inline=False)
+                                    embed = u.display_backpack(inv, a, "Backpack")
+                                    embed.add_field(name="Stats:", value=f"Health - {hp}/{max_hp}\n"
+                                                                         f"Stamina - {stamina}\n"
+                                                                         f"Traveled {dist} meters", inline=False)
                                     if perks != {}:
                                         embed.add_field(name="Perks:",
                                                         value="".join([
-                                                                          f"**{all_perks[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{all_perks[i.lower()]['description']}*\n"
+                                                                          f"**{u.PERKS[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{u.PERKS[i.lower()]['description']}*\n"
                                                                           for i in perks][:]))
                                     await ctx.send(embed=embed)
                                 elif msg_reply in ['r', 'ref', 'refresh']:
@@ -1620,8 +1608,8 @@ class Adventure(commands.Cog):
                             items_weight = 0
                             trade_items_to_take = {}
                             for translator in list(offers.values())[option - 1]:
-                                if translator[0].lower() in p_inv:
-                                    if translator[1] <= p_inv[translator[0].lower()]["items"] and trade_success:
+                                if translator[0].lower() in inv:
+                                    if translator[1] <= inv[translator[0].lower()]["items"] and trade_success:
                                         trade_items_to_take[translator[0].lower()] = translator[1]
                                         items_weight += u.items_dict(translator[0].lower())["weight"] * translator[1]
                                     else:
@@ -1633,7 +1621,7 @@ class Adventure(commands.Cog):
                             if not trade_success:
                                 trading_pre_message = "You don't have the items required to afford the " + \
                                                       list(offers.keys())[option - 1].title() + "!"
-                            elif u.get_bp_weight(p_inv) - items_weight + u.items_dict(list(offers.keys())[option - 1])[
+                            elif u.get_bp_weight(inv) - items_weight + u.items_dict(list(offers.keys())[option - 1])[
                                 "weight"] > 100:
                                 trading_pre_message = "You can't buy " + list(offers.keys())[
                                     option - 1].title() + " due to your rather full backpack!"
@@ -1643,43 +1631,43 @@ class Adventure(commands.Cog):
                                     cost.append(str(translator[1]) + " " + translator[0].title())
                                 trading_pre_message = "You successfully obtained " + list(offers.keys())[
                                     option - 1].title() + " with " + ", ".join(cost[:]) + "!"
-                                if not list(offers.keys())[option - 1].lower() in p_inv:
-                                    p_inv[list(offers.keys())[option - 1].lower()] = {"items": 1}
+                                if not list(offers.keys())[option - 1].lower() in inv:
+                                    inv[list(offers.keys())[option - 1].lower()] = {"items": 1}
                                 else:
-                                    p_inv[list(offers.keys())[option - 1].lower()]["items"] += 1
+                                    inv[list(offers.keys())[option - 1].lower()]["items"] += 1
                                 for translator in trade_items_to_take:
-                                    p_inv[translator]["items"] -= trade_items_to_take[translator]
-                                p_inv = u.clear_bp(p_inv)
+                                    inv[translator]["items"] -= trade_items_to_take[translator]
+                                inv = u.clear_bp(inv)
 
-                sql = "update playersinfo set exps = exps + %s, coins = coins + %s, gems = gems + %s where userid = %s"
-                val = (gained_exps, gained_coins, gained_gems, a_id)
                 if gained_coins > 0:
-                    dm.log_quest(5, gained_coins, a_id)
-                dm.cur.execute(sql, val)
-                dm.db.commit()
+                    dm.log_quest(5, gained_coins, a.id)
 
-            if p_sta <= 0 or leave or afk or p_hp <= 0 or section == "end":
+                dm.set_user_coin(a.id, dm.get_user_coin(a.id) + gained_coins)
+                dm.set_user_gem(a.id, dm.get_user_gem(a.id) + gained_gems)
+                dm.set_user_exp(a.id, dm.get_user_exp(a.id) + gained_exps)
+
+            if stamina <= 0 or leave or afk or hp <= 0 or section == "end":
                 if pre_message:
                     pre_message.append("\n")
-                if p_sta <= 0:
-                    p_sta = 0
+                if stamina <= 0:
+                    stamina = 0
                     embed = discord.Embed(title="You ran out of stamina!",
                                           description="```" + "\n".join(
-                                              pre_message) + "You died from exhaustion!``` ```Loss: \n" + \
-                                                      u.display_backpack(p_inv, ctx.author, "Backpack",
+                                              pre_message) + "You died from exhaustion!``` ```Loss:\n" + \
+                                                      u.display_backpack(inv, a, "Backpack",
                                                                          [0, -2]) + "```",
                                           color=discord.Color.gold())
-                    p_inv = {}
-                if p_hp <= 0:
-                    p_hp = 0
+                    inv = {}
+                if hp <= 0:
+                    hp = 0
                     embed = discord.Embed(
                         title="You ran out of health!",
                         description="```" + "\n".join(
-                            pre_message) + "The world starts to go dark. You struggled to breath properly. You died!``` ```Loss: \n" + \
-                                    u.display_backpack(p_inv, ctx.author, "Backpack", [0, -2]) + "```",
+                            pre_message) + "The world starts to go dark. You struggled to breath properly. You died!``` ```Loss:\n" + \
+                                    u.display_backpack(inv, a, "Backpack", [0, -2]) + "```",
                         color=discord.Color.gold()
                     )
-                    p_inv = {}
+                    inv = {}
                 if leave:
                     embed = discord.Embed(
                         title="You gave up keep adventuring!",
@@ -1691,33 +1679,32 @@ class Adventure(commands.Cog):
                 if afk:
                     embed = discord.Embed(
                         title="You went afk and left!",
-                        description="```" + "\n".join(
-                            pre_message) + "You stood motionlessly and somehow forgot what you were going to do. "
-                                           "Just like that, you traveled back to your hometown, wondering why you were here in the first place.```",
+                        description="```" +
+                                    pre_message + "\n"
+                                                  "You stood motionlessly and somehow forgot what you were going to do.\n"
+                                                  "Just like that, you traveled back to your hometown, "
+                                                  "wondering why you were here in the first place."
+                                                  "```",
                         color=discord.Color.red()
                     )
                 if section == "end":
-                    p_hp = 0
+                    hp = 0
                     embed = discord.Embed(
                         title="You finished this adventure!",
                         description="```" + "\n".join(
                             pre_message) + "CONGRATULATIONS! You have endured and survived all the obstacles stood in your way. You achieved what many failed to acomplish!```",
                         color=discord.Color.green()
                     )
-                    if location == "enchanted forest" and badges[5] == "0":
-                        badges[5] = '1'
-                        dm.cur.execute(f"update playersachievements set badges = '{badges}'")
-                        dm.db.commit()
+                    if location == "enchanted forest" and (badges & (1 << 5)) == 0:
+                        badges |= 1 << 5
+                        dm.set_user_badge(a.id, badges)
 
-                embed.add_field(name="Result:", value="Total distance traveled - " + str(p_distance) + " meters")
-                embed.set_thumbnail(url=ctx.author.avatar.url)
+                embed.add_field(name="Result:", value=f"Total distance traveled - {dist} meters")
+                embed.set_thumbnail(url=a.avatar.url)
                 embed.set_footer(text=f"Type {u.PREF}adventure to restart!")
                 await adventure_msg.edit(embed=embed)
 
-        sql = "update adventuredata set inventory = %s where userid = %s"
-        val = (str(p_inv), a_id)
-        dm.cur.execute(sql, val)
-        dm.db.commit()
+        dm.set_user_inventory(a.id, inv)
 
 
 async def setup(bot):

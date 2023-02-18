@@ -19,7 +19,7 @@ class Raid(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command(
-        description="Band with other players to fight OP bosses!"
+        description="Band with other players to fight an OP boss!"
     )
     @checks.level_check(4)
     @checks.is_registered()
@@ -39,14 +39,14 @@ class Raid(commands.Cog):
             for p in people:
                 id_ = p.id
 
-                # level_req = 4
-                # if dm.get_user_level(id_) < level_req:
-                #     await ctx.reply(f"{u.mention} isn't level {level_req} yet!")
-                #     break
+                level_req = 4
+                if dm.get_user_level(id_) < level_req:
+                    await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
+                    break
 
-                # if dm.get_user_ticket(id_) == 0:
-                #     await ctx.reply(f"{p.mention} doesn't have any raid tickets!")
-                #     break
+                if dm.get_user_ticket(id_) == 0:
+                    await ctx.reply(f"{p.mention} doesn't have any raid tickets!")
+                    break
 
                 if dm.get_user_deck_count(id_) != 12:
                     await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
@@ -81,11 +81,10 @@ class Raid(commands.Cog):
             random.shuffle(deck)
             decks.append(deck)
 
-            level = dm.get_user_level(p.id)
-            hp = round((100 * u.SCALE[1] ** math.floor(level / 2)) * u.SCALE[0])
+            hp = u.level_hp(dm.get_user_level(p.id))
             hps.append([hp, 0, hp, 0, 0])
 
-            bps.append(literal_eval(dm.get_user_inventory(p.id)))
+            bps.append(dm.get_user_inventory(p.id))
 
         for i in ids:
             dm.queues[i] = "raiding a boss"
@@ -101,14 +100,14 @@ class Raid(commands.Cog):
         enemies = ["Lich Lord"]
         ad_decks = [
             random.sample(
-                [f"{levels}.{x}" for x in u.mobs_dict(levels, i)["deck"]],
-                len(u.mobs_dict(levels, i)['deck'])
+                [f"{levels}.{x}" for x in u.mobs_dict(levels, e)["deck"]],
+                len(u.mobs_dict(levels, e)['deck'])
             )
-            for i in enemies
+            for e in enemies
         ]
         ad_hps = [
-            [u.mobs_dict(levels, i)["health"], 0, u.mobs_dict(levels, i)['health'], 0, 0]
-            for i in enemies
+            [u.mobs_dict(levels, e)["health"], 0, u.mobs_dict(levels, e)['health'], 0, 0]
+            for e in enemies
         ]
 
         # Initialize the battlefield
@@ -119,7 +118,7 @@ class Raid(commands.Cog):
         dd = BattleData(
             teams=teams,
             players=names + enemies,
-            p_ids=ids + [123] * len(enemies),
+            p_ids=ids + [123 for _ in range(len(enemies))],
             decks=decks + ad_decks,
             backpacks=bps + [{} for _ in range(len(enemies))],
             hps=hps + ad_hps,
@@ -127,9 +126,9 @@ class Raid(commands.Cog):
             counts=len(enemies) + members
         )
 
-        loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
-        stats_msg = await ctx.send(embed=loading_embed_message)
-        hands_msg = await ctx.send(embed=loading_embed_message)
+        loading_embed = discord.Embed(title="Loading...", description=u.ICON['load'])
+        stats_msg = await ctx.send(embed=loading_embed)
+        hands_msg = await ctx.send(embed=loading_embed)
 
         def stats_check() -> bool:
             alive = 0
@@ -174,12 +173,13 @@ class Raid(commands.Cog):
                     dd.descriptions.info[ind].append(f"•{u.ICON['dead']}")
                     dd.effects.info[ind] = {}
 
+            print(players)
             # Process player commands
             while len(players) > 0:
                 try:
                     replied_message = await self.bot.wait_for(
                         "message", timeout=120.0,
-                        check=checks.valid_reply('', people, ctx.channel)
+                        check=checks.valid_reply("", people, ctx.channel)
                     )
                 except asyncio.TimeoutError:
                     for p in players:
@@ -191,20 +191,22 @@ class Raid(commands.Cog):
                     players = []
 
                 else:
-                    index = list(dd.p_ids.info.values()).index(str(replied_message.author.id)) + 1
-                    the_message = dd.interpret_message(replied_message.content[len(u.PREF):],
-                                                       str(dd.players.info[index]), index)
+                    index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
+                    msg = dd.interpret_message(
+                        replied_message.content[len(u.PREF):],
+                        str(dd.players.info[index]), index
+                    )
 
-                    if type(the_message) is str and the_message not in ["skip", "flee", "refresh", "backpack"]:
-                        await ctx.send(the_message)
+                    if type(msg) is str and msg not in ["skip", "flee", "refresh", "backpack"]:
+                        await ctx.send(msg)
 
-                    elif the_message == "refresh":
+                    elif msg == "refresh":
                         stats_msg = await ctx.send(embed=stats_embed)
                         hands_msg = await ctx.send(embed=hand_embed)
 
-                    elif the_message == "skip":
+                    elif msg == "skip":
                         # dd.staminas.infos[index] += 1
-                        players.remove(str(replied_message.author.id))
+                        players.remove(replied_message.author.id)
 
                         for y in range(dd.hand_sizes.info[index]):
                             if dd.decks.info[index][y] not in [".".join(x.split(".")[0:2])
@@ -219,20 +221,20 @@ class Raid(commands.Cog):
 
                         dd.descriptions.info[index].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
 
-                    elif the_message == "flee":
-                        players.remove(str(replied_message.author.id))
+                    elif msg == "flee":
+                        players.remove(replied_message.author.id)
                         dd.hps.info[index][0] = 0
                         dd.staminas.info[index] = 0
                         dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
 
-                    elif the_message == "backpack":
+                    elif msg == "backpack":
                         await ctx.send(embed=u.display_backpack(dd.backpacks.info[index],
                                                                 dd.players.info[index],
                                                                 "Backpack"))
                     else:
-                        players.remove(str(replied_message.author.id))
-                        dd.staminas.info[index] -= len(the_message)
-                        dd.move_numbers.info[index] = the_message
+                        players.remove(replied_message.author.id)
+                        dd.staminas.info[index] -= len(msg)
+                        dd.move_numbers.info[index] = msg
                         dd.used_cards.info[index] = [dd.decks.info[index][int(str(x)[0]) - 1] + "." + str(x)[1:] for x
                                                      in dd.move_numbers.info[index]]
                         dd.stored_energies.info[index] -= \
@@ -300,18 +302,18 @@ class Raid(commands.Cog):
                     if dd.stored_energies.info[e_index] >= \
                             u.cards_dict(int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
                                          dd.decks.info[e_index][rng_move - 1].split(".")[1])["cost"]:
-                        the_message = [rng_move]
+                        msg = [rng_move]
                         for x in range(3):
                             rng_move = random.randint(1, dd.hand_sizes.info[e_index])
                             if dd.stored_energies.info[e_index] >= sum([u.cards_dict(
                                     int(dd.decks.info[e_index][x - 1].split(".")[0]),
-                                    dd.decks.info[e_index][x - 1].split(".")[1])["cost"] for x in the_message]) + \
+                                    dd.decks.info[e_index][x - 1].split(".")[1])["cost"] for x in msg]) + \
                                     u.cards_dict(int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
                                                  dd.decks.info[e_index][rng_move - 1].split(".")[1])["cost"]:
-                                the_message.append(rng_move)
+                                msg.append(rng_move)
                     else:
-                        the_message = "skip"
-                    if the_message == "skip":
+                        msg = "skip"
+                    if msg == "skip":
                         # dd.stamina[1] += 1
                         for y in range(dd.hand_sizes.info[e_index]):
                             if not dd.decks.info[e_index][y] in dd.used_cards.info[e_index]:
@@ -325,12 +327,12 @@ class Raid(commands.Cog):
                         dd.descriptions.info[e_index].insert(len(dd.descriptions.info[e_index]),
                                                              f"{u.ICON['ski']}{u.ICON['kip']}\n")
                         correct_format = True
-                    elif the_message == "flee":
+                    elif msg == "flee":
                         dd.afk = len(dd.players.info) + e_index
                         break
                     else:
                         dd.staminas.info[e_index] -= 1
-                        dd.move_numbers.info[e_index] = list(dict.fromkeys(the_message))
+                        dd.move_numbers.info[e_index] = list(dict.fromkeys(msg))
                         correct_format = True
                         defense_cards = [
                             "shield", "absorb", "heal", "aid", "aim", "relic", "meditate", "heavy shield",

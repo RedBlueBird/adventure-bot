@@ -34,8 +34,9 @@ class Info(commands.Cog):
 
         user_premium = dm.get_user_premium(user.id)
         if user_premium > dt.datetime.today():
+            days_left = (user_premium - dt.datetime.today()).days
             description_msg = f"14\n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
-                              f"{(user_premium - dt.datetime.today()).days} days remaining\n"
+                              f"{days_left} days remaining\n"
             tickets = 10
         else:
             description_msg = "7\n"
@@ -54,7 +55,7 @@ class Info(commands.Cog):
         )
         embed.set_thumbnail(url=user.avatar.url)
 
-        hp = round((100 * u.SCALE[1] ** math.floor(lvl / 2)) * u.SCALE[0])
+        hp = u.level_hp(lvl)
         xp = dm.get_user_exp(user.id)
         if lvl < 30:
             embed.add_field(
@@ -201,7 +202,7 @@ class Info(commands.Cog):
             await ctx.reply("That user isn't registered yet!")
             return
 
-        view = CardPages(user, page=page - 1)
+        view = CardPages(ctx.author, user, page=page - 1)
         await ctx.send(embed=view.page_embed(), view=view)
 
     @commands.hybrid_command(
@@ -214,7 +215,7 @@ class Info(commands.Cog):
             name: t.Literal["level", "coins", "gems", "medals", "tokens"]
     ) -> None:
         view = Leaderboard(name, ctx.author.id, self.bot)
-        await ctx.send(embed=await view.lb_embed(), view=view)
+        await ctx.send(embed=await view.leaderboard_embed(), view=view)
 
     @commands.hybrid_command(
         name="deck",
@@ -226,29 +227,30 @@ class Info(commands.Cog):
             await ctx.reply(f"That user isn't registered yet!")
             return
 
-        if not 0 <= slot <= 6:
-            await ctx.reply("The deck slot number must between 1-6!")
-            return
+        if slot != 0:
+            if not 1 <= slot <= 6:
+                await ctx.reply("The deck slot number must between 1-6!")
+                return
 
-        if slot != 0 and dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-            await ctx.reply(f"You need to reach {u.DECK_LVL_REQ[slot]} to get that deck slot!")
-            return
+            if dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
+                await ctx.reply(f"You need to reach level {u.DECK_LVL_REQ[slot]} to get that deck slot!")
+                return
 
         view = Decks(user, slot)
         await ctx.send(embed=view.deck_embed(), view=view)
 
     @commands.hybrid_command(
-        name="decklist",
-        description="Displays all decks of a user."
+        name="decks",
+        description="Displays an overview of a user's decks."
     )
-    async def decklist(self, ctx: Context, user: discord.Member = None):
+    async def decks(self, ctx: Context, user: discord.Member = None):
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
             await ctx.reply(f"That user isn't registered!")
             return
 
         view = Decks(user)
-        await ctx.send(embed=view.decklist_embed(), view=view)
+        await ctx.send(embed=view.overview_embed(), view=view)
 
     @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)

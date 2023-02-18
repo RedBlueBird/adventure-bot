@@ -1075,11 +1075,9 @@ class BattleData:
         """
         Interprets user input into something the bot can understand
         """
-        move_numbers = []
         msg = msg.split(" ")
 
         try:
-            # move_numbers = reduce(lambda r, x: r + [x] if x not in r else r, [x for x in the_message], [])
             for i in msg:
                 if items_dict(" ".join(i[:-1].lower().split("_")[:]))["name"].lower() in self.backpacks.info[user]:
                     if items_dict(" ".join(i[:-1].lower().split("_")[:]))["in_battle"]:

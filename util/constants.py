@@ -50,6 +50,8 @@ with open(os.path.join(dirname, "adventure.json")) as json_file:
     ADVENTURES = json.load(json_file)
 with open(os.path.join(dirname, "minigames.json")) as json_file:
     MINIGAMES = json.load(json_file)
+with open(os.path.join(dirname, "perks.json")) as json_file:
+    PERKS = json.load(json_file)
 with open(os.path.join(dirname, "tutorial.json")) as json_file:
     TUTORIAL = json.load(
         json_file,
