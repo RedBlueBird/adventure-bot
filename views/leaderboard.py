@@ -21,7 +21,7 @@ class Leaderboard(discord.ui.View):
             else:
                 select.options[index].default = False
 
-    async def lb_embed(self):
+    async def leaderboard_embed(self):
         limit = 10
         order_by = None
         desc_fmt = None
@@ -72,4 +72,4 @@ class Leaderboard(discord.ui.View):
     async def select_leaderboard(self, i: discord.Interaction, select: discord.ui.Select):
         self.name = select.values[0].lower()
         self.change_select_default()
-        await i.response.edit_message(embed=await self.lb_embed(), view=self)
+        await i.response.edit_message(embed=await self.leaderboard_embed(), view=self)

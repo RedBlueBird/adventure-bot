@@ -214,14 +214,14 @@ def get_user_cards_count(uid: int) -> int:
     return cur.fetchall()[0][0]
 
 
-def get_user_deck_count(uid: int, slot: int | None = None) -> int:
-    slot = get_user_deck_slot(uid) if slot is None else slot
+def get_user_deck_count(uid: int, slot: int = 0) -> int:
+    slot = get_user_deck_slot(uid) if slot == 0 else slot
     db_deck = f"deck{slot}"
     cur.execute(f"SELECT COUNT(*) FROM temp_cards WHERE owned_user = {uid} AND {db_deck} = 1")
     return cur.fetchall()[0][0]
 
 
-def get_user_deck(uid: int, slot: int = -1) -> list[tuple[int, str, int]]:
+def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
     order = get_user_order(uid)
     slot = slot if 1 <= slot <= 6 else get_user_deck_slot(uid)
 

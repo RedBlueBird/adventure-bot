@@ -215,7 +215,7 @@ class Info(commands.Cog):
             name: t.Literal["level", "coins", "gems", "medals", "tokens"]
     ) -> None:
         view = Leaderboard(name, ctx.author.id, self.bot)
-        await ctx.send(embed=await view.lb_embed(), view=view)
+        await ctx.send(embed=await view.leaderboard_embed(), view=view)
 
     @commands.hybrid_command(
         name="deck",
@@ -227,29 +227,30 @@ class Info(commands.Cog):
             await ctx.reply(f"That user isn't registered yet!")
             return
 
-        if not 0 <= slot <= 6:
-            await ctx.reply("The deck slot number must between 1-6!")
-            return
+        if slot != 0:
+            if not 1 <= slot <= 6:
+                await ctx.reply("The deck slot number must between 1-6!")
+                return
 
-        if slot != 0 and dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-            await ctx.reply(f"You need to reach {u.DECK_LVL_REQ[slot]} to get that deck slot!")
-            return
+            if dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
+                await ctx.reply(f"You need to reach {u.DECK_LVL_REQ[slot]} to get that deck slot!")
+                return
 
         view = Decks(user, slot)
         await ctx.send(embed=view.deck_embed(), view=view)
 
     @commands.hybrid_command(
-        name="decklist",
-        description="Displays all decks of a user."
+        name="decks",
+        description="Displays an overview of a user's decks."
     )
-    async def decklist(self, ctx: Context, user: discord.Member = None):
+    async def decks(self, ctx: Context, user: discord.Member = None):
         user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
             await ctx.reply(f"That user isn't registered!")
             return
 
         view = Decks(user)
-        await ctx.send(embed=view.decklist_embed(), view=view)
+        await ctx.send(embed=view.overview_embed(), view=view)
 
     @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)
