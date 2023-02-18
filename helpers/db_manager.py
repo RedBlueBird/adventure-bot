@@ -376,7 +376,8 @@ def get_user_inventory(uid: int) -> dict:
     return literal_eval(cur.fetchall()[0][0])
 
 
-def set_user_inventory(uid: int, value):
+def set_user_inventory(uid: int, value: str | dict):
+    value = value if isinstance(value, str) else json.dumps(value)
     cur.execute(f"UPDATE temp SET inventory = '{value}' WHERE userid = {uid}")
     db.commit()
 
@@ -386,7 +387,8 @@ def get_user_storage(uid: int) -> dict:
     return literal_eval(cur.fetchall()[0][0])
 
 
-def set_user_storage(uid: int, value: str):
+def set_user_storage(uid: int, value: str | dict):
+    value = value if isinstance(value, str) else json.dumps(value)
     cur.execute(f"UPDATE temp SET storage = '{value}' WHERE userid = {uid}")
     db.commit()
 
