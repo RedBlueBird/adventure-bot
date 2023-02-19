@@ -2,7 +2,6 @@ import asyncio
 import random
 import math
 import typing as t
-from ast import literal_eval
 
 import discord
 from discord.ext import commands
@@ -228,8 +227,7 @@ class Raid(commands.Cog):
                         dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
 
                     elif msg == "backpack":
-                        await ctx.send(embed=u.display_backpack(dd.backpacks.info[index],
-                                                                dd.players.info[index],
+                        await ctx.send(embed=u.container_embed(dd.backpacks.info[index],
                                                                 "Backpack"))
                     else:
                         players.remove(replied_message.author.id)

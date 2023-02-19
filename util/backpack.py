@@ -57,32 +57,30 @@ def chest_storage(level):
             return storage[i]
 
 
-def display_backpack(
+def container_embed(
         store: dict,
-        user: discord.User | discord.Member,
         container: str = "Backpack",
-        padding=None,
-        level=1
-):
-    inv = ["*" * 30]
-    capacity = 100 if container == "Backpack" else chest_storage(level)
+        lvl: int = 1
+) -> discord.Embed | str:
+    inv = container_str(store, container, lvl)
+    return discord.Embed() \
+        .add_field(name=f"Your {container}:", value=f"```{inv}```")
+
+
+def container_str(store: dict, container: str = "Backpack", lvl: int = 1):
+    inv = []
     if not store:
-        if padding is None:
-            inv.insert(len(inv), f"Empty {container}!")
-        else:
-            inv.insert(len(inv), "You lost nothing!")
+        inv.append("Nothing, it seems...")
     else:
         for i in store:
             descr = f"[{items_dict(i)['rarity']}/{items_dict(i)['weight']}]"
-            amt = store[i]['items']
+            amt = store[i]["items"]
             inv.append(
                 f"{descr} {i.title()} - {'∞' if amt == 'x' else amt}"
             )
 
-    inv.insert(len(inv), "------------------------------")
-    inv.insert(len(inv), f"{container} Storage used - {get_bp_weight(store)}/{capacity}")
-    inv.insert(len(inv), "******************************")
-    embed = discord.Embed(title=f"Your {container}:", description="```" + "\n".join(inv) + "```")
-    embed.set_thumbnail(url=user.avatar.url)
+    capacity = 100 if container == "Backpack" else chest_storage(lvl)
+    inv.append("\n")
+    inv.append(f"Storage used - {get_bp_weight(store)}/{capacity}")
 
-    return embed if padding is None else "\n".join(inv[padding[0]:padding[1]])
+    return "\n".join(inv)

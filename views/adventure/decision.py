@@ -39,7 +39,7 @@ class Decision(ui.View):
     async def backpack(self, i: discord.Interaction, button: ui.Button):
         inv = dm.get_user_inventory(self.user.id)
         await i.response.send_message(
-            embed=u.display_backpack(inv, self.user, "Backpack"),
+            embed=u.container_embed(inv, "Backpack"),
             ephemeral=True
         )
 

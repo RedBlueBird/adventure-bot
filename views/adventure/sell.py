@@ -51,7 +51,7 @@ class SellForm(ui.Modal, title="Sell something!"):
             ephemeral=True
         )
         dm.set_user_inventory(self.user.id, inv)
-        await self.sell_msg.edit(embed=u.display_backpack(inv, self.user))
+        await self.sell_msg.edit(embed=u.container_embed(inv))
 
 
 class Sell(ui.View):
