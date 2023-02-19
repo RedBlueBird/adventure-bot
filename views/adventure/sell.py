@@ -1,5 +1,3 @@
-import typing as t
-
 import discord
 import discord.ui as ui
 
@@ -44,7 +42,7 @@ class SellForm(ui.Modal, title="Sell something!"):
         )
         inv[name]["items"] -= amt
         if inv[name]["items"] == 0:
-            del inv[name]["items"]
+            del inv[name]
 
         descr = f"[{item['rarity']}/{item['weight']}]"
         await i.response.send_message(
@@ -63,8 +61,7 @@ class Sell(ui.View):
 
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)
     async def sell(self, i: discord.Interaction, button: ui.Button):
-        form = SellForm(self.user, i.message)
-        await i.response.send_modal(form)
+        await i.response.send_modal(SellForm(self.user, i.message))
 
     @ui.button(label="Exit", style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):
