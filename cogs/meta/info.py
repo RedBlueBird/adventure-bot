@@ -23,10 +23,8 @@ class Info(commands.Cog):
         description="Check a player's general information.",
         aliases=["p", "pro"]
     )
-    async def profile(self, ctx: Context, user: discord.Member = None):
+    async def profile(self, ctx: Context, user: discord.Member = commands.Author):
         """Check a player's general information."""
-
-        user = ctx.author if user is None else user
 
         if not dm.is_registered(user.id):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered!")
@@ -116,10 +114,9 @@ class Info(commands.Cog):
         description="Displays all current quests of a user.",
         aliases=["q", "quest", "qu"]
     )
-    async def quests(self, ctx: Context, user: discord.Member = None):
+    async def quests(self, ctx: Context, user: discord.Member = commands.Author):
         """Displays all current quests of a user."""
 
-        user = ctx.author if user is None else user
         if not dm.is_registered(user.id):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
             return
@@ -196,8 +193,7 @@ class Info(commands.Cog):
         description="Displays all the cards in a member's inventory.",
         aliases=["card", "cards", "i", "inv"]
     )
-    async def inventory(self, ctx: Context, page: int = 1, user: discord.Member = None):
-        user = ctx.author if user is None else user
+    async def inventory(self, ctx: Context, page: int = 1, user: discord.Member = commands.Author):
         if not dm.is_registered(user.id):
             await ctx.reply("That user isn't registered yet!")
             return
@@ -221,8 +217,7 @@ class Info(commands.Cog):
         name="deck",
         description="Displays the user's currently equipped deck."
     )
-    async def deck(self, ctx: Context, slot: int = 0, user: discord.Member = None) -> None:
-        user = ctx.author if user is None else user
+    async def deck(self, ctx: Context, slot: int = 0, user: discord.Member = commands.Author) -> None:
         if not dm.is_registered(user.id):
             await ctx.reply(f"That user isn't registered yet!")
             return
@@ -243,8 +238,7 @@ class Info(commands.Cog):
         name="decks",
         description="Displays an overview of a user's decks."
     )
-    async def decks(self, ctx: Context, user: discord.Member = None):
-        user = ctx.author if user is None else user
+    async def decks(self, ctx: Context, user: discord.Member = commands.Author):
         if not dm.is_registered(user.id):
             await ctx.reply(f"That user isn't registered!")
             return
