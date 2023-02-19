@@ -29,6 +29,7 @@ class Blackjack(discord.ui.View):
 
         self.player = self.deck.draw_n(2)
         self.dealer = self.deck.draw_n(2)
+        self.result = None
 
     def deck_size(self) -> int:
         return len(self.deck)
@@ -44,6 +45,7 @@ class Blackjack(discord.ui.View):
         embed.colour = discord.Colour.green()
         embed.add_field(name="Result", value="You win!", inline=False)
         await i.edit_original_response(embed=embed)
+        self.result = "win"
         self.stop()
 
     async def lose(self, i: discord.Interaction):
@@ -51,6 +53,7 @@ class Blackjack(discord.ui.View):
         embed.colour = discord.Colour.red()
         embed.add_field(name="Result", value="You lose...", inline=False)
         await i.edit_original_response(embed=embed)
+        self.result = "lose"
         self.stop()
 
     async def draw(self, i: discord.Interaction):
@@ -58,6 +61,7 @@ class Blackjack(discord.ui.View):
         embed.colour = discord.Colour.orange()
         embed.add_field(name="Result", value="Draw!", inline=False)
         await i.edit_original_response(embed=embed)
+        self.result = "draw"
         self.stop()
 
     @discord.ui.button(label="Hit", style=discord.ButtonStyle.green)

@@ -57,7 +57,13 @@ def chest_storage(level):
             return storage[i]
 
 
-def display_backpack(store: dict, user: discord.User, container: str, padding=None, level=1):
+def display_backpack(
+        store: dict,
+        user: discord.User | discord.Member,
+        container: str,
+        padding=None,
+        level=1
+):
     inv = ["*" * 30]
     # [[f"{{{'-' * 28}}}"],  ["_" * 30]]   # <-- other possible markers
     capacity = 100 if container == "Backpack" else chest_storage(level)
