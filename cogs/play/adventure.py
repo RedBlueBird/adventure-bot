@@ -406,8 +406,8 @@ class Adventure(commands.Cog):
                                                 else:
                                                     storage[item['name'].lower()]['items'] += amount
                                                 inv = u.clear_bp(inv)
-                                                await ctx.send(
-                                                    f"{mention} You put {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** into your Chest from your backpack!")
+                                                await ctx.reply(
+                                                    f"You put {amount} **[{item['rarity']}/{item['weight']}] {item['name']}** into your Chest from your backpack!")
                                             else:
                                                 if not item['name'].lower() in inv:
                                                     inv[item['name'].lower()] = {"items": amount}
@@ -798,8 +798,11 @@ class Adventure(commands.Cog):
                 else:
                     option = math.floor(traveled_distance / 1000) % len(path)
             if msg is None:
-                embed = discord.Embed(title=None, description="```" + path[option]["description"] + "```",
-                                      color=discord.Color.gold())
+                embed = discord.Embed(
+                    title=None,
+                    description=f"```" + path[option]["description"] + "```",
+                    color=discord.Color.gold()
+                )
             else:
                 embed = discord.Embed(title=None, description="```" + "\n".join(msg[:]) + "\n\n" + path[option][
                     "description"] + "```",
@@ -902,13 +905,13 @@ class Adventure(commands.Cog):
                     else:
                         perks[perk_list[choice - 1]] = 1
 
-                    if perk_list[choice - 1] == 'vigorous endurance':
+                    if perk_list[choice - 1] == "vigorous endurance":
                         max_hp = round(max_hp * 1.2)
-                    elif perk_list[choice - 1] == 'hot spring':
+                    elif perk_list[choice - 1] == "hot spring":
                         stamina += 40
                     elif perk_list[choice - 1] == "feathered shoe":
                         travel_speed += 0.4
-                    elif perk_list[choice - 1] == 'chunk of gold':
+                    elif perk_list[choice - 1] == "chunk of gold":
                         dm.log_quest(5, 250, a.id)
                         dm.set_user_coin(a.id, dm.get_user_coin(a.id) + 250)
                         dm.db.commit()
@@ -988,7 +991,6 @@ class Adventure(commands.Cog):
                     item_info = u.items_dict(list(choices['items'].keys())[0])
                     item_index = choices["items"][list(choices['items'].keys())[0]]["items"]
                     item_amount = random.randint(item_index[0], item_index[1])
-                    items_to_take = 1
                     if u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * item_amount <= 100:
                         items_to_take = item_amount
                         pre_message.append(f"You successfully obtained {item_info['name'].title()} x{item_amount}!")
@@ -1000,6 +1002,7 @@ class Adventure(commands.Cog):
                     else:
                         items_to_take = 0
                         pre_message.append(f"Your backpack is full, failed to obtain {item_info['name'].title()}!")
+
                     if not item_info['name'].lower() in inv and items_to_take != 0:
                         dm.log_quest(2, u.items_dict(item_info["name"])["weight"] * items_to_take,
                                      a.id)
