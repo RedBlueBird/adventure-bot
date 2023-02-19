@@ -75,10 +75,18 @@ class Card(commands.Cog):
     async def upgrade(self, ctx: commands.Context, card_id: int, other_card_id: int):
         """Upgrade a card by merging it with another."""
 
+        if card_id == other_card_id:
+            await ctx.reply(f"You cannot upgrade a card using itself!")
+            return
+
         a = ctx.author
         card = dm.get_card_name(a.id, card_id), dm.get_card_level(a.id, card_id)
         other_card = dm.get_card_name(a.id, other_card_id), dm.get_card_level(a.id, other_card_id)
 
+        if card[0] is None and other_card[0] is None:
+            await ctx.reply(f"You have neither card `#{card_id}` nor `#{other_card_id}`!")
+            return
+        
         if card[0] is None or other_card[0] is None:
             missing = card_id if card[0] is None else other_card_id
             await ctx.reply(f"You don't have card `#{missing}`!")
@@ -99,8 +107,8 @@ class Card(commands.Cog):
         if any(dm.get_card_decks(other_card_id)):
             await ctx.reply(
                 "The sacrificial card you chose "
-                "is currently in one of your deck slots- \n"
-                f"Use `{u.PREF}remove (* card_ids)` first before you sacrifice it!"
+                "is currently in one of your deck slots-\n"
+                f"Do `{u.PREF}remove {other_card_id}` first before you sacrifice it!"
             )
             return
 
