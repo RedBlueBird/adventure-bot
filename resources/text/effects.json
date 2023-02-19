@@ -29,7 +29,7 @@
     },
     "chill": {
         "name": "Chill",
-        "description": "Blockable. Decreases by 1 every turn. \nDoesn't do anything by itself. If a user has 7 or more Chill effects at the end of a turn, they will turn into 1 Freeze effect. \nCancelled out by burn effects."
+        "description": "Blockable. Decreases by 1 every turn. \nDoesn't do anything by itself. If a user has 7 or more Chill effects at the end of a turn, they will turn into 1 Freeze effect. \nCanceled out by burn effects."
     },
     "freeze": { 
         "name": "Freeze",

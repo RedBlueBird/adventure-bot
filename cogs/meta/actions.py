@@ -101,7 +101,7 @@ class Actions(commands.Cog):
         target_info = dm.cur.fetchall()
 
         # do some check to see if the people are all valid
-        if len(target_info) == 0:
+        if not target_info:
             await ctx.send("User is not registered in the bot!")
             return
 
@@ -128,12 +128,12 @@ class Actions(commands.Cog):
                     check=checks.valid_reaction(["❎", "✅"], [target, ctx.author], deal_msg)
                 )
             except asyncio.TimeoutError:
-                await deal_msg.edit(content=f"{mention}, trade cancelled due to afk {u.ICON['dead']}")
+                await deal_msg.edit(content=f"{mention}, trade canceled due to afk {u.ICON['dead']}")
                 await deal_msg.clear_reactions()
                 return
 
             if reaction.emoji == "❎":
-                await deal_msg.edit(content=f"{mention}, trade cancelled! :weary:")
+                await deal_msg.edit(content=f"{mention}, trade canceled! :weary:")
                 await deal_msg.clear_reactions()
                 return
 
@@ -142,7 +142,7 @@ class Actions(commands.Cog):
 
         if target.id in dm.queues:
             await deal_msg.edit(
-                content=f"{mention}, trade cancelled! The target user is currently {dm.queues[target.id]}!")
+                content=f"{mention}, trade canceled! The target user is currently {dm.queues[target.id]}!")
             await deal_msg.clear_reactions()
             return
 
@@ -236,7 +236,7 @@ class Actions(commands.Cog):
                 continue
             elif reply_msg[0] == "exit":
                 confirmed = [False, False]
-                await ctx.send(f"Trade is cancelled by {reply_author}!")
+                await ctx.send(f"Trade is canceled by {reply_author}!")
                 trade_end = True
                 break
             elif reply_msg[0] == "confirm":
@@ -282,7 +282,7 @@ class Actions(commands.Cog):
                         dm.cur.execute(
                             f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{reply_author.id}'")
                         result = dm.cur.fetchall()[0]
-                        if len(result) == 0:
+                        if not result:
                             await ctx.send(f"{reply_author}, you don't have this card id in your inventory!")
                             continue
                         else:

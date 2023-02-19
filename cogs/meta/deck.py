@@ -118,7 +118,7 @@ class Deck(commands.Cog):
             f"You swapped\n{swap[0]} with\n{swap[1]}\nin deck #{slot}!"
         )
 
-    @commands.command(aliases=["use"], description="Add a card to your deck.")
+    @commands.hybrid_command(aliases=["use"], description="Add a card to your deck.")
     @checks.not_preoccupied()
     @checks.is_registered()
     async def add(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -156,13 +156,13 @@ class Deck(commands.Cog):
         for i in add_ids:
             dm.set_user_card_deck(a.id, slot, 1, i)
 
-        msg = f" \n".join(error_msg) + "\n"
-        if len(add_ids) > 0:
+        msg = "\n".join(error_msg) + "\n"
+        if add_ids:
             msg += f"These cards have been added to deck #{slot}:\n" + \
                    f"\n".join(add_msg)
         await ctx.reply(msg)
 
-    @commands.command(aliases=["rem"], description="Remove a card from your deck.")
+    @commands.hybrid_command(aliases=["rem"], description="Remove a card from your deck.")
     @checks.not_preoccupied()
     @checks.is_registered()
     async def remove(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -195,8 +195,8 @@ class Deck(commands.Cog):
         for i in remove_ids:
             dm.set_user_card_deck(a.id, slot, 0, i)
 
-        msg = f"\n".join(error_msg) + "\n"
-        if len(remove_ids) > 0:
+        msg = "\n".join(error_msg) + "\n"
+        if remove_ids:
             msg += f"These cards have been removed from deck #{slot}:\n" + \
                    f"\n".join(remove_msg)
         await ctx.reply(msg)
@@ -211,7 +211,7 @@ class Deck(commands.Cog):
         slot = dm.get_user_deck_slot(a.id)
         deck = dm.get_user_deck(a.id, slot)
 
-        if len(deck) == 0:
+        if not deck:
             await ctx.reply(f"Your deck's already empty!")
             return
 
@@ -220,10 +220,10 @@ class Deck(commands.Cog):
         await view.wait()
 
         if view.value is None:
-            await msg.edit(content="Clearing timed out", view=None)
+            await msg.edit(content="Clearing timed out.", view=None)
             return
         if not view.value:
-            await msg.edit(content="Clearing cancelled", view=None)
+            await msg.edit(content="Clearing canceled.", view=None)
             return
 
         for i in deck:

@@ -17,10 +17,10 @@ async def confirm_purchase(ctx: commands.Context, msg: str) -> tuple[discord.Mes
     await view.wait()
 
     if view.value is None:
-        await msg.edit(content="Purchase timed out", view=None)
+        await msg.edit(content="Purchase timed out.", view=None)
         return msg, False
     if not view.value:
-        await msg.edit(content="Purchase cancelled", view=None)
+        await msg.edit(content="Purchase canceled.", view=None)
         return msg, False
     return msg, True
 
@@ -157,10 +157,10 @@ class Purchase(commands.Cog):
         await view.wait()
 
         if view.value is None:
-            await msg.edit(content="Purchase timed out", view=None)
+            await msg.edit(content="Purchase timed out.", view=None)
             return
         if not view.value:
-            await msg.edit(content="Purchase cancelled", view=None)
+            await msg.edit(content="Purchase canceled.", view=None)
             return
 
         dm.set_user_gem(a.id, gems - gem_cost)

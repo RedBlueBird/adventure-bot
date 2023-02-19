@@ -330,13 +330,13 @@ def delete_user_cards(cards: list[tuple[int, int]]):
 def get_card_name(uid: int, cid: int) -> str | None:
     cur.execute(f"SELECT card_name FROM temp_cards WHERE id = {cid} AND owned_user = {uid}")
     result = cur.fetchall()
-    return None if len(result) == 0 else result[0][0]
+    return None if not result else result[0][0]
 
 
 def get_card_level(uid: int, cid: int) -> int | None:
     cur.execute(f"SELECT card_level FROM temp_cards WHERE id = {cid} AND owned_user = {uid}")
     result = cur.fetchall()
-    return None if len(result) == 0 else result[0][0]
+    return None if not result else result[0][0]
 
 
 def set_card_level(uid: int, cid: int, lvl: int):
@@ -347,7 +347,7 @@ def set_card_level(uid: int, cid: int, lvl: int):
 def get_card_decks(cid: int) -> list[int]:
     cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM temp_cards WHERE id = {cid}")
     result = cur.fetchall()
-    return None if len(result) == 0 else result[0]
+    return None if not result else result[0]
 
 
 def add_user(uid: int):

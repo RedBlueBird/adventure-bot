@@ -175,7 +175,7 @@ class Raid(commands.Cog):
 
             print(players)
             # Process player commands
-            while len(players) > 0:
+            while players:
                 try:
                     replied_message = await self.bot.wait_for(
                         "message", timeout=120.0,

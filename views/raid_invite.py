@@ -68,7 +68,7 @@ class RaidInvite(discord.ui.View):
 
         if i.user == self.host:
             await i.response.edit_message(
-                content="The host cancelled the raid.", view=None
+                content="The host canceled the raid.", view=None
             )
             self.start = False
             self.stop()

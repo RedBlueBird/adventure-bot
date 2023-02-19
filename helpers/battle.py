@@ -125,7 +125,7 @@ class BattleData:
             if "chill" in self.effects.info[user] and "burn" in self.effects.info[user]:
                 if abs(self.effects.info[user]["chill"]) > abs(self.effects.info[user]["burn"]):
                     self.descriptions.info[user].append(
-                        f"{abs(self.effects.info[user]['burn'])}{u.ICON['burn']} {abs(self.effects.info[user]['chill'])}{u.ICON['chil']} cancelled out! \n{int(abs(self.effects.info[user]['chill'] - abs(self.effects.info[user]['burn']) * self.effects.info[user]['chill'] / abs(self.effects.info[user]['chill'])))}{u.ICON['chil']} remain")
+                        f"{abs(self.effects.info[user]['burn'])}{u.ICON['burn']} {abs(self.effects.info[user]['chill'])}{u.ICON['chil']} canceled out! \n{int(abs(self.effects.info[user]['chill'] - abs(self.effects.info[user]['burn']) * self.effects.info[user]['chill'] / abs(self.effects.info[user]['chill'])))}{u.ICON['chil']} remain")
                     self.effects.info[user]["chill"] -= int(abs(self.effects.info[user]["burn"]) *
                                                             self.effects.info[user]["chill"] /
                                                             abs(self.effects.info[user]["chill"]))
@@ -133,7 +133,7 @@ class BattleData:
 
                 elif abs(self.effects.info[user]["chill"]) < abs(self.effects.info[user]["burn"]):
                     self.descriptions.info[user].append(
-                        f"{abs(self.effects.info[user]['burn'])}{u.ICON['burn']} {abs(self.effects.info[user]['chill'])}{u.ICON['chil']} cancelled out! \n{int(abs(self.effects.info[user]['burn'] - abs(self.effects.info[user]['chill']) * self.effects.info[user]['burn'] / abs(self.effects.info[user]['burn'])))}{u.ICON['burn']} remain")
+                        f"{abs(self.effects.info[user]['burn'])}{u.ICON['burn']} {abs(self.effects.info[user]['chill'])}{u.ICON['chil']} canceled out! \n{int(abs(self.effects.info[user]['burn'] - abs(self.effects.info[user]['chill']) * self.effects.info[user]['burn'] / abs(self.effects.info[user]['burn'])))}{u.ICON['burn']} remain")
                     self.effects.info[user]["burn"] -= int(abs(self.effects.info[user]["chill"]) *
                                                            self.effects.info[user]["burn"] /
                                                            abs(self.effects.info[user]["burn"]))
@@ -142,7 +142,7 @@ class BattleData:
                 else:
                     self.descriptions.info[user].append(
                         f"{abs(self.effects.info[user]['burn'])}{u.ICON['burn']} "
-                        f"{abs(self.effects.info[user]['chill'])}{u.ICON['chil']} cancelled out!")
+                        f"{abs(self.effects.info[user]['chill'])}{u.ICON['chil']} canceled out!")
                     del self.effects.info[user]["chill"]
                     del self.effects.info[user]["burn"]
 
@@ -948,7 +948,7 @@ class BattleData:
                 if "all" in result["clear_eff"][0]:
                     self.effects.info[target] = {}
                     eff_clear_msg = ["every"]
-                if len(eff_clear_msg) == 0:
+                if not eff_clear_msg:
                     eff_clear_msg.append("none")
                 else:
                     self.descriptions.info[caster].append("Cleared " + ", ".join(
@@ -961,7 +961,7 @@ class BattleData:
                 if "all" in result["clear_eff"][0]:
                     self.effects.info[caster] = {}
                     eff_clear_msg = ["every"]
-                if len(eff_clear_msg) == 0:
+                if not eff_clear_msg:
                     eff_clear_msg.append("none")
                 else:
                     self.descriptions.info[caster].append("Cleared " + ", ".join(

@@ -171,7 +171,7 @@ class Pvp(commands.Cog):
                     dd.descriptions.info[ind].append(f"•{u.ICON['dead']}")
                     dd.effects.info[ind] = {}
 
-            while len(players) > 0:
+            while players:
                 try:
                     check = lambda m: (
                             m.content.startswith(u.PREF)
