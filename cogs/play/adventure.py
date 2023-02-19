@@ -178,72 +178,18 @@ class Adventure(commands.Cog):
                     await ctx.reply("Sorry, this route is still in development!")
 
             elif state[1] == "selling" and not afk and not leave:
-                exiting = False
-                await adventure_msg.edit(
-                    content=f"`{u.PREF}sell (item_name) (amount)` to sell items\n"
-                            f"`{u.PREF}backpack` to check your backpack\n"
-                            f"`{u.PREF}info item (item_name)` to check the item sell price\n"
-                            f"`{u.PREF}exit` to exit the shops",
-                    embed=u.display_backpack(inv, a, "Backpack")
+                view = Sell(a)
+                embed.set_footer(
+                    text="You can use `a.info item (name)` "
+                         "to check the sell price of an item!"
                 )
-                while not exiting:
-                    try:
-                        reply = await self.bot.wait_for(
-                            "message", timeout=60.0,
-                            check=valid_reply("", a, ctx.channel)
-                        )
-                    except asyncio.TimeoutError:
-                        await ctx.reply("You went idle and decided to exit the shop.")
-                        break
-
-                    reply = reply.content[len(u.PREF):].lower().split(" ")
-                    if len(reply) < 1:
-                        continue
-
-                    elif reply[0] == "exit":
-                        break
-
-                    elif reply[0] in ["backpack", "bp"]:
-                        await ctx.send(embed=u.display_backpack(inv, a, "Backpack"))
-                        continue
-
-                    elif reply[0] in ['r', 'ref', 'refresh']:
-                        adventure_msg = await ctx.send(
-                            content=f"`{u.PREF}sell (item_name) (amount)` to sell items\n"
-                                    f"`{u.PREF}backpack` to check your backpack\n"
-                                    f"`{u.PREF}info item (item_name)` to check the item sell price\n"
-                                    f"`{u.PREF}exit` to exit the shops",
-                            embed=u.display_backpack(inv, a, "Backpack")
-                        )
-                        continue
-
-                    elif len(reply) < 3:
-                        continue
-
-                    elif reply[0] == "sell":
-                        try:
-                            item = u.items_dict(" ".join(reply[1].split("_")[:]))
-                            counts = max(int(reply[2]), 1)
-                            if not item['name'].lower() in inv:
-                                await ctx.send("The selected item(s) is not in your backpack!")
-                                continue
-
-                            elif inv[item['name'].lower()]["items"] < counts:
-                                await ctx.send("You don't have these much items in your backpack!")
-                                continue
-
-                            else:
-                                coins += item["sell"] * counts
-                                if inv[item['name'].lower()]["items"] == counts:
-                                    del inv[item['name'].lower()]
-                                else:
-                                    inv[item['name'].lower()]["items"] -= counts
-                                await ctx.send(
-                                    f"You just sold **[{item['rarity']}/{item['weight']}] {item['name']} x{counts}** "
-                                    f"for {item['sell'] * counts} {u.ICON['coin']}!")
-                                continue
-                        except:
-                            continue
+                await adventure_msg.edit(
+                    content="You can use `a.info item (name)` "
+                            "to check the sell price of an item!",
+                    embed=u.display_backpack(inv, a),
+                    view=view
+                )
+                await view.wait()
 
             elif state[1] == "buying" and not afk and not leave:
                 exiting = False
@@ -665,6 +611,7 @@ class Adventure(commands.Cog):
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
         dm.set_user_storage(a.id, storage)
+        dm.set_user_position(a.id, pos)
 
         if not adventure:
             return

@@ -58,3 +58,12 @@ class Decision(ui.View):
         self.decision = "exit"
         await i.response.defer()
         self.stop()
+
+    async def interaction_check(self, i: discord.Interaction) -> bool:
+        if i.user != self.user:
+            await i.response.send_message(
+                "You aren't the explorer here!",
+                ephemeral=True
+            )
+            return False
+        return True
