@@ -13,6 +13,7 @@ from helpers.checks import valid_reaction, valid_reply
 from helpers import db_manager as dm
 import util as u
 from views.adventure import *
+from views.adventure.games import *
 
 
 def choices_list(choices) -> str:
@@ -32,7 +33,9 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
     return out
 
 
-def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
+def setup_minigame(
+        game_name: str, show_map: bool
+) -> tuple[discord.Embed, discord.File | None]:
     embed = discord.Embed(
         title=f"Mini Game - {game_name}!",
         color=discord.Color.gold()
@@ -125,7 +128,7 @@ class Adventure(commands.Cog):
         xp = dm.get_user_exp(a.id)
 
         inv = dm.get_user_inventory(a.id)
-        chest = dm.get_user_storage(a.id)
+        storage = dm.get_user_storage(a.id)
         pos = dm.get_user_position(a.id)
         show_map = dm.get_user_map(a.id)
 
@@ -137,7 +140,7 @@ class Adventure(commands.Cog):
         loading = discord.Embed(title="Loading...", description=u.ICON['load'])
         adventure_msg = await ctx.send(embed=loading)
 
-        while not leave and not afk and not adventure:
+        while True:
             embed = discord.Embed(
                 description=f"```{u.HTOWN[pos]['description']}```",
                 color=discord.Color.gold()
@@ -158,25 +161,27 @@ class Adventure(commands.Cog):
             attach = [file] if show_map else []
             await adventure_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
-            show_map = bool(adventure_msg.attachments)
 
-            if view.decision is None:
+            show_map = bool(adventure_msg.attachments)
+            decision = view.decision
+
+            if decision is None:
                 await ctx.reply("You spaced out and the adventure was ended.")
                 break
 
-            if view.decision == "exit":
+            if decision == "exit":
                 await ctx.reply("You quit this adventure.")
                 break
 
-            state = u.HTOWN[pos]["choices"][view.decision]
+            state = u.HTOWN[pos]["choices"][decision]
 
-            if state[1] == "self" and not afk and not leave:
+            if state[1] == "self":
                 if state[0] in u.HTOWN:
                     pos = state[0]
                 else:
                     await ctx.reply("Sorry, this route is still in development!")
 
-            elif state[1] == "selling" and not afk and not leave:
+            elif state[1] == "selling":
                 view = Sell(a)
                 embed.set_footer(
                     text="You can use `a.info item (name)` "
@@ -193,7 +198,7 @@ class Adventure(commands.Cog):
                 coins = dm.get_user_coin(a.id)
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "buying" and not afk and not leave:
+            elif state[1] == "buying":
                 offers = [
                     "forest fruit", "fruit salad", "raft", "torch", "herb",
                     "health potion", "power potion", "large health potion",
@@ -218,8 +223,8 @@ class Adventure(commands.Cog):
                 coins = dm.get_user_coin(a.id)
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "chest" and not afk and not leave:
-                embed = u.container_embed(chest, "Chest", lvl) \
+            elif state[1] == "chest":
+                embed = u.container_embed(storage, "Chest", lvl) \
                     .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
                 view = Chest(a)
                 await adventure_msg.edit(
@@ -230,10 +235,10 @@ class Adventure(commands.Cog):
                 await view.wait()
 
                 inv = dm.get_user_inventory(a.id)
-                chest = dm.get_user_storage(a.id)
+                storage = dm.get_user_storage(a.id)
 
-            elif state[1] == "mini game" and not afk and not leave:
-                dm.queues[a.id] = "playing a mini game"
+            elif state[1] == "mini game":
+                dm.queues[a.id] = "playing a minigame"
                 exit_game = False
                 earned_loots = [0, 0, 0]
                 random_number = random.randint(1, 1000)
@@ -250,85 +255,18 @@ class Adventure(commands.Cog):
                     dm.set_user_gem(a.id, gems)
 
                 embed, img = setup_minigame(
-                    u.HTOWN[pos]["choices"][list(u.HTOWN[pos]["choices"])[decision - 1]][0],
+                    u.HTOWN[pos]["choices"][decision][0],
                     show_map
                 )
-                await adventure_msg.edit(embed=embed, attachments=[img])
+                await adventure_msg.edit(
+                    embed=embed,
+                    attachments=[] if img is None else [img],
+                    view=None
+                )
                 if state[0] == "coin flip":
-                    while not exit_game:
-                        try:
-                            reply = await self.bot.wait_for(
-                                "message", timeout=60.0,
-                                check=valid_reply(["flip", "f", "exit"], a, ctx.channel)
-                            )
-                        except asyncio.TimeoutError:
-                            exit_game = True
-                            await ctx.reply("```You accidentally fell asleep and got left out of the game.```")
-                        else:
-                            if reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit":
-                                exit_game = True
-                                await ctx.reply("You quit this mini game")
-                            elif not (reply.content[len(u.PREF + "flip "):].lower() in ["head", "tail", "edge", "h",
-                                                                                        "t", "e"] or
-                                      reply.content[len(u.PREF + "f "):].lower() in ["head", "tail", "edge", "h",
-                                                                                     "t", "e"]):
-                                await ctx.reply(
-                                    f"```You can only input {u.PREF}exit or {u.PREF}flip (head/tail/edge)```")
-                            else:
-                                if coins < 100:
-                                    await ctx.reply("```You need least 100 golden coins to place a bet!```")
-                                else:
-                                    bet = reply.content[len(u.PREF + choice[1] + " "):].lower()
-                                    if reply.content.lower().startswith(u.PREF + "flip "):
-                                        choice = [None, "flip"]
-                                    elif reply.content.lower().startswith(u.PREF + "f "):
-                                        choice = [None, "f"]
-                                    if bet in ['head', 'tail', 'edge']:
-                                        choice = [reply.content[len(u.PREF + choice[1] + " "):].lower(),
-                                                  choice[1]]
-                                    elif bet in list('hte'):
-                                        translator = {"h": "head", "t": "tail", "e": "edge"}
-                                        choice = [translator[reply.content[len(u.PREF + choice[1] + " "):].lower()],
-                                                  choice[1]]
-                                    result = random.choice(["head", "tail"])
-                                    if random_number == 1:
-                                        result = "edge"
-                                    if result != choice[0]:
-                                        earned_loots[0] -= 100
-                                        earned_loots[2] += 2
-                                        await ctx.reply(
-                                            f"```You bet on {choice[0]}\n"
-                                            f"The coin landed on {result}\n"
-                                            f"You lost {abs(earned_loots[0])} golden coins!\n"
-                                            f"You still gained {earned_loots[2]} exp though...\n"
-                                            f"Better luck next time!```"
-                                            f"```>flip (head/tail/edge) -try again\n"
-                                            f">exit -quit the mini game```"
-                                        )
-                                    else:
-                                        if result != "edge":
-                                            earned_loots[0] += 100
-                                            earned_loots[2] += 3
-                                            await ctx.reply(
-                                                f"```You bet on {choice[0]}\n"
-                                                f"The coins landed on {result}\n"
-                                                f"You won {earned_loots[0]} golden coins and {earned_loots[2]} XP!```"
-                                                "```>flip (head/tail/edge) -try again\n"
-                                                ">exit -quit the mini game```"
-                                            )
-                                        else:
-                                            earned_loots[0] += 50000
-                                            earned_loots[2] += 100
-                                            await ctx.reply(
-                                                f"```You bet on {choice[0]}\n"
-                                                f"The coins landed on {result}\n"
-                                                f"You won {earned_loots[0]} GOLDEN COINS and {earned_loots[2]} XP!"
-                                                f"``````>flip (head/tail/edge) -try again\n"
-                                                f">exit -quit the mini game```"
-                                            )
-                                    reset(earned_loots)
-                                    earned_loots = [0, 0, 0]
-                                    random_number = random.randint(1, 1000)
+                    view = CoinFlip(a)
+                    await adventure_msg.edit(view=view)
+                    await view.wait()
 
                 if state[0] == "fishing":
                     while not exit_game:
@@ -434,7 +372,7 @@ class Adventure(commands.Cog):
 
                 dm.queues[a.id] = "wandering around town"
 
-            elif state[1] == "adventure" and not afk and not leave:
+            elif state[1] == "adventure":
                 if dm.get_user_deck_count(a.id) == 12:
                     if state[0] == "boss raid":
                         if lvl < 9:
@@ -465,16 +403,19 @@ class Adventure(commands.Cog):
                                     adventure = True
                     else:
                         adventure = True
+                        break
                 else:
                     await ctx.reply("You need 12 cards in your deck first!")
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
-        dm.set_user_storage(a.id, chest)
+        dm.set_user_storage(a.id, storage)
         dm.set_user_position(a.id, pos)
 
         if not adventure:
             return
+
+        await adventure_msg.edit(view=None)
 
         location = u.HTOWN[pos]["choices"][decision][0]
         event = "main"

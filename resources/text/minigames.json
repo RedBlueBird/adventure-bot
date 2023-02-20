@@ -15,8 +15,8 @@
     "coin flip": {
         "rules": [
             "Each coin flip takes 50 golden coins",
-            "You gain golden coins when coin landed as what you expected",
-            "You lose golden coins when it didn't",
+            "You get 50 coins if it lands on what you bet",
+            "You lose 50 if it doesn't",
             "Type `a.flip (head/tail/edge)` to start"
         ],
         "image": null

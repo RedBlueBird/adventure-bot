@@ -1,6 +1,10 @@
 import typing as t
+
 import discord
+import discord.ui as ui
+
 from util.poker import Value, Deck, Card
+from ..adventure_template import AdventureTemplate
 
 BJ: t.Final = 21
 
@@ -20,9 +24,9 @@ def bj_val(cards: list[Card]) -> int:
     return total
 
 
-class Blackjack(discord.ui.View):
-    def __init__(self):
-        super().__init__()
+class Blackjack(AdventureTemplate):
+    def __init__(self, user: discord.Member):
+        super().__init__(user)
 
         self.deck = Deck()
         self.deck.shuffle()
@@ -64,8 +68,8 @@ class Blackjack(discord.ui.View):
         self.result = "draw"
         self.stop()
 
-    @discord.ui.button(label="Hit", style=discord.ButtonStyle.green)
-    async def hit(self, i: discord.Interaction, button: discord.ui.Button):
+    @ui.button(label="Hit", style=discord.ButtonStyle.green)
+    async def hit(self, i: discord.Interaction, button: ui.Button):
         self.player.append(self.deck.draw())
         val = bj_val(self.player)
 
@@ -82,8 +86,8 @@ class Blackjack(discord.ui.View):
         elif val > BJ:
             await self.lose(i)
 
-    @discord.ui.button(label="Stand", style=discord.ButtonStyle.red)
-    async def stand(self, i: discord.Interaction, button: discord.ui.Button):
+    @ui.button(label="Stand", style=discord.ButtonStyle.red)
+    async def stand(self, i: discord.Interaction, button: ui.Button):
         while bj_val(self.dealer) < 17:
             self.dealer.append(self.deck.draw())
 
@@ -107,8 +111,8 @@ class Blackjack(discord.ui.View):
         else:
             await self.lose(i)
 
-    @discord.ui.button(label="Help", style=discord.ButtonStyle.blurple)
-    async def help(self, i: discord.Interaction, button: discord.ui.Button):
+    @ui.button(label="Help", style=discord.ButtonStyle.blurple)
+    async def help(self, i: discord.Interaction, button: ui.Button):
         embed = discord.Embed(title="Rules of Blackjack", color=discord.Colour.purple()) \
             .add_field(name="Hit", value="Draw a card and add it to your hand.", inline=False) \
             .add_field(name="Stand", value="Stop drawing cards. The dealer will then reveal their second card "
