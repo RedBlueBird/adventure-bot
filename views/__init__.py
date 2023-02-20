@@ -1,4 +1,3 @@
-from .bj import Blackjack
 from .shop import Shop
 from .card_pages import CardPages
 from .decks import Decks

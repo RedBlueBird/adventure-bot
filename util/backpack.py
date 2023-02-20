@@ -57,39 +57,30 @@ def chest_storage(level):
             return storage[i]
 
 
-def display_backpack(
+def container_embed(
         store: dict,
-        user: discord.User | discord.Member,
-        container: str,
-        padding=None,
-        level=1
-):
-    inv = ["*" * 30]
-    # [[f"{{{'-' * 28}}}"],  ["_" * 30]]   # <-- other possible markers
-    capacity = 100 if container == "Backpack" else chest_storage(level)
+        container: str = "Backpack",
+        lvl: int = 1
+) -> discord.Embed | str:
+    inv = container_str(store, container, lvl)
+    return discord.Embed() \
+        .add_field(name=f"Your {container}:", value=f"```{inv}```")
+
+
+def container_str(store: dict, container: str = "Backpack", lvl: int = 1):
+    inv = []
     if not store:
-        if padding is None:
-            inv.insert(len(inv), f"Empty {container}!")
-        else:
-            inv.insert(len(inv), "You lost nothing!")
+        inv.append("Nothing, it seems...")
     else:
-        for x in store:
-            if store[x]["items"] != "x":
-                inv.append(
-                    f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - {store[x]['items']} "
-                )
-            else:
-                inv.append(
-                    f"[{items_dict(x)['rarity']}/{items_dict(x)['weight']}] {x.title()} - ∞ "
-                )
+        for i in store:
+            descr = f"[{items_dict(i)['rarity']}/{items_dict(i)['weight']}]"
+            amt = store[i]["items"]
+            inv.append(
+                f"{descr} {i.title()} - {'∞' if amt == 'x' else amt}"
+            )
 
-    inv.insert(len(inv), "------------------------------")
-    inv.insert(len(inv), f"{container} Storage used - {get_bp_weight(store)}/{capacity}")
-    inv.insert(len(inv), "******************************")
-    embed = discord.Embed(title=f"Your {container}:", description="```" + "\n".join(inv) + "```")
-    embed.set_thumbnail(url=user.avatar.url)
+    capacity = 100 if container == "Backpack" else chest_storage(lvl)
+    inv.append("\n")
+    inv.append(f"Storage used - {get_bp_weight(store)}/{capacity}")
 
-    if padding is None:
-        return embed
-    else:
-        return "\n".join(inv[padding[0]:padding[1]])
+    return "\n".join(inv)

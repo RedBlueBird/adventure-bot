@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 
 import util as u
-from views import Blackjack
+from views.games import Blackjack
 from helpers import checks
 
 

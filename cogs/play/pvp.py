@@ -229,9 +229,8 @@ class Pvp(commands.Cog):
 
                     elif the_message == "backpack":
                         await ctx.send(
-                            embed=u.display_backpack(
+                            embed=u.container_embed(
                                 dd.backpacks.info[index],
-                                dd.players.info[index],
                                 "Backpack"
                             )
                         )

@@ -160,7 +160,7 @@ class Tutorial(commands.Cog):
                         await msg.delete()
                         msg = await ctx.send(procedure[step])
                 elif action == "backpack":
-                    embed = u.display_backpack(dd.backpacks.info[1], dd.players.info[1], "Backpack")
+                    embed = u.container_embed(dd.backpacks.info[1], "Backpack")
                     embed.add_field(
                         name="Your Stats:",
                         value=f"Health - {str(dd.hps.info[1][0])}\nStamina - {str(dd.staminas.info[1])}",
