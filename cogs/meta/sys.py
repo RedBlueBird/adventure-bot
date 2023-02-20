@@ -72,7 +72,7 @@ class Sys(commands.Cog):
             return
         user_exp = dm.get_user_exp(a.id)
 
-        if user_exp > u.level_xp(user_level) and user_level < 30:
+        if user_exp >= u.level_xp(user_level) and user_level < 30:
             level_msg = []
             if (user_level + 1) % 2 == 0:
                 add_hp = round(
