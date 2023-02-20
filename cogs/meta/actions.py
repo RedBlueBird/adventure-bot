@@ -95,75 +95,55 @@ class Actions(commands.Cog):
     @checks.is_registered()
     async def trade(self, ctx: commands.Context, target: discord.Member):
         """Trade with other players!"""
-        author = ctx.author
-        mention = author.mention
-        dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{target.id}'")
-        target_info = dm.cur.fetchall()
 
-        # do some check to see if the people are all valid
-        if not target_info:
-            await ctx.send("User is not registered in the bot!")
+        if not dm.is_registered(target.id):
+            await ctx.send(f"{ctx.author.mention}, that user isn't registered in the bot yet!")
+            return
+        target_level = dm.get_user_level(target.id)
+        if target_level < 7:
+            await ctx.send("The target user needs to be at least level 7 to trade!")
+            return
+        if target.id == ctx.author.id:
+            await ctx.send("Trading just with yourself? You sure got more friends that that!")
             return
 
-        target_info = target_info[0]
-        if target_info[0] < 7:
-            await ctx.send("User needs to be at least level 7 to trade!")
+        deal_msg = await ctx.send(f"{target.mention}. Accept a trade with {ctx.author.mention}?")
+        await deal_msg.add_reaction("✅")
+        await deal_msg.add_reaction("❎")
+        try:
+            reaction, user = await self.bot.wait_for(
+                "reaction_add", timeout=60.0,
+                check=checks.valid_reaction(["❎", "✅"], [target, ctx.author], deal_msg)
+            )
+        except asyncio.TimeoutError:
+            await deal_msg.edit(content=f"{ctx.author.mention}, trade canceled due to afk {u.ICON['dead']}")
+            await deal_msg.clear_reactions()
             return
-
-        if target.id == author.id:
-            await ctx.send("Tag a valid user other than yourself!")
+        if reaction.emoji == "❎":
+            await deal_msg.edit(content=f"{ctx.author.mention}, trade canceled! :weary:")
+            await deal_msg.clear_reactions()
+            return
+        if target.id in dm.queues:
+            await deal_msg.edit(
+                content=f"{ctx.author.mention}, trade canceled! The {target.mention} is currently {dm.queues[target.id]}!")
+            await deal_msg.clear_reactions()
             return
 
         trade_end = False
         confirmed = [False, False]
-
-        deal_msg = await ctx.send(f"{target.mention}. Accept a trade with {mention}?")
-        await deal_msg.add_reaction("✅")
-        await deal_msg.add_reaction("❎")
-
-        while not trade_end:
-            try:
-                reaction, user = await self.bot.wait_for(
-                    "reaction_add", timeout=60.0,
-                    check=checks.valid_reaction(["❎", "✅"], [target, ctx.author], deal_msg)
-                )
-            except asyncio.TimeoutError:
-                await deal_msg.edit(content=f"{mention}, trade canceled due to afk {u.ICON['dead']}")
-                await deal_msg.clear_reactions()
-                return
-
-            if reaction.emoji == "❎":
-                await deal_msg.edit(content=f"{mention}, trade canceled! :weary:")
-                await deal_msg.clear_reactions()
-                return
-
-            if reaction.emoji == "✅" and user == target:
-                break
-
-        if target.id in dm.queues:
-            await deal_msg.edit(
-                content=f"{mention}, trade canceled! The target user is currently {dm.queues[target.id]}!")
-            await deal_msg.clear_reactions()
-            return
-
-        dm.cur.execute(
-            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachievements WHERE userid = '{target.id}'")
-        decks1 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
-        dm.cur.execute(
-            f"SELECT deck1,deck2,deck3,deck4,deck5,deck6 FROM playersachievements WHERE userid = '{author.id}'")
-        decks2 = [int(k) for i in dm.cur.fetchall()[0] for k in i.split(",")]
-        dm.cur.execute(f"SELECT level, coins FROM playersinfo WHERE userid = '{author.id}'")
-        author_info = dm.cur.fetchall()[0]
-        dm.queues[target.id] = "trading"
-        author_coins = 0
-        target_coins = 0
+        author_deck_ids = dm.get_user_deck_ids(ctx.author.id)
+        target_deck_ids = dm.get_user_deck_ids(target.id)
+        author_coin = dm.get_user_coin(ctx.author.id)
+        target_coin = dm.get_user_coin(target.id)
+        author_coins_put = 0
+        target_coins_put = 0
         author_cards = {}
         target_cards = {}
 
         def tax():
             return max(
-                round(author_coins * 0.1) + 150 * len(author_cards),
-                round(target_coins * 0.1) + 150 * len(target_cards)
+                round(author_coins_put * 0.1) + 150 * len(author_cards),
+                round(target_coins_put * 0.1) + 150 * len(target_cards)
             )
 
         def offer():
@@ -189,26 +169,26 @@ class Actions(commands.Cog):
 
             if confirmed[0]:
                 embed.add_field(
-                    name=f"{author}: :white_check_mark:",
-                    value=f"```Golden Coins: {author_coins} \n" + "\n".join(author_offer) + "```",
+                    name=f"{ctx.author}: :white_check_mark:",
+                    value=f"```Golden Coins: {author_coins_put} \n" + "\n".join(author_offer) + "```",
                     inline=False
                 )
             else:
                 embed.add_field(
-                    name=f"{author}:",
-                    value=f"```Golden Coins: {author_coins} \n" + "\n".join(author_offer) + "```",
+                    name=f"{ctx.author}:",
+                    value=f"```Golden Coins: {author_coins_put} \n" + "\n".join(author_offer) + "```",
                     inline=False
                 )
             if confirmed[1]:
                 embed.add_field(
                     name=f"{target}: :white_check_mark:",
-                    value=f"```Golden Coins: {target_coins} \n" + "\n".join(target_offer) + "```",
+                    value=f"```Golden Coins: {target_coins_put} \n" + "\n".join(target_offer) + "```",
                     inline=False
                 )
             else:
                 embed.add_field(
                     name=f"{target}:",
-                    value=f"```Golden Coins: {target_coins} \n" + "\n".join(target_offer) + "```",
+                    value=f"```Golden Coins: {target_coins_put} \n" + "\n".join(target_offer) + "```",
                     inline=False
                 )
 
@@ -217,14 +197,16 @@ class Actions(commands.Cog):
 
         trade_msg = await ctx.send(embed=offer())
 
+        dm.queues[target.id] = "trading"
         while not trade_end:
             try:
                 reply_msg = await self.bot.wait_for(
                     "message", timeout=120.0,
-                    check=checks.valid_reply('', [target, author], ctx.message.channel)
+                    check=checks.valid_reply('', [target, ctx.author], ctx.message.channel)
                 )
             except asyncio.TimeoutError:
-                await ctx.send(f"Well, no one showed up to the trade, so it was called off.")
+                del dm.queues[target.id]
+                await ctx.send(f"Darn, no one showed up to the trade, so it was called off.")
                 return
 
             reply_author = reply_msg.author
@@ -236,22 +218,22 @@ class Actions(commands.Cog):
                 continue
             elif reply_msg[0] == "exit":
                 confirmed = [False, False]
-                await ctx.send(f"Trade is canceled by {reply_author}!")
+                await ctx.send(f"Trade is canceled by {reply_author.mention}!")
                 trade_end = True
                 break
             elif reply_msg[0] == "confirm":
-                if reply_author.id == author.id:
-                    if author_coins + tax() <= author_info[1]:
+                if reply_author.id == ctx.author.id:
+                    if author_coins_put + tax() <= author_coin:
                         confirmed[0] = True
                     else:
                         await ctx.send(
-                            f"{ctx.author}, you can't afford the transaction fee!")
+                            f"{ctx.author.mention}, you can't afford the transaction fee!")
                         continue
                 else:
-                    if target_coins + tax() <= target_info[1]:
+                    if target_coins_put + tax() <= target_coin:
                         confirmed[1] = True
                     else:
-                        await ctx.send(f"{target}, you can't afford the transaction fee!")
+                        await ctx.send(f"{target.mention}, you can't afford the transaction fee!")
                         continue
 
             if len(reply_msg) < 3 and reply_msg[0] != "confirm":
@@ -261,17 +243,17 @@ class Actions(commands.Cog):
                 if reply_msg[1] in ["coin", "co", "coins"]:
                     try:
                         amount = max(int(reply_msg[2]), 0)
-                        if reply_author.id == author.id:
-                            if amount <= author_info[1]:
-                                author_coins += amount
+                        if reply_author.id == ctx.author.id:
+                            if amount <= author_coin:
+                                author_coins_put += amount
                             else:
-                                await ctx.send(f"{ctx.author}, you don't have enough coins for this!")
+                                await ctx.send(f"{ctx.author.mention}, you don't have enough coins for this!")
                                 continue
                         else:
-                            if amount <= target_info[1]:
-                                target_coins += amount
+                            if amount <= target_coin:
+                                target_coins_put += amount
                             else:
-                                await ctx.send(f"{target}, you don't have enough coins for this!")
+                                await ctx.send(f"{target.mention}, you don't have enough coins for this!")
                                 continue
                     except:
                         continue
@@ -279,34 +261,33 @@ class Actions(commands.Cog):
                 elif reply_msg[1].lower() in ["card", "ca", "cards"]:
                     try:
                         card_id = int(reply_msg[2])
-                        dm.cur.execute(
-                            f"SELECT card_name, card_level FROM cardsinfo WHERE id = {card_id} AND owned_user = '{reply_author.id}'")
-                        result = dm.cur.fetchall()[0]
-                        if not result:
-                            await ctx.send(f"{reply_author}, you don't have this card id in your inventory!")
+                        card_name = dm.get_card_name(reply_author.id, card_id)
+                        card_level = dm.get_card_level(reply_author.id, card_id)
+                        if not card_name:
+                            await ctx.send(f"{reply_author.mention}, you don't have this card id in your inventory!")
                             continue
                         else:
-                            if reply_author.id == author.id:
+                            if reply_author.id == ctx.author.id:
                                 if len(author_cards) == 16:
-                                    await ctx.send(f"{ctx.author}, you can only put 16 cards at max per trade!")
+                                    await ctx.send(f"{ctx.author.mention}, you can only put 16 cards at max per trade!")
                                 elif card_id in author_cards:
-                                    await ctx.send(f"{ctx.author}, you already put this card id in the offer!")
+                                    await ctx.send(f"{ctx.author.mention}, you already put this card id in the offer!")
                                     continue
-                                elif card_id in decks1:
+                                elif card_id in author_deck_ids:
                                     await ctx.send(
-                                        f"{ctx.author}, you can't put a card from your deck into this offer!")
+                                        f"{ctx.author.mention}, you can't put a card from your decks into this offer!")
                                 else:
-                                    author_cards[card_id] = result
+                                    author_cards[card_id] = [card_name, card_level]
                             else:
                                 if len(target_cards) == 16:
-                                    await ctx.send(f"{target}, you can only put 16 cards at max per trade!")
+                                    await ctx.send(f"{target.mention}, you can only put 16 cards at max per trade!")
                                 elif card_id in target_cards:
-                                    await ctx.send(f"{target}, you already put this card id in the offer!")
+                                    await ctx.send(f"{target.mention}, you already put this card id in the offer!")
                                     continue
-                                elif card_id in decks2:
-                                    await ctx.send(f"{target}, you can't put a card from your deck into this offer!")
+                                elif card_id in target_deck_ids:
+                                    await ctx.send(f"{target.mention}, you can't put a card from your decks into this offer!")
                                 else:
-                                    target_cards[card_id] = result
+                                    target_cards[card_id] = [card_name, card_level]
                     except:
                         continue
 
@@ -315,18 +296,18 @@ class Actions(commands.Cog):
                 if reply_msg[1].lower() in ["coin", "co", "coins"]:
                     try:
                         amount = max(int(reply_msg[2]), 0)
-                        if reply_author.id == author.id:
-                            if amount <= author_coins:
-                                author_coins -= amount
+                        if reply_author.id == ctx.author.id:
+                            if amount <= author_coins_put:
+                                author_coins_put -= amount
                             else:
                                 await ctx.send(
-                                    f"{ctx.author}, you can't drop more coins than what you have in your offer!")
+                                    f"{ctx.author.mention}, you can't drop more coins than what you have in your offer!")
                                 continue
                         else:
-                            if amount <= target_coins:
-                                target_coins -= amount
+                            if amount <= target_coins_put:
+                                target_coins_put -= amount
                             else:
-                                await ctx.send(f"{target}, you can't drop more coins than what you have in your offer!")
+                                await ctx.send(f"{target.mention}, you can't drop more coins than what you have in your offer!")
                                 continue
                     except:
                         continue
@@ -334,17 +315,17 @@ class Actions(commands.Cog):
                 elif reply_msg[1].lower() in ["card", "ca", "cards"]:
                     try:
                         card_id = int(reply_msg[2])
-                        if reply_author.id == author.id:
+                        if reply_author.id == ctx.author.id:
                             if card_id in author_cards:
                                 del author_cards[card_id]
                             else:
-                                await ctx.send(f"{ctx.author}, the card id you want to drop doesn't exist!")
+                                await ctx.send(f"{ctx.author.mention}, the card id you want to drop doesn't exist!")
                                 continue
                         else:
                             if card_id in target_cards:
                                 del target_cards[card_id]
                             else:
-                                await ctx.send(f"{target}, the card if you want to drop doesn't exist!")
+                                await ctx.send(f"{target.mention}, the card if you want to drop doesn't exist!")
                                 continue
                     except:
                         continue
@@ -355,17 +336,16 @@ class Actions(commands.Cog):
                 trade_msg = await ctx.send(embed=offer())
 
             if confirmed[0] and confirmed[1]:
-                dm.cur.execute(
-                    f"UPDATE playersinfo SET coins = coins + {target_coins} - {author_coins} - {tax()} WHERE userid = '{author.id}'")
-                dm.cur.execute(
-                    f"UPDATE playersinfo SET coins = coins + {author_coins} - {target_coins} - {tax()} WHERE userid = '{target.id}'")
+                dm.set_user_coin(ctx.author.id, author_coin + target_coins_put - author_coins_put - tax())
+                dm.set_user_coin(target.id, target_coin + author_coins_put - target_coins_put - tax())
                 for card in author_cards:
-                    dm.cur.execute(f"UPDATE cardsinfo SET owned_user = '{target.id}' WHERE id = {card}")
+                    dm.set_card_owner(target.id, card)
                 for card in target_cards:
-                    dm.cur.execute(f"UPDATE cardsinfo SET owned_user = '{author.id}' WHERE id = {card}")
+                    dm.set_card_owner(ctx.author.id, card)
                 dm.db.commit()
                 trade_end = True
-                await ctx.send(f"Trade between {ctx.author} and {target} is now finished!")
+                del dm.queues[target.id]
+                await ctx.send(f"Trade between {ctx.author.mention} and {target.mention} is now finished!")
 
 
 async def setup(bot):

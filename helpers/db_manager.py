@@ -253,6 +253,10 @@ def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
         result = u.order_by_rarity(result, order - 9)
     return result
 
+def get_user_deck_ids(uid: int) -> list[int]:
+    cur.execute(f"SELECT id FROM temp_cards WHERE owned_user = {uid} AND (deck1 = 1 or deck2 = 1 or deck3 = 1 or deck4 = 1 or deck5 = 1 or deck6 = 1)")
+    result = cur.fetchall()
+    return [i[0] for i in result]
 
 def get_user_cards(
         uid: int,
@@ -343,6 +347,14 @@ def set_card_level(uid: int, cid: int, lvl: int):
     cur.execute(f"UPDATE temp_cards SET card_level = {lvl} WHERE id = {cid}")
     db.commit()
 
+def get_card_owner(cid: int) -> int | None:
+    cur.execute(f"SELECT owned_user FROM temp_cards WHERE id = {cid}")
+    result = cur.fetchall()
+    return None if not result else result[0][0]
+
+def set_card_owner(uid: int, cid: int):
+    cur.execute(f"UPDATE temp_cards SET owned_user = {uid} WHERE id = {cid}")
+    db.commit()
 
 def get_card_decks(cid: int) -> list[int]:
     cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM temp_cards WHERE id = {cid}")

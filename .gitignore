@@ -142,8 +142,7 @@ cython_debug/
 .vscode/*
 .vs/*
 *.pyproj
-# *.sln
-# apparently I need .sln for it to auto add new files from pull
+discord-adventurers-bot.code-workspace
 
 # SQLITE database
 *.db
