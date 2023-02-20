@@ -1,6 +1,7 @@
 import discord
 
 from .assets import items_dict
+from .constants import BP_CAP
 
 
 def get_bp_weight(i):  # bp will stand for backpack
@@ -79,7 +80,7 @@ def container_str(store: dict, container: str = "Backpack", lvl: int = 1):
                 f"{descr} {i.title()} - {'∞' if amt == 'x' else amt}"
             )
 
-    capacity = 100 if container == "Backpack" else chest_storage(lvl)
+    capacity = BP_CAP if container == "Backpack" else chest_storage(lvl)
     inv.append("\n")
     inv.append(f"Storage used - {get_bp_weight(store)}/{capacity}")
 
