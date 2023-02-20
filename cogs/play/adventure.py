@@ -247,7 +247,7 @@ class Adventure(commands.Cog):
                 elif state[0] == "fishing":
                     view = Fishing(a)
                 elif state[0] == "blackjack":
-                    await ctx.reply("Sorry, the devs are still working on this one!")
+                    view = Blackjack(a)
 
                 embed, img = setup_minigame(
                     u.HTOWN[pos]["choices"][choice][0],

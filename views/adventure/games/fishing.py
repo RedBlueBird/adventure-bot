@@ -81,9 +81,6 @@ class Bait(ui.View):
 
 
 class Fishing(AdventureTemplate):
-    def __init__(self, user: discord.Member):
-        super().__init__(user)
-
     @ui.button(label="Start fishing!", style=discord.ButtonStyle.blurple)
     async def bait(self, i: discord.Interaction, button: ui.Button):
         coins = dm.get_user_coin(self.user.id)

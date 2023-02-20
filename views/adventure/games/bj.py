@@ -1,12 +1,12 @@
-import typing as t
-
 import discord
 import discord.ui as ui
 
+import helpers.db_manager as dm
 from util.poker import Value, Deck, Card
 from ..adventure_template import AdventureTemplate
 
-BJ: t.Final = 21
+BJ = 21
+BET = 50
 
 
 def bj_val(cards: list[Card]) -> int:
@@ -24,10 +24,10 @@ def bj_val(cards: list[Card]) -> int:
     return total
 
 
-class Blackjack(AdventureTemplate):
+class BlackjackBoard(ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__(user)
-
+        super().__init__()
+        self.user = user
         self.deck = Deck()
         self.deck.shuffle()
 
@@ -47,25 +47,28 @@ class Blackjack(AdventureTemplate):
     async def win(self, i: discord.Interaction):
         embed = i.message.embeds[0]
         embed.colour = discord.Colour.green()
-        embed.add_field(name="Result", value="You win!", inline=False)
-        await i.edit_original_response(embed=embed)
-        self.result = "win"
-        self.stop()
+        embed.add_field(name="Result", value=f"You won {BET} coins!", inline=False)
+        dm.set_user_coin(self.user.id, dm.get_user_coin(self.user.id) + BET)
+        await self.send_result(i, embed)
 
     async def lose(self, i: discord.Interaction):
         embed = i.message.embeds[0]
         embed.colour = discord.Colour.red()
-        embed.add_field(name="Result", value="You lose...", inline=False)
-        await i.edit_original_response(embed=embed)
-        self.result = "lose"
-        self.stop()
+        embed.add_field(name="Result", value=f"You lost {BET} coins...", inline=False)
+        dm.set_user_coin(self.user.id, dm.get_user_coin(self.user.id) - BET)
+        await self.send_result(i, embed)
 
     async def draw(self, i: discord.Interaction):
         embed = i.message.embeds[0]
         embed.colour = discord.Colour.orange()
-        embed.add_field(name="Result", value="Draw!", inline=False)
-        await i.edit_original_response(embed=embed)
-        self.result = "draw"
+        embed.add_field(name="Result", value="Draw! No one got anything!", inline=False)
+        await self.send_result(i, embed)
+
+    async def send_result(self, i: discord.Interaction, embed: discord.Embed):
+        delay = 10
+        embed.set_footer(text=f"This message will be deleted in {delay} seconds.")
+        await i.edit_original_response(embed=embed, view=None)
+        await i.message.delete(delay=delay)
         self.stop()
 
     @ui.button(label="Hit", style=discord.ButtonStyle.green)
@@ -87,19 +90,22 @@ class Blackjack(AdventureTemplate):
 
     @ui.button(label="Stand", style=discord.ButtonStyle.red)
     async def stand(self, i: discord.Interaction, button: ui.Button):
+        p_val = bj_val(self.player)
+        if p_val == BJ:
+            await self.win(i)
+            return
+
         while bj_val(self.dealer) < 17:
             self.dealer.append(self.deck.draw())
 
         board = i.message.embeds[0]
         board.set_field_at(0, name="Cards Left", value=len(self.deck), inline=False)
 
-        p_val = bj_val(self.player)
         d_val = bj_val(self.dealer)
         d_new = f"**Value**: {d_val}\n```{' '.join(str(i) for i in self.dealer)}```"
         board.set_field_at(2, name="Dealer", value=d_new)
 
-        await i.response.defer()
-        await i.edit_original_response(embed=board)
+        await i.response.edit_message(embed=board)
 
         if d_val == BJ and len(self.dealer) == 2:
             await self.lose(i)
@@ -110,13 +116,51 @@ class Blackjack(AdventureTemplate):
         else:
             await self.lose(i)
 
-    @ui.button(label="Help", style=discord.ButtonStyle.blurple)
-    async def help(self, i: discord.Interaction, button: ui.Button):
-        embed = discord.Embed(title="Rules of Blackjack", color=discord.Colour.purple()) \
-            .add_field(name="Hit", value="Draw a card and add it to your hand.", inline=False) \
-            .add_field(name="Stand", value="Stop drawing cards. The dealer will then reveal their second card "
-                                           "and draw until they reach or exceed a value of 17, at which point "
-                                           "the player & dealer's hands will be compared.", inline=False) \
-            .add_field(name="Win Conditions", value="Whoever's closer to 21 without exceeding it wins.")
-        
-        await i.response.send_message(embed=embed, ephemeral=True)
+    async def interaction_check(self, i: discord.Interaction) -> bool:
+        if i.user != self.user:
+            await i.response.send_message(
+                "You aren't the explorer here!",
+                ephemeral=True
+            )
+            return False
+        return True
+
+    def board_embed(self) -> discord.Embed:
+        board = discord.Embed(title="Blackjack")
+
+        board.add_field(name="Cards Left", value=self.deck_size(), inline=False)
+
+        p_hand, p_val = self.player_vals()
+        player = f"**Value**: {p_val}\n```{' '.join(str(i) for i in p_hand)}```"
+        board.add_field(name="Your Hand", value=player)
+
+        d_hand, d_val = self.dealer_vals()
+        dealer = f"**Value**: ?\n```{d_hand[0]} ?```"
+        board.add_field(name="Dealer Hand", value=dealer)
+        board.colour = discord.Colour.teal()
+        return board
+
+
+class Blackjack(AdventureTemplate):
+    @ui.button(label="Play a round!", style=discord.ButtonStyle.blurple)
+    async def play(self, i: discord.Interaction, button: ui.Button):
+        coins = dm.get_user_coin(self.user.id)
+        if coins < BET:
+            await i.response.send_message(
+                f"You need at least {BET} to buy bait!",
+                ephemeral=True
+            )
+            return
+
+        view = BlackjackBoard(self.user)
+        await i.response.send_message(
+            embed=view.board_embed(),
+            view=view
+        )
+
+        button.disabled = True
+        await i.message.edit(view=self)
+
+        await view.wait()
+        button.disabled = False
+        await i.message.edit(view=self)
