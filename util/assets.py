@@ -119,7 +119,7 @@ def quest_str_rep(quest_type: str | int, amt: str | int):
     """
     return {
         1: f"Kill {amt} opponents while adventuring",
-        2: f"Accumulate enough items that they have a total weight of {amt} while adventuring",
+        2: f"Accumulate items of weight over {amt} while adventuring",
         3: f"Travel {amt} meters while adventuring",
         4: f"Win {amt} non-friendly PvP battles",
         5: f"Earn {amt} golden coins while adventuring",

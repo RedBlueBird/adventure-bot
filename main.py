@@ -55,6 +55,8 @@ class AdventurerBot(commands.Bot):
             print("Syncing commands globally...")
             await self.tree.sync()
             print("Finished syncing!")
+        game = discord.Game(f"{len(self.guilds)} Servers")
+        await self.change_presence(status=discord.Status.online, activity=game)
 
     async def on_command_completion(self, ctx: Context) -> None:
         """Executed every time a normal command has been *successfully* executed"""

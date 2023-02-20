@@ -158,7 +158,7 @@ class Sys(commands.Cog):
                     quests.remove(quests[x])
                     dm.set_user_coin(a.id, dm.get_user_coin(a.id) + gained[0])
                     dm.set_user_gem(a.id, dm.get_user_gem(a.id) + gained[1])
-                    dm.set_user_gem(a.id, dm.get_user_exp(a.id) + gained[2])
+                    dm.set_user_exp(a.id, dm.get_user_exp(a.id) + gained[2])
                     dm.set_user_token(a.id, dm.get_user_token(a.id) + 1)
                     dm.set_user_quest(a.id, ','.join(quests))
                     break

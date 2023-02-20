@@ -185,7 +185,7 @@ class Info(commands.Cog):
         embed.set_thumbnail(url=user.avatar.url)
         time_left = u.time_converter(int(quests[-1]) - int(times.time()))
         if time_left != "Right Now":
-            embed.set_footer(text=f"There's {time_left} left till a new quest")
+            embed.set_footer(text=f"{time_left} left till a new quest")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
