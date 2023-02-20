@@ -162,26 +162,24 @@ class Sys(commands.Cog):
             ))
 
             try:
-                rep = await self.bot.wait_for(
+                rep: discord.Message = await self.bot.wait_for(
                     "message", timeout=600.0,
                     check=lambda m:
                     m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
                     m.channel == spawn_msg.channel
                 )
-                mention = rep.author.mention
-
                 user_coin = dm.get_user_coin(a.id)
                 if user_coin:
                     dm.set_user_coin(a.id, user_coin + amt)
                     if random.randint(1, 100) == 1:
                         dm.set_user_gem(a.id, dm.get_user_gem(a.id) + 1)
-                        msg = f"{mention}, you got {amt} {u.ICON['coin']} and 1 {u.ICON['gem']} as well!"
+                        msg = f"You got {amt} {u.ICON['coin']} and a bonus {u.ICON['gem']}!"
                     else:
-                        msg = f"{mention}, you got {amt} {u.ICON['coin']}!"
+                        msg = f"You got {amt} {u.ICON['coin']}!"
                 else:
-                    msg = f"{mention}, you have to register in this bot first with `{u.PREF}register`! \n"
+                    msg = f"You have to register in this bot first with `{u.PREF}register`!"
 
-                await rep.channel.send(msg)
+                await rep.reply(msg)
             except asyncio.TimeoutError:
                 print("No one claimed the bag of coins.")
         # endregion
