@@ -150,7 +150,7 @@
         "choices": {
             "Go fishing - minigame": [
                 "fishing",
-                "mini game"
+                "minigame"
             ],
             "Leave the boat": [
                 "north street",
@@ -171,11 +171,11 @@
             ],
             "Play coin flip - minigame": [
                 "coin flip",
-                "mini game"
+                "minigame"
             ],
             "Play blackjack - minigame": [
                 "blackjack",
-                "mini game"
+                "minigame"
             ],
             "Leave the Bar": [
                 "south street",

@@ -13,6 +13,7 @@ from helpers.checks import valid_reaction, valid_reply
 from helpers import db_manager as dm
 import util as u
 from views.adventure import *
+from views.adventure.games import *
 
 
 def choices_list(choices) -> str:
@@ -32,16 +33,18 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
     return out
 
 
-def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
+def setup_minigame(
+        game_name: str, show_map: bool
+) -> tuple[discord.Embed, discord.File | None]:
     embed = discord.Embed(
-        title=f"Mini Game - {game_name}!",
+        title=f"Minigame - {game_name}!",
         color=discord.Color.gold()
     )
 
     logs = [f"• {r}" for r in u.MINIGAMES[game_name]["rules"]]
     embed.add_field(name="Rules", value="\n".join(logs))
 
-    embed.set_footer(text=f"{u.PREF}exit -quit mini game")
+    embed.set_footer(text=f"{u.PREF}exit -quit minigame")
     if show_map:
         if u.MINIGAMES[game_name]["image"] is not None:
             return (
@@ -125,7 +128,7 @@ class Adventure(commands.Cog):
         xp = dm.get_user_exp(a.id)
 
         inv = dm.get_user_inventory(a.id)
-        chest = dm.get_user_storage(a.id)
+        storage = dm.get_user_storage(a.id)
         pos = dm.get_user_position(a.id)
         show_map = dm.get_user_map(a.id)
 
@@ -137,46 +140,50 @@ class Adventure(commands.Cog):
         loading = discord.Embed(title="Loading...", description=u.ICON['load'])
         adventure_msg = await ctx.send(embed=loading)
 
-        while not leave and not afk and not adventure:
+        while True:
             embed = discord.Embed(
-                description=f"```{u.HTOWN[pos]['description']}```",
+                title=f"{a.display_name}'s Adventure",
+                description=f"{u.HTOWN[pos]['description']}",
                 color=discord.Color.gold()
             )
-            choices = u.HTOWN[pos]["choices"]
-            embed.add_field(name="Choices", value=choices_list(choices))
             embed.set_thumbnail(url=a.avatar.url)
-
-            always = ["exit", "map", "backpack", "home", "refresh"]
-            embed.set_footer(text=" | ".join(f"{u.PREF}{c}" for c in always))
 
             file = discord.File(
                 mark_location("hometown_map", *u.HTOWN[pos]["coordinate"]),
                 filename="hometown_map.png"
             )
 
-            view = Decision(a, file, choices)
+            view = Decision(a, file, u.HTOWN[pos]["choices"])
             attach = [file] if show_map else []
             await adventure_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
+
             show_map = bool(adventure_msg.attachments)
+            choice = view.decision
 
-            if view.decision is None:
-                await ctx.reply("You spaced out and the adventure was ended.")
+            if choice is None:
+                await adventure_msg.edit(
+                    content="You spaced out and the adventure was ended.",
+                    embed=None, view=None
+                )
                 break
 
-            if view.decision == "exit":
-                await ctx.reply("You quit this adventure.")
+            if choice == "exit":
+                await adventure_msg.edit(
+                    content="You quit this adventure.",
+                    embed=None, view=None
+                )
                 break
 
-            state = u.HTOWN[pos]["choices"][view.decision]
+            state = u.HTOWN[pos]["choices"][choice]
 
-            if state[1] == "self" and not afk and not leave:
+            if state[1] == "self":
                 if state[0] in u.HTOWN:
                     pos = state[0]
                 else:
                     await ctx.reply("Sorry, this route is still in development!")
 
-            elif state[1] == "selling" and not afk and not leave:
+            elif state[1] == "selling":
                 view = Sell(a)
                 embed.set_footer(
                     text="You can use `a.info item (name)` "
@@ -193,7 +200,7 @@ class Adventure(commands.Cog):
                 coins = dm.get_user_coin(a.id)
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "buying" and not afk and not leave:
+            elif state[1] == "buying":
                 offers = [
                     "forest fruit", "fruit salad", "raft", "torch", "herb",
                     "health potion", "power potion", "large health potion",
@@ -218,8 +225,8 @@ class Adventure(commands.Cog):
                 coins = dm.get_user_coin(a.id)
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "chest" and not afk and not leave:
-                embed = u.container_embed(chest, "Chest", lvl) \
+            elif state[1] == "chest":
+                embed = u.container_embed(storage, "Chest", lvl) \
                     .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
                 view = Chest(a)
                 await adventure_msg.edit(
@@ -230,253 +237,76 @@ class Adventure(commands.Cog):
                 await view.wait()
 
                 inv = dm.get_user_inventory(a.id)
-                chest = dm.get_user_storage(a.id)
+                storage = dm.get_user_storage(a.id)
 
-            elif state[1] == "mini game" and not afk and not leave:
-                dm.queues[a.id] = "playing a mini game"
-                exit_game = False
-                earned_loots = [0, 0, 0]
-                random_number = random.randint(1, 1000)
-
-                def reset(earned_loots):
-                    nonlocal xp, coins, gems
-
-                    xp += earned_loots[2]
-                    coins += earned_loots[0]
-                    gems += earned_loots[1]
-
-                    dm.set_user_coin(a.id, coins)
-                    dm.set_user_exp(a.id, xp)
-                    dm.set_user_gem(a.id, gems)
+            elif state[1] == "minigame":
+                dm.queues[a.id] = "playing a minigame"
+                if state[0] == "coin flip":
+                    view = CoinFlip(a)
+                elif state[0] == "fishing":
+                    view = Fishing(a)
+                elif state[0] == "blackjack":
+                    view = Blackjack(a)
 
                 embed, img = setup_minigame(
-                    u.HTOWN[pos]["choices"][list(u.HTOWN[pos]["choices"])[decision - 1]][0],
+                    u.HTOWN[pos]["choices"][choice][0],
                     show_map
                 )
-                await adventure_msg.edit(embed=embed, attachments=[img])
-                if state[0] == "coin flip":
-                    while not exit_game:
-                        try:
-                            reply = await self.bot.wait_for(
-                                "message", timeout=60.0,
-                                check=valid_reply(["flip", "f", "exit"], a, ctx.channel)
-                            )
-                        except asyncio.TimeoutError:
-                            exit_game = True
-                            await ctx.reply("```You accidentally fell asleep and got left out of the game.```")
-                        else:
-                            if reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit":
-                                exit_game = True
-                                await ctx.reply("You quit this mini game")
-                            elif not (reply.content[len(u.PREF + "flip "):].lower() in ["head", "tail", "edge", "h",
-                                                                                        "t", "e"] or
-                                      reply.content[len(u.PREF + "f "):].lower() in ["head", "tail", "edge", "h",
-                                                                                     "t", "e"]):
-                                await ctx.reply(
-                                    f"```You can only input {u.PREF}exit or {u.PREF}flip (head/tail/edge)```")
-                            else:
-                                if coins < 100:
-                                    await ctx.reply("```You need least 100 golden coins to place a bet!```")
-                                else:
-                                    bet = reply.content[len(u.PREF + choice[1] + " "):].lower()
-                                    if reply.content.lower().startswith(u.PREF + "flip "):
-                                        choice = [None, "flip"]
-                                    elif reply.content.lower().startswith(u.PREF + "f "):
-                                        choice = [None, "f"]
-                                    if bet in ['head', 'tail', 'edge']:
-                                        choice = [reply.content[len(u.PREF + choice[1] + " "):].lower(),
-                                                  choice[1]]
-                                    elif bet in list('hte'):
-                                        translator = {"h": "head", "t": "tail", "e": "edge"}
-                                        choice = [translator[reply.content[len(u.PREF + choice[1] + " "):].lower()],
-                                                  choice[1]]
-                                    result = random.choice(["head", "tail"])
-                                    if random_number == 1:
-                                        result = "edge"
-                                    if result != choice[0]:
-                                        earned_loots[0] -= 100
-                                        earned_loots[2] += 2
-                                        await ctx.reply(
-                                            f"```You bet on {choice[0]}\n"
-                                            f"The coin landed on {result}\n"
-                                            f"You lost {abs(earned_loots[0])} golden coins!\n"
-                                            f"You still gained {earned_loots[2]} exp though...\n"
-                                            f"Better luck next time!```"
-                                            f"```>flip (head/tail/edge) -try again\n"
-                                            f">exit -quit the mini game```"
-                                        )
-                                    else:
-                                        if result != "edge":
-                                            earned_loots[0] += 100
-                                            earned_loots[2] += 3
-                                            await ctx.reply(
-                                                f"```You bet on {choice[0]}\n"
-                                                f"The coins landed on {result}\n"
-                                                f"You won {earned_loots[0]} golden coins and {earned_loots[2]} XP!```"
-                                                "```>flip (head/tail/edge) -try again\n"
-                                                ">exit -quit the mini game```"
-                                            )
-                                        else:
-                                            earned_loots[0] += 50000
-                                            earned_loots[2] += 100
-                                            await ctx.reply(
-                                                f"```You bet on {choice[0]}\n"
-                                                f"The coins landed on {result}\n"
-                                                f"You won {earned_loots[0]} GOLDEN COINS and {earned_loots[2]} XP!"
-                                                f"``````>flip (head/tail/edge) -try again\n"
-                                                f">exit -quit the mini game```"
-                                            )
-                                    reset(earned_loots)
-                                    earned_loots = [0, 0, 0]
-                                    random_number = random.randint(1, 1000)
+                await adventure_msg.edit(
+                    embed=embed,
+                    attachments=[] if img is None else [img],
+                    view=view
+                )
+                await view.wait()
 
-                if state[0] == "fishing":
-                    while not exit_game:
-                        try:
-                            reply = await self.bot.wait_for(
-                                "message", timeout=60.0,
-                                check=valid_reply(["exit", "fish", "f"], a, ctx.channel)
-                            )
-                        except asyncio.TimeoutError:
-                            exit_game = True
-                            await ctx.reply("```You went idle and decided to quit this mini game```")
-                        else:
-                            if reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit":
-                                exit_game = True
-                                await ctx.reply(f"You quit this mini game")
-                            elif coins < 50:
-                                await ctx.reply("```You need least 50 golden coins to buy bait!```")
-                            else:
-                                fish_dict = {
-                                    'c': ['Carp', 'Tuna', 'Cod', 'Herring', 'Salmon', 'Trout', 'Bass', 'Minnow'],
-                                    'r': ['Lobster', 'Catfish', 'Pufferfish', 'Jellyfish', 'Stingray'],
-                                    'e': ['Shark', 'Narwhal', 'Octopus', 'Dolphin'],
-                                    'l': ['Kraken', 'Leviathan']
-                                }
-                                award_multiplier = 1
-                                if random_number <= 800:
-                                    waits = 6 + random_number % 5
-                                    rarity = 'common'
-                                elif random_number <= 960:
-                                    award_multiplier = 1.5
-                                    waits = 12 + random_number % 5
-                                    rarity = 'rare'
-                                elif random_number <= 992:
-                                    award_multiplier = 2.5
-                                    waits = 18 + random_number % 5
-                                    rarity = 'epic'
-                                else:
-                                    award_multiplier = 4.5
-                                    waits = 24 + random_number % 5
-                                    rarity = 'LEGENDARY'
-                                msg2 = await ctx.reply(
-                                    f"```You saw a {rarity} fish!"
-                                    f"Try to reply {u.PREF}bait in exactly {waits} seconds!```"
-                                )
-
-                                try:
-                                    msg_reply2 = await self.bot.wait_for(
-                                        "message", timeout=30.0,
-                                        check=valid_reply(["bait", "b"], a, ctx.channel)
-                                    )
-                                except asyncio.TimeoutError:
-                                    await ctx.reply("```The fish got away!```")
-                                else:
-                                    earned_loots[0] -= 50
-                                    success_rate = 0
-                                    reply_ms = (msg_reply2.created_at - msg2.created_at).total_seconds()
-                                    reply_time = round(abs(waits - reply_ms), 4)
-                                    if 0.750 <= reply_time <= 1.000:
-                                        success_rate = 10
-                                    elif 0.500 <= reply_time < 0.750:
-                                        success_rate = 20
-                                    elif 0.250 <= reply_time < 0.500:
-                                        success_rate = 40
-                                    elif 0.125 <= reply_time < 0.250:
-                                        success_rate = 60
-                                    elif 0.050 <= reply_time < 0.125:
-                                        success_rate = 80
-                                    elif reply_time < 0.050:
-                                        success_rate = 100
-
-                                    if random.randint(1, 100) <= success_rate:
-                                        if round(reply_ms) == 0:  # BRUH HOW DID THEY DO IT RIGHT ON TIME
-                                            earned_loots[0] += 100 * award_multiplier * 4
-                                            earned_loots[2] += 50
-                                            dm.log_quest(8, 1, a.id)
-                                            to_send = f"```You replied in EXACTLY {reply_ms} SECONDS!!!\n " \
-                                                      f"0.000 SECONDS OFF FROM {waits} SECONDS!!!\n"
-                                        else:
-                                            earned_loots[0] += 100 * award_multiplier
-                                            earned_loots[2] += 5
-                                            dm.log_quest(8, 1, a.id)
-                                            to_send = f"```You replied in {reply_ms} seconds\n" \
-                                                      f"{reply_time} seconds off from {waits} seconds!\n"
-
-                                        to_send += f"You caught a {random.choice(fish_dict[{1: 'c', 1.5: 'r', 2.5: 'e', 4.5: 'l'}[award_multiplier]])}, " \
-                                                   f"gaining {int(earned_loots[0])} golden coins and {earned_loots[2]} experience points in total!\n" \
-                                                   f"``````{u.PREF}fish -try again\n{u.PREF}exit -quit the mini game```"
-                                        await ctx.reply(to_send)
-                                    else:
-                                        earned_loots[2] += 2
-                                        await ctx.reply(
-                                            f"```You replied in {reply_ms} seconds\n{reply_time} seconds off from {waits} seconds!\n" +
-                                            f"The fish fled and you wasted {abs(earned_loots[0])} golden coins on the bait\n"
-                                            f"You only gained {earned_loots[2]} experience points\n"
-                                            f"Better luck next time!\n``````{u.PREF}fish -try again\n{u.PREF}exit -quit the mini game```"
-                                        )
-                                    reset(earned_loots)
-                                    earned_loots = [0, 0, 0]
-                                    random_number = random.randint(1, 1000)
-
-                if state[0] == "blackjack":
-                    await ctx.reply("Sorry, the devs are still working on this one!")
-
+                coins = dm.get_user_coin(a.id)
                 dm.queues[a.id] = "wandering around town"
 
-            elif state[1] == "adventure" and not afk and not leave:
-                if dm.get_user_deck_count(a.id) == 12:
-                    if state[0] == "boss raid":
-                        if lvl < 9:
-                            await ctx.send("You need to be at least level 9 to start a boss raid!")
-                        elif dm.get_user_ticket(a.id) < 1:
-                            await ctx.reply("You need a Raid Ticket to start a boss raid!")
-                        else:
-                            diff_msg = await ctx.send("Select Mob cards Level:\n"
-                                                      "**[1]** Easy - Lv 1\n"
-                                                      "**[2]** Moderate - Lv 5\n"
-                                                      "**[3]** Difficult - Lv 10\n"
-                                                      "**[4]** Insane - Lv 15\n"
-                                                      "**[5]** Go Back")
-                            for r in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
-                                await diff_msg.add_reaction(r)
-
-                            try:
-                                reaction, user = await self.bot.wait_for("reaction_add", timeout=120.0,
-                                                                         check=valid_reaction(
-                                                                             ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"],
-                                                                             [a], [diff_msg]))
-                            except asyncio.TimeoutError:
-                                await ctx.send(f"{a} the host, went afk... :man_facepalming: ")
-                            else:
-                                if reaction.emoji != "5️⃣":
-                                    raid_levels = {"1️⃣": 1, "2️⃣": 5, "3️⃣": 10, "4️⃣": 15}[reaction.emoji]
-                                    dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
-                                    adventure = True
-                    else:
-                        adventure = True
-                else:
+            elif state[1] == "adventure":
+                if dm.get_user_deck_count(a.id) != 12:
                     await ctx.reply("You need 12 cards in your deck first!")
+                    continue
+
+                if state[0] == "boss raid":
+                    lvl_req = 9
+                    if lvl < lvl_req:
+                        await ctx.reply(
+                            f"You need to be at least "
+                            f"level {lvl_req} to start a boss raid!",
+                            ephemeral=True
+                        )
+                        continue
+                    if dm.get_user_ticket(a.id) < 1:
+                        await ctx.reply("You need a raid ticket first!", ephemeral=True)
+                        continue
+
+                    view = LevelSelect(a)
+                    await adventure_msg.edit(view=None)
+                    sel_msg = await ctx.send("Choose your difficulty:", view=view)
+                    await view.wait()
+
+                    if view.level is not None:
+                        raid_levels = view.level * 5
+                        dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
+                        adventure = True
+
+                    await sel_msg.delete()
+                else:
+                    adventure = True
+
+                break
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
-        dm.set_user_storage(a.id, chest)
+        dm.set_user_storage(a.id, storage)
         dm.set_user_position(a.id, pos)
 
         if not adventure:
             return
 
-        location = u.HTOWN[pos]["choices"][decision][0]
+        await adventure_msg.edit(view=None)
+
+        location = u.HTOWN[pos]["choices"][choice][0]
         event = "main"
         section = "start"
         travel_speed = 1

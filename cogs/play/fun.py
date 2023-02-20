@@ -7,44 +7,12 @@ import discord
 from discord.ext import commands
 
 import util as u
-from views.games import Blackjack
 from helpers import checks
 
 
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.hybrid_command(
-        aliases=["black", "bj"],
-        description="Practice your blackjack skills!"
-    )
-    @checks.not_preoccupied("practicing blackjack")
-    async def blackjack(self, ctx: commands.Context):
-        user = ctx.author
-        view = Blackjack()
-
-        board = discord.Embed(title="Blackjack")
-        board.set_author(name=user.name, icon_url=user.avatar.url)
-
-        board.add_field(name="Cards Left", value=view.deck_size(), inline=False)
-
-        p_hand, p_val = view.player_vals()
-        player = f"**Value**: {p_val}\n```{' '.join(str(i) for i in p_hand)}```"
-        board.add_field(name="Your Hand", value=player)
-
-        d_hand, _ = view.dealer_vals()
-        dealer = f"**Value**: ?\n```{d_hand[0]} ?```"
-        board.add_field(name="Dealer Hand", value=dealer)
-        board.colour = discord.Colour.teal()
-
-        msg = await ctx.send(embed=board, view=view)
-        # very hacky for immediate bj detection but oh well
-        if p_val == 21:
-            board.colour = discord.Colour.green()
-            board.add_field(name="Result", value="You win!", inline=False)
-            await msg.edit(embed=board)
-            view.stop()
 
     @commands.hybrid_command(description="Test your reflexes and counting ability!")
     @checks.not_preoccupied("testing timing accuracy")

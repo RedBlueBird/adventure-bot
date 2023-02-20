@@ -5,6 +5,7 @@ import discord.ui as ui
 
 from helpers import db_manager as dm
 import util as u
+from .adventure_template import AdventureTemplate
 
 
 class BuyForm(ui.Modal, title="Buy something!"):
@@ -36,7 +37,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
             return
 
         inv = dm.get_user_inventory(self.user.id)
-        if item["weight"] * amt > 100 - u.get_bp_weight(inv):
+        if item["weight"] * amt > u.BP_CAP - u.get_bp_weight(inv):
             await i.response.send_message(
                 "You don't have enough space in your backpack for these items!",
                 ephemeral=True
@@ -68,10 +69,9 @@ class BuyForm(ui.Modal, title="Buy something!"):
         )
 
 
-class AdventureShop(ui.View):
+class AdventureShop(AdventureTemplate):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.items = offers
 
     @ui.button(label="Purchase", style=discord.ButtonStyle.blurple)
@@ -85,17 +85,3 @@ class AdventureShop(ui.View):
             embed=u.container_embed(inv, "Backpack"),
             ephemeral=True
         )
-
-    @ui.button(label="Exit", style=discord.ButtonStyle.red)
-    async def exit(self, i: discord.Interaction, button: ui.Button):
-        await i.response.defer()
-        self.stop()
-
-    async def interaction_check(self, i: discord.Interaction) -> bool:
-        if i.user != self.user:
-            await i.response.send_message(
-                "You aren't the explorer here!",
-                ephemeral=True
-            )
-            return False
-        return True

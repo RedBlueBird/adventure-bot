@@ -1,0 +1,26 @@
+{
+    "common": {
+        "fish": ["Carp", "Tuna", "Cod", "Herring", "Salmon", "Trout", "Bass", "Minnow"],
+        "base_wait": 6,
+        "rwd_bonus": 1,
+        "chance": 0.8
+    },
+    "rare": {
+        "fish": ["Lobster", "Catfish", "Pufferfish", "Jellyfish", "Stingray"],
+        "base_wait": 12,
+        "rwd_bonus": 1.5,
+        "chance": 0.16
+    },
+    "epic": {
+        "fish": ["Shark", "Narwhal", "Octopus", "Dolphin"],
+        "base_wait": 18,
+        "rwd_bonus": 2.5,
+        "chance": 0.032
+    },
+    "legendary": {
+        "fish": ["Kraken", "Leviathan"],
+        "base_wait": 24,
+        "rwd_bonus": 10,
+        "chance": 0.008
+    }
+}

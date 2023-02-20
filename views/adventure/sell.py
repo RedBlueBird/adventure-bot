@@ -3,6 +3,7 @@ import discord.ui as ui
 
 from helpers import db_manager as dm
 import util as u
+from .adventure_template import AdventureTemplate
 
 
 class SellForm(ui.Modal, title="Sell something!"):
@@ -54,25 +55,7 @@ class SellForm(ui.Modal, title="Sell something!"):
         await self.sell_msg.edit(embed=u.container_embed(inv))
 
 
-class Sell(ui.View):
-    def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
-
+class Sell(AdventureTemplate):
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)
     async def sell(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(SellForm(self.user, i.message))
-
-    @ui.button(label="Exit", style=discord.ButtonStyle.red)
-    async def exit(self, i: discord.Interaction, button: ui.Button):
-        await i.response.defer()
-        self.stop()
-
-    async def interaction_check(self, i: discord.Interaction) -> bool:
-        if i.user != self.user:
-            await i.response.send_message(
-                "You aren't the explorer here!",
-                ephemeral=True
-            )
-            return False
-        return True

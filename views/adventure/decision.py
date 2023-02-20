@@ -13,7 +13,7 @@ class DecisionSelect(ui.Select["Decision"]):
             discord.SelectOption(label=c, value=c)
             for c in choices
         ]
-        super().__init__(options=choices, placeholder="Where do you want to go?")
+        super().__init__(options=choices, placeholder="What do you want to do?")
 
     async def callback(self, i: discord.Interaction):
         assert self.view is not None
