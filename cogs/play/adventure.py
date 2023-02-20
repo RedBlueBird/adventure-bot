@@ -259,42 +259,42 @@ class Adventure(commands.Cog):
                 )
                 await view.wait()
 
+                coins = dm.get_user_coin(a.id)
                 dm.queues[a.id] = "wandering around town"
 
             elif state[1] == "adventure":
-                if dm.get_user_deck_count(a.id) == 12:
-                    if state[0] == "boss raid":
-                        if lvl < 9:
-                            await ctx.send("You need to be at least level 9 to start a boss raid!")
-                        elif dm.get_user_ticket(a.id) < 1:
-                            await ctx.reply("You need a Raid Ticket to start a boss raid!")
-                        else:
-                            diff_msg = await ctx.send("Select Mob cards Level:\n"
-                                                      "**[1]** Easy - Lv 1\n"
-                                                      "**[2]** Moderate - Lv 5\n"
-                                                      "**[3]** Difficult - Lv 10\n"
-                                                      "**[4]** Insane - Lv 15\n"
-                                                      "**[5]** Go Back")
-                            for r in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
-                                await diff_msg.add_reaction(r)
-
-                            try:
-                                reaction, user = await self.bot.wait_for("reaction_add", timeout=120.0,
-                                                                         check=valid_reaction(
-                                                                             ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"],
-                                                                             [a], [diff_msg]))
-                            except asyncio.TimeoutError:
-                                await ctx.send(f"{a} the host, went afk... :man_facepalming: ")
-                            else:
-                                if reaction.emoji != "5️⃣":
-                                    raid_levels = {"1️⃣": 1, "2️⃣": 5, "3️⃣": 10, "4️⃣": 15}[reaction.emoji]
-                                    dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
-                                    adventure = True
-                    else:
-                        adventure = True
-                        break
-                else:
+                if dm.get_user_deck_count(a.id) != 12:
                     await ctx.reply("You need 12 cards in your deck first!")
+                    continue
+
+                if state[0] == "boss raid":
+                    lvl_req = 9
+                    if lvl < lvl_req:
+                        await ctx.reply(
+                            f"You need to be at least "
+                            f"level {lvl_req} to start a boss raid!",
+                            ephemeral=True
+                        )
+                        continue
+                    if dm.get_user_ticket(a.id) < 1:
+                        await ctx.reply("You need a raid ticket first!", ephemeral=True)
+                        continue
+
+                    view = LevelSelect(a)
+                    await adventure_msg.edit(view=None)
+                    sel_msg = await ctx.send("Choose your difficulty:", view=view)
+                    await view.wait()
+
+                    if view.level is not None:
+                        raid_levels = view.level * 5
+                        dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
+                        adventure = True
+
+                    await sel_msg.delete()
+                else:
+                    adventure = True
+
+                break
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
