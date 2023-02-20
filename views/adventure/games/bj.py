@@ -78,8 +78,7 @@ class Blackjack(AdventureTemplate):
         p_new = f"**Value**: {val}\n```{' '.join(str(i) for i in self.player)}```"
         board.set_field_at(1, name="Player", value=p_new)
 
-        await i.response.defer()
-        await i.edit_original_response(embed=board)
+        await i.response.edit_message(embed=board)
 
         if val == BJ:
             await self.win(i)

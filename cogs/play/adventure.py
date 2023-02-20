@@ -149,9 +149,6 @@ class Adventure(commands.Cog):
             embed.add_field(name="Choices", value=choices_list(choices))
             embed.set_thumbnail(url=a.avatar.url)
 
-            always = ["exit", "map", "backpack", "home", "refresh"]
-            embed.set_footer(text=" | ".join(f"{u.PREF}{c}" for c in always))
-
             file = discord.File(
                 mark_location("hometown_map", *u.HTOWN[pos]["coordinate"]),
                 filename="hometown_map.png"
@@ -163,17 +160,23 @@ class Adventure(commands.Cog):
             await view.wait()
 
             show_map = bool(adventure_msg.attachments)
-            decision = view.decision
+            choice = view.decision
 
-            if decision is None:
-                await ctx.reply("You spaced out and the adventure was ended.")
+            if choice is None:
+                await adventure_msg.edit(
+                    content="You spaced out and the adventure was ended.",
+                    embed=None, view=None
+                )
                 break
 
-            if decision == "exit":
-                await ctx.reply("You quit this adventure.")
+            if choice == "exit":
+                await adventure_msg.edit(
+                    content="You quit this adventure.",
+                    embed=None, view=None
+                )
                 break
 
-            state = u.HTOWN[pos]["choices"][decision]
+            state = u.HTOWN[pos]["choices"][choice]
 
             if state[1] == "self":
                 if state[0] in u.HTOWN:
@@ -239,136 +242,23 @@ class Adventure(commands.Cog):
 
             elif state[1] == "mini game":
                 dm.queues[a.id] = "playing a minigame"
-                exit_game = False
-                earned_loots = [0, 0, 0]
-                random_number = random.randint(1, 1000)
-
-                def reset(earned_loots):
-                    nonlocal xp, coins, gems
-
-                    xp += earned_loots[2]
-                    coins += earned_loots[0]
-                    gems += earned_loots[1]
-
-                    dm.set_user_coin(a.id, coins)
-                    dm.set_user_exp(a.id, xp)
-                    dm.set_user_gem(a.id, gems)
+                if state[0] == "coin flip":
+                    view = CoinFlip(a)
+                elif state[0] == "fishing":
+                    view = Fishing(a)
+                elif state[0] == "blackjack":
+                    await ctx.reply("Sorry, the devs are still working on this one!")
 
                 embed, img = setup_minigame(
-                    u.HTOWN[pos]["choices"][decision][0],
+                    u.HTOWN[pos]["choices"][choice][0],
                     show_map
                 )
                 await adventure_msg.edit(
                     embed=embed,
                     attachments=[] if img is None else [img],
-                    view=None
+                    view=view
                 )
-                if state[0] == "coin flip":
-                    view = CoinFlip(a)
-                    await adventure_msg.edit(view=view)
-                    await view.wait()
-
-                if state[0] == "fishing":
-                    while not exit_game:
-                        try:
-                            reply = await self.bot.wait_for(
-                                "message", timeout=60.0,
-                                check=valid_reply(["exit", "fish", "f"], a, ctx.channel)
-                            )
-                        except asyncio.TimeoutError:
-                            exit_game = True
-                            await ctx.reply("```You went idle and decided to quit this mini game```")
-                        else:
-                            if reply.content[len(u.PREF):len(u.PREF) + 4].lower() == "exit":
-                                exit_game = True
-                                await ctx.reply(f"You quit this mini game")
-                            elif coins < 50:
-                                await ctx.reply("```You need least 50 golden coins to buy bait!```")
-                            else:
-                                fish_dict = {
-                                    'c': ['Carp', 'Tuna', 'Cod', 'Herring', 'Salmon', 'Trout', 'Bass', 'Minnow'],
-                                    'r': ['Lobster', 'Catfish', 'Pufferfish', 'Jellyfish', 'Stingray'],
-                                    'e': ['Shark', 'Narwhal', 'Octopus', 'Dolphin'],
-                                    'l': ['Kraken', 'Leviathan']
-                                }
-                                award_multiplier = 1
-                                if random_number <= 800:
-                                    waits = 6 + random_number % 5
-                                    rarity = 'common'
-                                elif random_number <= 960:
-                                    award_multiplier = 1.5
-                                    waits = 12 + random_number % 5
-                                    rarity = 'rare'
-                                elif random_number <= 992:
-                                    award_multiplier = 2.5
-                                    waits = 18 + random_number % 5
-                                    rarity = 'epic'
-                                else:
-                                    award_multiplier = 4.5
-                                    waits = 24 + random_number % 5
-                                    rarity = 'LEGENDARY'
-                                msg2 = await ctx.reply(
-                                    f"```You saw a {rarity} fish!"
-                                    f"Try to reply {u.PREF}bait in exactly {waits} seconds!```"
-                                )
-
-                                try:
-                                    msg_reply2 = await self.bot.wait_for(
-                                        "message", timeout=30.0,
-                                        check=valid_reply(["bait", "b"], a, ctx.channel)
-                                    )
-                                except asyncio.TimeoutError:
-                                    await ctx.reply("```The fish got away!```")
-                                else:
-                                    earned_loots[0] -= 50
-                                    success_rate = 0
-                                    reply_ms = (msg_reply2.created_at - msg2.created_at).total_seconds()
-                                    reply_time = round(abs(waits - reply_ms), 4)
-                                    if 0.750 <= reply_time <= 1.000:
-                                        success_rate = 10
-                                    elif 0.500 <= reply_time < 0.750:
-                                        success_rate = 20
-                                    elif 0.250 <= reply_time < 0.500:
-                                        success_rate = 40
-                                    elif 0.125 <= reply_time < 0.250:
-                                        success_rate = 60
-                                    elif 0.050 <= reply_time < 0.125:
-                                        success_rate = 80
-                                    elif reply_time < 0.050:
-                                        success_rate = 100
-
-                                    if random.randint(1, 100) <= success_rate:
-                                        if round(reply_ms) == 0:  # BRUH HOW DID THEY DO IT RIGHT ON TIME
-                                            earned_loots[0] += 100 * award_multiplier * 4
-                                            earned_loots[2] += 50
-                                            dm.log_quest(8, 1, a.id)
-                                            to_send = f"```You replied in EXACTLY {reply_ms} SECONDS!!!\n " \
-                                                      f"0.000 SECONDS OFF FROM {waits} SECONDS!!!\n"
-                                        else:
-                                            earned_loots[0] += 100 * award_multiplier
-                                            earned_loots[2] += 5
-                                            dm.log_quest(8, 1, a.id)
-                                            to_send = f"```You replied in {reply_ms} seconds\n" \
-                                                      f"{reply_time} seconds off from {waits} seconds!\n"
-
-                                        to_send += f"You caught a {random.choice(fish_dict[{1: 'c', 1.5: 'r', 2.5: 'e', 4.5: 'l'}[award_multiplier]])}, " \
-                                                   f"gaining {int(earned_loots[0])} golden coins and {earned_loots[2]} experience points in total!\n" \
-                                                   f"``````{u.PREF}fish -try again\n{u.PREF}exit -quit the mini game```"
-                                        await ctx.reply(to_send)
-                                    else:
-                                        earned_loots[2] += 2
-                                        await ctx.reply(
-                                            f"```You replied in {reply_ms} seconds\n{reply_time} seconds off from {waits} seconds!\n" +
-                                            f"The fish fled and you wasted {abs(earned_loots[0])} golden coins on the bait\n"
-                                            f"You only gained {earned_loots[2]} experience points\n"
-                                            f"Better luck next time!\n``````{u.PREF}fish -try again\n{u.PREF}exit -quit the mini game```"
-                                        )
-                                    reset(earned_loots)
-                                    earned_loots = [0, 0, 0]
-                                    random_number = random.randint(1, 1000)
-
-                if state[0] == "blackjack":
-                    await ctx.reply("Sorry, the devs are still working on this one!")
+                await view.wait()
 
                 dm.queues[a.id] = "wandering around town"
 
@@ -417,7 +307,7 @@ class Adventure(commands.Cog):
 
         await adventure_msg.edit(view=None)
 
-        location = u.HTOWN[pos]["choices"][decision][0]
+        location = u.HTOWN[pos]["choices"][choice][0]
         event = "main"
         section = "start"
         travel_speed = 1
