@@ -142,11 +142,10 @@ class Adventure(commands.Cog):
 
         while True:
             embed = discord.Embed(
-                description=f"```{u.HTOWN[pos]['description']}```",
+                title=f"{a.display_name}'s Adventure",
+                description=f"{u.HTOWN[pos]['description']}",
                 color=discord.Color.gold()
             )
-            choices = u.HTOWN[pos]["choices"]
-            embed.add_field(name="Choices", value=choices_list(choices))
             embed.set_thumbnail(url=a.avatar.url)
 
             file = discord.File(
@@ -154,7 +153,7 @@ class Adventure(commands.Cog):
                 filename="hometown_map.png"
             )
 
-            view = Decision(a, file, choices)
+            view = Decision(a, file, u.HTOWN[pos]["choices"])
             attach = [file] if show_map else []
             await adventure_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
