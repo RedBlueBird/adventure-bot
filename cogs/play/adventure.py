@@ -37,14 +37,14 @@ def setup_minigame(
         game_name: str, show_map: bool
 ) -> tuple[discord.Embed, discord.File | None]:
     embed = discord.Embed(
-        title=f"Mini Game - {game_name}!",
+        title=f"Minigame - {game_name}!",
         color=discord.Color.gold()
     )
 
     logs = [f"• {r}" for r in u.MINIGAMES[game_name]["rules"]]
     embed.add_field(name="Rules", value="\n".join(logs))
 
-    embed.set_footer(text=f"{u.PREF}exit -quit mini game")
+    embed.set_footer(text=f"{u.PREF}exit -quit minigame")
     if show_map:
         if u.MINIGAMES[game_name]["image"] is not None:
             return (
@@ -240,7 +240,7 @@ class Adventure(commands.Cog):
                 inv = dm.get_user_inventory(a.id)
                 storage = dm.get_user_storage(a.id)
 
-            elif state[1] == "mini game":
+            elif state[1] == "minigame":
                 dm.queues[a.id] = "playing a minigame"
                 if state[0] == "coin flip":
                     view = CoinFlip(a)
