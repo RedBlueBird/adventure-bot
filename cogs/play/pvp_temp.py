@@ -1,0 +1,125 @@
+import random
+import math
+import asyncio
+
+import discord
+from discord.ext import commands
+
+import util as u
+from helpers import checks, BattleData2, Player
+from helpers import db_manager as dm
+from views import BattleSelect, PvpInvite, BattleActions
+
+
+class Pvp2(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.hybrid_command(
+        aliases=["pvp2"],
+        description="Battle with other players!"
+    )
+    @checks.level_check(5)
+    @checks.not_preoccupied("in a friendly battle")
+    @checks.is_registered()
+    async def battle2(
+            self, ctx: commands.Context,
+            gamble_medals: int = 0,
+    ):
+        a = ctx.author
+        if not 0 <= gamble_medals <= 10:
+            await ctx.reply("You can't bet that amount of medals!")
+            return
+
+        # region UI
+        view = BattleSelect(a)
+        msg = await ctx.reply(view=view)
+        while True:
+            await view.wait()
+            people = view.selected
+            for p in people:
+                id_ = p.id
+
+                level_req = 1
+                if dm.get_user_level(id_) < level_req:
+                    await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
+                    break
+
+                if dm.get_user_medal(id_) < gamble_medals:
+                    await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
+                    break
+
+                if dm.get_user_deck_count(id_) != 12:
+                    await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
+                    break
+            else:
+                break
+            
+            view = BattleSelect(a)
+            await msg.edit(view=view)
+
+        people = [ctx.author] + people
+
+        req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
+        if gamble_medals > 0:
+            req_msg += f"{a.mention} wants to battle with {gamble_medals} {u.ICON['medal']}!\n"
+        else:
+            req_msg += f"{a.mention} wants to have a friendly battle!\n"
+
+        view = PvpInvite(ctx.author, people, 6)
+        await msg.edit(content=req_msg, view=view)
+        await view.wait()
+
+        if not view.start:
+            return
+        # endregion
+
+        # region setting up the Battle
+        players = []
+        counter = 1
+        for t_id, t in view.teams.items():
+            for p in t:
+                if p not in view.user_team:
+                    continue
+                
+                player = Player(level=dm.get_user_level(p.id),
+                                user=p,
+                                team=t_id,
+                                id=counter,
+                                deck=[])
+                players.append(player)
+                counter += 1
+                dm.queues[p.id] = "in a pvp battle"
+
+        if gamble_medals > 0:
+            s = "s" if gamble_medals > 1 else ""
+            title = f"A {gamble_medals}-Medal{s} Battle Just Started!"
+        else:
+            title = "A Friendly Battle Just Started!"
+        desc = " vs ".join([str(x.user.name) for x in players])
+        embed = discord.Embed(
+            title=title,
+            description=desc,
+            color=discord.Color.gold()
+        )
+        await ctx.send(embed=embed)
+        
+        dd = BattleData2(
+            players=players
+        )
+        battle_buttons = BattleActions(
+            players=players
+        )
+
+        stats_msg = await ctx.send(embed=dd.set_up())
+        # endregion
+
+        await stats_msg.edit(embed=dd.show_hand(), view=battle_buttons)
+
+        for user in players:
+            if user.id in dm.queues:
+                del dm.queues[user.id]
+
+
+async def setup(bot):
+    await bot.add_cog(Pvp2(bot))
