@@ -48,13 +48,12 @@ class Decision(ui.View):
     async def toggle_map(self, i: discord.Interaction, button: ui.Button):
         msg = i.message
         await i.response.defer()
-        if i.message.attachments:
-            await i.message.remove_attachments(*msg.attachments)
-            self.show_map = False
+        if msg.attachments:
+            msg = await msg.remove_attachments(*msg.attachments)
         else:
             self.loc_img.fp.seek(0)
-            await i.message.edit(attachments=[self.loc_img])
-            self.show_map = True
+            msg = await msg.edit(attachments=[self.loc_img])
+        self.show_map = bool(msg.attachments)
 
     @ui.button(label="Exit", row=1, style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):
