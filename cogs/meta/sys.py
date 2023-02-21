@@ -62,50 +62,53 @@ class Sys(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command(self, ctx: Context):
-        if ctx.author.bot:
+        if ctx.bot:
             return
 
         # region Check user level up
         a = ctx.author
-        user_level = dm.get_user_level(a.id)
-        if not user_level:
+        lvl = dm.get_user_level(a.id)
+        if not lvl:
             return
-        user_exp = dm.get_user_exp(a.id)
+        xp = dm.get_user_exp(a.id)
 
-        if user_exp >= u.level_xp(user_level) and user_level < 30:
+        if xp >= u.level_xp(lvl) and lvl < 30:
             level_msg = []
-            if (user_level + 1) % 2 == 0:
+            if (lvl + 1) % 2 == 0:
                 add_hp = round(
-                    (u.SCALE[1] ** math.floor((user_level + 1) / 2) -
-                     u.SCALE[1] ** math.floor(user_level / 2)) * 100 * u.SCALE[0]
+                    (u.SCALE[1] ** math.floor((lvl + 1) / 2) -
+                     u.SCALE[1] ** math.floor(lvl / 2)) * 100 * u.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
             # At levels 17 and 27, the user gets a week of free premium.
-            if user_level + 1 in [17, 27]:
-                dm.set_user_premium(a.id, dm.get_user_premium(a.id) + dt.timedelta(days=7))
+            if lvl + 1 in [17, 27]:
+                dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
 
-            if u.LEVELS[user_level - 1]:
-                level_msg.extend(u.LEVELS[user_level - 1].format(u.PREF).split("\n"))
+            if u.LEVELS[lvl - 1]:
+                level_msg.extend(u.LEVELS[lvl - 1].format(u.PREF).split("\n"))
 
             embed = discord.Embed(
                 title=f"Congratulations {a.name}!",
                 description=None,
                 color=discord.Color.green()
             )
+
+            coin_gain = lvl * 50
+            gem_gain = math.ceil((lvl + 1) / 5) + 1
             embed.add_field(
-                name=f"You're now level {user_level + 1}!",
-                value=f"+{user_level * 50} {u.ICON['coin']} \n"
-                      f"+{math.ceil((user_level + 1) / 5) + 1} {u.ICON['gem']} \n"
+                name=f"You're now level {lvl + 1}!",
+                value=f"+{coin_gain} {u.ICON['coin']} \n"
+                      f"+{gem_gain} {u.ICON['gem']} \n"
                       "```» " + "\n\n» ".join(level_msg) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
-            await ctx.channel.send(embed=embed)
+            await ctx.reply(embed=embed)
 
-            dm.set_user_exp(a.id, user_exp - u.level_xp(user_level))
-            dm.set_user_level(a.id, user_level + 1)
-            dm.set_user_coin(a.id, dm.get_user_coin(a.id) + user_level * 50)
-            dm.set_user_coin(a.id, dm.get_user_gem(a.id) + math.ceil((user_level + 1) / 5) + 1)
+            dm.set_user_exp(a.id, xp - u.level_xp(lvl))
+            dm.set_user_level(a.id, lvl + 1)
+            dm.set_user_coin(a.id, dm.get_user_coin(a.id) + coin_gain)
+            dm.set_user_coin(a.id, dm.get_user_gem(a.id) + gem_gain)
         # endregion
 
         # region Quest Completion Check (scuffed)
@@ -154,19 +157,16 @@ class Sys(commands.Cog):
             else:
                 amt = random.randint(50, 100)
 
-            spawn_msg = await ctx.channel.send(embed=discord.Embed(
+            await ctx.channel.send(embed=discord.Embed(
                 title=f"A bag of gold showed up out of nowhere!",
-                description=f"Quick! Type `{u.PREF}collect {amt} coins` to collect them! \n"
+                description=f"Quick! Type `{u.PREF}collect {amt} coins` to collect them!\n"
                             f"They'll be gone in 10 minutes!",
                 color=discord.Color.green()
             ))
-
             try:
                 rep: discord.Message = await self.bot.wait_for(
                     "message", timeout=600.0,
-                    check=lambda m:
-                    m.content.lower().startswith(f"{u.PREF}collect {amt} coins") and
-                    m.channel == spawn_msg.channel
+                    check=lambda m: m.content.lower() == f"{u.PREF}collect {amt} coins"
                 )
                 user_coin = dm.get_user_coin(a.id)
                 if user_coin:

@@ -4,7 +4,7 @@ import os
 
 dirname = os.path.join(os.path.dirname(__file__), "..", "resources/text")
 
-PREF: t.Final = "c."
+PREF: t.Final = "a."
 SCALE: t.Final = 50, 1.05
 
 DECK_LVL_REQ: t.Final = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}

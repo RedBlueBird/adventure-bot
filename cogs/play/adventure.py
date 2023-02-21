@@ -171,7 +171,7 @@ class Adventure(commands.Cog):
             if choice == "exit":
                 await adventure_msg.edit(
                     content="You quit this adventure.",
-                    embed=None, view=None
+                    embed=None, view=None, attachments=[]
                 )
                 break
 
@@ -190,8 +190,7 @@ class Adventure(commands.Cog):
                          "to check the sell price of an item!"
                 )
                 await adventure_msg.edit(
-                    content="You can use `a.info item (name)` "
-                            "to check the sell price of an item!",
+                    content=None,
                     embed=u.container_embed(inv),
                     view=view
                 )
