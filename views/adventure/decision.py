@@ -34,6 +34,7 @@ class Decision(ui.View):
         self.loc_img = loc_file
         self.decision = None
         self.add_item(DecisionSelect(choices))
+        self.show_map = None
 
     @ui.button(label="Backpack", row=1, style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):
@@ -49,9 +50,11 @@ class Decision(ui.View):
         await i.response.defer()
         if i.message.attachments:
             await i.message.remove_attachments(*msg.attachments)
+            self.show_map = False
         else:
             self.loc_img.fp.seek(0)
             await i.message.edit(attachments=[self.loc_img])
+            self.show_map = True
 
     @ui.button(label="Exit", row=1, style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):

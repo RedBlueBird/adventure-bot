@@ -158,7 +158,8 @@ class Adventure(commands.Cog):
             await adventure_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
 
-            show_map = bool(adventure_msg.attachments)
+            if view.show_map is not None:
+                show_map = view.show_map
             choice = view.decision
 
             if choice is None:
