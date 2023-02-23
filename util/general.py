@@ -44,8 +44,8 @@ def log_level_gen(i: int) -> int:
     """
     if i <= 1:
         return 10
-    val = 10 - math.floor(math.log(i - 1) / math.log(2))
-    return min(10, max(1, val))  # Clamp between 1 and 10
+    val = 10 - math.floor(math.log2(i - 1))
+    return clamp(val, 1, 10)
 
 
 def level_xp(lvl: int) -> int:
