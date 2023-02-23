@@ -142,7 +142,7 @@ class BattleData2:
             if not (1 <= int(move[1]) <= len (self.players)):
                 error_msg = "Make sure the target you choose is valid!"
                 break
-            energy_cost += player.deck[move[0]].get_energy_cost()
+            energy_cost += player.deck[int(move[0])].get_energy_cost()
         
         if error_msg != "":
             error_msg += f" E.g. `{u.PREF}move 12` to play the 1st card in your hand on player #2."
