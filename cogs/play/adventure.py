@@ -153,7 +153,7 @@ class Adventure(commands.Cog):
                 filename="hometown_map.png"
             )
 
-            view = Decision(a, file, u.HTOWN[pos]["choices"])
+            view = Decision(a, u.HTOWN[pos]["choices"], file)
             attach = [file] if show_map else []
             await adventure_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
@@ -310,6 +310,7 @@ class Adventure(commands.Cog):
         event = "main"
         section = "start"
         travel_speed = 1
+        t_dis = round(travel_speed * random.randint(100, 200))
         perk_turn = 5
         perks = {}
         pre_message = []
@@ -343,9 +344,10 @@ class Adventure(commands.Cog):
             choice = 0
             while not leave and not afk and hp > 0 and stamina > 0 and "choices" in choices:
                 try:
-                    reply = await self.bot.wait_for("message", timeout=60.0,
-                                                    check=valid_reply([''], [a],
-                                                                      [ctx.message.channel]))
+                    reply = await self.bot.wait_for(
+                        "message", timeout=60.0,
+                        check=valid_reply("", a, ctx.channel)
+                    )
                 except asyncio.TimeoutError:
                     afk = True
                     await ctx.reply("You went idling and the adventure was ended.")
@@ -361,13 +363,23 @@ class Adventure(commands.Cog):
                         break
                     elif reply in ["bp", "backpack"]:
                         embed = u.container_embed(inv, "Backpack")
-                        embed.add_field(name="Stats:", value=f"Health - {hp}/{max_hp}\n"
-                                                             f"Stamina - {stamina}\n"
-                                                             f"Traveled {dist} meters", inline=False)
-                        if perks != {}:
-                            embed.add_field(name="Perks:", value="".join([
-                                                                             f"**{u.PERKS[i]['name']}** x{perks[i]}\n{u.ICON['alpha']}*{u.PERKS[i.lower()]['description']}*\n"
-                                                                             for i in perks][:]))
+                        embed.add_field(
+                            name="Stats:",
+                            value=f"Health - {hp}/{max_hp}\n"
+                                  f"Stamina - {stamina}\n"
+                                  f"Traveled {dist} meters",
+                            inline=False
+                        )
+                        if perks:
+                            embed.add_field(
+                                name="Perks:",
+                                value="".join([
+                                    f"**{u.PERKS[i]['name']}** x{perks[i]}\n"
+                                    f"{u.ICON['alpha']}*{u.PERKS[i.lower()]['description']}*\n"
+                                    for i in perks
+                                ])
+                            )
+
                         await ctx.send(embed=embed)
                     elif reply in ['r', 'ref', 'refresh']:
                         adventure_msg = await ctx.send(embed=options[0], file=None)
@@ -1148,47 +1160,52 @@ class Adventure(commands.Cog):
                     pre_message.append("\n")
                 if stamina <= 0:
                     stamina = 0
-                    embed = discord.Embed(title="You ran out of stamina!",
-                                          description="```" + "\n".join(
-                                              pre_message) + "You died from exhaustion!``` ```Loss:\n" + \
-                                                      u.container_str(inv, "Backpack") + "```",
-                                          color=discord.Color.gold())
+                    embed = discord.Embed(
+                        title="You ran out of stamina!",
+                        description="```" +
+                                    "\n".join(pre_message) +
+                                    "You died from exhaustion!``````Loss:\n" +
+                                    f"{u.container_str(inv)}```",
+                        color=discord.Color.gold()
+                    )
                     inv = {}
                 if hp <= 0:
                     hp = 0
                     embed = discord.Embed(
                         title="You ran out of health!",
-                        description="```" + "\n".join(
-                            pre_message) + "The world starts to go dark. You struggled to breath properly. You died!``` ```Loss:\n" + \
-                                    u.container_str(inv, "Backpack") + "```",
+                        description="```" + "\n".join(pre_message) +
+                                    "The world starts to go dark."
+                                    "You struggled to breathe properly. You died!```"
+                                    f"```Loss:\n{u.container_str(inv)}```",
                         color=discord.Color.gold()
                     )
                     inv = {}
                 if leave:
                     embed = discord.Embed(
-                        title="You gave up keep adventuring!",
+                        title="You gave up the adventure!",
                         description="```" + "\n".join(pre_message) +
-                                    "You got nervous and stopped yourself. It's probably better to rest up then visit the place again. "
-                                    "You quickly backtracked and see your hometown again quickly.```",
+                                    "You got nervous and stopped yourself. "
+                                    "\"It's probably better to rest up first,\" you think to yourself. "
+                                    "You backtracked and see your hometown again quickly.```",
                         color=discord.Color.gold()
                     )
                 if afk:
                     embed = discord.Embed(
                         title="You went afk and left!",
-                        description="```" +
-                                    pre_message + "\n"
-                                                  "You stood motionlessly and somehow forgot what you were going to do.\n"
-                                                  "Just like that, you traveled back to your hometown, "
-                                                  "wondering why you were here in the first place."
-                                                  "```",
+                        description=f"```{pre_message}\n"
+                                    "You stood motionlessly and somehow forgot what you were going to do.\n"
+                                    "Just like that, you traveled back to your hometown, "
+                                    "wondering why you were here in the first place.```",
                         color=discord.Color.red()
                     )
                 if section == "end":
                     hp = 0
                     embed = discord.Embed(
                         title="You finished this adventure!",
-                        description="```" + "\n".join(
-                            pre_message) + "CONGRATULATIONS! You have endured and survived all the obstacles stood in your way. You achieved what many failed to acomplish!```",
+                        description="```" + "\n".join(pre_message) +
+                                    "CONGRATULATIONS! "
+                                    "You've survived all the obstacles stood in your way, "
+                                    "and have achieved what many failed to accomplish!```",
                         color=discord.Color.green()
                     )
                     if location == "enchanted forest" and (badges & (1 << 5)) == 0:

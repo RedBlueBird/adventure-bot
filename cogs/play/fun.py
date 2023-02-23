@@ -89,26 +89,6 @@ class Fun(commands.Cog):
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="kick.png"))
 
-    @commands.hybrid_command(
-        aliases=["find_words", "findwords", "fw"],
-        description="Finds words with given letters."
-    )
-    async def find_word(self, ctx: commands.Context, letters: str, limit: int = 5):
-        """Finds words with given letters."""
-        with open("resources/text/search.txt") as file:
-            valid_words = []
-            for line in file:
-                if limit == 0:
-                    break
-                if letters in line:
-                    valid_words.append(line)
-                    limit -= 1
-
-        if valid_words:
-            await ctx.send(f"Words found: \n{''.join(valid_words)}")
-        else:
-            await ctx.send("No words found! :frown:")
-
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))

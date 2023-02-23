@@ -26,15 +26,19 @@ class Decision(ui.View):
     def __init__(
             self,
             user: discord.Member,
-            loc_file: discord.File,
-            choices: t.Iterable[str]
+            choices: t.Iterable[str],
+            loc_file: discord.File | None = None
     ):
         super().__init__()
         self.user = user
-        self.loc_img = loc_file
+
         self.decision = None
         self.add_item(DecisionSelect(choices))
+
         self.show_map = None
+        self.loc_img = loc_file
+        if loc_file is None:
+            self.remove_item(self.children[1])
 
     @ui.button(label="Backpack", row=1, style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):

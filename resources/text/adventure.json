@@ -346,7 +346,7 @@
                     }
                 },
                 {
-                    "description": "A pack of goblins spots you from their campfire. You have a feeling that you would become their dinner if you don't fight.",
+                    "description": "A pack of goblins spots you from their campfire. You have a feeling that you're going to become dinner if you don't fight.",
                     "spawn rate": [
                         [
                             501,
@@ -463,7 +463,7 @@
                     }
                 },
                 {
-                    "description": "The ground trembles as the trees infront of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
+                    "description": "The ground trembles as the trees in front of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
                     "spawn rate": [
                         [
                             501,
