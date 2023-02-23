@@ -199,6 +199,16 @@ def set_user_msg_exp(uid: int, value: int):
     db.commit()
 
 
+def get_user_battle_command(uid: int) -> str:
+    cur.execute(f"SELECT battle_command FROM temp WHERE userid = {uid}")
+    return cur.fetchall()[0][0]
+
+
+def set_user_battle_command(uid: int, value: str):
+    cur.execute(f"UPDATE temp SET battle_command = '{value}' WHERE userid = {uid}")
+    db.commit()
+
+
 def get_user_deck_slot(uid: int) -> int:
     cur.execute(f"SELECT deck_slot FROM temp WHERE userid = {uid}")
     return cur.fetchall()[0][0]

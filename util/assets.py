@@ -32,6 +32,30 @@ def cards_dict(card_level, card_name):
                     card[i][k][0] = round(card[i][k][0] * card_level)
     return card
 
+def cards_dict_temp(card_level, card_name):
+    if card_name.lower() not in CARDS_TEMP:
+        return {
+            "name": "Glitched", "cost": 0, "rarity": "NA", "self_damage": 4500, "eff_acc": 100, "attacks": 10,
+            "acc": 100, "crit": 100, "mod": {}, "description": "None", "requirement": "None",
+            "brief": "Created from this bot's glitches."
+        }
+
+    card = copy.deepcopy(CARDS_TEMP[card_name.lower()])
+    for i in card:
+        if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
+            card[i] = round(card[i] * card_level)
+        elif i == "eff_app":
+            card[i][0] = round(card[i][0] * card_level)
+        elif i == "inverse_damage":
+            card[i] = round(card[i] * card_level)
+        elif i == "on_hand":
+            for k in card[i]:
+                if k in ["block", "absorb", "heal", "tramp", "damage",
+                         "self_damage", "crush", "revenge", "lich_revenge"]:
+                    card[i][k] = round(card[i][k] * card_level)
+                elif k == "eff_app":
+                    card[i][k][0] = round(card[i][k][0] * card_level)
+
 
 def items_dict(item_name, max_stat=100 * SCALE[0]):
     item_name = ITEM_ABB.get(item_name.lower(), item_name.lower())

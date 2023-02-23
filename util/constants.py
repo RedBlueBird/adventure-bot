@@ -3,7 +3,7 @@ import os
 
 dirname = os.path.join(os.path.dirname(__file__), "..", "resources/text")
 
-PREF = "a."
+PREF = "c."
 SCALE = 50, 1.05
 
 DECK_LVL_REQ = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
@@ -17,6 +17,8 @@ with open(os.path.join(dirname, "admins.json")) as json_file:
     ADMINS = set(json.load(json_file))
 with open(os.path.join(dirname, "cards.json")) as json_file:
     CARDS = json.load(json_file)
+with open(os.path.join(dirname, "cards_temp.json")) as json_file:
+    CARDS_TEMP = json.load(json_file)
 with open(os.path.join(dirname, "item_abbreviations.json")) as json_file:
     ITEM_ABB = json.load(json_file)
 with open(os.path.join(dirname, "items.json")) as json_file:

@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 import util as u
-from helpers import checks, BattleData2, Player
+from helpers import checks, BattleData2, Player, Card
 from helpers import db_manager as dm
 from views import BattleSelect, PvpInvite, BattleActions
 
@@ -81,12 +81,12 @@ class Pvp2(commands.Cog):
             for p in t:
                 if p not in view.user_team:
                     continue
-                
+                player_deck = [Card(name=i[1],level=i[2]) for i in dm.get_user_deck(p.id, dm.get_user_deck_slot(p.id))]
                 player = Player(level=dm.get_user_level(p.id),
                                 user=p,
                                 team=t_id,
                                 id=counter,
-                                deck=[])
+                                deck=player_deck)
                 players.append(player)
                 counter += 1
                 dm.queues[p.id] = "in a pvp battle"
@@ -107,19 +107,29 @@ class Pvp2(commands.Cog):
         dd = BattleData2(
             players=players
         )
-        battle_buttons = BattleActions(
-            players=players
-        )
-
         stats_msg = await ctx.send(embed=dd.set_up())
+        battle_buttons = BattleActions(
+            battledata=dd,
+            stats_msg=stats_msg
+        )
         # endregion
 
-        await stats_msg.edit(embed=dd.show_hand(), view=battle_buttons)
+        await stats_msg.edit(embed=dd.show_stats(), view=battle_buttons)
 
         for user in players:
             if user.id in dm.queues:
                 del dm.queues[user.id]
 
+    @commands.hybrid_command(
+        aliases=["m"],
+        description="Making moves in battles"
+    )
+    @checks.is_registered()
+    async def move(
+            self, ctx: commands.Context,
+            moves: commands.Greedy[int]
+    ):
+        dm.set_user_battle_command(ctx.author.id, " ".join([str(i) for i in moves]))
 
 async def setup(bot):
     await bot.add_cog(Pvp2(bot))
