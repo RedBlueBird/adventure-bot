@@ -77,8 +77,12 @@ class BattleData2:
         return player
 
     def show_stats(self) -> discord.Embed:
-        embed = discord.Embed(title=None,
-                              description=f"• {self.players[self.turn-1].user.name}'s turn")
+        turn_msg = ""
+        if self.turn >= len(self.players):
+            turn_msg = "Everyone is dead!"
+        else:
+            turn_msg = f"• {self.players[self.turn-1].user.name}'s turn"
+        embed = discord.Embed(title=None, description=turn_msg)
         
         for player in self.players:
             embed.add_field(
@@ -150,6 +154,8 @@ class BattleData2:
         else:
             while self.turn >= len(self.players) or self.players[self.turn].dead or self.players[self.turn].flee:
                 if self.turn >= len(self.players):
+                    if self.game_end:
+                        break
                     alive_teams = [0,0,0,0,0,0]
                     for player in self.players:
                         if player.dead or player.flee:

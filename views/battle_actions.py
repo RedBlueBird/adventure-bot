@@ -46,7 +46,7 @@ class BattleActions(discord.ui.View):
 
             embed = discord.Embed(title="Battle Ended!")
             if sum(alive_teams) == 1:
-                embed.add_field(name=f"Team {team_colors[self.battledata.team_orders[team_number-1]-1]} Won!",
+                embed.add_field(name=f"Team {team_colors[self.battledata.team_orders.index(team_number)]} Won!",
                                 value=" ".join(alive_names[:]))
             else:
                 embed.add_field(name="Lands in a Draw!",
@@ -65,5 +65,11 @@ class BattleActions(discord.ui.View):
 
     @discord.ui.button(label="Flee", style=discord.ButtonStyle.danger, row=2)
     async def flee_button(self, i: discord.Interaction, button: discord.ui.Button):
-        dm.set_user_battle_command(i.user.id, "flee")
-        await i.response.send_message(content=f"{i.user.mention} Please press `Finish` to confirm fleeing away from the battle.", ephemeral=True)
+        flee_message = ""
+        player = self.battledata.player_selector(i.user.id)
+        if player.id != self.battledata.turn:
+            flee_message = f"{player.user.mention} It is currently {self.battledata.players[self.battledata.turn-1].user.name}'s turn right now!"
+        else:
+            dm.set_user_battle_command(i.user.id, "flee")
+            flee_message = f"{i.user.mention} Please press `Finish` to confirm fleeing away from the battle."
+        await i.response.send_message(content=flee_message, ephemeral=True)

@@ -116,9 +116,9 @@ class Pvp2(commands.Cog):
 
         await stats_msg.edit(embed=dd.show_stats(), view=battle_buttons)
 
-        for user in players:
-            if user.id in dm.queues:
-                del dm.queues[user.id]
+        for player in players:
+            if int(player.user.id) in dm.queues:
+                del dm.queues[int(player.user.id)]
 
     @commands.hybrid_command(
         aliases=["m"],
