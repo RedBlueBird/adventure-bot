@@ -1,6 +1,5 @@
 import json
 import math
-import os
 import logging
 
 import discord
@@ -20,7 +19,7 @@ logging.basicConfig(
 
 
 class Admin(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     async def cog_before_invoke(self, ctx: Context):
@@ -112,7 +111,7 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def test(self, ctx: Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.send(f"{ctx.author} {u.ICON['load']}")
+        loading = await ctx.reply(u.ICON["load"])
 
         def print_all(table: str) -> None:
             dm.cur.execute(f"SELECT * FROM {table}")
@@ -120,21 +119,18 @@ class Admin(commands.Cog):
             for r in result:
                 print(r)
 
-        print_all("cardsinfo")
-        print_all("playersinfo")
-        print_all("playersachievements")
+        print_all("temp")
+        print_all("temp_cards")
         print(u.ADMINS)
         print(dm.queues)
+
         guilds = list(self.bot.guilds)
+        print(f"Connected on {len(guilds)} guilds:")
+        for g in guilds:
+            print(f"\t{g.name}")
 
-        print("Connected on " + str(len(self.bot.guilds)) + " guilds:")
-        for x in range(len(guilds)):
-            print('  ' + guilds[x - 1].name)
-        folders = os.listdir("..")
-
-        print(folders)
         await loading.edit(content="Database printed!")
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     await bot.add_cog(Admin(bot))
