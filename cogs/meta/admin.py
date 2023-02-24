@@ -1,7 +1,7 @@
 import json
 import math
-import datetime as dt
 import os
+import logging
 
 import discord
 from discord.ext import commands
@@ -11,13 +11,20 @@ from helpers import checks
 import util as u
 from helpers import db_manager as dm
 
+logging.basicConfig(
+    filename="resources/text/bot_log.txt",
+    filemode="a",
+    format="%(asctime)s - %(message)s",
+    level=logging.INFO
+)
+
 
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.hybrid_group(description="Redeem something! (Admin only)")
-    @checks.is_owner()
+    @checks.is_admin()
     @checks.is_registered()
     async def redeem(self, ctx: Context):
         if ctx.invoked_subcommand is None:
@@ -27,13 +34,10 @@ class Admin(commands.Cog):
             await ctx.reply(embed=embed)
 
     @redeem.command()
-    @checks.is_owner()
+    @checks.is_admin()
     @checks.is_registered()
     async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
-        with open("resources/text/bot_log.txt", "a") as log:
-            log.write(f">>>{ctx.message.content}\n")
-            log.write(f"{ctx.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-
+        logging.info(f"{ctx.author}: {ctx.message.content}")
         card = card.replace("_", " ").title()
 
         dm.add_user_cards([(recipient.id, card, math.floor(int(level)))])
@@ -43,13 +47,10 @@ class Admin(commands.Cog):
         )
 
     @redeem.command()
-    @checks.is_owner()
+    @checks.is_admin()
     @checks.is_registered()
     async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
-        with open("resources/text/bot_log.txt", "a") as log:
-            log.write(f">>>{ctx.message.content}\n")
-            log.write(f"{ctx.author} on {dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-
+        logging.info(f"{ctx.author}: {ctx.message.content}")
         item = u.items_dict(item.replace("_", " "))["name"].lower()
         inv = dm.get_user_inventory(recipient.id)
 
@@ -79,8 +80,10 @@ class Admin(commands.Cog):
         description="Resets the PVP season and gives each player their medals."
     )
     @commands.is_owner()
-    async def end_season(self, ctx: commands.Context):
+    async def end_season(self, ctx: Context):
         """Resets the PVP season and gives each player their medals."""
+        logging.info(f"{ctx.author}: {ctx.message.content}")
+
         for d in dm.get_all_userid():
             medals = dm.get_user_medal(d)
 
@@ -108,7 +111,7 @@ class Admin(commands.Cog):
 
     @commands.hybrid_command(description="Prints some debugging info for the devs.")
     @commands.is_owner()
-    async def test(self, ctx: commands.Context):
+    async def test(self, ctx: Context):
         """Prints some debugging info for the devs."""
         loading = await ctx.send(f"{ctx.author} {u.ICON['load']}")
 

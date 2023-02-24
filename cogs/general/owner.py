@@ -15,7 +15,7 @@ class Owner(commands.Cog):
         description="Synchronizes the slash commands.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
-    @checks.is_owner()
+    @checks.is_admin()
     async def sync(self, ctx: Context, scope: str) -> None:
         """Synchronizes the slash commands."""
 
@@ -47,7 +47,7 @@ class Owner(commands.Cog):
         description="Unsynchronizes the slash commands.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
-    @checks.is_owner()
+    @checks.is_admin()
     async def unsync(self, ctx: Context, scope: str) -> None:
         """Unsyncs the slash commands."""
 
@@ -80,7 +80,7 @@ class Owner(commands.Cog):
         description="Load a cog",
     )
     @app_commands.describe(cog="The name of the cog to load")
-    @checks.is_owner()
+    @checks.is_admin()
     async def load(self, ctx: Context, cog: str) -> None:
         """
         The bot will load the given cog.
@@ -108,7 +108,7 @@ class Owner(commands.Cog):
         description="Unloads a cog.",
     )
     @app_commands.describe(cog="The name of the cog to unload")
-    @checks.is_owner()
+    @checks.is_admin()
     async def unload(self, ctx: Context, cog: str) -> None:
         """The bot will unload the given cog."""
         try:
@@ -133,7 +133,7 @@ class Owner(commands.Cog):
         description="Reloads a cog.",
     )
     @app_commands.describe(cog="The name of the cog to reload")
-    @checks.is_owner()
+    @checks.is_admin()
     async def reload(self, ctx: Context, cog: str) -> None:
         """The bot will reload the given cog."""
         try:
@@ -158,7 +158,7 @@ class Owner(commands.Cog):
         name="shutdown",
         description="Make the bot shutdown.",
     )
-    @checks.is_owner()
+    @checks.is_admin()
     async def shutdown(self, ctx: Context) -> None:
         """Shuts down the bot."""
         embed = discord.Embed(

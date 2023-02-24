@@ -2847,3 +2847,37 @@ Blue Bird#0089 on 2023-02-20 22:59:52
 Blue Bird#0089 on 2023-02-20 22:59:54
 >>>
 Blue Bird#0089 on 2023-02-20 22:59:57
+2023-02-23 19:58:42,258 - Shard ID None has connected to Gateway (Session ID: 8c4d25979bf7ff7ec84ad224f52d16ac).
+>>>
+SansPapyrus683#4140 on 2023-02-23 19:59:17
+>>>a.redeem item torch 1 <@441672776345190421>
+SansPapyrus683#4140 on 2023-02-23 19:59:58
+>>>a.redeem item torch 1 <@441672776345190421>
+SansPapyrus683#4140 on 2023-02-23 20:00:20
+2023-02-23 20:02:25,215 - Shard ID None has connected to Gateway (Session ID: 4928c4776cbc572f893648d7fb61fee8).
+2023-02-23 20:03:43,459 - Shard ID None has connected to Gateway (Session ID: 784dd3142eb2946ce4c8e67bd92ab377).
+2023-02-23 20:03:55,452 - SansPapyrus683#4140: a.redeem item torch 1 <@441672776345190421>
+2023-02-23 20:04:45,852 - Shard ID None has connected to Gateway (Session ID: d0863fc72827401a2f39c7f1482d44b3).
+2023-02-23 20:04:56,028 - SansPapyrus683#4140: a.redeem item torch 1 <@441672776345190421>
+2023-02-23 20:05:08,540 - SansPapyrus683#4140: a.redeem card heal 15 <@441672776345190421>
+2023-02-23 20:08:37,582 - Ignoring exception in on_command_error
+Traceback (most recent call last):
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\client.py", line 409, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\main.py", line 120, in on_command_error
+    raise error
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\bot.py", line 1349, in invoke
+    await ctx.command.invoke(ctx)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 1642, in invoke
+    await ctx.invoked_subcommand.invoke(ctx)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 1015, in invoke
+    await self.prepare(ctx)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 932, in prepare
+    await self._parse_arguments(ctx)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\hybrid.py", line 531, in _parse_arguments
+    return await super()._parse_arguments(ctx)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 839, in _parse_arguments
+    transformed = await self.transform(ctx, param, attachments)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 691, in transform
+    raise MissingRequiredArgument(param)
+discord.ext.commands.errors.MissingRequiredArgument: card is a required argument that is missing.
