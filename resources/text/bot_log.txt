@@ -1,0 +1,2 @@
+2023-02-23 20:20:41,045 - Shard ID None has connected to Gateway (Session ID: 09a5e7b46c23f9339582bced40d1a418).
+2023-02-23 20:20:50,941 - SansPapyrus683#4140: a.redeem card punch 15 <@441672776345190421>

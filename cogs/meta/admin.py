@@ -23,6 +23,9 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def cog_before_invoke(self, ctx: Context):
+        logging.info(f"{ctx.author}: {ctx.message.content}")
+
     @commands.hybrid_group(description="Redeem something! (Admin only)")
     @checks.is_admin()
     @checks.is_registered()
@@ -37,7 +40,6 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
-        logging.info(f"{ctx.author}: {ctx.message.content}")
         card = card.replace("_", " ").title()
 
         dm.add_user_cards([(recipient.id, card, math.floor(int(level)))])
@@ -50,7 +52,6 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
-        logging.info(f"{ctx.author}: {ctx.message.content}")
         item = u.items_dict(item.replace("_", " "))["name"].lower()
         inv = dm.get_user_inventory(recipient.id)
 
@@ -82,8 +83,6 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def end_season(self, ctx: Context):
         """Resets the PVP season and gives each player their medals."""
-        logging.info(f"{ctx.author}: {ctx.message.content}")
-
         for d in dm.get_all_userid():
             medals = dm.get_user_medal(d)
 
@@ -135,7 +134,7 @@ class Admin(commands.Cog):
 
         print(folders)
         await loading.edit(content="Database printed!")
-                         
+
 
 async def setup(bot):
     await bot.add_cog(Admin(bot))
