@@ -43,3 +43,6 @@ discord.ext.commands.errors.CommandInvokeError: Command raised an exception: Not
 2023-02-24 08:57:36,892 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
 2023-02-24 12:54:22,814 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
 2023-02-24 15:06:47,944 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 17:30:18,059 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 17:55:05,505 - Shard ID None has connected to Gateway (Session ID: 895851d9da4fe00406ceac435081239c).
+2023-02-24 17:56:08,952 - Shard ID None has connected to Gateway (Session ID: 753f2a162e752d52d126730d886dca34).

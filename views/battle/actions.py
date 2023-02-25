@@ -5,7 +5,7 @@ from helpers import db_manager as dm
 from helpers import Player, BattleData2
 
 
-class BattleActions(discord.ui.View):
+class Actions(discord.ui.View):
     def __init__(self, battledata: BattleData2, stats_msg: discord.message):
         super().__init__()
         self.battledata = battledata

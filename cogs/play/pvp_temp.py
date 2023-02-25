@@ -4,8 +4,7 @@ from discord.ext import commands
 import util as u
 from helpers import checks, BattleData2, Player, Card
 from helpers import db_manager as dm
-from views import PvpInvite
-from views.battle import BattleSelect, BattleActions
+from views.battle import PvpInvite, Select, Actions
 
 
 class Pvp2(commands.Cog):
@@ -29,7 +28,7 @@ class Pvp2(commands.Cog):
             return
 
         # region UI
-        view = BattleSelect(a)
+        view = Select(a)
         msg = await ctx.reply(view=view)
         while True:
             await view.wait()
@@ -52,7 +51,7 @@ class Pvp2(commands.Cog):
             else:
                 break
             
-            view = BattleSelect(a)
+            view = Select(a)
             await msg.edit(view=view)
 
         people = [ctx.author] + people
@@ -105,7 +104,7 @@ class Pvp2(commands.Cog):
             players=players
         )
         stats_msg = await ctx.send(embed=dd.set_up())
-        battle_buttons = BattleActions(
+        battle_buttons = Actions(
             battledata=dd,
             stats_msg=stats_msg
         )

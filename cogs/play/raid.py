@@ -8,7 +8,7 @@ from discord.ext import commands
 
 from helpers import db_manager as dm
 from helpers import checks, BattleData
-from views import BattleSelect, RaidInvite
+from views.battle import RaidInvite, Select
 import util as u
 
 
@@ -30,7 +30,7 @@ class Raid(commands.Cog):
         a = ctx.author
 
         members = 2
-        view = BattleSelect(a, members - 1, members - 1)
+        view = Select(a, members - 1, members - 1)
         msg = await ctx.reply(view=view)
         while True:
             await view.wait()
@@ -53,7 +53,7 @@ class Raid(commands.Cog):
             else:
                 break
 
-            view = BattleSelect(a)
+            view = Select(a)
             await msg.edit(view=view)
 
         people = [ctx.author] + people
