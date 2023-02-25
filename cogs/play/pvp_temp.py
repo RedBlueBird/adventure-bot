@@ -81,7 +81,7 @@ class Pvp2(commands.Cog):
                 player = Player(level=dm.get_user_level(p.id),
                                 user=p,
                                 team=t_id,
-                                id=counter,
+                                id_=counter,
                                 deck=player_deck)
                 players.append(player)
                 counter += 1
