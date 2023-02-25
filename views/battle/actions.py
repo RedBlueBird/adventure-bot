@@ -46,11 +46,15 @@ class Actions(discord.ui.View):
 
             embed = discord.Embed(title="Battle Ended!")
             if sum(alive_teams) == 1:
-                embed.add_field(name=f"Team {team_colors[self.battledata.team_orders.index(team_number)]} Won!",
-                                value=" ".join(alive_names[:]))
+                embed.add_field(
+                    name=f"Team {team_colors[self.battledata.team_orders.index(team_number)]} Won!",
+                    value=" ".join(alive_names)
+                )
             else:
-                embed.add_field(name="Lands in a Draw!",
-                                value="No one has won the match")
+                embed.add_field(
+                    name="Draw!",
+                    value="No one won the match"
+                )
 
             await self.stats_msg.edit(embed=self.battledata.show_stats(), view=None)
             await i.response.send_message(embed=embed)
@@ -68,8 +72,9 @@ class Actions(discord.ui.View):
         flee_message = ""
         player = self.battledata.player_selector(i.user.id)
         if player.id != self.battledata.turn:
-            flee_message = f"{player.user.mention} It is currently {self.battledata.players[self.battledata.turn - 1].user.name}'s turn right now!"
+            name = self.battledata.players[self.battledata.turn - 1].user.name
+            flee_message = f"{player.user.mention} It's {name}'s turn!"
         else:
             dm.set_user_battle_command(i.user.id, "flee")
-            flee_message = f"{i.user.mention} Please press `Finish` to confirm fleeing away from the battle."
+            flee_message = f"{i.user.mention} Press `Finish` to confirm fleeing."
         await i.response.send_message(content=flee_message, ephemeral=True)
