@@ -10,9 +10,11 @@ DECK_LVL_REQ = {1: 0, 2: 0, 3: 6, 4: 15, 5: 21, 6: 29}
 MAX_CARDS = 500
 BP_CAP = 100
 
-# JSON automatically converts int keys to string so this is to reverse that
+
 def keys_to_int(x):
+    """JSON automatically converts int keys to string so this is to reverse that"""
     return {int(k) if k.isdigit() else k: v for k, v in x}
+
 
 # Loads in all the necessary JSON files
 with open(os.path.join(dirname, "icons.json")) as json_file:
