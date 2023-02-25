@@ -2,8 +2,8 @@ import discord
 from discord.ui import UserSelect
 
 from helpers import db_manager as dm
-import util as u
 from helpers import Player, BattleData2
+
 
 class BattleActions(discord.ui.View):
     def __init__(self, battledata: BattleData2, stats_msg: discord.message):
@@ -13,13 +13,13 @@ class BattleActions(discord.ui.View):
 
     @discord.ui.button(label="Deck", style=discord.ButtonStyle.blurple, row=1)
     async def deck_button(
-        self, i: discord.Interaction, button: discord.ui.Button
+            self, i: discord.Interaction, button: discord.ui.Button
     ):
         await i.response.send_message(embed=self.battledata.show_deck(i.user.id), ephemeral=True)
 
     @discord.ui.button(label="Backpack", style=discord.ButtonStyle.blurple, row=1)
     async def backpack_button(
-        self, i: discord.Interaction, button: discord.ui.Button
+            self, i: discord.Interaction, button: discord.ui.Button
     ):
         embed = discord.Embed(
             title="Test - Backpack",
@@ -30,18 +30,18 @@ class BattleActions(discord.ui.View):
     @discord.ui.button(label="Finish", style=discord.ButtonStyle.secondary, row=2)
     async def finish_button(self, i: discord.Interaction, button: discord.ui.Button):
         result = self.battledata.show_finish(i.user.id)
-        if result != None:
+        if result is not None:
             await i.response.send_message(content=result, ephemeral=True)
         elif self.battledata.game_end:
             team_colors = ["Red", "Purple", "White", "Blue", "Orange", "Green"]
-            alive_teams = [0,0,0,0,0,0]
+            alive_teams = [0, 0, 0, 0, 0, 0]
             alive_names = ["Members:"]
             team_number = 0
             for player in self.battledata.players:
                 if player.dead or player.flee:
                     continue
                 alive_names.append(player.user.name)
-                alive_teams[player.team-1] = 1
+                alive_teams[player.team - 1] = 1
                 team_number = player.team
 
             embed = discord.Embed(title="Battle Ended!")
@@ -68,7 +68,7 @@ class BattleActions(discord.ui.View):
         flee_message = ""
         player = self.battledata.player_selector(i.user.id)
         if player.id != self.battledata.turn:
-            flee_message = f"{player.user.mention} It is currently {self.battledata.players[self.battledata.turn-1].user.name}'s turn right now!"
+            flee_message = f"{player.user.mention} It is currently {self.battledata.players[self.battledata.turn - 1].user.name}'s turn right now!"
         else:
             dm.set_user_battle_command(i.user.id, "flee")
             flee_message = f"{i.user.mention} Please press `Finish` to confirm fleeing away from the battle."

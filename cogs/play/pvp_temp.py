@@ -1,14 +1,11 @@
-import random
-import math
-import asyncio
-
 import discord
 from discord.ext import commands
 
 import util as u
 from helpers import checks, BattleData2, Player, Card
 from helpers import db_manager as dm
-from views import BattleSelect, PvpInvite, BattleActions
+from views import PvpInvite
+from views.battle import BattleSelect, BattleActions
 
 
 class Pvp2(commands.Cog):
