@@ -5,3 +5,41 @@
 2023-02-23 21:59:47,775 - Shard ID None has connected to Gateway (Session ID: 5f78fcc1077aa33281304b82f41d9874).
 2023-02-23 21:59:52,079 - SansPapyrus683#4140: a.test
 2023-02-23 22:01:23,471 - SansPapyrus683#4140: 
+2023-02-23 22:17:24,739 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-23 23:38:02,495 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-23 23:46:45,930 - Ignoring exception in on_command_error
+Traceback (most recent call last):
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 229, in wrapped
+    ret = await coro(*args, **kwargs)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\cogs\play\pvp_temp.py", line 133, in move
+    await ctx.message.delete()
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\message.py", line 805, in delete
+    await self._state.http.delete_message(self.channel.id, self.id)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\http.py", line 740, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10008): Unknown Message
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\client.py", line 409, in _run_event
+    await coro(*args, **kwargs)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\main.py", line 120, in on_command_error
+    raise error
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\bot.py", line 1349, in invoke
+    await ctx.command.invoke(ctx)
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 1023, in invoke
+    await injected(*ctx.args, **ctx.kwargs)  # type: ignore
+  File "C:\Users\kevin\GitHub\discord-adventurers-bot\venv\lib\site-packages\discord\ext\commands\core.py", line 238, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: NotFound: 404 Not Found (error code: 10008): Unknown Message
+2023-02-24 01:49:48,098 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 03:47:24,157 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 04:40:11,782 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 04:52:11,162 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 05:12:27,989 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 05:38:57,973 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 08:10:43,203 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 08:57:36,892 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 12:54:22,814 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.
+2023-02-24 15:06:47,944 - Shard ID None has successfully RESUMED session 5f78fcc1077aa33281304b82f41d9874.

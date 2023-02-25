@@ -342,7 +342,6 @@ class Actions(commands.Cog):
                     dm.set_card_owner(target.id, card)
                 for card in target_cards:
                     dm.set_card_owner(ctx.author.id, card)
-                dm.db.commit()
                 trade_end = True
                 del dm.queues[target.id]
                 await ctx.send(f"Trade between {ctx.author.mention} and {target.mention} is now finished!")

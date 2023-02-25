@@ -91,7 +91,8 @@ class Admin(commands.Cog):
                 earned_coins *= 2
                 earned_gems *= 2
 
-            new_medals = (medals - 500) // 2 + 500 if medals > 500 else medals
+            cap = 500  # "tax" medals above this limit at 50%
+            new_medals = (medals - cap) // 2 + cap if medals > cap else medals
 
             msg = f"The season ended!" \
                   f"You now have {new_medals} {u.ICON['medal']} (from {medals}) "\
