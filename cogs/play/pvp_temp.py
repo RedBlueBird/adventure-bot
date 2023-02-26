@@ -130,7 +130,10 @@ class Pvp2(commands.Cog):
             moves: commands.Greedy[int]
     ):
         dm.set_user_battle_command(ctx.author.id, " ".join([str(i) for i in moves]))
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except:
+            pass
 
 async def setup(bot):
     await bot.add_cog(Pvp2(bot))
