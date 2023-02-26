@@ -5,6 +5,7 @@ import discord.ui as ui
 
 from helpers import db_manager as dm
 import util as u
+from .adventure_template import AdventureTemplate
 
 
 class DecisionSelect(ui.Select["Decision"]):
@@ -22,15 +23,14 @@ class DecisionSelect(ui.Select["Decision"]):
         self.view.stop()
 
 
-class Decision(ui.View):
+class Decision(AdventureTemplate):
     def __init__(
             self,
             user: discord.Member,
             choices: t.Iterable[str],
             loc_file: discord.File | None = None
     ):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
 
         self.decision = None
         self.add_item(DecisionSelect(choices))
@@ -62,14 +62,4 @@ class Decision(ui.View):
     @ui.button(label="Exit", row=1, style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):
         self.decision = "exit"
-        await i.response.defer()
-        self.stop()
-
-    async def interaction_check(self, i: discord.Interaction) -> bool:
-        if i.user != self.user:
-            await i.response.send_message(
-                "You aren't the explorer here!",
-                ephemeral=True
-            )
-            return False
-        return True
+        await super().exit(i, button)

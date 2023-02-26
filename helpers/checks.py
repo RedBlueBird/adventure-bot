@@ -9,7 +9,7 @@ import util as u
 T = t.TypeVar("T")
 
 
-def is_owner() -> t.Callable[[T], T]:
+def is_admin() -> t.Callable[[T], T]:
     """Checks if the calling user is an owner of the bot"""
 
     async def predicate(context: commands.Context) -> bool:

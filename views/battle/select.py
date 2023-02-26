@@ -4,7 +4,7 @@ from discord.ui import UserSelect
 from helpers import db_manager as dm
 
 
-class BattleSelectMenu(UserSelect["BattleSelect"]):
+class SelectMenu(UserSelect["Select"]):
     def __init__(self, min_players: int, max_players: int):
         # min_players doesn't include the host
         super().__init__(
@@ -42,7 +42,7 @@ class BattleSelectMenu(UserSelect["BattleSelect"]):
         self.view.stop()
 
 
-class BattleSelect(discord.ui.View):
+class Select(discord.ui.View):
     def __init__(
             self,
             host: discord.Member,
@@ -51,7 +51,7 @@ class BattleSelect(discord.ui.View):
     ):
         super().__init__()
         self.host = host
-        self.add_item(BattleSelectMenu(min_players, max_players))
+        self.add_item(SelectMenu(min_players, max_players))
         self.selected = None
 
     async def interaction_check(self, i: discord.Interaction) -> bool:

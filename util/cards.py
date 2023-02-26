@@ -16,9 +16,8 @@ def fill_args(card, level):
         "on_hand_lich_revenge", "on_hand_eff_app", "on_hand_inverse_damage"
     ]
     param = [
-        "block", "absorb", "heal", "tramp", "damage", "self_damage",
-        "crush", "revenge", "lich_revenge", "eff_app",
-        "inverse_damage"
+        "block", "absorb", "heal", "tramp", "damage", "self_damage", "crush",
+        "revenge", "lich_revenge", "eff_app", "inverse_damage"
     ]
 
     args = {"level": level}
@@ -45,45 +44,33 @@ def add_a_card(player_lvl):
     return f"{energy_cost}.{random_card(energy_cost, 'normal')}"
 
 
-def random_card(energy: int, edition: str) -> str:
+def random_card(energy: int, type: str) -> str:
     """
     Returns a random card for the enemy AI.
     :param energy: The amount of energy the enemy has, as to not overspend.
-    :param edition: The type of card which to choose.
+    :param type: The type of card which to choose.
     :return: The name of the card which the enemy is to play.
     """
+
+    if type == "monster":
+        cards = CARD_LIST["monster"]
+        return random.choice(cards[1])
+    
+    if type in ["fire", "evil", "electric", "defensive"]:
+        cards = CARD_LIST[type]
+        for cost in cards:
+            if cost > energy:
+                continue
+            if random.randint(1, 2) == 1:
+                return random.choice(cards[cost])
+    
     cards = CARD_LIST["cards"]
-    fire = CARD_LIST["fire"]
-    evil = CARD_LIST["evil"]
-    electric = CARD_LIST["electric"]
-    defensive = CARD_LIST["defensive"]
-    monster = CARD_LIST["monster"]
-
-    finished = False
-    if edition == "fire":
-        for x in fire:
-            if not finished and random.randint(1, 2) == 1 and energy >= int(x):
-                return random.choice(fire[x])
-    elif edition == "evil":
-        for x in evil:
-            if not finished and random.randint(1, 2) == 1 and energy >= int(x):
-                return random.choice(evil[x])
-    elif edition == "electric":
-        for x in electric:
-            if not finished and random.randint(1, 2) == 1 and energy >= int(x):
-                return random.choice(electric[x])
-    elif edition == "defensive":
-        for x in defensive:
-            if not finished and random.randint(1, 2) == 1 and energy >= int(x):
-                return random.choice(defensive[x])
-    elif edition == "monster":
-        return random.choice(monster["1"])
-
-    for x in cards:
-        if not finished and random.randint(1, 4) == 1 and energy >= int(x):
-            return random.choice(cards[x])
-    if not finished:
-        return random.choice(cards["1"])
+    for cost in cards:
+        if cost > energy:
+            continue
+        if random.randint(1, 4) == 1:
+            return random.choice(cards[cost])
+    return random.choice(cards[1])
 
 
 def order_by_cost(cards, direction: int):

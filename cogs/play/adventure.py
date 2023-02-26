@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 
 from helpers import checks, BattleData
-from helpers.checks import valid_reaction, valid_reply
+from helpers.checks import valid_reply
 from helpers import db_manager as dm
 import util as u
 from views.adventure import *
@@ -420,7 +420,6 @@ class Adventure(commands.Cog):
                     elif perk_list[choice - 1] == "chunk of gold":
                         dm.log_quest(5, 250, a.id)
                         dm.set_user_coin(a.id, dm.get_user_coin(a.id) + 250)
-                        dm.db.commit()
                     elif perk_list[choice - 1] == "book of knowledge":
                         dm.set_user_exp(a.id, dm.get_user_exp(a.id) + 150)
                     elif perk_list[choice - 1] == "hidden gem":

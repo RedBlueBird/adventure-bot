@@ -1,35 +1,4 @@
 {
-    "experimental": {
-        "spawn rate": {
-            "0": {
-                "monster": 10000,
-                "trader": 0,
-                "spirit": 0,
-                "item": 0,
-                "event": 0,
-                "thief": 0
-            }
-        },
-        "monster": [
-            {
-                "description": "You are invited to fight a dangerous experimental monster! Be warned!",
-                "spawn rate": 5000,
-                "encounters": {
-                    "Lich Lord": [
-                        1,
-                        1,
-                        0
-                    ]
-                },
-                "choices": {
-                    "Fight the Monster": [
-                        "encounters",
-                        "duel"
-                    ]
-                }
-            }
-        ]
-    },
     "boss raid": {
         "main": {
             "start": [

@@ -8,7 +8,7 @@ from discord.ext import commands
 import util as u
 from helpers import checks, BattleData
 from helpers import db_manager as dm
-from views import BattleSelect, PvpInvite
+from views.battle import PvpInvite, Select
 
 
 class Pvp(commands.Cog):
@@ -32,7 +32,7 @@ class Pvp(commands.Cog):
             await ctx.reply("You can't bet that amount of medals!")
             return
 
-        view = BattleSelect(a)
+        view = Select(a)
         msg = await ctx.reply(view=view)
         while True:
             await view.wait()
@@ -55,7 +55,7 @@ class Pvp(commands.Cog):
             else:
                 break
             
-            view = BattleSelect(a)
+            view = Select(a)
             await msg.edit(view=view)
 
         people = [ctx.author] + people
