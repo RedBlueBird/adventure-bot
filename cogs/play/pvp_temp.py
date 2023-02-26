@@ -1,3 +1,4 @@
+import random
 import discord
 from discord.ext import commands
 
@@ -78,11 +79,14 @@ class Pvp2(commands.Cog):
                 if p not in view.user_team:
                     continue
                 player_deck = [Card(name=i[1],level=i[2]) for i in dm.get_user_deck(p.id, dm.get_user_deck_slot(p.id))]
+                random.shuffle(player_deck)
                 player = Player(level=dm.get_user_level(p.id),
                                 user=p,
                                 team=t_id,
                                 id_=counter,
                                 deck=player_deck)
+                for card in player.deck:
+                    card.owner = player
                 players.append(player)
                 counter += 1
                 dm.queues[p.id] = "in a pvp battle"

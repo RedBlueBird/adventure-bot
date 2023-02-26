@@ -1,2 +1,3 @@
 from .battle import BattleData
-from .battle_temp import BattleData2, Player, Card
+from .battle_temp import BattleData2, Player
+from .card import Card

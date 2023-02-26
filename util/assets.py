@@ -41,20 +41,11 @@ def cards_dict_temp(card_level, card_name):
         }
 
     card = copy.deepcopy(CARDS_TEMP[card_name.lower()])
-    for i in card:
-        if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
-            card[i] = round(card[i] * card_level)
-        elif i == "eff_app":
-            card[i][0] = round(card[i][0] * card_level)
-        elif i == "inverse_damage":
-            card[i] = round(card[i] * card_level)
-        elif i == "on_hand":
-            for k in card[i]:
-                if k in ["block", "absorb", "heal", "tramp", "damage",
-                         "self_damage", "crush", "revenge", "lich_revenge"]:
-                    card[i][k] = round(card[i][k] * card_level)
-                elif k == "eff_app":
-                    card[i][k][0] = round(card[i][k][0] * card_level)
+    attributes = ["dmg", "cdmg"]
+    for attribute in attributes:
+        if attribute in card:
+            card[attribute] = card[attribute] * card_level
+    return card
 
 
 def items_dict(item_name, max_stat=100 * SCALE[0]):
