@@ -1,8 +1,7 @@
 import discord
-from discord.ui import UserSelect
 
+from helpers import BattleData2
 from helpers import db_manager as dm
-from helpers import Player, BattleData2
 
 
 class Actions(discord.ui.View):
@@ -11,7 +10,7 @@ class Actions(discord.ui.View):
         self.battledata = battledata
         self.stats_msg = stats_msg
 
-    @discord.ui.button(label="Deck", style=discord.ButtonStyle.blurple, row=1)
+    @discord.ui.button(label="Deck", style=discord.ButtonStyle.blurple, row=0)
     async def deck_button(
             self, i: discord.Interaction, button: discord.ui.Button
     ):
@@ -27,7 +26,7 @@ class Actions(discord.ui.View):
         )
         await i.response.send_message(embed=embed, ephemeral=True)
 
-    @discord.ui.button(label="Finish", style=discord.ButtonStyle.secondary, row=2)
+    @discord.ui.button(label="Finish", style=discord.ButtonStyle.secondary, row=1)
     async def finish_button(self, i: discord.Interaction, button: discord.ui.Button):
         result = self.battledata.show_finish(i.user.id)
         if result is not None:
@@ -61,15 +60,14 @@ class Actions(discord.ui.View):
         else:
             await i.response.edit_message(embed=self.battledata.show_stats())
 
-    @discord.ui.button(label="Refresh", style=discord.ButtonStyle.success, row=2)
+    @discord.ui.button(label="Refresh", style=discord.ButtonStyle.success, row=1)
     async def refresh_button(self, i: discord.Interaction, button: discord.ui.Button):
         await self.stats_msg.edit(view=None)
         await i.response.send_message(embed=self.battledata.show_stats(), view=self)
         self.stats_msg = await i.original_response()
 
-    @discord.ui.button(label="Flee", style=discord.ButtonStyle.danger, row=2)
+    @discord.ui.button(label="Flee", style=discord.ButtonStyle.danger, row=1)
     async def flee_button(self, i: discord.Interaction, button: discord.ui.Button):
-        flee_message = ""
         player = self.battledata.player_selector(i.user.id)
         if player.id != self.battledata.turn:
             name = self.battledata.players[self.battledata.turn - 1].user.name

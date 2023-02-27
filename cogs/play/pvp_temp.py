@@ -51,7 +51,7 @@ class Pvp2(commands.Cog):
                     break
             else:
                 break
-            
+
             view = Select(a)
             await msg.edit(view=view)
 
@@ -78,13 +78,18 @@ class Pvp2(commands.Cog):
             for p in t:
                 if p not in view.user_team:
                     continue
-                player_deck = [Card(name=i[1],level=i[2]) for i in dm.get_user_deck(p.id, dm.get_user_deck_slot(p.id))]
+                player_deck = [
+                    Card(name=i[1], level=i[2])
+                    for i in dm.get_user_deck(p.id, dm.get_user_deck_slot(p.id))
+                ]
                 random.shuffle(player_deck)
-                player = Player(level=dm.get_user_level(p.id),
-                                user=p,
-                                team=t_id,
-                                id_=counter,
-                                deck=player_deck)
+                player = Player(
+                    level=dm.get_user_level(p.id),
+                    user=p,
+                    team=t_id,
+                    id_=counter,
+                    deck=player_deck
+                )
                 for card in player.deck:
                     card.owner = player
                 players.append(player)
@@ -103,7 +108,7 @@ class Pvp2(commands.Cog):
             color=discord.Color.gold()
         )
         await ctx.send(embed=embed)
-        
+
         dd = BattleData2(
             players=players
         )
@@ -122,7 +127,7 @@ class Pvp2(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["m"],
-        description="Making moves in battles"
+        description="Make a move."
     )
     @checks.is_registered()
     async def move(
@@ -134,6 +139,7 @@ class Pvp2(commands.Cog):
             await ctx.message.delete()
         except:
             pass
+
 
 async def setup(bot):
     await bot.add_cog(Pvp2(bot))

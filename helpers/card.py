@@ -1,13 +1,7 @@
-import random
-import math
-from functools import reduce
-
-import discord
-
 import util as u
-from util import cards_dict, cards_dict_temp, items_dict, rarity_cost
-from helpers import db_manager as dm
 from helpers.battle_temp import Player
+from util import cards_dict_temp, rarity_cost
+
 
 class Card:
     def __init__(self, level: int, name: str, owner: Player = None):
@@ -19,9 +13,17 @@ class Card:
     def get_energy_cost(self):
         return self.card["cost"]
 
-    def get_attribute_written(self, card_attribute: str, icon_attribute: str, target: Player, crit: bool = False):
+    def get_attribute_written(
+            self,
+            card_attribute: str, icon_attribute: str,
+            target: Player, crit: bool = False
+    ):
         if card_attribute in self.card:
-            self.owner.dialogue.append(f"• {self.card[card_attribute]} {u.ICON[icon_attribute]}{u.ICON['crit'] if crit else ''}» #{target.id} {target.icon}")
+            self.owner.dialogue.append(
+                f"• {self.card[card_attribute]} "
+                f"{u.ICON[icon_attribute]}{u.ICON['crit'] if crit else ''}"
+                f"» #{target.id} {target.icon}"
+            )
 
     def write(self, target: Player):
         self.owner.dialogue.append(f"» {self.display_name}")
@@ -46,4 +48,3 @@ class Card:
     def crit_use(self, target: Player):
         if "cdmg" in self.card:
             target.hp -= self.card["cdmg"]
-

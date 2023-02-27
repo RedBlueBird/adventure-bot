@@ -1,27 +1,26 @@
 import random
 import math
-from functools import reduce
 
 import discord
 
 import util as u
-from util import cards_dict, cards_dict_temp, items_dict, rarity_cost
 from helpers import db_manager as dm
+
 
 class Player:
     def __init__(
             self,
             level: int = 1, user: discord.Member = None,
             team: int = 0, id_: int = 0,
-            deck = None
+            deck=None
     ):
         self.team = team
         self.icon = None
         self.id = id_
         self.user = user
         self.level = level
-        self.hp = 100 #u.level_hp(level)
-        self.max_hp = 100 #u.level_hp(level)
+        self.hp = 100  # u.level_hp(level)
+        self.max_hp = 100  # u.level_hp(level)
         self.stamina = 30
         self.stored_energy = 2
         self.deck = deck
@@ -33,10 +32,9 @@ class Player:
         self.crit = 0
         self.inbox = []
 
+
 class BattleData2:
-    """
-    Contains the battling functions that are at the CORE of this bot.
-    """
+    """Contains the battling functions that are the CORE of this bot."""
 
     def __init__(self, players: list[Player]):
         """Sets up the initial battlefield."""
@@ -84,9 +82,9 @@ class BattleData2:
             player_dialogue = "\n".join(player.dialogue[:])
             embed.add_field(name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
                             value=f"**{u.ICON['hp']} {player.hp}/{player.max_hp}**\n"
-                                f"**{u.ICON['sta']} {player.stamina} "
-                                f"{u.ICON['engy']} {player.stored_energy}**\n"
-                                f"{player_dialogue}")
+                                  f"**{u.ICON['sta']} {player.stamina} "
+                                  f"{u.ICON['engy']} {player.stored_energy}**\n"
+                                  f"{player_dialogue}")
         embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 1), 12)} energy/round)")
 
         return embed
@@ -152,17 +150,17 @@ class BattleData2:
 
         if error_msg != "":
             return f"{p.user.mention} {error_msg}"
-        
+
         p.crit = 0
         for move in moves:
             if move == "flee":
                 break
-            target = self.players[int(move[1])-1]
-            selection = int(move[0])-1
+            target = self.players[int(move[1]) - 1]
+            selection = int(move[0]) - 1
             p.deck[selection].write(target=target)
             p.deck.append(p.deck.pop(selection))
             p.hand_size -= 1
-        p.hand_size = min(6, p.hand_size+1)
+        p.hand_size = min(6, p.hand_size + 1)
         for use_card in p.inbox:
             use_card(target=p)
         if p.hp <= 0:
