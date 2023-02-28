@@ -80,11 +80,13 @@ class BattleData2:
 
         for player in self.players:
             player_dialogue = "\n".join(player.dialogue[:])
-            embed.add_field(name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
-                            value=f"**{u.ICON['hp']} {player.hp}/{player.max_hp}**\n"
-                                  f"**{u.ICON['sta']} {player.stamina} "
-                                  f"{u.ICON['engy']} {player.stored_energy}**\n"
-                                  f"{player_dialogue}")
+            embed.add_field(
+                name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
+                value=f"**{u.ICON['hp']} {player.hp}/{player.max_hp}**\n"
+                      f"**{u.ICON['sta']} {player.stamina} "
+                      f"{u.ICON['engy']} {player.stored_energy}**\n"
+                      f"{player_dialogue}"
+            )
         embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 1), 12)} energy/round)")
 
         return embed
@@ -144,9 +146,9 @@ class BattleData2:
             energy_cost += p.deck[int(move[0])].get_energy_cost()
 
         if error_msg != "":
-            error_msg += f" E.g. `{u.PREF}move 12` to play the 1st card in your hand on player #2."
+            error_msg += f" e.g. `{u.PREF}move 12` to play the 1st card in your hand on player #2."
         elif energy_cost > p.stored_energy:
-            error_msg = f"Make sure to have enough energy to use the cards! The selected cards cost {energy_cost} energy."
+            error_msg = f"You don't have enough energy ({energy_cost} energy) to use those cards!"
 
         if error_msg != "":
             return f"{p.user.mention} {error_msg}"
