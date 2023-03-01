@@ -861,7 +861,7 @@
             "Bees Swarm",
             "Meditate"
         ],
-        "brief": "A specialist in various kinds of potions and medicines.",
+        "brief": "A specialist in various kinds of potions and medicine.",
         "offers": {
             "6000": "Health Potion",
             "6001": "Power Potion",
@@ -947,7 +947,7 @@
             "Heavy Shield",
             "Quick Shot"
         ],
-        "brief": "Skilled craftsmen who are experienced with working in the forges to craft new items.",
+        "brief": "Skilled craftsmen who are experienced with working in the forges to craft items.",
         "offers": {
             "6000": "Raft",
             "6001": "Wooden Sword",
@@ -1026,6 +1026,6 @@
             "Absorb",
             "Terminate"
         ],
-        "brief": "Training dummy enchanted with MAGIC! Mainly used to help new adventurers get comfortable fighting."
+        "brief": "An enchanted training dummy! Mainly used to help new adventurers get comfortable with fighting."
     }
 }
