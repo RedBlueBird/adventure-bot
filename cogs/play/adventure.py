@@ -165,7 +165,7 @@ class Adventure(commands.Cog):
             if choice is None:
                 await adventure_msg.edit(
                     content="You spaced out and the adventure was ended.",
-                    embed=None, view=None
+                    embed=None, view=None, attachments=[]
                 )
                 break
 

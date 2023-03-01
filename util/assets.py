@@ -135,10 +135,10 @@ def quest_str_rep(quest_type: str | int, amt: str | int):
     return {
         1: f"Kill {amt} opponents while adventuring",
         2: f"Accumulate items of weight over {amt} while adventuring",
-        3: f"Travel {amt} meters while adventuring",
+        3: f"Adventure {amt} meters",
         4: f"Win {amt} non-friendly PvP battles",
         5: f"Earn {amt} golden coins while adventuring",
         6: f"Earn {amt} medals in PvP battles",
         7: f"Merge {amt} pairs of cards",
-        8: f"Catch {amt} fish in the fishing mini-game"
+        8: f"Catch {amt} fish in the public boat"
     }[int(quest_type)]
