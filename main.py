@@ -90,9 +90,9 @@ class AdventurerBot(commands.Bot):
                             f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
                 color=0xE02B2B
             )
-        elif isinstance(error, exceptions.UserNotOwner):
-            # UserNotOwner happens with @checks.is_owner() (or you can manually raise it)
-            embed.description = "You're not an owner of the bot!"
+        elif isinstance(error, exceptions.UserNotAdmin):
+            # UserNotOwner happens with @checks.is_admin() (or you can manually raise it)
+            embed.description = "You're not an admin of the bot!"
         elif isinstance(error, exceptions.UserPreoccupied):
             embed.title = "Hold on!"
             embed.description = f"You're still {error.action}! " \

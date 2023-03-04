@@ -14,7 +14,7 @@ def is_admin() -> t.Callable[[T], T]:
 
     async def predicate(context: commands.Context) -> bool:
         if context.author.id not in u.ADMINS:
-            raise UserNotOwner
+            raise UserNotAdmin
         return True
 
     return commands.check(predicate)
