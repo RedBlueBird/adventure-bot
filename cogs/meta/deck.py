@@ -24,7 +24,6 @@ class Deck(commands.Cog):
     ):
         """Set the card display order."""
         order = None
-        card_property = card_property.lower()
         if card_property == "level":
             order = 1
         elif card_property == "name":
@@ -34,7 +33,7 @@ class Deck(commands.Cog):
         elif card_property == "energy":
             order = 7
         elif card_property == "rarity":
-            order = 8
+            order = 9
         assert order is not None
 
         if order_by == "descending":

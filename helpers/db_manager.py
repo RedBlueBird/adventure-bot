@@ -239,15 +239,15 @@ def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
     if order == 1:
         order_by = "card_level, card_name"
     elif order in [2, 7, 8, 9, 10]:
-        order_by = "card_level desc, card_name"
+        order_by = "card_level DESC, card_name"
     elif order == 3:
         order_by = "card_name"
     elif order == 4:
-        order_by = "card_name desc"
+        order_by = "card_name DESC"
     elif order == 5:
         order_by = "id, card_name"
     elif order == 6:
-        order_by = "id desc, card_name"
+        order_by = "id DESC, card_name"
 
     db_deck = f"deck{slot}"
     cur.execute(
@@ -257,16 +257,20 @@ def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
     result = cur.fetchall()
     if order in [7, 8]:
         result = u.order_by_rarity(result, 1)
-        result = u.order_by_cost(result, order - 7)
     if order in [9, 10]:
         result = u.order_by_cost(result, 1)
-        result = u.order_by_rarity(result, order - 9)
+
     return result
 
+
 def get_user_deck_ids(uid: int) -> list[int]:
-    cur.execute(f"SELECT id FROM cards WHERE owned_user = {uid} AND (deck1 = 1 or deck2 = 1 or deck3 = 1 or deck4 = 1 or deck5 = 1 or deck6 = 1)")
+    cur.execute(
+        f"SELECT id FROM cards WHERE owned_user = {uid} "
+        "AND (deck1 = 1 or deck2 = 1 or deck3 = 1 or deck4 = 1 or deck5 = 1 or deck6 = 1)"
+    )
     result = cur.fetchall()
     return [i[0] for i in result]
+
 
 def get_user_cards(
         uid: int,

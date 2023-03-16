@@ -36,20 +36,21 @@ def fill_args(card, level: int):
     return Template(card["description"]).safe_substitute(args)
 
 
-def add_card(player_lvl: int):
-    energy_cost = log_level_gen(
-        random.randint(2 ** (max(0, 5 - (player_lvl // 4))),
-                       2 ** (10 - math.floor(player_lvl / 10)))
-    )
-    return f"{energy_cost}.{random_card(energy_cost, 'normal')}"
+def deal_card(lvl: int):
+    """Generates a random card for the shop based on the player level."""
+    cost = log_level_gen(random.randint(
+        2 ** (max(0, 5 - (lvl // 4))),
+        2 ** (10 - math.floor(lvl / 10))
+    ))
+    return f"{cost}.{random_card(cost, 'normal')}"
 
 
 def random_card(energy: int, type_: str) -> str:
     """
-    Returns a random card for the enemy AI.
-    :param energy: The amount of energy the enemy has, as to not overspend.
-    :param type_: The type of card which to choose.
-    :return: The name of the card which the enemy is to play.
+    Returns a random card based on type_ and energy upper bound.
+    :param energy: The amount of energy the enemy has.
+    :param type_: The type of card to choose.
+    :return: The name of the card.
     """
 
     if type_ == "monster":
@@ -70,35 +71,26 @@ def random_card(energy: int, type_: str) -> str:
             continue
         if random.randint(1, 4) == 1:
             return random.choice(cards[cost])
+
     return random.choice(cards[1])
 
 
-def order_by_cost(cards, direction: int):
-    cards_by_cost = {}
-    for c in cards:
-        if cards_dict(c[4], c[3])["cost"] not in cards_by_cost:
-            cards_by_cost[cards_dict(c[4], c[3])["cost"]] = []
-        cards_by_cost[cards_dict(c[4], c[3])["cost"]].append(c)
-
-    cost_order = sorted(cards_by_cost.keys(), reverse=direction != 0)
-    cards = []
-    for c in cost_order:
-        cards += cards_by_cost[c]
-
-    return cards
+def order_by_cost(cards: list[tuple[int, str, int]], reverse: bool = False):
+    return sorted(
+        cards,
+        key=lambda c: cards_dict(c[2], c[1])["cost"],
+        reverse=reverse
+    )
 
 
-def order_by_rarity(cards, direction: int):
-    cards_by_rarity = {r: [] for r in ["EX", "L", "E", "R", "C", "M", "NA"]}
-    for x in cards:
-        cards_by_rarity[cards_dict(x[4], x[3])["rarity"]].append(x)
-    cards = []
-    rarity_order = list(cards_by_rarity.keys())
-    if direction == 0:
-        rarity_order.reverse()
-    for x in rarity_order:
-        cards += cards_by_rarity[x]
-    return cards
+def order_by_rarity(cards: list[tuple[int, str, int]], reverse: bool = False):
+    rarities = ["EX", "L", "E", "R", "C", "M", "NA"]
+    weights = {r: i for i, r in enumerate(rarities)}
+    return sorted(
+        cards,
+        key=lambda c: weights[cards_dict(c[2], c[1])["rarity"]],
+        reverse=reverse
+    )
 
 
 def rarity_cost(name: str):
@@ -112,5 +104,5 @@ def price_factor(name: str):
     }.get(cards_dict(1, name)["rarity"], 1)
 
 
-def compute_card_cost(name: str, lvl: int) -> int:
+def card_coin_cost(name: str, lvl: int) -> int:
     return int(1.6 ** lvl * 50 * price_factor(name))

@@ -3,59 +3,66 @@ import copy
 from .constants import *
 
 
-def cards_dict(card_level, card_name):
-    level = int(card_level)
-    card_level = SCALE[1] ** (level - 1) * SCALE[0]
+def cards_dict(lvl: str | int, name: str):
+    level = int(lvl)
+    lvl = SCALE[1] ** (level - 1) * SCALE[0]
     inverse_level = 1.01 ** (level * -1 + 1) * SCALE[0]
 
-    if card_name.lower() not in CARDS:
+    if name.lower() not in CARDS:
         return {
-            "name": "Glitched", "cost": 0, "rarity": "NA", "self_damage": 4500, "eff_acc": 100, "attacks": 10,
-            "acc": 100, "crit": 100, "mod": {}, "description": "None", "requirement": "None",
+            "name": "Glitched", "cost": 0, "rarity": "NA",
+            "self_damage": 4500, "eff_acc": 100, "attacks": 10,
+            "acc": 100, "crit": 100,
+            "mod": {}, "description": "None", "requirement": "None",
             "brief": "Created from this bot's glitches."
         }
 
-    card = copy.deepcopy(CARDS[card_name.lower()])
+    card = copy.deepcopy(CARDS[name.lower()])
     for i in card:
         if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
-            card[i] = round(card[i] * card_level)
+            card[i] = round(card[i] * lvl)
         elif i == "eff_app":
-            card[i][0] = round(card[i][0] * card_level)
+            card[i][0] = round(card[i][0] * lvl)
         elif i == "inverse_damage":
             card[i] = round(card[i] * inverse_level)
         elif i == "on_hand":
             for k in card[i]:
                 if k in ["block", "absorb", "heal", "tramp", "damage",
                          "self_damage", "crush", "revenge", "lich_revenge"]:
-                    card[i][k] = round(card[i][k] * card_level)
+                    card[i][k] = round(card[i][k] * lvl)
                 elif k == "eff_app":
-                    card[i][k][0] = round(card[i][k][0] * card_level)
+                    card[i][k][0] = round(card[i][k][0] * lvl)
     return card
 
 
-def cards_dict_temp(card_level, card_name):
-    if card_name.lower() not in CARDS_TEMP:
+def cards_dict_temp(lvl: int, name: str):
+    if name.lower() not in CARDS_TEMP:
         return {
-            "name": "Glitched", "cost": 0, "rarity": "NA", "self_damage": 4500, "eff_acc": 100, "attacks": 10,
-            "acc": 100, "crit": 100, "mod": {}, "description": "None", "requirement": "None",
+            "name": "Glitched", "cost": 0, "rarity": "NA",
+            "self_damage": 4500, "eff_acc": 100, "attacks": 10,
+            "acc": 100, "crit": 100,
+            "mod": {}, "description": "None", "requirement": "None",
             "brief": "Created from this bot's glitches."
         }
 
-    card = copy.deepcopy(CARDS_TEMP[card_name.lower()])
+    card = copy.deepcopy(CARDS_TEMP[name.lower()])
     attributes = ["dmg", "cdmg"]
     for attribute in attributes:
         if attribute in card:
-            card[attribute] = card[attribute] * card_level
+            card[attribute] = card[attribute] * lvl
     return card
 
 
-def items_dict(name, max_stat=100 * SCALE[0]):
+def items_dict(name: str, max_stat=100 * SCALE[0]):
     name = ITEM_ABB.get(name.lower(), name.lower())
     if name not in ITEMS:
         return {
-            "name": "Glitching", "rarity": "NA", "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
-            "one_use": "False", "in_battle": "False", "abb": "glitching", "sta_gain": 1, "mod": {},
-            "description": "None", "brief": "Summons a black hole, ending all life on this planet."
+            "name": "Glitching", "rarity": "NA",
+            "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
+            "one_use": "False", "in_battle": "False",
+            "abb": "glitching", "sta_gain": 1, "mod": {},
+            "description": "None",
+            "brief": "Summons a black hole, ending all life on this planet."
         }
 
     item = copy.deepcopy(ITEMS[name])

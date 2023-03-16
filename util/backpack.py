@@ -43,11 +43,11 @@ def fulfill_requirement(i, p_inv):
     return [req_fulfill, p_inv, pre_message]
 
 
-def chest_storage(level):
+def chest_storage(lvl: int):
     storage = {7: 100, 13: 150, 19: 175, 25: 200, 30: 225, 100: 250}
-    for i in storage:
-        if level < i:
-            return storage[i]
+    for l, space in storage.items():
+        if lvl < l:
+            return space
 
 
 def container_embed(

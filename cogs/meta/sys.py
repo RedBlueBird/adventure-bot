@@ -52,8 +52,8 @@ class Sys(commands.Cog):
 
         deals_cards = []
         for _ in range(9):
-            deals_cards.append(u.add_card(1))
-        dm.set_user_deals(a.id, ','.join(deals_cards))
+            deals_cards.append(u.deal_card(1))
+        dm.set_user_deals(a.id, ",".join(deals_cards))
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"

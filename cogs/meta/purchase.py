@@ -37,8 +37,8 @@ class Purchase(commands.Cog):
                 .add_field(name="Coins", value=f"`{u.PREF}buy coins (coin deal name)`") \
                 .add_field(name="Tickets", value=f"`{u.PREF}buy tickets (ticket deal name)`") \
                 .add_field(name="Shop Refresh", value=f"`{u.PREF}buy r`") \
-                .add_field(name="Single Card", value=f"`{u.PREF}buy all`") \
-                .add_field(name="All Cards", value=f"`{u.PREF}buy (card #)`")
+                .add_field(name="Single Card", value=f"`{u.PREF}buy (card #)`") \
+                .add_field(name="All Cards", value=f"`{u.PREF}buy all`")
             await ctx.reply(embed=embed)
 
     @buy.command()
@@ -66,27 +66,27 @@ class Purchase(commands.Cog):
 
         gem_cost = card_packs[pack][0]
         token_cost = card_packs[pack][1]
-        cards_count = card_packs[pack][2]
-        cards_level = card_packs[pack][3]
+        amt = card_packs[pack][2]
+        lvls = card_packs[pack][3]
 
-        if cards_count + dm.get_user_cards_count(a.id) > u.MAX_CARDS:
+        if amt + dm.get_user_cards_count(a.id) > u.MAX_CARDS:
             await ctx.reply("You don't have enough space for this card pack!")
             return
 
         if gems < gem_cost or tokens < token_cost:
-            cost = "Nothing"  # should never happen but oh well
+            cost = "Nothing"  # should never happen
             if gem_cost > 0 and token_cost > 0:
                 cost = f"{gem_cost} {u.ICON['gem']} and {token_cost} {u.ICON['token']}"
             elif gem_cost > 0:
                 cost = f"{gem_cost} {u.ICON['gem']}"
             elif token_cost > 0:
                 cost = f"{token_cost} {u.ICON['token']}"
-            await ctx.reply(f"You need {cost} to buy a {pack.title()} Edition card pack!")
+            await ctx.reply(f"You need {cost} to buy a {pack.title()} card pack!")
             return
 
         msg, confirm = confirm_purchase(
             ctx,
-            f"Are you sure you want to purchase a {pack.title()} Edition card pack?"
+            f"Are you sure you want to buy a {pack.title()} card pack?"
         )
         if not confirm:
             return
@@ -96,11 +96,11 @@ class Purchase(commands.Cog):
         if pack != "confetti":
             gained_cards = []
             cards_msg = []
-            for _ in range(cards_count):
-                card_level = u.log_level_gen(random.randint(1, cards_level))
-                card_name = u.random_card(card_level, pack)
-                gained_cards.append((a.id, card_name, card_level))
-                cards_msg.append(f"[{u.rarity_cost(card_name)}] **{card_name}** lv: **{card_level}** \n")
+            for _ in range(amt):
+                lvl = u.log_level_gen(random.randint(1, lvls))
+                name = u.random_card(lvl, pack)
+                gained_cards.append((a.id, name, lvl))
+                cards_msg.append(f"[{u.rarity_cost(name)}] **{name}** lv: **{lvl}** \n")
 
             dm.add_user_cards(gained_cards)
 
@@ -236,7 +236,7 @@ class Purchase(commands.Cog):
 
         # 200 coins isn't that big of a cost, idt we need a confirm view here ~ sans
         gained_cards = [
-            u.add_card(dm.get_user_level(a.id))
+            u.deal_card(dm.get_user_level(a.id))
             for _ in range(9 if dm.has_premium(a.id) else 6)
         ]
         dm.set_user_coin(a.id, coins - cost)
@@ -255,7 +255,7 @@ class Purchase(commands.Cog):
         deals = [i.split(".") for i in dm.get_user_deals(a.id).split(',')]
 
         cost = sum(
-            [u.compute_card_cost(card, int(lvl))
+            [u.card_coin_cost(card, int(lvl))
              if lvl[0] != "-" else 0 for lvl, card in deals]
         )
 
@@ -289,7 +289,7 @@ class Purchase(commands.Cog):
             gained_cards.append((a.id, name, lvl))
             cards_msg.append(
                 f"[{u.rarity_cost(name)}] **{name}** lv: **{lvl}** - "
-                f"**{u.compute_card_cost(name, lvl)}** {u.ICON['coin']}"
+                f"**{u.card_coin_cost(name, lvl)}** {u.ICON['coin']}"
             )
 
         dm.add_user_cards(gained_cards)
@@ -330,7 +330,7 @@ class Purchase(commands.Cog):
             await ctx.reply("You don't have space for this card!")
             return
 
-        card_cost = u.compute_card_cost(name, int(lvl))
+        card_cost = u.card_coin_cost(name, int(lvl))
         if coins < card_cost:
             await ctx.reply("You don't have enough golden coins to buy that card!")
             return
