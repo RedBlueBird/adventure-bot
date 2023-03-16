@@ -48,16 +48,16 @@ def cards_dict_temp(card_level, card_name):
     return card
 
 
-def items_dict(item_name, max_stat=100 * SCALE[0]):
-    item_name = ITEM_ABB.get(item_name.lower(), item_name.lower())
-    if item_name not in ITEMS:
+def items_dict(name, max_stat=100 * SCALE[0]):
+    name = ITEM_ABB.get(name.lower(), name.lower())
+    if name not in ITEMS:
         return {
             "name": "Glitching", "rarity": "NA", "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
             "one_use": "False", "in_battle": "False", "abb": "glitching", "sta_gain": 1, "mod": {},
             "description": "None", "brief": "Summons a black hole, ending all life on this planet."
         }
 
-    item = copy.deepcopy(ITEMS[item_name])
+    item = copy.deepcopy(ITEMS[name])
     for i in item:
         if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
             item[i] = round(item[i] * max_stat / 100)
@@ -66,29 +66,31 @@ def items_dict(item_name, max_stat=100 * SCALE[0]):
     return item
 
 
-def mobs_dict(mob_level: str | int, mob_name: str):
-    mob_level = int(mob_level)
-    mob_level = SCALE[1] ** (int(mob_level) - 1) * SCALE[0]
+def mobs_dict(lvl: str | int, name: str):
+    lvl = int(lvl)
+    lvl = SCALE[1] ** (int(lvl) - 1) * SCALE[0]
 
-    if mob_name.lower() not in MOBS:
+    if name.lower() not in MOBS:
         return {
-            "name": "Glitcher", "rarity": "NA", "health": -1, "energy_lag": 0, "stamina": -1,
+            "name": "Glitcher", "rarity": "NA",
+            "health": -1, "energy_lag": 0, "stamina": -1,
             "death reward": {"coins": 0, "exps": 0},
             "deck": ["Glitched" for _ in range(10)],
             "brief": "Oh no. Whatever this is, it's probably bad."
         }
-    mob = copy.deepcopy(MOBS[mob_name.lower()])
-    mob["health"] = round(mob["health"] * mob_level)
+
+    mob = copy.deepcopy(MOBS[name.lower()])
+    mob["health"] = round(mob["health"] * lvl)
     return mob
 
 
-def fx_dict(eff_name: str):
-    if eff_name.lower() not in EFFX:
+def fx_dict(name: str):
+    if name.lower() not in EFFX:
         return {
             "name": "Glitch",
             "description": "This effect oH NO HE COMES"
         }
-    return copy.deepcopy(EFFX[eff_name.lower()])
+    return copy.deepcopy(EFFX[name.lower()])
 
 
 def quest_index(index: str) -> list[str | int]:
@@ -125,10 +127,10 @@ def quest_index(index: str) -> list[str | int]:
     ]
 
 
-def quest_str_rep(quest_type: str | int, amt: str | int):
+def quest_str_rep(type_: str | int, amt: str | int):
     """
-    Gives a string representation of a quest given the type and the extend to do it to.
-    :param quest_type: The type of quest. (types can be found in quest_index's docstring)
+    Gives a string representation of a quest
+    :param quest_type: The type of quest
     :param amt: The extent to do it to
     :return: A string representation of the quest.
     """
@@ -141,4 +143,4 @@ def quest_str_rep(quest_type: str | int, amt: str | int):
         6: f"Earn {amt} medals in PvP battles",
         7: f"Merge {amt} pairs of cards",
         8: f"Catch {amt} fish in the public boat"
-    }[int(quest_type)]
+    }[int(type_)]
