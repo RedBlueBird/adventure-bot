@@ -1,3 +1,5 @@
+from string import Template
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -9,6 +11,27 @@ RARITIES = {
     "C": "Common", "R": "Rare", "E": "Epic", "EX": "Exclusive",
     "L": "Legendary", "M": "N/A", "NA": "N/A"
 }
+
+
+def fill_args(card: dict, level: int):
+    param = [
+        "block", "absorb", "heal", "tramp", "damage", "self_damage", "crush",
+        "revenge", "lich_revenge", "eff_app", "inverse_damage"
+    ]
+
+    on_hand = card.get("on_hand", {})
+    args = {"level": level}
+    for p in param:
+        if p in card:
+            args[p] = card[p]
+    
+        if p in on_hand:
+            args[f"on_hand_{p}"] = on_hand[p]
+
+        if p == "eff_app" and p in args:
+            args[p] = args[p][0]
+
+    return Template(card["description"]).safe_substitute(args)
 
 
 class EntitySearch(commands.Cog):
@@ -32,30 +55,28 @@ class EntitySearch(commands.Cog):
             await ctx.reply(f"The card level has to be between 1 and {max_level}!")
             return
 
-        card_info = u.cards_dict(level, " ".join(name.lower().split("_")))
+        card = u.cards_dict(level, " ".join(name.lower().split("_")))
         info_str = [
-            f"**Name:** {card_info['name']}",
+            f"**Name:** {card['name']}",
             f"**Level:** {level}",
-            f"**Rarity:** {RARITIES[card_info['rarity']]}",
-            f"**Energy Cost:** {card_info['cost']}",
-            f"**Accuracy:** {card_info['acc']}%",
-            f"**Critical Chance:** {card_info['crit']}%"
+            f"**Rarity:** {RARITIES[card['rarity']]}",
+            f"**Energy Cost:** {card['cost']}",
+            f"**Accuracy:** {card['acc']}%",
+            f"**Critical Chance:** {card['crit']}%"
         ]
 
-        if card_info["rarity"] == "M":
+        if card["rarity"] == "M":
             info_str.insert(len(info_str), "**[Monster Card]** - Unobtainable")
-        if card_info["rarity"] == "EX":
+        if card["rarity"] == "EX":
             info_str.insert(len(info_str), "**[Exclusive Card]** - Obtainable in events")
 
-        embed = discord.Embed(title="Card's info:", description=None, color=discord.Color.green())
-        embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
-        embed.add_field(name="Uses: ", value=u.fill_args(card_info, level), inline=False)
-        embed.add_field(name="Brief: ", value=card_info["brief"], inline=False)
-        """
-        if "journal" in card_info:
-            embed.add_field(name="Scout's Journal: ", value="*" + card_info["journal"] + "*", inline=False)
-        embed.set_thumbnail(url=ctx.author.avatar.url)
-        """
+        print(card)
+
+        embed = discord.Embed(title="Card's info:", color=discord.Color.green())
+        embed.add_field(name="Description:", value="\n".join(info_str), inline=False)
+        embed.add_field(name="Uses:", value=fill_args(card, level), inline=False)
+        embed.add_field(name="Brief:", value=card["brief"], inline=False)
+
         await ctx.send(embed=embed)
 
     @info.command()
