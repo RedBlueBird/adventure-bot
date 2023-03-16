@@ -32,6 +32,7 @@ def cards_dict(card_level, card_name):
                     card[i][k][0] = round(card[i][k][0] * card_level)
     return card
 
+
 def cards_dict_temp(card_level, card_name):
     if card_name.lower() not in CARDS_TEMP:
         return {

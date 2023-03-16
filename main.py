@@ -24,9 +24,11 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
     def on_error(name: str) -> t.NoReturn:
         raise ImportError(name=name)  # pragma: no cover
 
-    # The mock prevents asyncio.get_event_loop() from being called.
-    # The first parameter has to be cogs.__path__ otherwise when main.py executed through
-    # absolute path  no cogs will be appended
+    """
+    The mock prevents asyncio.get_event_loop() from being called.
+    The first parameter has to be cogs.__path__
+    otherwise when main.py executed through absolute path no cogs will be added
+    """
     prefix = f"{start}."
     for module in pkgutil.walk_packages(cogs.__path__, prefix, onerror=on_error):
         if not module.ispkg:

@@ -494,7 +494,7 @@ class Adventure(commands.Cog):
 
                 if index[2] == "item":
                     item_info = u.items_dict(list(choices['items'].keys())[0])
-                    item_index = choices["items"][list(choices['items'].keys())[0]]["items"]
+                    item_index = choices[list(choices['items'].keys())[0]]
                     item_amount = random.randint(item_index[0], item_index[1])
                     if u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * item_amount <= 100:
                         items_to_take = item_amount
@@ -515,7 +515,7 @@ class Adventure(commands.Cog):
                     elif items_to_take != 0:
                         dm.log_quest(2, u.items_dict(item_info['name'])["weight"] * items_to_take,
                                      a.id)
-                        inv[item_info['name'].lower()]["items"] += items_to_take
+                        inv[item_info['name'].lower()] += items_to_take
 
                 if index[2] == "fight":
                     def mob_generator(requirements):
@@ -1003,7 +1003,7 @@ class Adventure(commands.Cog):
                                         if not translator.lower() in inv and items_to_take != 0:
                                             inv[translator.lower()] = {"items": items_to_take}
                                         elif items_to_take != 0:
-                                            inv[translator.lower()]["items"] += items_to_take
+                                            inv[translator.lower()] += items_to_take
 
                         else:
                             await stats_msg.edit(embed=dd.show_stats())
@@ -1117,7 +1117,7 @@ class Adventure(commands.Cog):
                             trade_items_to_take = {}
                             for translator in list(offer_str.values())[option - 1]:
                                 if translator[0].lower() in inv:
-                                    if translator[1] <= inv[translator[0].lower()]["items"] and trade_success:
+                                    if translator[1] <= inv[translator[0].lower()] and trade_success:
                                         trade_items_to_take[translator[0].lower()] = translator[1]
                                         items_weight += u.items_dict(translator[0].lower())["weight"] * translator[1]
                                     else:
@@ -1142,9 +1142,9 @@ class Adventure(commands.Cog):
                                 if not list(offer_str.keys())[option - 1].lower() in inv:
                                     inv[list(offer_str.keys())[option - 1].lower()] = {"items": 1}
                                 else:
-                                    inv[list(offer_str.keys())[option - 1].lower()]["items"] += 1
+                                    inv[list(offer_str.keys())[option - 1].lower()] += 1
                                 for translator in trade_items_to_take:
-                                    inv[translator]["items"] -= trade_items_to_take[translator]
+                                    inv[translator] -= trade_items_to_take[translator]
                                 inv = u.clear_bp(inv)
 
                 if gained_coins > 0:

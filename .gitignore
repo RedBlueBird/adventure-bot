@@ -142,7 +142,7 @@ cython_debug/
 .vscode/*
 .vs/*
 *.pyproj
-discord-adventurers-bot.code-workspace
+adventure-bot.code-workspace
 
 # SQLITE database
 *.db

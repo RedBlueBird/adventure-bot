@@ -57,11 +57,11 @@ class Admin(commands.Cog):
         if amt > 0 and item not in inv:
             inv[item] = {"items": amt}
         else:
-            inv[item]["items"] += amt
+            inv[item] += amt
 
         inv_delete = []
         for i in inv:
-            if inv[i]["items"] != "x" and inv[i]["items"] <= 0:
+            if inv[i] != "x" and inv[i] <= 0:
                 inv_delete.append(i)
         for i in inv_delete:
             del inv[i]

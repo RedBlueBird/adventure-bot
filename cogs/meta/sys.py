@@ -52,7 +52,7 @@ class Sys(commands.Cog):
 
         deals_cards = []
         for _ in range(9):
-            deals_cards.append(u.add_a_card(1))
+            deals_cards.append(u.add_card(1))
         dm.set_user_deals(a.id, ','.join(deals_cards))
 
         await ctx.send(

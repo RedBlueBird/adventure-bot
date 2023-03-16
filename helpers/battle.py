@@ -1127,11 +1127,11 @@ class BattleData:
                     def backpack_clear():
                         inv_delete = []
                         for x in self.backpacks.info[user]:
-                            if self.backpacks.info[user][x]["items"] == 0:
+                            if self.backpacks.info[user][x] == 0:
                                 inv_delete.append(x)
                         for x in inv_delete:
                             del self.backpacks.info[user][x]
 
-                    self.backpacks.info[user][self.item_used.info[user][0]]["items"] -= 1
+                    self.backpacks.info[user][self.item_used.info[user][0]] -= 1
                     backpack_clear()
                 return move_numbers
