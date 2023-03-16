@@ -236,7 +236,7 @@ class Purchase(commands.Cog):
 
         # 200 coins isn't that big of a cost, idt we need a confirm view here ~ sans
         gained_cards = [
-            u.add_a_card(dm.get_user_level(a.id))
+            u.add_card(dm.get_user_level(a.id))
             for _ in range(9 if dm.has_premium(a.id) else 6)
         ]
         dm.set_user_coin(a.id, coins - cost)

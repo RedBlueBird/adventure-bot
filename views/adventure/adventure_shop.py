@@ -54,7 +54,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
 
         coins -= item["buy"] * amt
         if name in inv:
-            inv[name]["items"] += amt
+            inv[name] += amt
         else:
             inv[name] = {"items": amt}
 

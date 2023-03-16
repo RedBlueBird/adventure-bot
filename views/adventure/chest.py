@@ -19,21 +19,21 @@ def transfer(
     item = u.items_dict(item.lower())
     name = item["name"].lower()
     descr = f"{amt} **[{item['rarity']}/{item['weight']}] {item['name']}**"
-    if from_.get(name, {}).get("items", 0) < amt:
+    if from_.get(name, 0) < amt:
         raise ValueError(f"You don't have {descr} in your {from_name}!")
 
     weight = item["weight"] * amt
     if u.get_bp_weight(to) + weight > to_storage:
         raise ValueError(f"Your {to_name} doesn't have enough space for {descr}!")
 
-    from_[name]["items"] -= amt
-    if from_[name]["items"] == 0:
+    from_[name] -= amt
+    if from_[name] == 0:
         del from_[name]
 
     if name in to:
-        to[name]["items"] += amt
+        to[name] += amt
     else:
-        to[name] = {"items": amt}
+        to[name] = amt
 
 
 async def submit_chest_form(

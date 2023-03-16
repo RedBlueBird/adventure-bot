@@ -1,0 +1,17 @@
+2023-03-15 21:24:26,734 - Shard ID None has connected to Gateway (Session ID: ece59bb16c244aa3753a7725aa179ba5).
+2023-03-15 21:27:36,294 - Shard ID None has connected to Gateway (Session ID: 7e9c76ce63722b29c5da96cdb6ac2668).
+2023-03-15 21:51:42,613 - Shard ID None has connected to Gateway (Session ID: 1f31ef0e39db9ce5bb9a5dc9a14f4e8c).
+2023-03-15 21:56:51,989 - Shard ID None has connected to Gateway (Session ID: f5154ec79ad9c25e9ee40be4f57bed6b).
+2023-03-15 21:57:52,131 - Ignoring exception in modal <TakeForm timeout=None children=2>:
+Traceback (most recent call last):
+  File "C:\Users\kevin\GitHub\adventure-bot\venv\lib\site-packages\discord\ui\modal.py", line 187, in _scheduled_task
+    await self.on_submit(interaction)
+  File "C:\Users\kevin\GitHub\adventure-bot\views\adventure\chest.py", line 90, in on_submit
+    await submit_chest_form(i, "take", self.item.value, self.amt.value)
+  File "C:\Users\kevin\GitHub\adventure-bot\views\adventure\chest.py", line 58, in submit_chest_form
+    transfer(
+  File "C:\Users\kevin\GitHub\adventure-bot\views\adventure\chest.py", line 22, in transfer
+    if from_.get(name, {}).get("items", 0) < amt:
+AttributeError: 'int' object has no attribute 'get'
+2023-03-15 21:58:18,228 - Shard ID None has connected to Gateway (Session ID: 6b909296c140abab3dbc10a8644a6e87).
+2023-03-15 22:00:24,827 - Shard ID None has connected to Gateway (Session ID: ed06b444b96b1d8e29de8491b704f45d).

@@ -41,8 +41,8 @@ class SellForm(ui.Modal, title="Sell something!"):
             self.user.id,
             dm.get_user_coin(self.user.id) + item["sell"] * amt
         )
-        inv[name]["items"] -= amt
-        if inv[name]["items"] == 0:
+        inv[name] -= amt
+        if inv[name] == 0:
             del inv[name]
 
         descr = f"[{item['rarity']}/{item['weight']}]"
