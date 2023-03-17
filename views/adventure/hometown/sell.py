@@ -2,7 +2,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u
-from .adventure_template import AdventureTemplate
+from views.adventure.template import AdventureTemplate
 
 
 class SellForm(ui.Modal, title="Sell something!"):

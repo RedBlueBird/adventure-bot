@@ -51,10 +51,7 @@ def container_str(store: dict, container: str = "Backpack", lvl: int = 1):
     else:
         for i in store:
             descr = f"[{items_dict(i)['rarity']}/{items_dict(i)['weight']}]"
-            amt = store[i]
-            inv.append(
-                f"{descr} {i.title()} - {'∞' if amt == 'x' else amt}"
-            )
+            inv.append(f"{descr} {i.title()} - {store[i]}")
 
     capacity = BP_CAP if container == "Backpack" else chest_storage(lvl)
     inv.append(f"Storage used - {bp_weight(store)}/{capacity}")

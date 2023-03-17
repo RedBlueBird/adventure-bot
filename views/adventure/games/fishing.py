@@ -6,7 +6,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm
-from ..adventure_template import AdventureTemplate
+from ..template import AdventureTemplate
 
 BAIT_COST = 50
 

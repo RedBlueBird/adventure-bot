@@ -1,7 +1,7 @@
 import discord
 import discord.ui as ui
 
-from .adventure_template import AdventureTemplate
+from views.adventure.template import AdventureTemplate
 
 
 class LevelSelect(AdventureTemplate):

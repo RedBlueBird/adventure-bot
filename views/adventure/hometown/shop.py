@@ -4,7 +4,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u
-from .adventure_template import AdventureTemplate
+from views.adventure.template import AdventureTemplate
 
 
 class BuyForm(ui.Modal, title="Buy something!"):
@@ -68,7 +68,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
         )
 
 
-class AdventureShop(AdventureTemplate):
+class Shop(AdventureTemplate):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
         super().__init__(user)
         self.items = offers

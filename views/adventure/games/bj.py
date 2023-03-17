@@ -3,7 +3,7 @@ import discord.ui as ui
 
 import helpers.db_manager as dm
 from helpers.util.poker import Value, Deck, Card
-from ..adventure_template import AdventureTemplate
+from ..template import AdventureTemplate
 
 BJ = 21
 BET = 50
