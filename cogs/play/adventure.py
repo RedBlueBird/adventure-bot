@@ -292,8 +292,8 @@ class Adventure(commands.Cog):
         if not adventure:
             return
 
-        hp = u.level_hp(lvl)
-        max_hp = hp
+        max_hp = u.level_hp(lvl)
+        hp = max_hp
         stamina = 100
         dist = 0
         badges = dm.get_user_badge(a.id)
