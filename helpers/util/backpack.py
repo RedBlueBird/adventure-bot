@@ -5,7 +5,7 @@ from .constants import BP_CAP
 
 
 def get_bp_weight(bp: dict[str, int]):
-    return sum(items_dict(i)["weight"] for i in bp)
+    return sum(items_dict(i)["weight"] * bp[i] for i in bp)
 
 
 def clear_bp(bp: dict[str, int]):

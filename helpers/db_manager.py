@@ -55,7 +55,7 @@ def log_quest(quest_type: int, value: int, uid: int):
         if quests[x].split(".")[1] == str(quest_type):
             quests[x] = ".".join(quests[x].split(".")[0:2]) + "." + str(int(quests[x].split(".")[2]) + value)
             break
-    cur.execute(f"UPDATE players SET quests = '{','.join(quests[:])}' WHERE uid = {uid}")
+    cur.execute(f"UPDATE players SET quests = '{','.join(quests)}' WHERE uid = {uid}")
     db.commit()
 
 
