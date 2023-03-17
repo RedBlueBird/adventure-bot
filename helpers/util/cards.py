@@ -45,24 +45,6 @@ def random_card(energy: int, type_: str) -> str:
     return random.choice(cards[1])
 
 
-def order_by_cost(cards: list[tuple[int, str, int]], reverse: bool = False):
-    return sorted(
-        cards,
-        key=lambda c: cards_dict(c[2], c[1])["cost"],
-        reverse=reverse
-    )
-
-
-def order_by_rarity(cards: list[tuple[int, str, int]], reverse: bool = False):
-    rarities = ["EX", "L", "E", "R", "C", "M", "NA"]
-    weights = {r: i for i, r in enumerate(rarities)}
-    return sorted(
-        cards,
-        key=lambda c: weights[cards_dict(c[2], c[1])["rarity"]],
-        reverse=reverse
-    )
-
-
 def rarity_cost(name: str):
     card = cards_dict(1, str(name))
     return f"{card['rarity']}/{card['cost']}"
@@ -73,3 +55,24 @@ def card_coin_cost(name: str, lvl: int) -> int:
         r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])
     }.get(cards_dict(1, name)["rarity"], 1)
     return int(1.6 ** lvl * 50 * price_factor)
+
+
+def sort_cards(cards: list[tuple[int, str, int]], order: int):
+    # If Python has a tie, it'll maintain this order
+    cards.sort(key=lambda c: (-c[2], c[1]))
+
+    if order in [1, 2]:
+        cards.sort(key=lambda c: (c[2], c[1]))
+    elif order in [3, 4]:
+        cards.sort(key=lambda c: c[1])
+    elif order in [5, 6]:
+        cards.sort(key=lambda c: c[0])
+    elif order in [7, 8]:
+        cards.sort(key=lambda c: cards_dict(c[2], c[1])["cost"])
+    elif order in [9, 10]:
+        rarities = ["NA", "M", "C", "R", "E", "L", "EX"]
+        weights = {r: i for i, r in enumerate(rarities)}
+        cards.sort(key=lambda c: weights[cards_dict(c[2], c[1])["rarity"]])
+
+    if order % 2 == 0:
+        cards.reverse()

@@ -14,7 +14,7 @@ class Deck(commands.Cog):
     @checks.is_registered()
     async def order(
             self, ctx: commands.Context,
-            card_property: t.Literal["level", "ID", "name", "energy", "rarity"],
+            card_property: t.Literal["level", "id", "name", "energy", "rarity"],
             order: t.Literal["ascending", "descending"]
     ):
         """Set the card display order."""
@@ -23,7 +23,7 @@ class Deck(commands.Cog):
             o_num = 1
         elif card_property == "name":
             o_num = 3
-        elif card_property == "ID":
+        elif card_property == "id":
             o_num = 5
         elif card_property == "energy":
             o_num = 7
@@ -34,7 +34,7 @@ class Deck(commands.Cog):
         o_num += order == "descending"
 
         dm.set_user_order(ctx.author.id, o_num)
-        await ctx.reply(f"The order had been set to {card_property} {order}.")
+        await ctx.reply(f"The order is now {card_property} {order}.")
 
     @commands.hybrid_command(
         aliases=["selectdeck", "sel", "se"],

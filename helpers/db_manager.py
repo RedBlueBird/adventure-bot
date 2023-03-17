@@ -232,33 +232,14 @@ def get_user_deck_count(uid: int, slot: int = 0) -> int:
 
 
 def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
-    order = get_user_order(uid)
     slot = slot if 1 <= slot <= 6 else get_user_deck_slot(uid)
-
-    order_by = ""
-    if order == 1:
-        order_by = "card_level, card_name"
-    elif order in [2, 7, 8, 9, 10]:
-        order_by = "card_level DESC, card_name"
-    elif order == 3:
-        order_by = "card_name"
-    elif order == 4:
-        order_by = "card_name DESC"
-    elif order == 5:
-        order_by = "id, card_name"
-    elif order == 6:
-        order_by = "id DESC, card_name"
-
     db_deck = f"deck{slot}"
     cur.execute(
         f"SELECT id, card_name, card_level FROM cards WHERE "
-        f"owned_user = {uid} AND {db_deck} = 1 ORDER BY {order_by}"
+        f"owned_user = {uid} AND {db_deck} = 1"
     )
     result = cur.fetchall()
-    if order in [7, 8]:
-        result = u.order_by_rarity(result, bool(order - 7))
-    if order in [9, 10]:
-        result = u.order_by_cost(result, bool(order - 9))
+    u.sort_cards(result, get_user_order(uid))
 
     return result
 
@@ -285,25 +266,10 @@ def get_user_cards(
         conditions.append(f"AND card_name LIKE '%{name}%'")
     if level is not None:
         conditions.append(f"AND card_level = {level}")
-    
-    if order is None:
-        order = get_user_order(uid)
-    if order == 1:
-        order_by = "card_level, card_name"
-    elif order in [2, 7, 8, 9, 10]:
-        order_by = "card_level desc, card_name"
-    elif order == 3:
-        order_by = "card_name"
-    elif order == 4:
-        order_by = "card_name desc"
-    elif order == 5:
-        order_by = "id, card_name"
-    elif order == 6:
-        order_by = "id desc, card_name"
 
     cur.execute(
         f"SELECT id, card_name, card_level FROM cards WHERE "
-        f"owned_user = {uid} {' '.join(conditions)} ORDER BY {order_by}"
+        f"owned_user = {uid} {' '.join(conditions)}"
     )
     result = cur.fetchall()
 
@@ -323,13 +289,7 @@ def get_user_cards(
             if rarity == rarity_terms.get(u.cards_dict(card[2], card[1])["rarity"])
         ]
 
-    if order in [7, 8]:
-        result = u.order_by_rarity(result, 1)
-        result = u.order_by_cost(result, order - 7)
-    if order in [9, 10]:
-        result = u.order_by_cost(result, 1)
-        result = u.order_by_rarity(result, order - 9)
-
+    u.sort_cards(result, order)
     return result
 
 
