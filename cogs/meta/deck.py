@@ -61,15 +61,18 @@ class Deck(commands.Cog):
     async def deck_ids(self, ctx: commands.Context, slot: int = 0):
         """Returns the card IDs of your current deck."""
 
-        a = ctx.author
         if not 0 <= slot <= 6:
             await ctx.reply("The deck slot number must be between 1-6!")
             return
 
-        slot = slot if slot != 0 else dm.get_user_deck_slot(a.id)
-        cards = dm.get_user_deck(a.id, slot)
+        slot = slot if slot != 0 else dm.get_user_deck_slot(ctx.author.id)
+        cards = dm.get_user_deck(ctx.author.id, slot)
+        if not cards:
+            await ctx.reply(f"You don't have any cards in deck #{slot}!")
+            return
+
         await ctx.reply(
-            f"All the card IDs in Deck #{slot}:\n"
+            f"All the card IDs in deck #{slot}:\n"
             f"```{' '.join([str(c[0]) for c in cards])}```"
         )
 
@@ -84,22 +87,21 @@ class Deck(commands.Cog):
 
         a = ctx.author
         slot = dm.get_user_deck_slot(a.id)
-        err = None
         swap = []
+        for cid in [new, old]:
+            name = dm.get_card_name(a.id, cid)
+            lvl = dm.get_card_level(a.id, cid)
+            decks = dm.get_card_decks(cid)
 
-        for x in [new, old]:
-            name = dm.get_card_name(a.id, x)
-            lvl = dm.get_card_level(a.id, x)
-            decks = dm.get_card_decks(x)
-
+            err = None
             if not name:
-                err = f"You don't have a card #`{x}`!"
-            elif decks[slot - 1] == 1 and x == new:
+                err = f"You don't have a card #`{cid}`!"
+            elif decks[slot - 1] == 1 and cid == new:
                 err = f"Card #{new} is already in a deck of yours!"
-            elif decks[slot - 1] == 0 and x == old:
+            elif decks[slot - 1] == 0 and cid == old:
                 err = f"Card #{old} isn't in your deck!"
             else:
-                swap.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{x}`")
+                swap.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{cid}`")
 
             if err is not None:
                 await ctx.reply(err)
