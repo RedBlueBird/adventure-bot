@@ -22,7 +22,7 @@ def transfer(
         raise ValueError(f"You don't have {descr} in your {from_name}!")
 
     weight = item["weight"] * amt
-    if u.get_bp_weight(to) + weight > to_storage:
+    if u.bp_weight(to) + weight > to_storage:
         raise ValueError(f"Your {to_name} doesn't have enough space for {descr}!")
 
     from_[name] -= amt

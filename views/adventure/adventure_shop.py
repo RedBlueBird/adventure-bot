@@ -36,7 +36,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
             return
 
         inv = dm.get_user_inventory(self.user.id)
-        if item["weight"] * amt > u.BP_CAP - u.get_bp_weight(inv):
+        if item["weight"] * amt > u.BP_CAP - u.bp_weight(inv):
             await i.response.send_message(
                 "You don't have enough space in your backpack for these items!",
                 ephemeral=True

@@ -336,7 +336,7 @@ class Adventure(commands.Cog):
             else:
                 options = perk_decider()
                 pre_message = []
-                choices = {"choices": perk_list[:3]}
+                choices = {"choices": {p: p for p in perk_list[:3]}}
                 await adventure_msg.edit(embed=options[0])
 
             choice = 0
@@ -352,7 +352,7 @@ class Adventure(commands.Cog):
                     break
 
                 try:
-                    choice = abs(math.floor(int(reply.content[len(u.PREF):])) + 1 - 1)
+                    choice = abs(int(reply.content[len(u.PREF):]))
                 except:
                     reply = reply.content[len(u.PREF):].lower()
                     if reply == "exit":
@@ -384,23 +384,27 @@ class Adventure(commands.Cog):
 
                     choice = 0
 
-                if not 1 <= choice <= len(choices["choices"]):
+                if not 1 <= choice <= len(choices):
                     if not (reply in ['exit', 'bp', 'backpack', 'r', 'refresh', 'ref']):
-                        await ctx.send(f"You can only enter numbers `1-{len(choices['choices'])}`!")
+                        await ctx.send(f"You can only enter numbers `1-{len(choices)}`!")
                 elif perk_turn != 0:
-                    feed = u.fulfill_requirement(list(choices["choices"].values())[choice - 1], inv)
+                    choice_info = list(choices["choices"].values())[choice - 1]
+                    if len(choice_info) == 4:
+                        feed = u.req_check(choice_info[-1], inv)
+                    else:
+                        feed = True, ""
+
+                    if feed[1]:
+                        pre_message.append(feed[1])
 
                     if feed[0]:
-                        if not feed[2] is None:
-                            pre_message.append(feed[2])
-                        inv = feed[1]
                         await reply.delete()
                         break
                     else:
-                        if not feed[2] is None:
-                            pre_message.append(feed[2])
-                        options = option_decider(u.ADVENTURES[location][event][section], dist, boss_spawn,
-                                                 pre_message, option)
+                        options = option_decider(
+                            u.ADVENTURES[location][event][section], dist, boss_spawn,
+                            pre_message, option
+                        )
                         pre_message = []
                         await adventure_msg.edit(embed=options[0])
                 else:
@@ -445,7 +449,7 @@ class Adventure(commands.Cog):
                     try:
                         reply = await self.bot.wait_for("message", timeout=20.0,
                                                         check=checks.valid_reply(['react'], [a],
-                                                                          [ctx.message.channel]))
+                                                                                 [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
                         hp -= trap_dmg * 2
@@ -468,7 +472,7 @@ class Adventure(commands.Cog):
                     try:
                         reply = await self.bot.wait_for("message", timeout=20.0,
                                                         check=checks.valid_reply([''], [a],
-                                                                          [ctx.message.channel]))
+                                                                                 [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
                         hp -= trap_dmg * 2
@@ -494,14 +498,14 @@ class Adventure(commands.Cog):
                     item_info = u.items_dict(list(choices['items'].keys())[0])
                     item_index = choices[list(choices['items'].keys())[0]]
                     item_amount = random.randint(item_index[0], item_index[1])
-                    if u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * item_amount <= 100:
+                    if u.bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * item_amount <= 100:
                         items_to_take = item_amount
                         pre_message.append(f"You successfully obtained {item_info['name'].title()} x{item_amount}!")
-                    elif u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] <= 100:
+                    elif u.bp_weight(inv) + u.items_dict(item_info["name"])["weight"] <= 100:
                         items_to_take = math.floor(
-                            (100 - u.get_bp_weight(inv)) / u.items_dict(item_info["name"])["weight"])
+                            (100 - u.bp_weight(inv)) / u.items_dict(item_info["name"])["weight"])
                         pre_message.append(
-                            f"You successfully obtained {item_info['name'].title()} x{math.floor((100 - u.get_bp_weight(inv)) / u.items_dict(item_info['name'])['weight'])}!")
+                            f"You successfully obtained {item_info['name'].title()} x{math.floor((100 - u.bp_weight(inv)) / u.items_dict(item_info['name'])['weight'])}!")
                     else:
                         items_to_take = 0
                         pre_message.append(f"Your backpack is full, failed to obtain {item_info['name'].title()}!")
@@ -981,18 +985,18 @@ class Adventure(commands.Cog):
                                     if random.randint(1, 10000) <= death_award[translator][1]:
                                         item_info = u.items_dict(translator)
                                         items_to_take = 1
-                                        if u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * \
+                                        if u.bp_weight(inv) + u.items_dict(item_info["name"])["weight"] * \
                                                 death_award[translator][0] <= 100:
                                             items_to_take = death_award[translator][0]
                                             pre_message.append(
                                                 "Obtained " + translator.title() + " x" + str(
                                                     death_award[translator][0]) + "!")
-                                        elif u.get_bp_weight(inv) + u.items_dict(item_info["name"])["weight"] <= 100:
-                                            items_to_take = math.floor((100 - u.get_bp_weight(inv)) /
+                                        elif u.bp_weight(inv) + u.items_dict(item_info["name"])["weight"] <= 100:
+                                            items_to_take = math.floor((100 - u.bp_weight(inv)) /
                                                                        u.items_dict(item_info["name"])[
                                                                            "weight"])
                                             pre_message.append("Obtained " + translator.title() + " x" + str(math.floor(
-                                                (100 - u.get_bp_weight(inv)) /
+                                                (100 - u.bp_weight(inv)) /
                                                 u.items_dict(item_info["name"])["weight"])) + "!")
                                         else:
                                             items_to_take = 0
@@ -1072,7 +1076,7 @@ class Adventure(commands.Cog):
                             try:
                                 reply = await self.bot.wait_for("message", timeout=60.0,
                                                                 check=checks.valid_reply([''], [a],
-                                                                                  [ctx.message.channel]))
+                                                                                         [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 afk = True
                                 await ctx.reply("You went idling and the adventure was ended.")
@@ -1127,7 +1131,7 @@ class Adventure(commands.Cog):
                             if not trade_success:
                                 trading_pre_message = "You don't have the items required to afford the " + \
                                                       list(offer_str.keys())[option - 1].title() + "!"
-                            elif u.get_bp_weight(inv) - items_weight + u.items_dict(list(offer_str.keys())[option - 1])[
+                            elif u.bp_weight(inv) - items_weight + u.items_dict(list(offer_str.keys())[option - 1])[
                                 "weight"] > 100:
                                 trading_pre_message = "You can't buy " + list(offer_str.keys())[
                                     option - 1].title() + " due to your rather full backpack!"
@@ -1143,7 +1147,7 @@ class Adventure(commands.Cog):
                                     inv[list(offer_str.keys())[option - 1].lower()] += 1
                                 for translator in trade_items_to_take:
                                     inv[translator] -= trade_items_to_take[translator]
-                                inv = u.clear_bp(inv)
+                                inv = u.cleared_bp(inv)
 
                 if gained_coins > 0:
                     dm.log_quest(5, gained_coins, a.id)
