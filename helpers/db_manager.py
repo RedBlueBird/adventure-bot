@@ -256,9 +256,9 @@ def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
     )
     result = cur.fetchall()
     if order in [7, 8]:
-        result = u.order_by_rarity(result, 1)
+        result = u.order_by_rarity(result, bool(order - 7))
     if order in [9, 10]:
-        result = u.order_by_cost(result, 1)
+        result = u.order_by_cost(result, bool(order - 9))
 
     return result
 
