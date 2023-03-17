@@ -220,7 +220,7 @@ def set_user_deck_slot(uid: int, value: int):
 
 
 def get_user_cards_count(uid: int) -> int:
-    cur.execute(f"SELECT COUNT(*) FROM cards WHERE owned_user = {uid}" )
+    cur.execute(f"SELECT COUNT(*) FROM cards WHERE owned_user = {uid}")
     return cur.fetchall()[0][0]
 
 
@@ -277,13 +277,13 @@ def get_user_cards(
         result = [card for card in result if energy == u.cards_dict(card[2], card[1])["cost"]]
     if rarity is not None:
         rarity_terms = {
-                "L": "legendary",
-                "EX": "exclusive",
-                "E": "epic",
-                "R": "rare",
-                "C": "common",
-                "M": "monster"
-            }
+            "L": "legendary",
+            "EX": "exclusive",
+            "E": "epic",
+            "R": "rare",
+            "C": "common",
+            "M": "monster"
+        }
         result = [
             card for card in result
             if rarity == rarity_terms.get(u.cards_dict(card[2], card[1])["rarity"])
@@ -317,20 +317,23 @@ def get_card_level(uid: int, cid: int) -> int | None:
     return None if not result else result[0][0]
 
 
-def set_card_level(uid: int, cid: int, lvl: int):
+def set_card_level(cid: int, lvl: int):
     cur.execute(f"UPDATE cards SET card_level = {lvl} WHERE id = {cid}")
     db.commit()
+
 
 def get_card_owner(cid: int) -> int | None:
     cur.execute(f"SELECT owned_user FROM cards WHERE id = {cid}")
     result = cur.fetchall()
     return None if not result else result[0][0]
 
+
 def set_card_owner(uid: int, cid: int):
     cur.execute(f"UPDATE cards SET owned_user = {uid} WHERE id = {cid}")
     db.commit()
 
-def get_card_decks(cid: int) -> list[int]:
+
+def get_card_decks(cid: int) -> list[int] | None:
     cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM cards WHERE id = {cid}")
     result = cur.fetchall()
     return None if not result else result[0]
@@ -423,7 +426,9 @@ def set_user_premium(uid: int, value: dt.datetime):
     db.commit()
 
 
-def get_leaderboard(order_by: str, limit: int) -> list[tuple[int, str, int] | tuple[int, str, int, int]]:
+def get_leaderboard(
+        order_by: str, limit: int
+) -> list[tuple[int, str, int] | tuple[int, str, int, int]]:
     select = []
     order = []
     if order_by == "XP":
@@ -441,7 +446,11 @@ def get_leaderboard(order_by: str, limit: int) -> list[tuple[int, str, int] | tu
     elif order_by == "Tokens":
         select = ["id", "uid", "event_token"]
         order = ["event_token DESC"]
-    cur.execute(f"SELECT {','.join(select)} FROM players ORDER BY {','.join(order)} LIMIT {limit}")
+
+    cur.execute(
+        f"SELECT {','.join(select)} FROM players "
+        f"ORDER BY {','.join(order)} LIMIT {limit}"
+    )
     return cur.fetchall()
 
 

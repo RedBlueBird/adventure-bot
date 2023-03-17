@@ -136,7 +136,7 @@ class Card(commands.Cog):
         dm.log_quest(7, 1, a.id)
         dm.set_user_coin(a.id, coins - upgrade_cost)
         dm.delete_user_cards([(other_card_id, a.id)])
-        dm.set_card_level(a.id, card_id, card[1] + 1)
+        dm.set_card_level(card_id, card[1] + 1)
 
         embed = discord.Embed(
             title="Card upgraded successfully!",
