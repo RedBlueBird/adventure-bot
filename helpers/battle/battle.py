@@ -1,12 +1,11 @@
 import random
 import math
 from functools import reduce
-from typing import List
 
 import discord
 
-import util as u
-from util import cards_dict, items_dict, rarity_cost
+from helpers import util as u
+from helpers.util import cards_dict, items_dict, rarity_cost
 
 
 class Classify:

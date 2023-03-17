@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from util import PREF
+from helpers.util import PREF
 
 
 class General(commands.Cog):

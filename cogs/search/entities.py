@@ -4,8 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-import util as u
-
+from helpers import util as u
 
 RARITIES = {
     "C": "Common", "R": "Rare", "E": "Epic", "EX": "Exclusive",

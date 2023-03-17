@@ -8,10 +8,8 @@ from PIL import Image
 import discord
 from discord.ext import commands
 
-from helpers import checks, BattleData
-from helpers.checks import valid_reply
-from helpers import db_manager as dm
-import util as u
+from helpers import db_manager as dm, util as u, checks
+from helpers.battle import BattleData
 from views.adventure import *
 from views.adventure.games import *
 
@@ -346,7 +344,7 @@ class Adventure(commands.Cog):
                 try:
                     reply = await self.bot.wait_for(
                         "message", timeout=60.0,
-                        check=valid_reply("", a, ctx.channel)
+                        check=checks.valid_reply("", a, ctx.channel)
                     )
                 except asyncio.TimeoutError:
                     afk = True
@@ -446,7 +444,7 @@ class Adventure(commands.Cog):
                     trap_msg = await ctx.send('Now!')
                     try:
                         reply = await self.bot.wait_for("message", timeout=20.0,
-                                                        check=valid_reply(['react'], [a],
+                                                        check=checks.valid_reply(['react'], [a],
                                                                           [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
@@ -469,7 +467,7 @@ class Adventure(commands.Cog):
                     await seq_msg.edit(content=f"Retype the sequence begin with `{u.PREF}`!\nEx: `{u.PREF}abcdefg`")
                     try:
                         reply = await self.bot.wait_for("message", timeout=20.0,
-                                                        check=valid_reply([''], [a],
+                                                        check=checks.valid_reply([''], [a],
                                                                           [ctx.message.channel]))
                     except asyncio.TimeoutError:
                         pre_message.append(f"You went idle and received {trap_dmg * 2} damage!")
@@ -600,7 +598,7 @@ class Adventure(commands.Cog):
                             try:
                                 replied_message = await self.bot.wait_for(
                                     "message", timeout=120.0,
-                                    check=valid_reply("", a, ctx.channel)
+                                    check=checks.valid_reply("", a, ctx.channel)
                                 )
                             except asyncio.TimeoutError:
                                 dd.hps.info[1][0] = 0
@@ -1073,7 +1071,7 @@ class Adventure(commands.Cog):
                         while not leave and not afk:
                             try:
                                 reply = await self.bot.wait_for("message", timeout=60.0,
-                                                                check=valid_reply([''], [a],
+                                                                check=checks.valid_reply([''], [a],
                                                                                   [ctx.message.channel]))
                             except asyncio.TimeoutError:
                                 afk = True

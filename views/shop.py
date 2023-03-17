@@ -1,7 +1,6 @@
 import discord
 
-from helpers import db_manager as dm
-import util as u
+from helpers import db_manager as dm, util as u
 
 PACKS = [
     {

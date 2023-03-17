@@ -7,8 +7,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm
-import util as u
+from helpers import db_manager as dm, util as u
 
 
 class Sys(commands.Cog):

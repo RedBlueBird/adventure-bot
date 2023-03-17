@@ -5,9 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm
-from helpers import checks
-import util as u
+from helpers import db_manager as dm, util as u, checks
 from views import Confirm
 
 

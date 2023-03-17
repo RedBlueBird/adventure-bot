@@ -2,7 +2,7 @@ import discord
 import discord.ui as ui
 
 import helpers.db_manager as dm
-from util.poker import Value, Deck, Card
+from helpers.util.poker import Value, Deck, Card
 from ..adventure_template import AdventureTemplate
 
 BJ = 21

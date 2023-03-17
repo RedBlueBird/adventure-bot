@@ -6,8 +6,7 @@ from PIL import Image, ImageFont, ImageDraw
 import discord
 from discord.ext import commands
 
-import util as u
-from helpers import checks
+from helpers import util as u, checks
 
 
 class Fun(commands.Cog):

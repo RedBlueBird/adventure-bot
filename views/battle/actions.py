@@ -1,6 +1,6 @@
 import discord
 
-from helpers import BattleData2
+from helpers.battle import BattleData2
 from helpers import db_manager as dm
 
 

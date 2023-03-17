@@ -6,9 +6,8 @@ from copy import deepcopy
 import discord
 from discord.ext import commands
 
-from helpers import checks, BattleData
-from helpers.checks import valid_reply
-import util as u
+from helpers import util as u, checks
+from helpers.battle import BattleData
 from views import Confirm
 
 
@@ -119,7 +118,7 @@ class Tutorial(commands.Cog):
                 try:
                     reply = await self.bot.wait_for(
                         "message", timeout=120.0,
-                        check=valid_reply("", author, ctx.channel)
+                        check=checks.valid_reply("", author, ctx.channel)
                     )
                     await reply.delete()
                 except asyncio.TimeoutError:
