@@ -245,8 +245,6 @@ class Adventure(commands.Cog):
                     view=view
                 )
                 await view.wait()
-
-                coins = dm.get_user_coin(a.id)
                 dm.queues[a.id] = "wandering around town"
 
             elif state[1] == "adventure":
@@ -273,7 +271,7 @@ class Adventure(commands.Cog):
                     await view.wait()
 
                     if view.level is not None:
-                        raid_levels = view.level * 5
+                        raid_lvls = view.level * 5
                         dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
                         adventure = True
 

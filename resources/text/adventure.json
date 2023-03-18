@@ -997,14 +997,14 @@
             ],
             "end": [
                 {
-                    "description": "You... did it?! YOU DID IT!!! You have conquered the Enchanted Forest! You can always come back for resources another time.",
+                    "description": "You have conquered the Enchanted Forest! You can always come back for resources another time.",
                     "spawn rate": [
                         0,
                         10000,
                         10000
                     ],
                     "choices": {
-                        "Return to Hometown and tell your tale": [
+                        "Return to the Hometown and tell your tale": [
                             "end",
                             "main",
                             "exit"
