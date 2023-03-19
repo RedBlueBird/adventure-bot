@@ -289,6 +289,8 @@ def get_user_cards(
             if rarity == rarity_terms.get(u.cards_dict(card[2], card[1])["rarity"])
         ]
 
+    if order is None:
+        order = get_user_order(uid)
     u.sort_cards(result, order)
     return result
 

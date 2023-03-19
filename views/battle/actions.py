@@ -16,7 +16,7 @@ class Actions(discord.ui.View):
     ):
         await i.response.send_message(embed=self.battledata.show_deck(i.user.id), ephemeral=True)
 
-    @discord.ui.button(label="Backpack", style=discord.ButtonStyle.blurple, row=1)
+    @discord.ui.button(label="Backpack", style=discord.ButtonStyle.blurple, row=0)
     async def backpack_button(
             self, i: discord.Interaction, button: discord.ui.Button
     ):
