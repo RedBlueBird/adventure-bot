@@ -257,7 +257,7 @@ class Adventure(commands.Cog):
                     if lvl < lvl_req:
                         await ctx.reply(
                             f"You need to be at least "
-                            f"level {lvl_req} to start a boss raid!",
+                            f"level {lvl_req} to fight a boss!",
                             ephemeral=True
                         )
                         continue
@@ -271,7 +271,7 @@ class Adventure(commands.Cog):
                     await view.wait()
 
                     if view.level is not None:
-                        raid_lvls = view.level * 5
+                        raid_lvls = view.level
                         dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
                         adventure = True
 

@@ -12,9 +12,9 @@ class LevelSelect(AdventureTemplate):
     @discord.ui.select(
         options=[
             discord.SelectOption(label="Easy - Lvl 1", value="1"),
-            discord.SelectOption(label="Normal - Lvl 5", value="2"),
-            discord.SelectOption(label="Hard - Lvl 10", value="3"),
-            discord.SelectOption(label="Insane - Lvl 15", value="4"),
+            discord.SelectOption(label="Normal - Lvl 5", value="5"),
+            discord.SelectOption(label="Hard - Lvl 10", value="10"),
+            discord.SelectOption(label="Insane - Lvl 15", value="15"),
         ]
     )
     async def select(self, i: discord.Interaction, select: ui.Select):
