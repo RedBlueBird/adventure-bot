@@ -2109,9 +2109,9 @@
         "tombstone": {
             "start": [
                 {
-                    "description": "As you adventure forward, you nearly trip over a tombstone. This paticular tombstone is more decorative than the others, what if you dig down through it...",
+                    "description": "You stumble upon a particularly well-decorated tombstone that might contain some good stuff. What's a little grave robbery now and then?",
                     "choices": {
-                        "Escavate the Tombstone": [
+                        "Excavate the Tombstone": [
                             "tombstone",
                             "tombstone",
                             "none"
@@ -2135,7 +2135,7 @@
             ],
             "tombstone": [
                 {
-                    "description": "Wow! As you escavate the tombstone, shiny treasures gradually revealed themselves in front of your eyes!",
+                    "description": "A glimmer in the tombstone catches your eye. Digging around it, you found some shiny treasure!",
                     "choices": {
                         "Continue your adventure": [
                             "main",
@@ -2154,7 +2154,7 @@
                     ]
                 },
                 {
-                    "description": "Unfortunately, the more you dug through the tombstone, the more dirt you found. Guess it's just a regular tombstone afterall.",
+                    "description": "Unfortunately, you only hit dirt. Guess it's just a regular tombstone after all.",
                     "choices": {
                         "Keep digging": [
                             "tombstone",
@@ -2178,7 +2178,7 @@
                     ]
                 },
                 {
-                    "description": "SURPRISE! As you were digging down the tombstone, a zombie popped up right in front of you!",
+                    "description": "SURPRISE! A zombie suddenly popped up from the tombstone!",
                     "encounters": {
                         "Zombie": [
                             1
@@ -2207,7 +2207,7 @@
                     ]
                 },
                 {
-                    "description": "SURPRISE! As you were digging down the tombstone, a skeleton popped up right in front of you!",
+                    "description": "SURPRISE! A skeleton suddenly popped up from the tombstone!",
                     "encounters": {
                         "Skeleton": [
                             1
@@ -2219,7 +2219,7 @@
                             "start",
                             "fight"
                         ],
-                        "Stop digging the tombstone and run away": [
+                        "Run away": [
                             "main",
                             "start",
                             "none"

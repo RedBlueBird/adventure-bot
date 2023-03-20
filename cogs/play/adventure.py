@@ -118,7 +118,7 @@ class Adventure(commands.Cog):
         adventure = False
         # region hometown exploration
         loading = discord.Embed(title="Loading...", description=u.ICON['load'])
-        adventure_msg = await ctx.send(embed=loading)
+        adv_msg = await ctx.send(embed=loading)
 
         while True:
             embed = discord.Embed(
@@ -135,7 +135,7 @@ class Adventure(commands.Cog):
 
             view = ht.Decision(a, u.HTOWN[pos]["choices"], file)
             attach = [file] if show_map else []
-            await adventure_msg.edit(embed=embed, attachments=attach, view=view)
+            await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
 
             if view.show_map is not None:
@@ -143,14 +143,14 @@ class Adventure(commands.Cog):
             choice = view.decision
 
             if choice is None:
-                await adventure_msg.edit(
+                await adv_msg.edit(
                     content="You spaced out and the adventure was ended.",
                     embed=None, view=None, attachments=[]
                 )
                 break
 
             if choice == "exit":
-                await adventure_msg.edit(
+                await adv_msg.edit(
                     content="You quit this adventure.",
                     embed=None, view=None, attachments=[]
                 )
@@ -170,7 +170,7 @@ class Adventure(commands.Cog):
                     text="You can use `a.info item (name)` "
                          "to check the sell price of an item!"
                 )
-                await adventure_msg.edit(
+                await adv_msg.edit(
                     content=None,
                     embed=u.container_embed(inv),
                     view=view
@@ -199,7 +199,7 @@ class Adventure(commands.Cog):
                     color=discord.Color.gold()
                 )
                 view = ht.Shop(a, offers)
-                await adventure_msg.edit(embed=embed, view=view)
+                await adv_msg.edit(embed=embed, view=view)
                 await view.wait()
 
                 coins = dm.get_user_coin(a.id)
@@ -209,7 +209,7 @@ class Adventure(commands.Cog):
                 embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl) \
                     .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
                 view = ht.Chest(a)
-                await adventure_msg.edit(
+                await adv_msg.edit(
                     content=None,
                     embed=embed,
                     view=view
@@ -231,7 +231,7 @@ class Adventure(commands.Cog):
                     u.HTOWN[pos]["choices"][choice][0],
                     show_map
                 )
-                await adventure_msg.edit(
+                await adv_msg.edit(
                     embed=embed,
                     attachments=[] if img is None else [img],
                     view=view
@@ -257,17 +257,21 @@ class Adventure(commands.Cog):
                         await ctx.reply("You need a raid ticket first!", ephemeral=True)
                         continue
 
+                    embed = discord.Embed(
+                        title="Raid Preparation",
+                        description="How hard do you want the raid to be?",
+                        color=discord.Color.yellow()
+                    )
                     view = ht.LevelSelect(a)
-                    await adventure_msg.edit(view=None)
-                    sel_msg = await ctx.send("Choose your difficulty:", view=view)
+                    await adv_msg.edit(embed=embed, view=view)
                     await view.wait()
 
+                    if view.exit:
+                        continue
                     if view.level is not None:
                         raid_lvls = view.level
                         dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
                         adventure = True
-
-                    await sel_msg.delete()
                 else:
                     adventure = True
 
@@ -290,6 +294,15 @@ class Adventure(commands.Cog):
         coins = dm.get_user_coin(a.id)
         gems = dm.get_user_gem(a.id)
         xp = dm.get_user_exp(a.id)
+
+        adv = u.ADVENTURES[pos]
+        start = "main", "start", 0
+        embed = discord.Embed(
+            title=f"{a.display_name}'s {pos.title()} Adventure",
+            description="test description"
+        )
+        view = w.Adventure(a, adv, start)
+        await adv_msg.edit(embed=embed, view=view, attachments=[])
 
         await ctx.reply("Sorry, the devs are still working on this!")
 

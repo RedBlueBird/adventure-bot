@@ -10,7 +10,7 @@
                 "bed",
                 "self"
             ],
-            "Explore around your house": [
+            "Walk around your house": [
                 "explore home",
                 "self"
             ],
@@ -21,7 +21,7 @@
         }
     },
     "bed": {
-        "description": "Laying on your bed is very relaxing, and all your worries simply go away. There is a wooden chest sitting next to your bed, keeping your items safe. However, you know you have to get up from your bed sometime, as sleeping alone in your bed all day makes it look like you're just a lazy bum.",
+        "description": "Lying on your bed, you feel all your worries slip away. After an hour or so, though, you force yourself to get up and be productive. The mortgage isn't gonna pay itself!",
         "coordinate": [
             5,
             4
@@ -42,7 +42,7 @@
         }
     },
     "explore home": {
-        "description": "Your home doesn't really have anything worth exploring. It's just a giant mess, with items scattered everywhere.",
+        "description": "Your home is a giant eyesore. Items are scattered chaotically around the floor, and last time you checked there was an anthill next to the door. Maybe this is why you have no friends.",
         "coordinate": [
             5,
             4
@@ -59,7 +59,7 @@
         }
     },
     "south street": {
-        "description": "You look around. There are many houses, for both adventurers and normal townspeople. To the west, there is a bridge leading to the Enchanted Forest. To the southwest, there is a passage way leading out of the hometown. To the southeast, there is a locked gate blocking the entrance to an open plateau. Finally, there is the bar famous for its games and cocktails is to the east. You can also go to the north side of the town.",
+        "description": "You look around and see the houses of various townspeople and adventurers like you.\nTo the west lies a bridge leading to the Enchanted Forest.\nTo the southwest is a passage way leading out of the town.\nTo the southeast is a locked gate blocking the entrance to an open plateau.\nTo the east is the bar famous for its games and cocktails.\nYou can also go to the north side of the town.",
         "coordinate": [
             5,
             5
@@ -92,14 +92,14 @@
         }
     },
     "north street": {
-        "description": "You head north. To the west, there are a few shops open for trading. You can also see a wooden boat floating up and down on the river. To the north, there is a bridge leading to the ocean. To the east, there's a hidden passage way between the trees leading to who knows where.",
+        "description": "You head north.\nTo the west, there are a few shops open for trading.\nYou also see a wooden boat floating on the river.\nTo the north, there is a bridge leading to the ocean.\nTo the east, there's a passage way between the trees leading to who knows where.",
         "coordinate": [
             6,
             3
         ],
         "choices": {
             "Head to the ocean - adventure": [
-                "maze island",
+                "ocean",
                 "self"
             ],
             "Check out the shops - shop": [
@@ -111,7 +111,7 @@
                 "self"
             ],
             "Explore the hidden pathway - adventure": [
-                "city of mirage",
+                "mirage city",
                 "self"
             ],
             "Go to the bottom part of the hometown": [
@@ -121,7 +121,7 @@
         }
     },
     "shop": {
-        "description": "This is the trading center of the town! Open 24/7, it's filled with a wide variety of supplies and basic tools. You can buy and sell items here!",
+        "description": "This is the town's bustling marketplace! You constantly find yourself squished between other people, but finally make it to the shops where you can buy and sell almost anything.",
         "coordinate": [
             5,
             2
@@ -159,7 +159,7 @@
         }
     },
     "bar": {
-        "description": "You entered Sammy's Bar, the best (and only) bar in town! It's not only famous for its cocktails, but also its mini casino as well (You must be 18 or older to play. Please play responsibly).",
+        "description": "You entered Sammy's Bar, the best (and only) bar in town! It's famous for its explosive cocktails and mini-casino (You must be 18 or older to play. Please play responsibly).",
         "coordinate": [
             8,
             5
@@ -184,7 +184,7 @@
         }
     },
     "enchanted forest": {
-        "description": "This is an ancient forest teeming with magic. Many adventurers have attempted to explore here, but had given up partway through due to its mysterious, unpredictable, and dangerous environment. Legends say that this area contains a mythical power inside a holy shrine, but no one had ever seen it with their own eyes and gotten back out alive.",
+        "description": "This is an ancient forest teeming with magic. Many adventurers have attempted to explore here, but had given up partway through due to its mysterious, unpredictable, and dangerous environment. Legends say that this area contains a mythical power inside a holy shrine, but no one has ever gotten back alive after seeing it.",
         "coordinate": [
             0,
             5
@@ -201,7 +201,7 @@
         }
     },
     "cemetery": {
-        "description": "When you made it to the end of the narrow passage, you find yourself in a cemetery! You recall that this place is a terrifying ghost-filled path to the underworld!",
+        "description": "Walking through the passage, you find yourself in a cemetery. You remember hearing that this place is a terrifying ghost-filled path to the underworld!",
         "coordinate": [
             1,
             7
@@ -218,7 +218,7 @@
         }
     },
     "boss raid": {
-        "description": "You walk up to the largest gate you have ever seen, built to prevent people from accidentally going down this path which leads to an open plateau. What could be waiting for those who venture past the safety of the village?",
+        "description": "You walk up to an extremely large gate. The skulls of other less fortunate adventurers adorn two posts next to the gate. What could possibly be behind it?",
         "coordinate": [
             6,
             7
