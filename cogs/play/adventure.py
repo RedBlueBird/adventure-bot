@@ -1,7 +1,5 @@
 import random
 import math
-import string
-import asyncio
 import io
 
 from PIL import Image
@@ -113,12 +111,7 @@ class Adventure(commands.Cog):
         a = ctx.author
 
         lvl = dm.get_user_level(a.id)
-        deck = dm.get_user_deck(a.id)
-        hand = [f"{c[2]}.{c[1]}" for c in deck]
-        random.shuffle(hand)
-
         inv = dm.get_user_inventory(a.id)
-        storage = dm.get_user_storage(a.id)
         pos = dm.get_user_position(a.id)
         show_map = dm.get_user_map(a.id)
 
@@ -213,7 +206,7 @@ class Adventure(commands.Cog):
                 inv = dm.get_user_inventory(a.id)
 
             elif state[1] == "chest":
-                embed = u.container_embed(storage, "Chest", lvl) \
+                embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl) \
                     .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
                 view = ht.Chest(a)
                 await adventure_msg.edit(
@@ -224,7 +217,6 @@ class Adventure(commands.Cog):
                 await view.wait()
 
                 inv = dm.get_user_inventory(a.id)
-                storage = dm.get_user_storage(a.id)
 
             elif state[1] == "minigame":
                 dm.queues[a.id] = "playing a minigame"
@@ -283,7 +275,6 @@ class Adventure(commands.Cog):
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
-        dm.set_user_storage(a.id, storage)
         dm.set_user_position(a.id, pos)
         # endregion
 

@@ -18,7 +18,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -27,9 +27,7 @@
                     "description": "You notice a large shadow sweep across the ground as a figure flies through the sky. In a flash, the wind unleashes its power as a monstrous claw hits the ground. The creature waves its strong wings while arcing its head back to let out a roar. The Red Wyvern shoots a burst of flame, ready to turn you to ash with its legendary power.",
                     "encounters": {
                         "Red Wyvern": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "choices": {
@@ -46,15 +44,13 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 },
                 {
                     "description": "You walk through the gate, expecting to see a wyvern, or perhaps a lich lord, but are instead greeted by an absolutely majestic being. It's beautiful form takes your breath away, and the gracefulness of its legs as they scuttle across the ground are like that of a skilled dancer. But you DO get pretty good loot for killing it, though it would be a shame to end the life of such a perfect being.",
                     "encounters": {
                         "Spider Fish": [
-                            1,
-                            1,
                             0
                         ]
                     },
@@ -71,7 +67,7 @@
                         ]
                     ],
                     "prob": [
-                        0
+                        0.0
                     ]
                 }
             ],
@@ -85,7 +81,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ]
@@ -110,7 +106,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -131,7 +127,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 },
                 {
@@ -158,9 +154,9 @@
                         ]
                     ],
                     "prob": [
-                        4000,
-                        4000,
-                        4000
+                        0.4,
+                        0.4,
+                        0.4
                     ]
                 },
                 {
@@ -179,7 +175,7 @@
                         ]
                     ],
                     "prob": [
-                        4000
+                        0.4
                     ]
                 },
                 {
@@ -198,7 +194,7 @@
                         ]
                     ],
                     "prob": [
-                        1500
+                        0.15
                     ]
                 },
                 {
@@ -217,7 +213,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 },
                 {
@@ -236,7 +232,7 @@
                         ]
                     ],
                     "prob": [
-                        1000
+                        0.1
                     ]
                 },
                 {
@@ -255,7 +251,7 @@
                         ]
                     ],
                     "prob": [
-                        1500
+                        0.15
                     ]
                 },
                 {
@@ -274,7 +270,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 },
                 {
@@ -293,7 +289,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 }
             ],
@@ -302,9 +298,9 @@
                     "description": "A tribe of goblins leap out of the undergrowth, weapons at the ready.",
                     "encounters": {
                         "Goblin": [
-                            2,
-                            3,
-                            2000
+                            1,
+                            1,
+                            0.2
                         ]
                     },
                     "choices": {
@@ -340,27 +336,21 @@
                         ]
                     ],
                     "prob": [
-                        5000,
-                        1000
+                        0.5,
+                        0.1
                     ]
                 },
                 {
                     "description": "A pack of goblins spots you from their campfire. You have a feeling that you're going to become dinner if you don't fight.",
                     "encounters": {
                         "Goblin": [
-                            1,
-                            1,
-                            1500
+                            1
                         ],
                         "Goblin Soldier": [
-                            1,
-                            1,
-                            500
+                            1
                         ],
                         "Goblin Bomber": [
-                            1,
-                            1,
-                            2000
+                            1
                         ]
                     },
                     "choices": {
@@ -396,22 +386,19 @@
                         ]
                     ],
                     "prob": [
-                        4000,
-                        1000
+                        0.4,
+                        0.1
                     ]
                 },
                 {
                     "description": "Armed goblin soldiers drop down from ropes and you find yourself completely surrounded!",
                     "encounters": {
                         "Goblin Chief": [
-                            1,
-                            1,
-                            0
+                            1
                         ],
                         "Goblin Soldier": [
-                            2,
-                            2,
-                            2500
+                            1,
+                            1
                         ]
                     },
                     "choices": {
@@ -432,8 +419,8 @@
                         ]
                     ],
                     "prob": [
-                        3000,
-                        2500
+                        0.3,
+                        0.25
                     ]
                 },
                 {
@@ -441,8 +428,8 @@
                     "encounters": {
                         "Slime": [
                             1,
-                            3,
-                            3000
+                            0.5,
+                            0.3
                         ]
                     },
                     "choices": {
@@ -463,17 +450,17 @@
                         ]
                     ],
                     "prob": [
-                        2000,
-                        1000
+                        0.2,
+                        0.1
                     ]
                 },
                 {
                     "description": "The ground trembles as the trees in front of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
                     "encounters": {
                         "Tree Giant": [
-                            2,
-                            3,
-                            2500
+                            1,
+                            1,
+                            0.25
                         ]
                     },
                     "choices": {
@@ -509,8 +496,8 @@
                         ]
                     ],
                     "prob": [
-                        1000,
-                        2500
+                        0.1,
+                        0.25
                     ]
                 },
                 {
@@ -518,8 +505,8 @@
                     "encounters": {
                         "Ogre Gladiator": [
                             1,
-                            3,
-                            2000
+                            0.2,
+                            0.2
                         ]
                     },
                     "choices": {
@@ -544,9 +531,9 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        3000,
-                        1500
+                        0.15,
+                        0.3,
+                        0.15
                     ]
                 }
             ],
@@ -580,7 +567,7 @@
                         ]
                     ],
                     "prob": [
-                        2000
+                        0.2
                     ]
                 },
                 {
@@ -612,7 +599,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 },
                 {
@@ -648,8 +635,8 @@
                         ]
                     ],
                     "prob": [
-                        1000,
-                        500
+                        0.1,
+                        0.05
                     ]
                 },
                 {
@@ -689,9 +676,9 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        1000,
-                        500
+                        0.15,
+                        0.1,
+                        0.05
                     ]
                 },
                 {
@@ -727,8 +714,8 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        1000
+                        0.15,
+                        0.1
                     ]
                 },
                 {
@@ -764,8 +751,8 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        1000
+                        0.15,
+                        0.1
                     ]
                 }
             ],
@@ -774,9 +761,7 @@
                     "description": "A lone elf jumped out of the bushes and ambushed you!",
                     "encounters": {
                         "Archer Elf": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "choices": {
@@ -793,7 +778,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -825,8 +810,8 @@
                         ]
                     ],
                     "prob": [
-                        3000,
-                        1000
+                        0.3,
+                        0.1
                     ]
                 },
                 {
@@ -860,8 +845,8 @@
                         ]
                     ],
                     "prob": [
-                        2000,
-                        1500
+                        0.2,
+                        0.15
                     ]
                 }
             ],
@@ -870,9 +855,7 @@
                     "description": "You meet a skilled potioneer. They may have some helpful supplies you can use on your journeys.",
                     "encounters": {
                         "Potioneer": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "name": "potioneer",
@@ -908,18 +891,16 @@
                         ]
                     ],
                     "prob": [
-                        4000,
-                        5000,
-                        6000
+                        0.4,
+                        0.5,
+                        0.6
                     ]
                 },
                 {
                     "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
                     "encounters": {
                         "Craftsman": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "name": "craftsman",
@@ -955,9 +936,9 @@
                         ]
                     ],
                     "prob": [
-                        5000,
-                        4000,
-                        3000
+                        0.5,
+                        0.4,
+                        0.3
                     ]
                 }
             ],
@@ -967,13 +948,10 @@
                     "encounters": {
                         "Goblin Thief": [
                             1,
-                            2,
-                            2000
+                            0.2
                         ],
                         "Goblin Bomber": [
-                            1,
-                            1,
-                            1500
+                            1
                         ]
                     },
                     "choices": {
@@ -995,7 +973,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -1004,14 +982,11 @@
                     "description": "You see a huge lumbering ogre that's much larger than the others. Wearing animal pelts, and covering its face with black and white war paint, it carries two huge metal blades covered with blood stains. You're nearly paralyzed with fear!",
                     "encounters": {
                         "Ogre Berserker": [
-                            1,
-                            1,
-                            0
+                            1
                         ],
                         "Ogre Gladiator": [
-                            2,
-                            2,
-                            0
+                            1,
+                            1
                         ]
                     },
                     "choices": {
@@ -1028,21 +1003,18 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 },
                 {
                     "description": "The earth *TREMBLES* as the all mighty Golem awakens from its shell. The guardian of the Holy Shrine, the ultimate barrier between adventurers and treasures. You can either try to get past it or mark your last step upon this forbidden part of the forest and leave.",
                     "encounters": {
                         "Temple Guardian": [
-                            1,
-                            1,
-                            0
+                            1
                         ],
                         "Crystal Golem": [
-                            2,
-                            2,
-                            0
+                            1,
+                            1
                         ]
                     },
                     "choices": {
@@ -1059,7 +1031,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -1080,7 +1052,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ]
@@ -1133,7 +1105,7 @@
                         ]
                     ],
                     "prob": [
-                        3000
+                        0.3
                     ]
                 }
             ],
@@ -1158,7 +1130,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 }
             ],
@@ -1179,7 +1151,7 @@
                         ]
                     ],
                     "prob": [
-                        1000
+                        0.1
                     ]
                 }
             ],
@@ -1200,7 +1172,7 @@
                         ]
                     ],
                     "prob": [
-                        1000
+                        0.1
                     ]
                 }
             ]
@@ -1238,7 +1210,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 }
             ],
@@ -1264,7 +1236,7 @@
                         ]
                     ],
                     "prob": [
-                        4000
+                        0.4
                     ]
                 },
                 {
@@ -1283,7 +1255,7 @@
                         ]
                     ],
                     "prob": [
-                        1000
+                        0.1
                     ]
                 },
                 {
@@ -1320,7 +1292,7 @@
                         ]
                     ],
                     "prob": [
-                        2000
+                        0.2
                     ]
                 }
             ]
@@ -1343,7 +1315,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -1364,21 +1336,17 @@
                         ]
                     ],
                     "prob": [
-                        4000
+                        0.4
                     ]
                 },
                 {
                     "description": "The end of this long hall way brings you to a large room with filled with a pool of blue liquid with a ginormous tree rooted in the center. Those are no blue water, as you take a closer at them, what should be your face's reflection is now replaced by videos of other entities. Its almost as if the liquid has taken the souls of past creatures who came near and caged them inside. Suddenly the room shook as the holy tree in the center morphing into a humanoid form. ",
                     "encounters": {
                         "Shiniminsus": [
-                            1,
-                            1,
-                            10000
+                            1
                         ],
                         "Temple Guardian": [
-                            1,
-                            1,
-                            5000
+                            1
                         ]
                     },
                     "choices": {
@@ -1395,7 +1363,7 @@
                         ]
                     ],
                     "prob": [
-                        2000
+                        0.2
                     ]
                 },
                 {
@@ -1403,8 +1371,7 @@
                     "encounters": {
                         "Crystal Golem": [
                             1,
-                            2,
-                            5500
+                            0.55
                         ]
                     },
                     "choices": {
@@ -1421,7 +1388,7 @@
                         ]
                     ],
                     "prob": [
-                        2000
+                        0.2
                     ]
                 }
             ]
@@ -1446,7 +1413,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -1475,9 +1442,9 @@
                         ]
                     ],
                     "prob": [
-                        4000,
-                        4000,
-                        4000
+                        0.4,
+                        0.4,
+                        0.4
                     ]
                 },
                 {
@@ -1496,7 +1463,7 @@
                         ]
                     ],
                     "prob": [
-                        4000
+                        0.4
                     ]
                 },
                 {
@@ -1515,7 +1482,7 @@
                         ]
                     ],
                     "prob": [
-                        1500
+                        0.15
                     ]
                 },
                 {
@@ -1534,7 +1501,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 },
                 {
@@ -1553,7 +1520,7 @@
                         ]
                     ],
                     "prob": [
-                        1000
+                        0.1
                     ]
                 },
                 {
@@ -1572,7 +1539,7 @@
                         ]
                     ],
                     "prob": [
-                        1500
+                        0.15
                     ]
                 },
                 {
@@ -1591,7 +1558,7 @@
                         ]
                     ],
                     "prob": [
-                        500
+                        0.05
                     ]
                 }
             ],
@@ -1600,9 +1567,9 @@
                     "description": "Arghh!! Bony hands clawing their way out of a grave were followed by a skeleton's body, threatening your life!",
                     "encounters": {
                         "Skeleton": [
-                            2,
-                            3,
-                            2000
+                            1,
+                            1,
+                            0.2
                         ]
                     },
                     "choices": {
@@ -1628,17 +1595,17 @@
                         ]
                     ],
                     "prob": [
-                        5000,
-                        1000
+                        0.5,
+                        0.1
                     ]
                 },
                 {
                     "description": "\"Rauuughhh!\" . You hear something moving behind a tree. Peeking around, you see the undead eyes of zombies!",
                     "encounters": {
                         "Zombie": [
-                            2,
-                            3,
-                            2000
+                            1,
+                            1,
+                            0.2
                         ]
                     },
                     "choices": {
@@ -1664,8 +1631,8 @@
                         ]
                     ],
                     "prob": [
-                        5000,
-                        2000
+                        0.5,
+                        0.2
                     ]
                 },
                 {
@@ -1673,8 +1640,7 @@
                     "encounters": {
                         "Phantom": [
                             1,
-                            2,
-                            2000
+                            0.2
                         ]
                     },
                     "choices": {
@@ -1695,8 +1661,8 @@
                         ]
                     ],
                     "prob": [
-                        5000,
-                        2000
+                        0.5,
+                        0.2
                     ]
                 },
                 {
@@ -1704,8 +1670,7 @@
                     "encounters": {
                         "Demon": [
                             1,
-                            2,
-                            2000
+                            0.2
                         ]
                     },
                     "choices": {
@@ -1726,8 +1691,8 @@
                         ]
                     ],
                     "prob": [
-                        3000,
-                        4000
+                        0.3,
+                        0.4
                     ]
                 }
             ],
@@ -1761,7 +1726,7 @@
                         ]
                     ],
                     "prob": [
-                        2000
+                        0.2
                     ]
                 },
                 {
@@ -1801,9 +1766,9 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        1000,
-                        500
+                        0.15,
+                        0.1,
+                        0.05
                     ]
                 },
                 {
@@ -1839,8 +1804,8 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        1000
+                        0.15,
+                        0.1
                     ]
                 },
                 {
@@ -1876,8 +1841,8 @@
                         ]
                     ],
                     "prob": [
-                        1500,
-                        1000
+                        0.15,
+                        0.1
                     ]
                 }
             ],
@@ -1886,9 +1851,7 @@
                     "description": "A lone elf jumped out of the bushes and ambushed you!",
                     "encounters": {
                         "Archer Elf": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "choices": {
@@ -1905,7 +1868,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -1937,8 +1900,8 @@
                         ]
                     ],
                     "prob": [
-                        0,
-                        0
+                        0.0,
+                        0.0
                     ]
                 },
                 {
@@ -1972,8 +1935,8 @@
                         ]
                     ],
                     "prob": [
-                        2000,
-                        1500
+                        0.2,
+                        0.15
                     ]
                 }
             ],
@@ -1982,9 +1945,7 @@
                     "description": "You meet a skilled potioneer. They may have some helpful supplies you can use on your journeys.",
                     "encounters": {
                         "Potioneer": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "name": "potioneer",
@@ -2020,18 +1981,16 @@
                         ]
                     ],
                     "prob": [
-                        4000,
-                        5000,
-                        6000
+                        0.4,
+                        0.5,
+                        0.6
                     ]
                 },
                 {
                     "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
                     "encounters": {
                         "Craftsman": [
-                            1,
-                            1,
-                            0
+                            1
                         ]
                     },
                     "name": "craftsman",
@@ -2067,9 +2026,9 @@
                         ]
                     ],
                     "prob": [
-                        5000,
-                        4000,
-                        3000
+                        0.5,
+                        0.4,
+                        0.3
                     ]
                 }
             ],
@@ -2078,9 +2037,9 @@
                     "description": "You suddenly feel a pang of paranoia. Looking back, you realize that a vicious ghost is looming over your head!",
                     "encounters": {
                         "Ghost": [
-                            2,
-                            3,
-                            2000
+                            1,
+                            1,
+                            0.2
                         ]
                     },
                     "choices": {
@@ -2102,7 +2061,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -2111,9 +2070,7 @@
                     "description": "In the distance, you see a knight galloping towards you. However, as it gets closer, you realize that where a shiny helmet should be, there is now only a bright blue flame!",
                     "encounters": {
                         "Headless Knight": [
-                            1,
-                            1,
-                            2000
+                            1
                         ]
                     },
                     "choices": {
@@ -2130,7 +2087,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -2144,7 +2101,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ]
@@ -2172,7 +2129,7 @@
                         ]
                     ],
                     "prob": [
-                        10000
+                        1
                     ]
                 }
             ],
@@ -2193,7 +2150,7 @@
                         ]
                     ],
                     "prob": [
-                        2500
+                        0.25
                     ]
                 },
                 {
@@ -2217,16 +2174,14 @@
                         ]
                     ],
                     "prob": [
-                        2500
+                        0.25
                     ]
                 },
                 {
                     "description": "SURPRISE! As you were digging down the tombstone, a zombie popped up right in front of you!",
                     "encounters": {
                         "Zombie": [
-                            1,
-                            1,
-                            2000
+                            1
                         ]
                     },
                     "choices": {
@@ -2248,16 +2203,14 @@
                         ]
                     ],
                     "prob": [
-                        2500
+                        0.25
                     ]
                 },
                 {
                     "description": "SURPRISE! As you were digging down the tombstone, a skeleton popped up right in front of you!",
                     "encounters": {
                         "Skeleton": [
-                            1,
-                            1,
-                            2000
+                            1
                         ]
                     },
                     "choices": {
@@ -2279,7 +2232,7 @@
                         ]
                     ],
                     "prob": [
-                        2500
+                        0.25
                     ]
                 }
             ]
