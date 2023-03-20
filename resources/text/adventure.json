@@ -17,9 +17,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "boss": [
@@ -45,9 +43,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 },
                 {
                     "description": "You walk through the gate, expecting to see a wyvern, or perhaps a lich lord, but are instead greeted by an absolutely majestic being. It's beautiful form takes your breath away, and the gracefulness of its legs as they scuttle across the ground are like that of a skilled dancer. But you DO get pretty good loot for killing it, though it would be a shame to end the life of such a perfect being.",
@@ -70,9 +66,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        0
-                    ]
+                    "prob": 0
                 }
             ],
             "end": [
@@ -84,9 +78,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ]
         }
@@ -109,9 +101,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "adventure": [
@@ -130,9 +120,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 },
                 {
                     "description": "Boss!",
@@ -157,11 +145,7 @@
                             3100
                         ]
                     ],
-                    "prob": [
-                        4000,
-                        4000,
-                        4000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "Monsters!",
@@ -178,9 +162,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        4000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "Items!",
@@ -197,9 +179,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1500
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "Traders!",
@@ -216,9 +196,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 },
                 {
                     "description": "Thieves!",
@@ -235,9 +213,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1000
-                    ]
+                    "prob": 1000
                 },
                 {
                     "description": "Traps!",
@@ -254,9 +230,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1500
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "River!",
@@ -273,9 +247,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 },
                 {
                     "description": "Cave!",
@@ -292,9 +264,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 }
             ],
             "monster": [
@@ -339,10 +309,7 @@
                             1000
                         ]
                     ],
-                    "prob": [
-                        5000,
-                        1000
-                    ]
+                    "prob": 5000
                 },
                 {
                     "description": "A pack of goblins spots you from their campfire. You have a feeling that you're going to become dinner if you don't fight.",
@@ -395,10 +362,7 @@
                             2500
                         ]
                     ],
-                    "prob": [
-                        4000,
-                        1000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "Armed goblin soldiers drop down from ropes and you find yourself completely surrounded!",
@@ -431,10 +395,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        3000,
-                        2500
-                    ]
+                    "prob": 3000
                 },
                 {
                     "description": "Living slimes ooze out of a nearby puddle!",
@@ -462,10 +423,7 @@
                             2000
                         ]
                     ],
-                    "prob": [
-                        2000,
-                        1000
-                    ]
+                    "prob": 2000
                 },
                 {
                     "description": "The ground trembles as the trees in front of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
@@ -508,10 +466,7 @@
                             2500
                         ]
                     ],
-                    "prob": [
-                        1000,
-                        2500
-                    ]
+                    "prob": 1000
                 },
                 {
                     "description": "Oh no! You realize you've crossed into an Ogre's territory...",
@@ -543,11 +498,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        3000,
-                        1500
-                    ]
+                    "prob": 1500
                 }
             ],
             "item": [
@@ -579,9 +530,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        2000
-                    ]
+                    "prob": 2000
                 },
                 {
                     "description": "You see some strange looking leaves. No, upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
@@ -611,9 +560,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 },
                 {
                     "description": "You see some red fruits hanging on a tree. These fruits can come in handy, able to replenish your energy when you are in need of it",
@@ -647,10 +594,7 @@
                             2000
                         ]
                     ],
-                    "prob": [
-                        1000,
-                        500
-                    ]
+                    "prob": 1000
                 },
                 {
                     "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
@@ -688,11 +632,7 @@
                             3000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        1000,
-                        500
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
@@ -726,10 +666,7 @@
                             3000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        1000
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
@@ -763,10 +700,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        1000
-                    ]
+                    "prob": 1500
                 }
             ],
             "arrow trap": [
@@ -792,9 +726,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "trap": [
@@ -824,10 +756,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        3000,
-                        1000
-                    ]
+                    "prob": 3000
                 },
                 {
                     "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
@@ -859,10 +788,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        2000,
-                        1500
-                    ]
+                    "prob": 2000
                 }
             ],
             "trader": [
@@ -907,11 +833,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        4000,
-                        5000,
-                        6000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
@@ -954,11 +876,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        5000,
-                        4000,
-                        3000
-                    ]
+                    "prob": 5000
                 }
             ],
             "thief": [
@@ -994,9 +912,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "boss": [
@@ -1027,9 +943,7 @@
                             1999
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 },
                 {
                     "description": "The earth *TREMBLES* as the all mighty Golem awakens from its shell. The guardian of the Holy Shrine, the ultimate barrier between adventurers and treasures. You can either try to get past it or mark your last step upon this forbidden part of the forest and leave.",
@@ -1058,9 +972,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "end": [
@@ -1079,9 +991,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ]
         },
@@ -1132,9 +1042,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        3000
-                    ]
+                    "prob": 3000
                 }
             ],
             "legs": [
@@ -1157,9 +1065,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 }
             ],
             "raft": [
@@ -1178,9 +1084,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1000
-                    ]
+                    "prob": 1000
                 }
             ],
             "craft": [
@@ -1199,9 +1103,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1000
-                    ]
+                    "prob": 1000
                 }
             ]
         },
@@ -1237,9 +1139,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 }
             ],
             "explore": [
@@ -1263,9 +1163,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        4000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "You reached a dead end. Guess there wasn't anything in this cave...",
@@ -1282,9 +1180,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1000
-                    ]
+                    "prob": 1000
                 },
                 {
                     "description": "While walking through the cave, you noticed some mushrooms beneath you!",
@@ -1319,9 +1215,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2000
-                    ]
+                    "prob": 2000
                 }
             ]
         },
@@ -1342,9 +1236,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "explore": [
@@ -1363,9 +1255,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        4000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "The end of this long hall way brings you to a large room with filled with a pool of blue liquid with a ginormous tree rooted in the center. Those are no blue water, as you take a closer at them, what should be your face's reflection is now replaced by videos of other entities. Its almost as if the liquid has taken the souls of past creatures who came near and caged them inside. Suddenly the room shook as the holy tree in the center morphing into a humanoid form. ",
@@ -1394,9 +1284,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2000
-                    ]
+                    "prob": 2000
                 },
                 {
                     "description": "Just as you thought you walked into a dead end, the rocky boulders infront of you reanimated themselves and start attacking you by surprise!",
@@ -1420,9 +1308,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2000
-                    ]
+                    "prob": 2000
                 }
             ]
         }
@@ -1445,9 +1331,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "adventure": [
@@ -1474,11 +1358,7 @@
                             3100
                         ]
                     ],
-                    "prob": [
-                        4000,
-                        4000,
-                        4000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "Monsters!",
@@ -1495,9 +1375,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        4000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "Items!",
@@ -1514,9 +1392,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1500
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "Traders!",
@@ -1533,9 +1409,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 },
                 {
                     "description": "Thieves!",
@@ -1552,9 +1426,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1000
-                    ]
+                    "prob": 1000
                 },
                 {
                     "description": "Traps!",
@@ -1571,9 +1443,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1500
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "Tombstone!",
@@ -1590,9 +1460,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        500
-                    ]
+                    "prob": 500
                 }
             ],
             "monster": [
@@ -1627,10 +1495,7 @@
                             3000
                         ]
                     ],
-                    "prob": [
-                        5000,
-                        1000
-                    ]
+                    "prob": 5000
                 },
                 {
                     "description": "\"Rauuughhh!\" . You hear something moving behind a tree. Peeking around, you see the undead eyes of zombies!",
@@ -1663,10 +1528,7 @@
                             4000
                         ]
                     ],
-                    "prob": [
-                        5000,
-                        2000
-                    ]
+                    "prob": 5000
                 },
                 {
                     "description": "A ghost wielding a shimmering battle axe glides towards you. Despite whoever this person was in their previous life, they now only want one thing: human flesh! ",
@@ -1694,10 +1556,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        5000,
-                        2000
-                    ]
+                    "prob": 5000
                 },
                 {
                     "description": "As a strong wave of heat surrounds you, a swirling pillar of flame suddenly appears. When the fire dies, you realize a demon had appeared right before your eyes!",
@@ -1725,10 +1584,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        3000,
-                        4000
-                    ]
+                    "prob": 3000
                 }
             ],
             "item": [
@@ -1760,9 +1616,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2000
-                    ]
+                    "prob": 2000
                 },
                 {
                     "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
@@ -1800,11 +1654,7 @@
                             3000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        1000,
-                        500
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
@@ -1838,10 +1688,7 @@
                             3000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        1000
-                    ]
+                    "prob": 1500
                 },
                 {
                     "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
@@ -1875,10 +1722,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        1500,
-                        1000
-                    ]
+                    "prob": 1500
                 }
             ],
             "arrow trap": [
@@ -1904,9 +1748,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "trap": [
@@ -1936,10 +1778,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        0,
-                        0
-                    ]
+                    "prob": 0
                 },
                 {
                     "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
@@ -1971,10 +1810,7 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        2000,
-                        1500
-                    ]
+                    "prob": 2000
                 }
             ],
             "trader": [
@@ -2019,11 +1855,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        4000,
-                        5000,
-                        6000
-                    ]
+                    "prob": 4000
                 },
                 {
                     "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
@@ -2066,11 +1898,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        5000,
-                        4000,
-                        3000
-                    ]
+                    "prob": 5000
                 }
             ],
             "thief": [
@@ -2101,9 +1929,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "boss": [
@@ -2129,23 +1955,19 @@
                             7000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "end": [
                 {
-                    "description": "You have conquered the Cemetery! You can always come back for resources another time.",
+                    "description": "You have conquered the Enchanted Forest! You can always come back for resources another time.",
                     "ranges": [
                         [
                             0,
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ]
         },
@@ -2171,9 +1993,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        10000
-                    ]
+                    "prob": 10000
                 }
             ],
             "tombstone": [
@@ -2192,9 +2012,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2500
-                    ]
+                    "prob": 2500
                 },
                 {
                     "description": "Unfortunately, the more you dug through the tombstone, the more dirt you found. Guess it's just a regular tombstone afterall.",
@@ -2216,9 +2034,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2500
-                    ]
+                    "prob": 2500
                 },
                 {
                     "description": "SURPRISE! As you were digging down the tombstone, a zombie popped up right in front of you!",
@@ -2247,9 +2063,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2500
-                    ]
+                    "prob": 2500
                 },
                 {
                     "description": "SURPRISE! As you were digging down the tombstone, a skeleton popped up right in front of you!",
@@ -2278,9 +2092,7 @@
                             10000
                         ]
                     ],
-                    "prob": [
-                        2500
-                    ]
+                    "prob": 2500
                 }
             ]
         }
