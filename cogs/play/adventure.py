@@ -6,8 +6,9 @@ from PIL import Image
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from helpers.battle import BattleData
+
 import views.adventure.games as g
 import views.adventure.hometown as ht
 import views.adventure.wild as w
@@ -38,63 +39,20 @@ def setup_minigame(
         color=discord.Color.gold()
     )
 
-    logs = [f"• {r}" for r in u.MINIGAMES[game_name]["rules"]]
+    logs = [f"• {r}" for r in r.MINIGAMES[game_name].rules]
     embed.add_field(name="Rules", value="\n".join(logs))
 
     embed.set_footer(text=f"{u.PREF}exit -quit minigame")
     if show_map:
-        if u.MINIGAMES[game_name]["image"] is not None:
+        if r.MINIGAMES[game_name].img is not None:
             return (
                 embed,
-                discord.File(u.MINIGAMES[game_name]["image"])
+                discord.File(r.MINIGAMES[game_name].img)
             )
         else:
             return embed, None
     else:
         return embed, None
-
-
-def spawn_decider(path, traveled_distance, boss, msg=None, option=None):
-    while option is None:
-        if not boss:
-            for x, n in enumerate(path):
-                for a, b, c in n["spawn rate"]:
-                    if a <= traveled_distance <= b and c >= random.randint(1, 10000):
-                        option = x
-                        break
-                if option is not None:
-                    break
-        else:
-            option = math.floor(traveled_distance / 1000) % len(path)
-
-    if msg is None:
-        embed = discord.Embed(
-            description=f"```{path[option]['description']}```",
-            color=discord.Color.gold()
-        )
-    else:
-        embed = discord.Embed(
-            description="```" + "\n".join(msg) + "\n\n" +
-                        f"{path[option]['description']}```",
-            color=discord.Color.gold()
-        )
-
-    if "choices" in path[option]:
-        embed.add_field(name="Choices", value=choices_list(path[option]["choices"]))
-
-    embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack | {u.PREF}refresh")
-    return [embed, option]
-
-
-def perk_decider():
-    embed = discord.Embed(
-        description="```The tireless long journey has paid off! Choose a perk:```",
-        color=discord.Color.gold()
-    )
-    chosen = random.sample(u.PERKS, 3)
-    embed.add_field(name="Choices", value=choices_list([i.title() for i in chosen]))
-    embed.set_footer(text=f"{u.PREF}exit | {u.PREF}backpack | {u.PREF}refresh")
-    return [embed]
 
 
 class Adventure(commands.Cog):

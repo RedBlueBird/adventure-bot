@@ -1,7 +1,7 @@
 import random
 import math
 
-from .constants import *
+from .raw_constants import *
 from .assets import cards_dict
 from .general import log_level_gen
 

@@ -5,7 +5,7 @@
         "health": 20,
         "energy_lag": 7,
         "stamina": 20,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 20,
                 30
@@ -37,7 +37,7 @@
         "health": 10,
         "energy_lag": 7,
         "stamina": 20,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 20,
                 30
@@ -69,7 +69,7 @@
         "health": 15,
         "energy_lag": 8,
         "stamina": 15,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 2,
                 5
@@ -101,7 +101,7 @@
         "health": 30,
         "energy_lag": 6,
         "stamina": 20,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 5,
                 10
@@ -133,7 +133,7 @@
         "health": 60,
         "energy_lag": 5,
         "stamina": 30,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 20,
                 30
@@ -142,13 +142,7 @@
                 20,
                 30
             ],
-            "Goblin Staff": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ]
+            "Goblin Staff": 1
         },
         "deck": [
             "Shield",
@@ -172,7 +166,7 @@
         "health": 25,
         "energy_lag": 4,
         "stamina": 25,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 10,
                 15
@@ -204,7 +198,7 @@
         "health": 25,
         "energy_lag": 8,
         "stamina": 40,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 5,
                 10
@@ -217,8 +211,7 @@
                 [
                     1,
                     1
-                ],
-                10000
+                ]
             ]
         },
         "deck": [
@@ -243,7 +236,7 @@
         "health": 70,
         "energy_lag": 6,
         "stamina": 35,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 10,
                 15
@@ -275,7 +268,7 @@
         "health": 100,
         "energy_lag": 6,
         "stamina": 25,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 15,
                 25
@@ -284,20 +277,8 @@
                 20,
                 30
             ],
-            "Stone": [
-                [
-                    0,
-                    3
-                ],
-                10000
-            ],
-            "Crystal": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ]
+            "Stone": [1, 3],
+            "Crystal": 1
         },
         "deck": [
             "Shield",
@@ -321,7 +302,7 @@
         "health": 200,
         "energy_lag": 4,
         "stamina": 50,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 100,
                 200
@@ -330,27 +311,9 @@
                 25,
                 50
             ],
-            "Health Potion": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ],
-            "Power Potion": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ],
-            "Berserker Axe": [
-                [
-                    1,
-                    1
-                ],
-                5000
-            ]
+            "Health Potion": 1,
+            "Power Potion": 1,
+            "Berserker Axe": 1
         },
         "deck": [
             "Fury Slashes",
@@ -374,7 +337,7 @@
         "health": 2400,
         "energy_lag": 4,
         "stamina": 35,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 150,
                 250
@@ -383,20 +346,8 @@
                 25,
                 50
             ],
-            "Health Potion": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ],
-            "Power Potion": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ]
+            "Health Potion": 1,
+            "Power Potion": 1
         },
         "deck": [
             "Relic",
@@ -419,7 +370,7 @@
         "health": 600,
         "energy_lag": 2,
         "stamina": 100,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 1000,
                 2000
@@ -450,7 +401,7 @@
         "health": 20,
         "energy_lag": 7,
         "stamina": 30,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 20,
                 30
@@ -482,7 +433,7 @@
         "health": 25,
         "energy_lag": 6,
         "stamina": 20,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 2,
                 5
@@ -514,7 +465,7 @@
         "health": 35,
         "energy_lag": 9,
         "stamina": 35,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 5,
                 10
@@ -546,7 +497,7 @@
         "health": 30,
         "energy_lag": 8,
         "stamina": 25,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 5,
                 10
@@ -578,7 +529,7 @@
         "health": 40,
         "energy_lag": 6,
         "stamina": 40,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 10,
                 20
@@ -610,7 +561,7 @@
         "health": 70,
         "energy_lag": 5,
         "stamina": 35,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 20,
                 30
@@ -642,7 +593,7 @@
         "health": 150,
         "energy_lag": 4,
         "stamina": 50,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 100,
                 200
@@ -651,17 +602,8 @@
                 25,
                 50
             ],
-            "Large Power Potion": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ],
-            "Resurrection Amulet": [
-                1,
-                10000
-            ]
+            "Large Power Potion": 1,
+            "Resurrection Amulet": 1
         },
         "deck": [
             "Heavy Shield",
@@ -685,7 +627,7 @@
         "health": 240,
         "energy_lag": 3,
         "stamina": 100,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 500,
                 1000
@@ -750,7 +692,7 @@
         "health": 50,
         "energy_lag": 4,
         "stamina": 30,
-        "death reward": {
+        "death_rwd": {
             "coins": 0,
             "exps": 0
         },
@@ -776,7 +718,7 @@
         "health": 500,
         "energy_lag": 2,
         "stamina": 75,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 500,
                 1000
@@ -789,13 +731,7 @@
                 0,
                 49
             ],
-            "crystal": [
-                [
-                    1,
-                    1
-                ],
-                10000
-            ]
+            "crystal": 1
         },
         "deck": [
             "Rejuvenate",
@@ -823,7 +759,7 @@
         "health": 80,
         "energy_lag": 4,
         "stamina": 45,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 30,
                 50
@@ -832,20 +768,8 @@
                 5,
                 10
             ],
-            "Health Potion": [
-                [
-                    1,
-                    1
-                ],
-                5000
-            ],
-            "Power Potion": [
-                [
-                    1,
-                    1
-                ],
-                5000
-            ]
+            "Health Potion": 1,
+            "Power Potion": 1
         },
         "deck": [
             "Shield",
@@ -909,7 +833,7 @@
         "health": 90,
         "energy_lag": 4,
         "stamina": 40,
-        "death reward": {
+        "death_rwd": {
             "coins": [
                 20,
                 30
@@ -918,20 +842,8 @@
                 5,
                 10
             ],
-            "Wood": [
-                [
-                    3,
-                    3
-                ],
-                10000
-            ],
-            "Stone": [
-                [
-                    3,
-                    3
-                ],
-                5000
-            ]
+            "Wood": 3,
+            "Stone": [0, 3]
         },
         "deck": [
             "Shield",
@@ -1008,7 +920,7 @@
         "health": 25,
         "energy_lag": 4,
         "stamina": 20,
-        "death reward": {
+        "death_rwd": {
             "coins": 0,
             "exps": 5
         },

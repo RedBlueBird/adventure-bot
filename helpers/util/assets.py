@@ -1,6 +1,6 @@
 import copy
 
-from .constants import *
+from .raw_constants import *
 
 
 def cards_dict(lvl: str | int, name: str):

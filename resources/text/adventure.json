@@ -5,11 +5,11 @@
                 {
                     "description": "You walk towards the Gate of Terror. You feel a chill at the mere sight of it.",
                     "choices": {
-                        "Adventure Forward": [
-                            "main",
-                            "boss",
-                            "none"
-                        ]
+                        "Adventure Forward": {
+                            "section": "main",
+                            "subsec": "boss",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -31,11 +31,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Red Wyvern": [
-                            "main",
-                            "end",
-                            "fight"
-                        ]
+                        "Fight the Red Wyvern": {
+                            "section": "main",
+                            "subsec": "end",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -55,10 +55,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Spider Fish": [
-                            "duel",
-                            "encounters"
-                        ]
+                        "Fight the Spider Fish": {
+                            "section": "main",
+                            "subsec": "end",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -93,11 +94,11 @@
                 {
                     "description": "What to do next?",
                     "choices": {
-                        "Adventure Forward": [
-                            "main",
-                            "adventure",
-                            "none"
-                        ]
+                        "Adventure Forward": {
+                            "section": "main",
+                            "subsec": "adventure",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -114,11 +115,11 @@
                 {
                     "description": "Shrine of Life!",
                     "choices": {
-                        "Continue": [
-                            "shrine of life",
-                            "start",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "shrine of life",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -133,11 +134,11 @@
                 {
                     "description": "Boss!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "boss",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "boss",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -162,11 +163,11 @@
                 {
                     "description": "Monsters!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "monster",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "monster",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -181,11 +182,11 @@
                 {
                     "description": "Items!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "item",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "item",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -200,11 +201,11 @@
                 {
                     "description": "Traders!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "trader",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "trader",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -219,11 +220,11 @@
                 {
                     "description": "Thieves!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "thief",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "thief",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -238,11 +239,11 @@
                 {
                     "description": "Traps!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "trap",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "trap",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -257,11 +258,11 @@
                 {
                     "description": "River!",
                     "choices": {
-                        "Continue": [
-                            "river crossing",
-                            "start",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "river crossing",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -276,11 +277,11 @@
                 {
                     "description": "Cave!",
                     "choices": {
-                        "Continue": [
-                            "dark cave",
-                            "start",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "dark cave",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -304,26 +305,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the goblins": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Order the goblins to stay away - 1 Goblin Staff": [
-                            "main",
-                            "start",
-                            "none",
-                            {
-                                "req": {
-                                    "item": {
-                                        "Goblin Staff": [
-                                            1,
-                                            "keep"
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
+                        "Fight the goblins": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Order the goblins to stay away - 1 Goblin Staff": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -354,26 +345,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the goblins": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Order the goblins to stay away - 1 Goblin Staff": [
-                            "main",
-                            "start",
-                            "none",
-                            {
-                                "req": {
-                                    "item": {
-                                        "Goblin Staff": [
-                                            1,
-                                            "keep"
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
+                        "Fight the goblins": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Order the goblins to stay away - 1 Goblin Staff": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -402,11 +383,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the goblins": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the goblins": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -433,11 +414,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the slimes": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the slimes": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -464,26 +445,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the tree giants": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Torch them - 1 Torch": [
-                            "main",
-                            "start",
-                            "none",
-                            {
-                                "req": {
-                                    "item": {
-                                        "Torch": [
-                                            1,
-                                            "taken"
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
+                        "Fight the tree giants": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Torch them - 1 Torch": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -510,11 +481,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the ogre gladiators": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the ogre gladiators": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -549,16 +520,16 @@
                         }
                     },
                     "choices": {
-                        "Pick up the mushroom": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore it and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Pick up the mushroom": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore it and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -581,16 +552,16 @@
                         }
                     },
                     "choices": {
-                        "Pick up the herb": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore it and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Pick up the herb": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore it and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -613,16 +584,16 @@
                         }
                     },
                     "choices": {
-                        "Collect some forest fruits": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Collect some forest fruits": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -650,16 +621,16 @@
                         }
                     },
                     "choices": {
-                        "Cut down a few trees for wood": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Cut down a few trees for wood": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -692,16 +663,16 @@
                         }
                     },
                     "choices": {
-                        "Mine some stones": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Mine some stones": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -729,16 +700,16 @@
                         }
                     },
                     "choices": {
-                        "Mine some iron ores": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Mine some iron ores": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -765,11 +736,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Elf": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the Elf": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -860,21 +831,21 @@
                     },
                     "name": "potioneer",
                     "choices": {
-                        "Ask what this person has to offer": [
-                            "main",
-                            "start",
-                            "trade"
-                        ],
-                        "Kill them and take their loot": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Leave this person alone": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Ask what this person has to offer": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "trade"
+                        },
+                        "Kill them and take their loot": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Leave this person alone": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -905,21 +876,21 @@
                     },
                     "name": "craftsman",
                     "choices": {
-                        "Ask what this person can craft": [
-                            "main",
-                            "start",
-                            "trade"
-                        ],
-                        "Kill them and take their loot": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Leave this person alone": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Ask what this person can craft": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "trade"
+                        },
+                        "Kill them and take their loot": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Leave this person alone": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -955,16 +926,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the thieves": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Give away some loot and flee": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Fight the thieves": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Give away some loot and flee": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -990,11 +961,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight on!": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight on!": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1018,11 +989,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight on!": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight on!": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1039,11 +1010,11 @@
                 {
                     "description": "You have conquered the Enchanted Forest! You can always come back for resources another time.",
                     "choices": {
-                        "Return to the Hometown and tell your tale": [
-                            "main",
-                            "end",
-                            "exit"
-                        ]
+                        "Return to the Hometown and tell your tale": {
+                            "section": "main",
+                            "subsec": "end",
+                            "action": "exit"
+                        }
                     },
                     "ranges": [
                         [
@@ -1062,41 +1033,21 @@
                 {
                     "description": "A river blocks your path. The water flows quickly, and the river is very wide. You could try to wade across, or use/craft a temporary raft to sail over.",
                     "choices": {
-                        "Wading across the river": [
-                            "river crossing",
-                            "legs",
-                            "none"
-                        ],
-                        "Sail over by raft - 1 Raft": [
-                            "river crossing",
-                            "raft",
-                            "none",
-                            {
-                                "req": {
-                                    "item": {
-                                        "Raft": [
-                                            1,
-                                            "taken"
-                                        ]
-                                    }
-                                }
-                            }
-                        ],
-                        "Craft a raft and sail over - 8 Wood": [
-                            "river crossing",
-                            "craft",
-                            "none",
-                            {
-                                "req": {
-                                    "item": {
-                                        "Wood": [
-                                            8,
-                                            "taken"
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
+                        "Wading across the river": {
+                            "section": "river crossing",
+                            "subsec": "legs",
+                            "action": "none"
+                        },
+                        "Sail over by raft - 1 Raft": {
+                            "section": "river crossing",
+                            "subsec": "raft",
+                            "action": "none"
+                        },
+                        "Craft a raft and sail over - 8 Wood": {
+                            "section": "river crossing",
+                            "subsec": "craft",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1117,11 +1068,11 @@
                         5
                     ],
                     "choices": {
-                        "Continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1138,11 +1089,11 @@
                 {
                     "description": "You nearly make it to the other side of the river when your raft starts to sink.  Thinking fast, you manage to jump out and manage to reach the other side, though you no longer have your raft.",
                     "choices": {
-                        "Continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1159,11 +1110,11 @@
                 {
                     "description": "You made a raft of your own with the resources you carried. Your \"masterpiece\" managed to help you cross over this river. Too bad it broke apart right after you landed on the other side",
                     "choices": {
-                        "Continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1182,26 +1133,16 @@
                 {
                     "description": "You find yourself in front of a dark cave on your journey. Chilling winds come from deep inside. There could be treasures hidden inside, but enemies may also be lurking within.  You should probably use a torch to be safe.",
                     "choices": {
-                        "Explore inside - 1 torch": [
-                            "dark cave",
-                            "explore",
-                            "none",
-                            {
-                                "req": {
-                                    "item": {
-                                        "Torch": [
-                                            1,
-                                            "taken"
-                                        ]
-                                    }
-                                }
-                            }
-                        ],
-                        "Continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Explore inside - 1 torch": {
+                            "section": "dark cave",
+                            "subsec": "explore",
+                            "action": "none"
+                        },
+                        "Continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1218,16 +1159,16 @@
                 {
                     "description": "You kept walking. Nothing surprising has happened so far.",
                     "choices": {
-                        "Keep exploring": [
-                            "dark cave",
-                            "explore",
-                            "none"
-                        ],
-                        "Turn back and leave the cave": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Keep exploring": {
+                            "section": "dark cave",
+                            "subsec": "explore",
+                            "action": "none"
+                        },
+                        "Turn back and leave the cave": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1242,11 +1183,11 @@
                 {
                     "description": "You reached a dead end. Guess there wasn't anything in this cave...",
                     "choices": {
-                        "Turn back and leave the cave": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Turn back and leave the cave": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1269,21 +1210,21 @@
                         }
                     },
                     "choices": {
-                        "Pick up up the mushrooms": [
-                            "dark cave",
-                            "explore",
-                            "item"
-                        ],
-                        "Ignore and keep exploring": [
-                            "dark cave",
-                            "explore",
-                            "none"
-                        ],
-                        "Turn back and leave the cave": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Pick up up the mushrooms": {
+                            "section": "dark cave",
+                            "subsec": "explore",
+                            "action": "item"
+                        },
+                        "Ignore and keep exploring": {
+                            "section": "dark cave",
+                            "subsec": "explore",
+                            "action": "none"
+                        },
+                        "Turn back and leave the cave": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1302,11 +1243,11 @@
                 {
                     "description": "BE HOLD! The mythical Shrine of Life. The rumors had it this is the heart of this Enchanted Forest, full of unknowns and dangers. No one has come back alive to tell the tale.",
                     "choices": {
-                        "Step into the Shrine of Life": [
-                            "shrine of life",
-                            "explore",
-                            "none"
-                        ]
+                        "Step into the Shrine of Life": {
+                            "section": "shrine of life",
+                            "subsec": "explore",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1323,11 +1264,11 @@
                 {
                     "description": "You kept walking... The shrine is a long, dark, and ancient hallway. The only light source is the shimmering green lanterns hanging under the ceiling.",
                     "choices": {
-                        "Keep exploring": [
-                            "shrine of life",
-                            "explore",
-                            "none"
-                        ]
+                        "Keep exploring": {
+                            "section": "shrine of life",
+                            "subsec": "explore",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1350,11 +1291,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the God of the Nature": [
-                            "main",
-                            "end",
-                            "fight"
-                        ]
+                        "Fight the God of the Nature": {
+                            "section": "main",
+                            "subsec": "end",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1375,11 +1316,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Crystal Golems": [
-                            "shrine of life",
-                            "explore",
-                            "fight"
-                        ]
+                        "Fight the Crystal Golems": {
+                            "section": "shrine of life",
+                            "subsec": "explore",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1400,11 +1341,11 @@
                 {
                     "description": "What to do next?",
                     "choices": {
-                        "Adventure Forward": [
-                            "main",
-                            "adventure",
-                            "none"
-                        ]
+                        "Adventure Forward": {
+                            "section": "main",
+                            "subsec": "adventure",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1421,11 +1362,11 @@
                 {
                     "description": "Boss!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "boss",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "boss",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1450,11 +1391,11 @@
                 {
                     "description": "Monsters!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "monster",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "monster",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1469,11 +1410,11 @@
                 {
                     "description": "Items!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "item",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "item",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1488,11 +1429,11 @@
                 {
                     "description": "Traders!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "trader",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "trader",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1507,11 +1448,11 @@
                 {
                     "description": "Thieves!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "thief",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "thief",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1526,11 +1467,11 @@
                 {
                     "description": "Traps!",
                     "choices": {
-                        "Continue": [
-                            "main",
-                            "trap",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "main",
+                            "subsec": "trap",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1545,11 +1486,11 @@
                 {
                     "description": "Tombstone!",
                     "choices": {
-                        "Continue": [
-                            "tombstone",
-                            "start",
-                            "none"
-                        ]
+                        "Continue": {
+                            "section": "tombstone",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1573,16 +1514,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Skeleton!": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Escape!": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Fight the Skeleton!": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Escape!": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1609,16 +1550,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Zombie": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Quickly escape away from its sight": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Fight the Zombie": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Quickly escape away from its sight": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1644,11 +1585,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Pantom": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the Pantom": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1674,11 +1615,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Demon": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the Demon": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1708,16 +1649,16 @@
                         }
                     },
                     "choices": {
-                        "Pick up the mushroom": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore it and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Pick up the mushroom": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore it and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1740,16 +1681,16 @@
                         }
                     },
                     "choices": {
-                        "Cut down a few trees for wood": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Cut down a few trees for wood": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1782,16 +1723,16 @@
                         }
                     },
                     "choices": {
-                        "Mine some stones": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Mine some stones": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1819,16 +1760,16 @@
                         }
                     },
                     "choices": {
-                        "Mine some iron ores": [
-                            "main",
-                            "start",
-                            "item"
-                        ],
-                        "Ignore them and walk away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Mine some iron ores": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "item"
+                        },
+                        "Ignore them and walk away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1855,11 +1796,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Elf": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight the Elf": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -1950,21 +1891,21 @@
                     },
                     "name": "potioneer",
                     "choices": {
-                        "Ask what this person has to offer": [
-                            "main",
-                            "start",
-                            "trade"
-                        ],
-                        "Kill them and take their loot": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Leave this person alone": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Ask what this person has to offer": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "trade"
+                        },
+                        "Kill them and take their loot": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Leave this person alone": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -1995,21 +1936,21 @@
                     },
                     "name": "craftsman",
                     "choices": {
-                        "Ask what this person can craft": [
-                            "main",
-                            "start",
-                            "trade"
-                        ],
-                        "Kill them and take their loot": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Leave this person alone": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Ask what this person can craft": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "trade"
+                        },
+                        "Kill them and take their loot": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Leave this person alone": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -2043,16 +1984,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the thief": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Give away some loot and flee": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Fight the thief": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Give away some loot and flee": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -2074,11 +2015,11 @@
                         ]
                     },
                     "choices": {
-                        "Fight on!": [
-                            "main",
-                            "start",
-                            "fight"
-                        ]
+                        "Fight on!": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        }
                     },
                     "ranges": [
                         [
@@ -2111,16 +2052,16 @@
                 {
                     "description": "You stumble upon a particularly well-decorated tombstone that might contain some good stuff. What's a little grave robbery now and then?",
                     "choices": {
-                        "Excavate the Tombstone": [
-                            "tombstone",
-                            "tombstone",
-                            "none"
-                        ],
-                        "Continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Excavate the Tombstone": {
+                            "section": "tombstone",
+                            "subsec": "tombstone",
+                            "action": "none"
+                        },
+                        "Continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -2137,11 +2078,11 @@
                 {
                     "description": "A glimmer in the tombstone catches your eye. Digging around it, you found some shiny treasure!",
                     "choices": {
-                        "Continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -2156,16 +2097,16 @@
                 {
                     "description": "Unfortunately, you only hit dirt. Guess it's just a regular tombstone after all.",
                     "choices": {
-                        "Keep digging": [
-                            "tombstone",
-                            "tombstone",
-                            "none"
-                        ],
-                        "Give up and continue your adventure": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Keep digging": {
+                            "section": "tombstone",
+                            "subsec": "tombstone",
+                            "action": "none"
+                        },
+                        "Give up and continue your adventure": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -2185,16 +2126,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Zombie": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Stop digging the tombstone and run away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Fight the Zombie": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Stop digging the tombstone and run away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
@@ -2214,16 +2155,16 @@
                         ]
                     },
                     "choices": {
-                        "Fight the Skeleton": [
-                            "main",
-                            "start",
-                            "fight"
-                        ],
-                        "Run away": [
-                            "main",
-                            "start",
-                            "none"
-                        ]
+                        "Fight the Skeleton": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "fight"
+                        },
+                        "Run away": {
+                            "section": "main",
+                            "subsec": "start",
+                            "action": "none"
+                        }
                     },
                     "ranges": [
                         [
