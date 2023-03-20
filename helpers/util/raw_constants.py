@@ -1,7 +1,7 @@
 import json
 import os
 
-dirname = os.path.join(os.path.dirname(__file__), "../..", "resources/text")
+dirname = os.path.join(os.path.dirname(__file__), "../..", "resources/json")
 
 PREF = "a."
 SCALE = 50, 1.05

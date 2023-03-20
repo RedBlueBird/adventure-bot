@@ -10,7 +10,7 @@ from ..template import AdventureTemplate
 
 BAIT_COST = 50
 
-with open("resources/text/fish.json") as read:
+with open("resources/json/fish.json") as read:
     FISH = json.load(read)
 RARITIES = list(FISH.keys())
 RARITY_PROBS = [FISH[f]["chance"] for f in FISH]

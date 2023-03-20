@@ -9,7 +9,7 @@ from discord.ext.commands import Context
 from helpers import db_manager as dm, util as u, checks
 
 logging.basicConfig(
-    filename="resources/text/bot_log.txt",
+    filename="bot_log.txt",
     filemode="a",
     format="%(asctime)s - %(message)s",
     level=logging.INFO

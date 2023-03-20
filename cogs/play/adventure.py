@@ -134,8 +134,6 @@ class Adventure(commands.Cog):
                     view=view
                 )
                 await view.wait()
-
-                coins = dm.get_user_coin(a.id)
                 inv = dm.get_user_inventory(a.id)
 
             elif state[1] == "buying":
@@ -160,7 +158,6 @@ class Adventure(commands.Cog):
                 await adv_msg.edit(embed=embed, view=view)
                 await view.wait()
 
-                coins = dm.get_user_coin(a.id)
                 inv = dm.get_user_inventory(a.id)
 
             elif state[1] == "chest":
