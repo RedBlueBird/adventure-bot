@@ -48,5 +48,3 @@ class Mob:
 
 for name, mob in MOBS.items():
     MOBS[name] = Mob(**mob)
-
-print(MOBS)
