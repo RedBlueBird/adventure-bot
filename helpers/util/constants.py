@@ -1,4 +1,4 @@
-from ..resources.loader import load_json
+from helpers.json_loader import load_json
 
 PREF = "a."
 SCALE = 50, 1.05

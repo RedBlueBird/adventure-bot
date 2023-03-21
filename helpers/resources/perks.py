@@ -1,6 +1,6 @@
 from pydantic.dataclasses import dataclass
 
-from .loader import load_json
+from helpers.json_loader import load_json
 
 PERKS = load_json("perks")
 

@@ -1,10 +1,8 @@
 import typing as t
-import dataclasses
 
-from pydantic import validator, root_validator
 from pydantic.dataclasses import dataclass
 
-from .loader import load_json
+from helpers.json_loader import load_json
 
 CARDS = load_json("cards")
 

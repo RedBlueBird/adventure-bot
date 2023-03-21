@@ -3,7 +3,7 @@ import dataclasses
 from pydantic import root_validator
 from pydantic.dataclasses import dataclass
 
-from .loader import load_json
+from helpers.json_loader import load_json
 
 ADVENTURES = load_json("adventure")
 

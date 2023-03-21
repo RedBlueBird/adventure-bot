@@ -1,6 +1,6 @@
 from pydantic.dataclasses import dataclass
 
-from .loader import load_json
+from helpers.json_loader import load_json
 
 FISH = load_json("fish")
 

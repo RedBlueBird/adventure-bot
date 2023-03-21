@@ -1,4 +1,4 @@
-from .loader import load_json
+from helpers.json_loader import load_json
 
 # these don't need any validation, just load them in & you're done
 ADMINS = set(load_json("admins"))

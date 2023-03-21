@@ -5,7 +5,7 @@ from copy import deepcopy
 from pydantic import validator, root_validator, ConfigDict, Extra
 from pydantic.dataclasses import dataclass
 
-from .loader import load_json
+from helpers.json_loader import load_json
 from ..util.constants import SCALE
 
 ITEMS = load_json("items")

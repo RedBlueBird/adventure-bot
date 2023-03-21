@@ -2,7 +2,7 @@ import dataclasses
 
 from pydantic.dataclasses import dataclass
 
-from .loader import load_json
+from helpers.json_loader import load_json
 
 MINIGAMES = load_json("minigames")
 
