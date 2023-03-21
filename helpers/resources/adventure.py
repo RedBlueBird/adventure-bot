@@ -44,7 +44,9 @@ class AdventureNode:
 
     choices: dict[str, AdventureChoice] | None = dataclasses.field(default=None)
     to: AdventureChoice | None = dataclasses.field(default=None)
+
     encounters: dict[str, list[float]] = dataclasses.field(default_factory=dict)
+    items: dict[str, tuple[PositiveInt, PositiveInt]] = dataclasses.field(default_factory=dict)
 
     @root_validator
     def choices_or_to_not_both(cls, vals):
@@ -52,9 +54,14 @@ class AdventureNode:
         return vals
 
     @validator("encounters")
-    def valid_encounter_probs(cls, vals):
-        assert all(all(0 <= float(p) <= 1 for p in e) for e in vals.values())
-        return vals
+    def valid_encounter_probs(cls, e: dict[str, list[float]]):
+        assert all(all(0 <= float(p) <= 1 for p in e) for e in e.values())
+        return e
+
+    @validator("items")
+    def valid_item_ranges(cls, items: dict[str, tuple[int, int]]):
+        assert all(lb <= ub for lb, ub in items.values())
+        return items
 
 
 raw_adventures = load_json("adventure")
@@ -67,3 +74,5 @@ for loc, adv in raw_adventures.items():
             ADVENTURES[loc][sec][subsec] = []
             for v, option in enumerate(adv[sec][subsec]):
                 ADVENTURES[loc][sec][subsec].append(AdventureNode(**option))
+
+print(ADVENTURES)

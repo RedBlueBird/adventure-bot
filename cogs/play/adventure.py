@@ -301,8 +301,13 @@ class Adventure(commands.Cog):
             else:
                 npos = curr_op.to
 
-            if npos.action is not None:
-                pass  # TODO: fight, trade, etc.
+            match npos.action:
+                case "item":
+                    pass
+                case "trade":
+                    pass
+                case "fight":
+                    pass
 
             nsubsec = adv[npos.section][npos.subsec]
             nnode = None

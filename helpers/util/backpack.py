@@ -31,15 +31,17 @@ def container_embed(
 
 
 def container_str(store: dict, container: str = "Backpack", lvl: int = 1):
-    inv = []
+    ret = []
     if not store:
-        inv.append("Nothing, it seems...")
+        ret.append("Nothing, it seems...")
     else:
         for i in store:
+            if store[i] <= 0:
+                continue
             descr = f"[{item(i).rarity}/{item(i).weight}]"
-            inv.append(f"{descr} {i.title()} - {store[i]}")
+            ret.append(f"{descr} {i.title()} - {store[i]}")
 
     capacity = BP_CAP if container == "Backpack" else chest_storage(lvl)
-    inv.append(f"Storage used - {bp_weight(store)}/{capacity}")
+    ret.append(f"Storage used - {bp_weight(store)}/{capacity}")
 
-    return "\n".join(inv)
+    return "\n".join(ret)
