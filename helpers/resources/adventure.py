@@ -12,6 +12,10 @@ class ItemReq:
     amt: PositiveInt
     taken: bool  # After use, will this item disappear?
 
+    @validator("name")
+    def lower_name(cls, name: str):
+        return name.lower()
+
 
 @dataclass
 class AdventureChoice:

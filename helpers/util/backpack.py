@@ -13,19 +13,6 @@ def cleared_bp(bp: dict[str, int]):
     return {i: amt for i, amt in bp.items() if amt > 0}
 
 
-def req_check(
-        reqs: dict[str, tuple[int, t.Literal["keep", "taken"]]],
-        inv: dict[str, int]
-) -> tuple[bool, str]:
-    for r, (amt, take) in reqs.items():
-        if amt > inv.get(r, 0):
-            return False, "You don't have the items required!"
-        if take == "taken":
-            inv[r] -= amt
-
-    return True, ""
-
-
 def chest_storage(level: int):
     storage = {7: 100, 13: 150, 19: 175, 25: 200, 30: 225, 100: 250}
     for lvl, space in storage.items():

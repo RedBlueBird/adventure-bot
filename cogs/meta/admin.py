@@ -30,7 +30,7 @@ class Admin(commands.Cog):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can redeem:") \
                 .add_field(name="Cards", value=f"`{r.PREF}redeem card (card name) (card level) (recipient)`") \
-                .add_field(name="Items", value=f"`{r.PREF}redeem coins (item name) (item amt) (recipient)`")
+                .add_field(name="Items", value=f"`{r.PREF}redeem item (item name) (item amt) (recipient)`")
             await ctx.reply(embed=embed)
 
     @redeem.command()
@@ -54,7 +54,7 @@ class Admin(commands.Cog):
         inv = dm.get_user_inventory(recipient.id)
 
         if amt > 0 and name not in inv:
-            inv[name] = {"items": amt}
+            inv[name] = amt
         else:
             inv[name] += amt
 
@@ -69,7 +69,7 @@ class Admin(commands.Cog):
         await ctx.reply(
             f"{recipient.mention}, you received "
             f"**[{item.rarity}/{item.weight}] "
-            f"{name}** x{math.floor(int(amt))} "
+            f"{name.title()}** x{math.floor(int(amt))} "
             f"from {ctx.author.mention}"
         )
 

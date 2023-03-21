@@ -291,6 +291,13 @@ class Adventure(commands.Cog):
                     await bad_msg.delete(delay=5)
                     # Have them make the decision again (inefficient, but lmao)
                     continue
+                
+                for req in npos.reqs:
+                    inv[req.name] -= req.amt if req.taken else 0
+                    if inv[req.name] == 0:
+                        del inv[req.name]
+
+                dm.set_user_inventory(a.id, inv)
             else:
                 npos = curr_op.to
 
@@ -311,6 +318,7 @@ class Adventure(commands.Cog):
             
             curr_op = nnode
 
+        dm.set_user_inventory(a.id, inv)
         await ctx.reply("adventure finished")
 
 
