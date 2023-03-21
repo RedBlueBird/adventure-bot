@@ -1,6 +1,7 @@
 import copy
 
 from .constants import *
+from ..resources import *
 
 
 def cards_dict(lvl: str | int, name: str):
@@ -55,16 +56,6 @@ def cards_dict_temp(lvl: int, name: str):
 
 def items_dict(name: str, max_stat=100 * SCALE[0]):
     name = ITEM_ABB.get(name.lower(), name.lower())
-    if name not in ITEMS:
-        return {
-            "name": "Glitching", "rarity": "NA",
-            "weight": 0, "attacks": 1, "acc": 100, "crit": 0, "eff_acc": 100,
-            "one_use": "False", "in_battle": "False",
-            "abb": "glitching", "sta_gain": 1, "mod": {},
-            "description": "None",
-            "brief": "Summons a black hole, ending all life on this planet."
-        }
-
     item = copy.deepcopy(ITEMS[name])
     for i in item:
         if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
@@ -74,30 +65,14 @@ def items_dict(name: str, max_stat=100 * SCALE[0]):
     return item
 
 
-def mobs_dict(lvl: str | int, name: str):
-    lvl = int(lvl)
-    lvl = SCALE[1] ** (int(lvl) - 1) * SCALE[0]
-
-    if name.lower() not in MOBS:
-        return {
-            "name": "Glitcher", "rarity": "NA",
-            "health": -1, "energy_lag": 0, "stamina": -1,
-            "death reward": {"coins": 0, "exps": 0},
-            "deck": ["Glitched" for _ in range(10)],
-            "brief": "Oh no. Whatever this is, it's probably bad."
-        }
-
+def mobs_dict(lvl: int, name: str):
+    lvl = SCALE[1] ** (lvl - 1) * SCALE[0]
     mob = copy.deepcopy(MOBS[name.lower()])
-    mob["health"] = round(mob["health"] * lvl)
+    mob.health = round(mob.health * lvl)
     return mob
 
 
 def fx_dict(name: str):
-    if name.lower() not in EFFX:
-        return {
-            "name": "Glitch",
-            "description": "This effect oH NO HE COMES"
-        }
     return copy.deepcopy(EFFX[name.lower()])
 
 
@@ -135,10 +110,10 @@ def quest_index(index: str) -> list[str | int]:
     ]
 
 
-def quest_str_rep(type_: str | int, amt: str | int):
+def quest_str_rep(q_type: str | int, amt: str | int):
     """
     Gives a string representation of a quest
-    :param quest_type: The type of quest
+    :param q_type: The type of quest
     :param amt: The extent to do it to
     :return: A string representation of the quest.
     """
@@ -151,4 +126,4 @@ def quest_str_rep(type_: str | int, amt: str | int):
         6: f"Earn {amt} medals in PvP battles",
         7: f"Merge {amt} pairs of cards",
         8: f"Catch {amt} fish in the public boat"
-    }[int(type_)]
+    }[int(q_type)]
