@@ -67,28 +67,28 @@ class Adventure(commands.Cog):
 
         lvl = dm.get_user_level(a.id)
         inv = dm.get_user_inventory(a.id)
-        journey = dm.get_user_position(a.id)
+        pos = dm.get_user_position(a.id)
         show_map = dm.get_user_map(a.id)
 
         adventure = False
-        raid_lvls = None
+        raid_lvl = None
         # region hometown exploration
         loading = discord.Embed(title="Loading...", description=r.ICON["load"])
         adv_msg = await ctx.send(embed=loading)
         while True:
             embed = discord.Embed(
                 title=f"{a.display_name}'s Adventure",
-                description=f"{r.HTOWN[journey].description}",
+                description=f"{r.HTOWN[pos].description}",
                 color=discord.Color.gold()
             )
             embed.set_thumbnail(url=a.avatar.url)
 
             file = discord.File(
-                mark_location("hometown_map", *r.HTOWN[journey].coordinate),
+                mark_location("hometown_map", *r.HTOWN[pos].coordinate),
                 filename="hometown_map.png"
             )
 
-            view = Decision(a, r.HTOWN[journey].choices, file)
+            view = Decision(a, r.HTOWN[pos].choices, file)
             attach = [file] if show_map else []
             await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
@@ -111,11 +111,11 @@ class Adventure(commands.Cog):
                 )
                 break
 
-            state = r.HTOWN[journey].choices[choice]
+            state = r.HTOWN[pos].choices[choice]
 
             if state.action == "self":
                 if state.pos in r.HTOWN:
-                    journey = state.pos
+                    pos = state.pos
                 else:
                     await ctx.reply("Sorry, this route is still in development!")
 
@@ -136,8 +136,9 @@ class Adventure(commands.Cog):
             elif state.action == "buying":
                 offers = [
                     "forest fruit", "fruit salad", "raft", "torch", "herb",
-                    "health potion", "power potion", "large health potion",
-                    "large power potion", "resurrection amulet", "teleportation stone"
+                    "health potion", "large health potion",
+                    "power potion", "large power potion",
+                    "resurrection amulet", "teleportation stone"
                 ]
                 offer_str = []
                 for o in map(r.item, offers):
@@ -180,7 +181,7 @@ class Adventure(commands.Cog):
                     view = g.Blackjack(a)
 
                 embed, img = setup_minigame(
-                    r.HTOWN[journey].choices[choice].pos,
+                    r.HTOWN[pos].choices[choice].pos,
                     show_map
                 )
                 await adv_msg.edit(
@@ -221,7 +222,7 @@ class Adventure(commands.Cog):
                     if view.exit:
                         continue
                     if view.level is not None:
-                        raid_lvls = view.level
+                        raid_lvl = view.level
                         dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
                         adventure = True
                 else:
@@ -231,12 +232,21 @@ class Adventure(commands.Cog):
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
-        dm.set_user_position(a.id, journey)
+        dm.set_user_position(a.id, pos)
         # endregion
 
-        if not adventure:
-            return
+        if adventure:
+            await self.explore(ctx, adv_msg, pos, raid_lvl)
 
+
+    async def explore(
+            self, ctx: commands.Context,
+            adv_msg: discord.Message,
+            journey: str, raid_lvl: int | None
+    ):
+        a = ctx.author
+
+        lvl = dm.get_user_level(a.id)
         max_hp = u.level_hp(lvl)
         hp = max_hp
         stamina = 100
