@@ -1,5 +1,3 @@
-import random
-import math
 import io
 
 from PIL import Image
@@ -143,9 +141,9 @@ class Adventure(commands.Cog):
                     "large power potion", "resurrection amulet", "teleportation stone"
                 ]
                 offer_str = []
-                for o in map(u.items_dict, offers):
+                for o in map(r.item, offers):
                     offer_str.append(
-                        f"[{o['rarity']}/{o['weight']}] {o['name']} - {o['buy']} gc"
+                        f"[{o.rarity}/{o.weight}] {o.name} - {o.buy} gc"
                     )
 
                 embed = discord.Embed(

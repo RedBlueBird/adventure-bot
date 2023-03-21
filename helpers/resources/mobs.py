@@ -1,10 +1,12 @@
 import typing as t
 import dataclasses
+from copy import deepcopy
 
 from pydantic import root_validator, ConfigDict, Extra
 from pydantic.dataclasses import dataclass
 
 from .loader import load_json
+from ..util.constants import SCALE
 
 MOBS = load_json("mobs") 
 
@@ -24,11 +26,11 @@ class DeathReward:
             field.alias for field in cls.__pydantic_model__.__fields__.values()
         }  # to support alias
 
-        extra = {}
+        mats = {}
         for field_name in list(values):
             if field_name not in req_fields:
-                extra[field_name] = values.pop(field_name)
-        values["extra"] = extra
+                mats[field_name] = values.pop(field_name)
+        values["mats"] = mats
         return values
 
 
@@ -46,5 +48,12 @@ class Mob:
     deck: list[str]
 
 
-for name, mob in MOBS.items():
-    MOBS[name] = Mob(**mob)
+def mob(name: str, lvl: int) -> Mob:
+    lvl = SCALE[1] ** (lvl - 1) * SCALE[0]
+    ret = deepcopy(MOBS[name.lower()])
+    ret.health = round(ret.health * lvl)
+    return ret
+
+
+for n, m in MOBS.items():
+    MOBS[n] = Mob(**m)

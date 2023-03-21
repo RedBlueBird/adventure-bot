@@ -60,20 +60,7 @@ def items_dict(name: str, max_stat=100 * SCALE[0]):
     for i in item:
         if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
             item[i] = round(item[i] * max_stat / 100)
-        elif i == "eff_app":
-            item[i][0] = round(item[i][0] * max_stat / 100)
     return item
-
-
-def mobs_dict(lvl: int, name: str):
-    lvl = SCALE[1] ** (lvl - 1) * SCALE[0]
-    mob = copy.deepcopy(MOBS[name.lower()])
-    mob.health = round(mob.health * lvl)
-    return mob
-
-
-def fx_dict(name: str):
-    return copy.deepcopy(EFFX[name.lower()])
 
 
 def quest_index(index: str) -> list[str | int]:

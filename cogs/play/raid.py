@@ -6,7 +6,7 @@ import typing as t
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from helpers.battle import BattleData
 from views.battle import RaidInvite, Select
 
@@ -98,13 +98,13 @@ class Raid(commands.Cog):
         enemies = ["Lich Lord"]
         ad_decks = [
             random.sample(
-                [f"{levels}.{x}" for x in u.mobs_dict(levels, e)["deck"]],
-                len(u.mobs_dict(levels, e)['deck'])
+                [f"{levels}.{x}" for x in r.mob(e, levels).deck],
+                len(r.mob(e, levels).deck)
             )
             for e in enemies
         ]
         ad_hps = [
-            [u.mobs_dict(levels, e)["health"], 0, u.mobs_dict(levels, e)['health'], 0, 0]
+            [r.mob(e, levels).health, 0, r.mob(e, levels).health, 0, 0]
             for e in enemies
         ]
 
@@ -120,7 +120,7 @@ class Raid(commands.Cog):
             decks=decks + ad_decks,
             backpacks=bps + [{} for _ in range(len(enemies))],
             hps=hps + ad_hps,
-            stamina=[35 for _ in range(members)] + [u.mobs_dict(levels, i)["stamina"] for i in enemies],
+            stamina=[35 for _ in range(members)] + [r.mob(i, levels).stamina for i in enemies],
             counts=len(enemies) + members
         )
 
@@ -423,7 +423,7 @@ class Raid(commands.Cog):
                 for i in range(1, len(dd.used_cards.info) + 1):
                     dd.used_cards.info[i] = []
                 for i in range(1, len(dd.players.info) + 1):
-                    energy_lags = u.mobs_dict(1, dd.players.info[i])["energy_lag"] if i > members else 4
+                    energy_lags = r.mob(dd.players.info[i], 1).energy_lag if i > members else 4
                     if dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags) > 12:
                         dd.stored_energies.info[i] = 12
                     else:
@@ -452,15 +452,15 @@ class Raid(commands.Cog):
                 await hands_msg.edit(embed=dd.show_hand())
 
                 coin_loot = loot_factor * sum([
-                    random.randint(*u.mobs_dict(levels, e)["death reward"]['coins'])
+                    random.randint(*r.mob(e, levels).death_rwd.coins)
                     for e in enemies
                 ])
                 exp_loot = loot_factor * sum([
-                    random.randint(*u.mobs_dict(levels, e)["death reward"]['exps'])
+                    random.randint(*r.mob(e, levels).death_rwd.exps)
                     for e in enemies
                 ])
                 gem_loot = loot_factor * sum([
-                    random.randint(*u.mobs_dict(levels, e)["death reward"]['gems'])
+                    random.randint(*r.mob(e, levels).death_rwd.gems)
                     for e in enemies
                 ]) // 100
 

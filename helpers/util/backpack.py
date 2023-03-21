@@ -2,12 +2,12 @@ import typing as t
 
 import discord
 
-from .assets import items_dict
+from ..resources import item
 from .constants import BP_CAP
 
 
 def bp_weight(bp: dict[str, int]):
-    return sum(items_dict(i)["weight"] * bp[i] for i in bp)
+    return sum(item(i).weight * bp[i] for i in bp)
 
 
 def cleared_bp(bp: dict[str, int]):
@@ -50,7 +50,7 @@ def container_str(store: dict, container: str = "Backpack", lvl: int = 1):
         inv.append("Nothing, it seems...")
     else:
         for i in store:
-            descr = f"[{items_dict(i)['rarity']}/{items_dict(i)['weight']}]"
+            descr = f"[{item(i).rarity}/{item(i).weight}]"
             inv.append(f"{descr} {i.title()} - {store[i]}")
 
     capacity = BP_CAP if container == "Backpack" else chest_storage(lvl)

@@ -21,4 +21,3 @@ class Card:
 
 for name, node in CARDS.items():
     CARDS[name] = Card(**node)
-print(CARDS)

@@ -11,5 +11,9 @@ class Effect:
     description: str
 
 
-for name, eff in EFFX.items():
-    EFFX[name] = Effect(**eff)
+def effect(name: str) -> Effect:
+    return EFFX[name]
+
+
+for n, eff in EFFX.items():
+    EFFX[n] = Effect(**eff)

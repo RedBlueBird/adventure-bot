@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 
 logging.basicConfig(
     filename="bot_log.txt",
@@ -49,13 +49,14 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
-        item = u.items_dict(item.replace("_", " "))["name"].lower()
+        item = r.item(item.replace("_", " "))
+        name = item.name
         inv = dm.get_user_inventory(recipient.id)
 
-        if amt > 0 and item not in inv:
-            inv[item] = {"items": amt}
+        if amt > 0 and name not in inv:
+            inv[name] = {"items": amt}
         else:
-            inv[item] += amt
+            inv[name] += amt
 
         inv_delete = []
         for i in inv:
@@ -67,9 +68,8 @@ class Admin(commands.Cog):
         dm.set_user_inventory(recipient.id, json.dumps(inv))
         await ctx.reply(
             f"{recipient.mention}, you received "
-            f"**[{u.items_dict(item)['rarity']}/"
-            f"{u.items_dict(item)['weight']}] "
-            f"{item}** x{math.floor(int(amt))} "
+            f"**[{item.rarity}/{item.weight}] "
+            f"{name}** x{math.floor(int(amt))} "
             f"from {ctx.author.mention}"
         )
 
@@ -80,7 +80,7 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def end_season(self, ctx: Context):
         """Resets the PVP season and gives each player their medals."""
-        for d in dm.get_all_userid():
+        for d in dm.get_all_uid():
             medals = dm.get_user_medal(d)
 
             earned_coins = medals * 5
@@ -115,8 +115,8 @@ class Admin(commands.Cog):
         def print_all(table: str) -> None:
             dm.cur.execute(f"SELECT * FROM {table}")
             result = dm.cur.fetchall()
-            for r in result:
-                print(r)
+            for i in result:
+                print(i)
 
         print_all("temp")
         print_all("temp_cards")
