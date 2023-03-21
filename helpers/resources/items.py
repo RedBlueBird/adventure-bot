@@ -57,15 +57,16 @@ class Item:
 
 def item(name: str, max_stat=100 * SCALE[0]) -> Item:
     name = ITEM_ABB.get(name.lower(), name.lower())
-    ret = deepcopy(ITEMS[name])
-
-    variable = [
+    
+    # these stats vary according to max_stat
+    variable = {
         "block", "absorb", "heal", "tramp", "damage",
         "self_damage", "crush", "revenge", "lich_revenge"
-    ]
+    }
+    ret = deepcopy(ITEMS[name])
     for attr in ret.extra:
         if attr in variable:
-            ret[attr] = round(ret[attr] * max_stat / 100)
+            ret.extra[attr] = round(ret.extra[attr] * max_stat / 100)
     return ret
 
 

@@ -1,4 +1,5 @@
 import io
+import random
 
 from PIL import Image
 import discord
@@ -81,7 +82,6 @@ class Adventure(commands.Cog):
                 description=f"{r.HTOWN[pos].description}",
                 color=discord.Color.gold()
             )
-            embed.set_thumbnail(url=a.avatar.url)
 
             file = discord.File(
                 mark_location("hometown_map", *r.HTOWN[pos].coordinate),
@@ -257,9 +257,11 @@ class Adventure(commands.Cog):
         gems = dm.get_user_gem(a.id)
         xp = dm.get_user_exp(a.id)
 
+        inv = dm.get_user_inventory(a.id)
+
         adv = r.ADVENTURES[journey]
-        pos = "main", "start", 0
-        curr_op = adv[pos[0]][pos[1]][pos[2]]
+        start = "main", "start", 0
+        curr_op = adv[start[0]][start[1]][start[2]]
         end_cause = None
         while True:
             view = Decision(a, curr_op.choices or ["Continue"])
@@ -278,14 +280,36 @@ class Adventure(commands.Cog):
 
             if curr_op.choices is not None:
                 npos = curr_op.choices[decision]
+                req_filled = True
+                for req in npos.reqs:
+                    if inv.get(req.name, 0) < req.amt:
+                        req_filled = False
+                        break
+                
+                if not req_filled:
+                    bad_msg = await ctx.reply("You don't have those items!")
+                    await bad_msg.delete(delay=5)
+                    # Have them make the decision again (inefficient, but lmao)
+                    continue
             else:
                 npos = curr_op.to
 
             if npos.action is not None:
-                pass  # fight, trade, etc.
+                pass  # TODO: fight, trade, etc.
 
             nsubsec = adv[npos.section][npos.subsec]
-            print(nsubsec)
+            nnode = None
+            while nnode is None:
+                for op in nsubsec:
+                    if any(
+                        spawn.lb <= dist <= spawn.ub
+                        and random.random() <= spawn.prob
+                        for spawn in op.spawns
+                    ):
+                        nnode = op
+                        break
+            
+            curr_op = nnode
 
         await ctx.reply("adventure finished")
 
