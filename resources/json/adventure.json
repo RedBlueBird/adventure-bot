@@ -7,8 +7,7 @@
                     "choices": {
                         "Adventure Forward": {
                             "section": "main",
-                            "subsec": "boss",
-                            "action": "none"
+                            "subsec": "boss"
                         }
                     },
                     "ranges": [
@@ -96,8 +95,7 @@
                     "choices": {
                         "Adventure Forward": {
                             "section": "main",
-                            "subsec": "adventure",
-                            "action": "none"
+                            "subsec": "adventure"
                         }
                     },
                     "ranges": [
@@ -117,8 +115,7 @@
                     "choices": {
                         "Continue": {
                             "section": "shrine of life",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -136,8 +133,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "boss",
-                            "action": "none"
+                            "subsec": "boss"
                         }
                     },
                     "ranges": [
@@ -165,8 +161,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "monster",
-                            "action": "none"
+                            "subsec": "monster"
                         }
                     },
                     "ranges": [
@@ -184,8 +179,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "item",
-                            "action": "none"
+                            "subsec": "item"
                         }
                     },
                     "ranges": [
@@ -203,8 +197,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "trader",
-                            "action": "none"
+                            "subsec": "trader"
                         }
                     },
                     "ranges": [
@@ -222,8 +215,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "thief",
-                            "action": "none"
+                            "subsec": "thief"
                         }
                     },
                     "ranges": [
@@ -241,8 +233,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "trap",
-                            "action": "none"
+                            "subsec": "trap"
                         }
                     },
                     "ranges": [
@@ -260,8 +251,7 @@
                     "choices": {
                         "Continue": {
                             "section": "river crossing",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -279,8 +269,7 @@
                     "choices": {
                         "Continue": {
                             "section": "dark cave",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -312,8 +301,7 @@
                         },
                         "Order the goblins to stay away - 1 Goblin Staff": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -352,8 +340,7 @@
                         },
                         "Order the goblins to stay away - 1 Goblin Staff": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -452,8 +439,7 @@
                         },
                         "Torch them - 1 Torch": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -527,8 +513,7 @@
                         },
                         "Ignore it and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -559,8 +544,7 @@
                         },
                         "Ignore it and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -591,8 +575,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -628,8 +611,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -670,8 +652,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -707,8 +688,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -765,11 +745,10 @@
                         3,
                         5
                     ],
-                    "to": [
-                        "arrow trap",
-                        "main",
-                        "none"
-                    ],
+                    "to": {
+                        "section": "arrow trap",
+                        "subsec": "main"
+                    },
                     "ranges": [
                         [
                             0,
@@ -800,11 +779,10 @@
                         3,
                         4
                     ],
-                    "to": [
-                        "start",
-                        "main",
-                        "none"
-                    ],
+                    "to": {
+                        "section": "start",
+                        "subsec": "main"
+                    },
                     "ranges": [
                         [
                             0,
@@ -843,8 +821,7 @@
                         },
                         "Leave this person alone": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -888,8 +865,7 @@
                         },
                         "Leave this person alone": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -933,8 +909,7 @@
                         },
                         "Give away some loot and flee": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1035,18 +1010,15 @@
                     "choices": {
                         "Wading across the river": {
                             "section": "river crossing",
-                            "subsec": "legs",
-                            "action": "none"
+                            "subsec": "legs"
                         },
                         "Sail over by raft - 1 Raft": {
                             "section": "river crossing",
-                            "subsec": "raft",
-                            "action": "none"
+                            "subsec": "raft"
                         },
                         "Craft a raft and sail over - 8 Wood": {
                             "section": "river crossing",
-                            "subsec": "craft",
-                            "action": "none"
+                            "subsec": "craft"
                         }
                     },
                     "ranges": [
@@ -1070,8 +1042,7 @@
                     "choices": {
                         "Continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1091,8 +1062,7 @@
                     "choices": {
                         "Continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1112,8 +1082,7 @@
                     "choices": {
                         "Continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1135,13 +1104,11 @@
                     "choices": {
                         "Explore inside - 1 torch": {
                             "section": "dark cave",
-                            "subsec": "explore",
-                            "action": "none"
+                            "subsec": "explore"
                         },
                         "Continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1161,13 +1128,11 @@
                     "choices": {
                         "Keep exploring": {
                             "section": "dark cave",
-                            "subsec": "explore",
-                            "action": "none"
+                            "subsec": "explore"
                         },
                         "Turn back and leave the cave": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1185,8 +1150,7 @@
                     "choices": {
                         "Turn back and leave the cave": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1217,13 +1181,11 @@
                         },
                         "Ignore and keep exploring": {
                             "section": "dark cave",
-                            "subsec": "explore",
-                            "action": "none"
+                            "subsec": "explore"
                         },
                         "Turn back and leave the cave": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1245,8 +1207,7 @@
                     "choices": {
                         "Step into the Shrine of Life": {
                             "section": "shrine of life",
-                            "subsec": "explore",
-                            "action": "none"
+                            "subsec": "explore"
                         }
                     },
                     "ranges": [
@@ -1266,8 +1227,7 @@
                     "choices": {
                         "Keep exploring": {
                             "section": "shrine of life",
-                            "subsec": "explore",
-                            "action": "none"
+                            "subsec": "explore"
                         }
                     },
                     "ranges": [
@@ -1343,8 +1303,7 @@
                     "choices": {
                         "Adventure Forward": {
                             "section": "main",
-                            "subsec": "adventure",
-                            "action": "none"
+                            "subsec": "adventure"
                         }
                     },
                     "ranges": [
@@ -1364,8 +1323,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "boss",
-                            "action": "none"
+                            "subsec": "boss"
                         }
                     },
                     "ranges": [
@@ -1393,8 +1351,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "monster",
-                            "action": "none"
+                            "subsec": "monster"
                         }
                     },
                     "ranges": [
@@ -1412,8 +1369,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "item",
-                            "action": "none"
+                            "subsec": "item"
                         }
                     },
                     "ranges": [
@@ -1431,8 +1387,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "trader",
-                            "action": "none"
+                            "subsec": "trader"
                         }
                     },
                     "ranges": [
@@ -1450,8 +1405,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "thief",
-                            "action": "none"
+                            "subsec": "thief"
                         }
                     },
                     "ranges": [
@@ -1469,8 +1423,7 @@
                     "choices": {
                         "Continue": {
                             "section": "main",
-                            "subsec": "trap",
-                            "action": "none"
+                            "subsec": "trap"
                         }
                     },
                     "ranges": [
@@ -1488,8 +1441,7 @@
                     "choices": {
                         "Continue": {
                             "section": "tombstone",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1521,8 +1473,7 @@
                         },
                         "Escape!": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1557,8 +1508,7 @@
                         },
                         "Quickly escape away from its sight": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1656,8 +1606,7 @@
                         },
                         "Ignore it and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1688,8 +1637,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1730,8 +1678,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1767,8 +1714,7 @@
                         },
                         "Ignore them and walk away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1825,11 +1771,10 @@
                         3,
                         5
                     ],
-                    "to": [
-                        "arrow trap",
-                        "main",
-                        "none"
-                    ],
+                    "to": {
+                        "section": "arrow trap",
+                        "subsec": "main"
+                    },
                     "ranges": [
                         [
                             0,
@@ -1841,8 +1786,8 @@
                         ]
                     ],
                     "prob": [
-                        0.0,
-                        0.0
+                        0.3,
+                        0.1
                     ]
                 },
                 {
@@ -1860,11 +1805,10 @@
                         3,
                         4
                     ],
-                    "to": [
-                        "start",
-                        "main",
-                        "none"
-                    ],
+                    "to": {
+                        "section": "start",
+                        "subsec": "main"
+                    },
                     "ranges": [
                         [
                             0,
@@ -1903,8 +1847,7 @@
                         },
                         "Leave this person alone": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1948,8 +1891,7 @@
                         },
                         "Leave this person alone": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -1991,8 +1933,7 @@
                         },
                         "Give away some loot and flee": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -2054,13 +1995,11 @@
                     "choices": {
                         "Excavate the Tombstone": {
                             "section": "tombstone",
-                            "subsec": "tombstone",
-                            "action": "none"
+                            "subsec": "tombstone"
                         },
                         "Continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -2080,8 +2019,7 @@
                     "choices": {
                         "Continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -2099,13 +2037,11 @@
                     "choices": {
                         "Keep digging": {
                             "section": "tombstone",
-                            "subsec": "tombstone",
-                            "action": "none"
+                            "subsec": "tombstone"
                         },
                         "Give up and continue your adventure": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -2133,8 +2069,7 @@
                         },
                         "Stop digging the tombstone and run away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [
@@ -2162,8 +2097,7 @@
                         },
                         "Run away": {
                             "section": "main",
-                            "subsec": "start",
-                            "action": "none"
+                            "subsec": "start"
                         }
                     },
                     "ranges": [

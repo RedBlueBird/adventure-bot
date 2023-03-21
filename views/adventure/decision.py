@@ -37,7 +37,7 @@ class Decision(AdventureTemplate):
         self.show_map = None
         self.loc_img = loc_file
         if loc_file is None:
-            self.remove_item(self.children[1])
+            self.remove_item(self.children[2])
 
     @ui.button(label="Backpack", row=1, style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):

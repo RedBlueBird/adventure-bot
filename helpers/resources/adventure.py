@@ -10,7 +10,7 @@ from helpers.json_loader import load_json
 class AdventureChoice:
     section: str
     subsec: str
-    action: str
+    action: str | None = dataclasses.field(default=None)
 
 
 @dataclass
@@ -20,11 +20,17 @@ class AdventureNode:
     prob: list[float]
 
     choices: dict[str, AdventureChoice] | None = dataclasses.field(default=None)
+    to: AdventureChoice | None = dataclasses.field(default=None)
     encounters: dict[str, list[int]] | None = dataclasses.field(default=None)
 
     @root_validator
     def range_prob_same_len(cls, vals):
         assert len(vals["ranges"]) == len(vals["prob"])
+        return vals
+
+    @root_validator
+    def choices_or_to_not_both(cls, vals):
+        assert vals["choices"] is None or vals["to"] is None
         return vals
 
 

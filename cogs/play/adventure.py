@@ -6,9 +6,9 @@ from discord.ext import commands
 
 from helpers import db_manager as dm, util as u, resources as r, checks
 
+from views.adventure import Decision
 import views.adventure.games as g
 import views.adventure.hometown as ht
-import views.adventure.wild as w
 
 
 def choices_list(choices) -> str:
@@ -67,7 +67,7 @@ class Adventure(commands.Cog):
 
         lvl = dm.get_user_level(a.id)
         inv = dm.get_user_inventory(a.id)
-        pos = dm.get_user_position(a.id)
+        journey = dm.get_user_position(a.id)
         show_map = dm.get_user_map(a.id)
 
         adventure = False
@@ -78,17 +78,17 @@ class Adventure(commands.Cog):
         while True:
             embed = discord.Embed(
                 title=f"{a.display_name}'s Adventure",
-                description=f"{r.HTOWN[pos].description}",
+                description=f"{r.HTOWN[journey].description}",
                 color=discord.Color.gold()
             )
             embed.set_thumbnail(url=a.avatar.url)
 
             file = discord.File(
-                mark_location("hometown_map", *r.HTOWN[pos].coordinate),
+                mark_location("hometown_map", *r.HTOWN[journey].coordinate),
                 filename="hometown_map.png"
             )
 
-            view = ht.Decision(a, r.HTOWN[pos].choices, file)
+            view = Decision(a, r.HTOWN[journey].choices, file)
             attach = [file] if show_map else []
             await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
@@ -111,11 +111,11 @@ class Adventure(commands.Cog):
                 )
                 break
 
-            state = r.HTOWN[pos].choices[choice]
+            state = r.HTOWN[journey].choices[choice]
 
             if state.action == "self":
                 if state.pos in r.HTOWN:
-                    pos = state.pos
+                    journey = state.pos
                 else:
                     await ctx.reply("Sorry, this route is still in development!")
 
@@ -180,7 +180,7 @@ class Adventure(commands.Cog):
                     view = g.Blackjack(a)
 
                 embed, img = setup_minigame(
-                    r.HTOWN[pos].choices[choice].pos,
+                    r.HTOWN[journey].choices[choice].pos,
                     show_map
                 )
                 await adv_msg.edit(
@@ -231,7 +231,7 @@ class Adventure(commands.Cog):
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
-        dm.set_user_position(a.id, pos)
+        dm.set_user_position(a.id, journey)
         # endregion
 
         if not adventure:
@@ -247,16 +247,37 @@ class Adventure(commands.Cog):
         gems = dm.get_user_gem(a.id)
         xp = dm.get_user_exp(a.id)
 
-        adv = r.ADVENTURES[pos]
-        start = "main", "start", 0
-        embed = discord.Embed(
-            title=f"{a.display_name}'s {pos.title()} Adventure",
-            description="test description"
-        )
-        view = w.Adventure(a, adv, start)
-        await adv_msg.edit(embed=embed, view=view, attachments=[])
+        adv = r.ADVENTURES[journey]
+        pos = "main", "start", 0
+        curr_op = adv[pos[0]][pos[1]][pos[2]]
+        end_cause = None
+        while True:
+            view = Decision(a, curr_op.choices or ["Continue"])
 
-        await ctx.reply("Sorry, the devs are still working on this!")
+            embed = discord.Embed(
+                title=f"{a.display_name}'s {journey.title()} Adventure",
+                description=curr_op.description
+            )
+            await adv_msg.edit(embed=embed, view=view, attachments=[])
+            await view.wait()
+            decision = view.decision
+
+            if decision == "exit":
+                end_cause = "leave"
+                break
+
+            if curr_op.choices is not None:
+                npos = curr_op.choices[decision]
+            else:
+                npos = curr_op.to
+
+            if npos.action is not None:
+                pass  # fight, trade, etc.
+
+            nsubsec = adv[npos.section][npos.subsec]
+            print(nsubsec)
+
+        await ctx.reply("adventure finished")
 
 
 async def setup(bot):
