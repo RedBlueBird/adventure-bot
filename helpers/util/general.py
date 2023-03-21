@@ -1,7 +1,7 @@
 import math
 import datetime as dt
 
-from .raw_constants import SCALE
+from .constants import SCALE
 
 
 def time_converter(seconds: str | int) -> str:

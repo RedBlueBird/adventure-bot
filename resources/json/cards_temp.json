@@ -6,7 +6,7 @@
         "dmg": 4,
         "cdmg": 8,
         "crit": 60,
-        "desc": "Deals ${dmg} damage to your target.",
+        "description": "Deals ${dmg} damage to your target.",
         "crit_desc": "Deals ${cdmg} damage to your target.",
         "brief": "A basic attack any swordsman can use."
     },

@@ -39,7 +39,7 @@ def setup_minigame(
         color=discord.Color.gold()
     )
 
-    logs = [f"• {r}" for r in r.MINIGAMES[game_name].rules]
+    logs = [f"• {rule}" for rule in r.MINIGAMES[game_name].rules]
     embed.add_field(name="Rules", value="\n".join(logs))
 
     embed.set_footer(text=f"{u.PREF}exit -quit minigame")

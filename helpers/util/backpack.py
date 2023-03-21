@@ -3,7 +3,7 @@ import typing as t
 import discord
 
 from .assets import items_dict
-from .raw_constants import BP_CAP
+from .constants import BP_CAP
 
 
 def bp_weight(bp: dict[str, int]):

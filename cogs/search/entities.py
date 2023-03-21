@@ -143,7 +143,7 @@ class EntitySearch(commands.Cog):
         embed.add_field(name="Uses: ", value=fx_info["description"], inline=False)
         embed.set_image(
             url=f"https://cdn.discordapp.com/emojis/"
-                f"{u.CONVERT[fx_info['name'].lower()][4:-1]}.png"
+                f"{u.I_CONVERT[fx_info['name'].lower()][4:-1]}.png"
         )
         await ctx.send(embed=embed)
 
