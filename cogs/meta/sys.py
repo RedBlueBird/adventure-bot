@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u
+from helpers import db_manager as dm, util as u, resources as r
 
 
 class Sys(commands.Cog):
@@ -56,7 +56,7 @@ class Sys(commands.Cog):
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
-            f"Welcome to Adventure Bot! Do `{u.PREF}tutorial` to get started!"
+            f"Welcome to Adventure Bot! Do `{r.PREF}tutorial` to get started!"
         )
 
     @commands.Cog.listener()
@@ -75,8 +75,8 @@ class Sys(commands.Cog):
             level_msg = []
             if (lvl + 1) % 2 == 0:
                 add_hp = round(
-                    (u.SCALE[1] ** math.floor((lvl + 1) / 2) -
-                     u.SCALE[1] ** math.floor(lvl / 2)) * 100 * u.SCALE[0]
+                    (r.SCALE[1] ** math.floor((lvl + 1) / 2) -
+                     r.SCALE[1] ** math.floor(lvl / 2)) * 100 * r.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
@@ -84,8 +84,8 @@ class Sys(commands.Cog):
             if lvl + 1 in [17, 27]:
                 dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
 
-            if u.LEVELS[lvl - 1]:
-                level_msg.extend(u.LEVELS[lvl - 1].format(u.PREF).split("\n"))
+            if r.LEVELS[lvl - 1]:
+                level_msg.extend(r.LEVELS[lvl - 1].format(r.PREF).split("\n"))
 
             embed = discord.Embed(
                 title=f"Congratulations {a.name}!",
@@ -97,8 +97,8 @@ class Sys(commands.Cog):
             gem_gain = math.ceil((lvl + 1) / 5) + 1
             embed.add_field(
                 name=f"You're now level {lvl + 1}!",
-                value=f"+{coin_gain} {u.ICON['coin']} \n"
-                      f"+{gem_gain} {u.ICON['gem']} \n"
+                value=f"+{coin_gain} {r.ICON['coin']} \n"
+                      f"+{gem_gain} {r.ICON['gem']} \n"
                       "```» " + "\n\n» ".join(level_msg) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
@@ -127,17 +127,17 @@ class Sys(commands.Cog):
                     )
                     embed.add_field(
                         name=f"**{quest[2]} {u.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
-                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {u.ICON['exp']}**",
-                        # " +1{u.icon['token']}**",
+                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {r.ICON['exp']}**",
+                        # " +1{r.ICON['token']}**",
                         inline=False
                     )
                     embed.set_thumbnail(url=a.avatar.url)
                     await ctx.channel.send(embed=embed)
 
                     gained = [0, 0, quest[4]]  # coin, gem, exp
-                    if quest[3] == u.ICON["coin"]:
+                    if quest[3] == r.ICON["coin"]:
                         gained[0] += int(quest[1])
-                    elif quest[3] == u.ICON["gem"]:
+                    elif quest[3] == r.ICON["gem"]:
                         gained[1] += int(quest[1])
 
                     quests.remove(quests[x])
@@ -158,25 +158,25 @@ class Sys(commands.Cog):
 
             await ctx.channel.send(embed=discord.Embed(
                 title=f"A bag of gold showed up out of nowhere!",
-                description=f"Quick! Type `{u.PREF}collect {amt} coins` to collect them!\n"
+                description=f"Quick! Type `{r.PREF}collect {amt} coins` to collect them!\n"
                             f"They'll be gone in 10 minutes!",
                 color=discord.Color.green()
             ))
             try:
                 rep: discord.Message = await self.bot.wait_for(
                     "message", timeout=600.0,
-                    check=lambda m: m.content.lower() == f"{u.PREF}collect {amt} coins"
+                    check=lambda m: m.content.lower() == f"{r.PREF}collect {amt} coins"
                 )
                 user_coin = dm.get_user_coin(a.id)
                 if user_coin:
                     dm.set_user_coin(a.id, user_coin + amt)
                     if random.randint(1, 100) == 1:
                         dm.set_user_gem(a.id, dm.get_user_gem(a.id) + 1)
-                        msg = f"You got {amt} {u.ICON['coin']} and a bonus {u.ICON['gem']}!"
+                        msg = f"You got {amt} {r.ICON['coin']} and a bonus {r.ICON['gem']}!"
                     else:
-                        msg = f"You got {amt} {u.ICON['coin']}!"
+                        msg = f"You got {amt} {r.ICON['coin']}!"
                 else:
-                    msg = f"You have to register in this bot first with `{u.PREF}register`!"
+                    msg = f"You have to register in this bot first with `{r.PREF}register`!"
 
                 await rep.reply(msg)
             except asyncio.TimeoutError:

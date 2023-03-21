@@ -4,8 +4,6 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-CARDS = load_json("cards")
-
 
 @dataclass
 class Card:
@@ -17,5 +15,7 @@ class Card:
     brief: str
 
 
-for name, node in CARDS.items():
+raw_cards = load_json("cards")
+CARDS: dict[str, Card] = {}
+for name, node in raw_cards.items():
     CARDS[name] = Card(**node)

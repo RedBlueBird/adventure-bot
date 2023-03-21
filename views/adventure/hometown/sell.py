@@ -47,7 +47,7 @@ class SellForm(ui.Modal, title="Sell something!"):
         descr = f"[{item.rarity}/{item.weight}]"
         await i.response.send_message(
             f"You just sold **{descr} {name.title()} x{amt}** "
-            f"for {item.sell * amt} {u.ICON['coin']}!",
+            f"for {item.sell * amt} {r.ICON['coin']}!",
             ephemeral=True
         )
         dm.set_user_inventory(self.user.id, inv)

@@ -2,8 +2,6 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-EFFX = load_json("effects")
-
 
 @dataclass
 class Effect:
@@ -15,5 +13,7 @@ def effect(name: str) -> Effect:
     return EFFX[name]
 
 
-for n, eff in EFFX.items():
+raw_effx = load_json("effects")
+EFFX: dict[str, Effect] = {}
+for n, eff in raw_effx.items():
     EFFX[n] = Effect(**eff)

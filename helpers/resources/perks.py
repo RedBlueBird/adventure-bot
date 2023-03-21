@@ -2,8 +2,6 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-PERKS = load_json("perks")
-
 
 @dataclass
 class Perk:
@@ -12,5 +10,7 @@ class Perk:
     multiplier: tuple[int, int, int, int, int]
 
 
-for name, perk in PERKS.items():
+raw_perks = load_json("perks")
+PERKS: dict[str, Perk] = {}
+for name, perk in raw_perks.items():
     PERKS[name] = Perk(**perk)

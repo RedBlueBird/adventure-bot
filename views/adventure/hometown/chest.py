@@ -57,7 +57,7 @@ async def submit_chest_form(
             transfer(
                 item, amt,
                 chest, "chest",
-                inv, "backpack", u.BP_CAP
+                inv, "backpack", r.BP_CAP
             )
         else:
             transfer(

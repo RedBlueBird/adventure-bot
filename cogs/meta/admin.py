@@ -29,8 +29,8 @@ class Admin(commands.Cog):
     async def redeem(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can redeem:") \
-                .add_field(name="Cards", value=f"`{u.PREF}redeem card (card name) (card level) (recipient)`") \
-                .add_field(name="Items", value=f"`{u.PREF}redeem coins (item name) (item amt) (recipient)`")
+                .add_field(name="Cards", value=f"`{r.PREF}redeem card (card name) (card level) (recipient)`") \
+                .add_field(name="Items", value=f"`{r.PREF}redeem coins (item name) (item amt) (recipient)`")
             await ctx.reply(embed=embed)
 
     @redeem.command()
@@ -93,10 +93,10 @@ class Admin(commands.Cog):
             new_medals = (medals - cap) // 2 + cap if medals > cap else medals
 
             msg = f"The season ended!" \
-                  f"You now have {new_medals} {u.ICON['medal']} (from {medals}) "\
-                  f"\n+{earned_coins} {u.ICON['coin']}!"
+                  f"You now have {new_medals} {r.ICON['medal']} (from {medals}) "\
+                  f"\n+{earned_coins} {r.ICON['coin']}!"
             if earned_gems > 0:
-                msg += f"\n + {earned_gems} {u.ICON['gem']}"
+                msg += f"\n + {earned_gems} {r.ICON['gem']}"
 
             user = await self.bot.fetch_user(d)
             await user.send(msg)
@@ -110,7 +110,7 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def test(self, ctx: Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.reply(u.ICON["load"])
+        loading = await ctx.reply(r.ICON["load"])
 
         def print_all(table: str) -> None:
             dm.cur.execute(f"SELECT * FROM {table}")
@@ -120,7 +120,7 @@ class Admin(commands.Cog):
 
         print_all("temp")
         print_all("temp_cards")
-        print(u.ADMINS)
+        print(r.ADMINS)
         print(dm.queues)
 
         guilds = list(self.bot.guilds)

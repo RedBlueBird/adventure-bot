@@ -6,7 +6,7 @@ from PIL import Image, ImageFont, ImageDraw
 import discord
 from discord.ext import commands
 
-from helpers import util as u, checks
+from helpers import resources as r, checks
 
 
 class Fun(commands.Cog):
@@ -20,7 +20,7 @@ class Fun(commands.Cog):
         if wait_time <= 0:
             wait_time = random.randint(6, 30)
 
-        t = await ctx.reply(f"Reply `{u.PREF}` as close as you can to {wait_time} seconds!")
+        t = await ctx.reply(f"Reply `{r.PREF}` as close as you can to {wait_time} seconds!")
         try:
             message = await self.bot.wait_for(
                 "message", timeout=70,

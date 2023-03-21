@@ -3,7 +3,7 @@ import typing as t
 import discord
 
 from exceptions import *
-from helpers import db_manager as dm, util as u
+from helpers import db_manager as dm, resources as r
 
 T = t.TypeVar("T")
 
@@ -12,7 +12,7 @@ def is_admin() -> t.Callable[[T], T]:
     """Checks if the calling user is an owner of the bot"""
 
     async def predicate(context: commands.Context) -> bool:
-        if context.author.id not in u.ADMINS:
+        if context.author.id not in r.ADMINS:
             raise UserNotAdmin
         return True
 
@@ -65,7 +65,7 @@ def valid_reply(
             return False
         if msg.author not in authors:
             return False
-        return any(msg.content.lower().startswith(f"{u.PREF}{s}") for s in replies)
+        return any(msg.content.lower().startswith(f"{r.PREF}{s}") for s in replies)
 
     return _valid_reply
 

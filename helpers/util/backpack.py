@@ -2,8 +2,7 @@ import typing as t
 
 import discord
 
-from ..resources import item
-from .constants import BP_CAP
+from ..resources import item, BP_CAP
 
 
 def bp_weight(bp: dict[str, int]):
@@ -27,10 +26,10 @@ def req_check(
     return True, ""
 
 
-def chest_storage(lvl: int):
+def chest_storage(level: int):
     storage = {7: 100, 13: 150, 19: 175, 25: 200, 30: 225, 100: 250}
-    for l, space in storage.items():
-        if lvl < l:
+    for lvl, space in storage.items():
+        if level < lvl:
             return space
 
 

@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from views import Confirm
 
 
@@ -31,12 +31,12 @@ class Purchase(commands.Cog):
     async def buy(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can buy:") \
-                .add_field(name="Card Packs", value=f"`{u.PREF}buy (card pack name)`") \
-                .add_field(name="Coins", value=f"`{u.PREF}buy coins (coin deal name)`") \
-                .add_field(name="Tickets", value=f"`{u.PREF}buy tickets (ticket deal name)`") \
-                .add_field(name="Shop Refresh", value=f"`{u.PREF}buy r`") \
-                .add_field(name="Single Card", value=f"`{u.PREF}buy (card #)`") \
-                .add_field(name="All Cards", value=f"`{u.PREF}buy all`")
+                .add_field(name="Card Packs", value=f"`{r.PREF}buy (card pack name)`") \
+                .add_field(name="Coins", value=f"`{r.PREF}buy coins (coin deal name)`") \
+                .add_field(name="Tickets", value=f"`{r.PREF}buy tickets (ticket deal name)`") \
+                .add_field(name="Shop Refresh", value=f"`{r.PREF}buy r`") \
+                .add_field(name="Single Card", value=f"`{r.PREF}buy (card #)`") \
+                .add_field(name="All Cards", value=f"`{r.PREF}buy all`")
             await ctx.reply(embed=embed)
 
     @buy.command()
@@ -67,18 +67,18 @@ class Purchase(commands.Cog):
         amt = card_packs[pack][2]
         lvls = card_packs[pack][3]
 
-        if amt + dm.get_user_cards_count(a.id) > u.MAX_CARDS:
+        if amt + dm.get_user_cards_count(a.id) > r.MAX_CARDS:
             await ctx.reply("You don't have enough space for this card pack!")
             return
 
         if gems < gem_cost or tokens < token_cost:
             cost = "Nothing"  # should never happen
             if gem_cost > 0 and token_cost > 0:
-                cost = f"{gem_cost} {u.ICON['gem']} and {token_cost} {u.ICON['token']}"
+                cost = f"{gem_cost} {r.ICON['gem']} and {token_cost} {r.ICON['token']}"
             elif gem_cost > 0:
-                cost = f"{gem_cost} {u.ICON['gem']}"
+                cost = f"{gem_cost} {r.ICON['gem']}"
             elif token_cost > 0:
-                cost = f"{token_cost} {u.ICON['token']}"
+                cost = f"{token_cost} {r.ICON['token']}"
             await ctx.reply(f"You need {cost} to buy a {pack.title()} card pack!")
             return
 
@@ -148,8 +148,8 @@ class Purchase(commands.Cog):
 
         view = Confirm()
         msg = await ctx.reply(
-            f"Are you sure you want to buy {coin_gain} {u.ICON['coin']} "
-            f"with {gem_cost} {u.ICON['gem']}?",
+            f"Are you sure you want to buy {coin_gain} {r.ICON['coin']} "
+            f"with {gem_cost} {r.ICON['gem']}?",
             view=view
         )
         await view.wait()
@@ -166,7 +166,7 @@ class Purchase(commands.Cog):
 
         embed = discord.Embed(
             title="You got:",
-            description=f"**{coin_gain}** {u.ICON['coin']}!",
+            description=f"**{coin_gain}** {r.ICON['coin']}!",
             color=discord.Color.gold()
         )
         embed.set_footer(text=f"Gems left: {gems - gem_cost}")
@@ -203,8 +203,8 @@ class Purchase(commands.Cog):
 
         msg, confirm = confirm_purchase(
             ctx,
-            f"Are you sure you want to buy {ticket_gain} {u.ICON['tick']} "
-            f"with {gem_cost} {u.ICON['gem']}?"
+            f"Are you sure you want to buy {ticket_gain} {r.ICON['tick']} "
+            f"with {gem_cost} {r.ICON['gem']}?"
         )
         if not confirm:
             return
@@ -214,7 +214,7 @@ class Purchase(commands.Cog):
 
         embed = discord.Embed(
             title="You got:",
-            description=f"**{ticket_gain}** {u.ICON['tick']}!",
+            description=f"**{ticket_gain}** {r.ICON['tick']}!",
             color=discord.Color.gold()
         )
         embed.set_footer(text=f"Gems left: {gems - gem_cost}")
@@ -241,7 +241,7 @@ class Purchase(commands.Cog):
         dm.set_user_deals(a.id, ",".join(gained_cards))
 
         dm.set_user_coin(a.id, coins - cost)
-        await ctx.reply(f"You refreshed your shop for {cost} {u.ICON['coin']}!")
+        await ctx.reply(f"You refreshed your shop for {cost} {r.ICON['coin']}!")
 
     @buy.command()
     @checks.not_preoccupied("in the shop")
@@ -258,21 +258,21 @@ class Purchase(commands.Cog):
         )
 
         count = sum([lvl[0] != "-" for lvl, _ in deals])
-        if count + dm.get_user_cards_count(a.id) > u.MAX_CARDS:
+        if count + dm.get_user_cards_count(a.id) > r.MAX_CARDS:
             await ctx.reply("You don't have enough space to buy everything!")
             return
         if count == 0:
             await ctx.reply("You've already bought everything!")
             return
         if coins < cost:
-            await ctx.reply(f"You need {cost} {u.ICON['coin']} to buy everything!")
+            await ctx.reply(f"You need {cost} {r.ICON['coin']} to buy everything!")
             return
 
         cards = f"all {count} cards" if count > 1 else "the one remaining card"
         msg, confirm = await confirm_purchase(
             ctx,
             f"Do you want to buy {cards} "
-            f"in the shop for {cost} {u.ICON['coin']}?"
+            f"in the shop for {cost} {r.ICON['coin']}?"
         )
         if not confirm:
             return
@@ -287,7 +287,7 @@ class Purchase(commands.Cog):
             gained_cards.append((a.id, name, lvl))
             cards_msg.append(
                 f"[{u.rarity_cost(name)}] **{name}** lv: **{lvl}** - "
-                f"**{u.card_coin_cost(name, lvl)}** {u.ICON['coin']}"
+                f"**{u.card_coin_cost(name, lvl)}** {r.ICON['coin']}"
             )
 
         dm.add_user_cards(gained_cards)
@@ -301,7 +301,7 @@ class Purchase(commands.Cog):
         )
         embed.add_field(
             name="Total Cost",
-            value=f"{cost} {u.ICON['coin']}"
+            value=f"{cost} {r.ICON['coin']}"
         )
         embed.set_footer(text=f"You have {coins - cost} golden coins left")
         await msg.edit(content=None, embed=embed, view=None)
@@ -324,7 +324,7 @@ class Purchase(commands.Cog):
         if lvl[0] == "-":
             await ctx.reply("You already bought this card!")
             return
-        if dm.get_user_cards_count(a.id) == u.MAX_CARDS:
+        if dm.get_user_cards_count(a.id) == r.MAX_CARDS:
             await ctx.reply("You don't have space for this card!")
             return
 
@@ -345,7 +345,7 @@ class Purchase(commands.Cog):
             content="You successfully bought a "
                     f"**[{u.rarity_cost(name)}] {name} "
                     f"lv: {lvl}** with "
-                    f"{card_cost} {u.ICON['coin']}!",
+                    f"{card_cost} {r.ICON['coin']}!",
             view=None
         )
 

@@ -41,10 +41,10 @@ class EntitySearch(commands.Cog):
     async def info(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can search up:") \
-                .add_field(name="Cards", value=f"`{u.PREF}info card`") \
-                .add_field(name="Monsters", value=f"`{u.PREF}info monster`") \
-                .add_field(name="Items", value=f"`{u.PREF}info item`") \
-                .add_field(name="Effects", value=f"`{u.PREF}info effect`")
+                .add_field(name="Cards", value=f"`{r.PREF}info card`") \
+                .add_field(name="Monsters", value=f"`{r.PREF}info monster`") \
+                .add_field(name="Items", value=f"`{r.PREF}info item`") \
+                .add_field(name="Effects", value=f"`{r.PREF}info effect`")
             await ctx.reply(embed=embed)
 
     @info.command()
@@ -118,9 +118,9 @@ class EntitySearch(commands.Cog):
             embed.add_field(name="Scout's Journal: ", value="*" + item_info["journal"] + "*", inline=False)
         embed.set_thumbnail(url=ctx.author.avatar.url)
         """
-        # print(u.ICON[item_info['name'].lower()])
-        if name.lower() in u.ICON:
-            icon = u.ICON[name.lower()]
+        # print(r.ICON[item_info['name'].lower()])
+        if name.lower() in r.ICON:
+            icon = r.ICON[name.lower()]
             icon_id = icon[icon.rfind(":") + 1:-1]
             embed.set_image(url=f"https://cdn.discordapp.com/emojis/{icon_id}.png")
         await ctx.send(embed=embed)
@@ -133,7 +133,7 @@ class EntitySearch(commands.Cog):
         embed.add_field(name="Uses: ", value=fx_info.description, inline=False)
         embed.set_image(
             url=f"https://cdn.discordapp.com/emojis/"
-                f"{u.I_CONVERT[fx_info.name.lower()][4:-1]}.png"
+                f"{r.I_CONVERT[fx_info.name.lower()][4:-1]}.png"
         )
         await ctx.send(embed=embed)
 

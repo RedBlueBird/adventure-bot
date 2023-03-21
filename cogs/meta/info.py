@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from views import Shop, CardPages, Decks, Leaderboard
 
 
@@ -31,7 +31,7 @@ class Info(commands.Cog):
         user_premium = dm.get_user_premium(user.id)
         if user_premium > dt.datetime.today():
             days_left = (user_premium - dt.datetime.today()).days
-            description_msg = f"14\n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
+            description_msg = f"14\n{r.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
                               f"{days_left} days remaining\n"
             tickets = 10
         else:
@@ -41,7 +41,7 @@ class Info(commands.Cog):
         tick_msg = ""
         lvl = dm.get_user_level(user.id)
         if lvl >= 4:
-            tick_msg = f"{u.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
+            tick_msg = f"{r.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
 
         descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
         embed = discord.Embed(
@@ -56,15 +56,15 @@ class Info(commands.Cog):
         if lvl < 30:
             embed.add_field(
                 name=f"Current Level: {lvl}",
-                value=f"{u.ICON['exp']} {xp}/{u.level_xp(lvl)}\n"
-                      f"{u.ICON['hp']} {hp}",
+                value=f"{r.ICON['exp']} {xp}/{u.level_xp(lvl)}\n"
+                      f"{r.ICON['hp']} {hp}",
                 inline=False
             )
         else:
             embed.add_field(
                 name=f"Max Level: {lvl}",
-                value=f"{u.ICON['exp']} {xp}\n"
-                      f"{u.ICON['hp']} {hp}",
+                value=f"{r.ICON['exp']} {xp}\n"
+                      f"{r.ICON['hp']} {hp}",
                 inline=False
             )
 
@@ -72,10 +72,10 @@ class Info(commands.Cog):
         dts = "Right now!" if user_daily.date() != dt.date.today() else u.time_til_midnight()
         embed.add_field(
             name="Currency",
-            value=f"{u.ICON['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
-                  f"{u.ICON['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
-                  f"{u.ICON['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
-                  f"{u.ICON['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
+            value=f"{r.ICON['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
+                  f"{r.ICON['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
+                  f"{r.ICON['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
+                  f"{r.ICON['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
                   f"{tick_msg}",
             inline=False
         )
@@ -83,10 +83,10 @@ class Info(commands.Cog):
         quests = dm.get_user_quest(user.id)
         embed.add_field(
             name="Tasks",
-            value=f"{u.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
+            value=f"{r.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
                   description_msg +
-                  f"{u.ICON['timer']}**Next daily: **{dts}\n"
-                  f"{u.ICON['timer']}**Next quest: "
+                  f"{r.ICON['timer']}**Next daily: **{dts}\n"
+                  f"{r.ICON['timer']}**Next quest: "
                   f"**{u.time_converter(int(quests.split(',')[-1]) - int(times.time()))}",
             inline=False
         )
@@ -97,7 +97,7 @@ class Info(commands.Cog):
             owned_badges = []
             for i in range(29):
                 if badges % 2 == 1:
-                    owned_badges.append(u.ICON[badges[i]])
+                    owned_badges.append(r.ICON[badges[i]])
                 badges = badges >> 1
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
 
@@ -176,7 +176,7 @@ class Info(commands.Cog):
                 embed.add_field(
                     name=f"**{quest[2]} {u.quest_str_rep(q.split('.')[1], quest[0])}**",
                     value=f"Finished {math.floor(100 * int(q.split('.')[2]) / quest[0])}%\n"
-                          f"Reward: **{''.join(quest[1::2])} {quest[4]} {u.ICON['exp']}**",
+                          f"Reward: **{''.join(quest[1::2])} {quest[4]} {r.ICON['exp']}**",
                     inline=False
                 )
 
@@ -225,8 +225,8 @@ class Info(commands.Cog):
                 await ctx.reply("The deck slot number must between 1-6!")
                 return
 
-            if dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-                await ctx.reply(f"You need to reach level {u.DECK_LVL_REQ[slot]} to get that deck slot!")
+            if dm.get_user_level(user.id) < r.DECK_LVL_REQ[slot]:
+                await ctx.reply(f"You need to reach level {r.DECK_LVL_REQ[slot]} to get that deck slot!")
                 return
 
         view = Decks(user, slot)

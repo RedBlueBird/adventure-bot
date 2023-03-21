@@ -6,7 +6,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 
 
 class Actions(commands.Cog):
@@ -43,11 +43,11 @@ class Actions(commands.Cog):
             tick_msg = ""
         else:
             ticket_reward = 1
-            tick_msg = f"+{ticket_reward} {u.ICON['tick']}"
+            tick_msg = f"+{ticket_reward} {r.ICON['tick']}"
 
         coins = dm.get_user_coin(a.id)
         # Give the user a card or 250 coins, depending on how many they already have
-        if dm.get_user_cards_count(a.id) < u.MAX_CARDS:
+        if dm.get_user_cards_count(a.id) < r.MAX_CARDS:
             card_level = u.log_level_gen(random.randint(
                 2 ** (max(0, 5 - (lvl // 4))),
                 2 ** (10 - math.floor(lvl / 10))
@@ -58,7 +58,7 @@ class Actions(commands.Cog):
         else:
             card_val = 250
             coins += card_val
-            card_msg = f"Obtained {card_val} {u.ICON['coin']}!"
+            card_msg = f"Obtained {card_val} {r.ICON['coin']}!"
 
         xp = dm.get_user_exp(a.id)
         medals = dm.get_user_medal(a.id)
@@ -75,9 +75,9 @@ class Actions(commands.Cog):
 
         await ctx.reply(
             f"{'***JACKPOT!!!***' if jackpot else ''}\n"
-            f"**+{coin_amt} {u.ICON['coin']} +{xp_amt} {u.ICON['exp']}"
-            f" +{medal_amt}{u.ICON['medal']} {tick_msg}\n"
-            f"Daily streak {streak}/{max_streak} {u.ICON['streak']}** \n{card_msg}"
+            f"**+{coin_amt} {r.ICON['coin']} +{xp_amt} {r.ICON['exp']}"
+            f" +{medal_amt}{r.ICON['medal']} {tick_msg}\n"
+            f"Daily streak {streak}/{max_streak} {r.ICON['streak']}** \n{card_msg}"
         )
 
         dm.set_user_coin(a.id, coins)
@@ -114,7 +114,7 @@ class Actions(commands.Cog):
                 check=checks.valid_reaction(["❎", "✅"], [target, ctx.author], deal_msg)
             )
         except asyncio.TimeoutError:
-            await deal_msg.edit(content=f"{ctx.author.mention}, trade canceled due to afk {u.ICON['dead']}")
+            await deal_msg.edit(content=f"{ctx.author.mention}, trade canceled due to afk {r.ICON['dead']}")
             await deal_msg.clear_reactions()
             return
         if reaction.emoji == "❎":
@@ -147,8 +147,8 @@ class Actions(commands.Cog):
         def offer():
             embed = discord.Embed(
                 title=f"Trade ongoing!",
-                description=f"`{u.PREF}(put/drop) (coin/card) (amount/card_id)` \n"
-                            f"`{u.PREF}(confirm/exit/refresh)` \n"
+                description=f"`{r.PREF}(put/drop) (coin/card) (amount/card_id)` \n"
+                            f"`{r.PREF}(confirm/exit/refresh)` \n"
                             f"16 cards at max per side per trade",
                 color=discord.Color.gold()
             )
@@ -208,7 +208,7 @@ class Actions(commands.Cog):
                 return
 
             reply_author = reply_msg.author
-            reply_msg = [s.lower() for s in reply_msg.content[len(u.PREF):].split(" ")]
+            reply_msg = [s.lower() for s in reply_msg.content[len(r.PREF):].split(" ")]
             if len(reply_msg) < 1:
                 continue
             if reply_msg[0] in ["refresh", "re", "ref", "r"]:

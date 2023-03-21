@@ -2,8 +2,6 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-FISH = load_json("fish")
-
 
 @dataclass
 class Fish:
@@ -13,5 +11,7 @@ class Fish:
     chance: float
 
 
-for name, node in FISH.items():
+raw_fish = load_json("fish")
+FISH: dict[str, Fish] = {}
+for name, node in raw_fish.items():
     FISH[name] = Fish(**node)

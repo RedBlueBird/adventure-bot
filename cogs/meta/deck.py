@@ -2,7 +2,7 @@ import typing as t
 
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from views import Confirm
 
 
@@ -49,8 +49,8 @@ class Deck(commands.Cog):
             await ctx.reply("The deck slot number must between 1-6!")
             return
 
-        if dm.get_user_level(a.id) < u.DECK_LVL_REQ[slot]:
-            await ctx.reply(f"Deck #{slot} is unlocked at {u.DECK_LVL_REQ[slot]}!")
+        if dm.get_user_level(a.id) < r.DECK_LVL_REQ[slot]:
+            await ctx.reply(f"Deck #{slot} is unlocked at {r.DECK_LVL_REQ[slot]}!")
             return
 
         dm.set_user_deck_slot(a.id, slot)
@@ -225,7 +225,7 @@ class Deck(commands.Cog):
             dm.set_user_card_deck(a.id, slot, 0, i[0])
         await msg.edit(
             content=f"Deck #{slot} has been cleared! \n"
-                    f"Do `{u.PREF}add [cards]` to add new cards to your deck!"
+                    f"Do `{r.PREF}add [cards]` to add new cards to your deck!"
         )
 
 async def setup(bot):

@@ -5,8 +5,6 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-ADVENTURES = load_json("adventure")
-
 
 @dataclass
 class AdventureChoice:
@@ -30,8 +28,13 @@ class AdventureNode:
         return vals
 
 
-for loc, adv in ADVENTURES.items():
+raw_adventures = load_json("adventure")
+ADVENTURES: dict[str, dict[str, dict[str, list[AdventureNode]]]] = {}
+for loc, adv in raw_adventures.items():
+    ADVENTURES[loc] = {}
     for sec in adv:
+        ADVENTURES[loc][sec] = {}
         for subsec in adv[sec]:
+            ADVENTURES[loc][sec][subsec] = []
             for v, option in enumerate(adv[sec][subsec]):
-                adv[sec][subsec][v] = AdventureNode(**option)
+                ADVENTURES[loc][sec][subsec].append(AdventureNode(**option))

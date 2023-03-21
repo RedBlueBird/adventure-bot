@@ -2,13 +2,11 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-HTOWN = load_json("hometown")
-
 
 @dataclass
 class HometownChoice:
-    next_node: str
-    state: str
+    pos: str
+    action: str
 
 
 @dataclass
@@ -18,5 +16,7 @@ class HometownNode:
     choices: dict[str, HometownChoice]
 
 
-for name, node in HTOWN.items():
+htown_raw = load_json("hometown")
+HTOWN: dict[str, HometownNode] = {}
+for name, node in htown_raw.items():
     HTOWN[name] = HometownNode(**node)

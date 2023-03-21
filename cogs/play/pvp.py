@@ -5,7 +5,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from helpers.battle import BattleData
 from views.battle import PvpInvite, Select
 
@@ -61,7 +61,7 @@ class Pvp(commands.Cog):
 
         req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
         if gamble_medals > 0:
-            req_msg += f"{a.mention} wants to battle with {gamble_medals} {u.ICON['medal']}!\n"
+            req_msg += f"{a.mention} wants to battle with {gamble_medals} {r.ICON['medal']}!\n"
         else:
             req_msg += f"{a.mention} wants to have a friendly battle!\n"
 
@@ -128,7 +128,7 @@ class Pvp(commands.Cog):
         for u_ in set(dd.p_ids.info.values()):
             if u_ in dm.queues:
                 dm.queues[u_] = "in a friendly battle"
-        loading_embed_message = discord.Embed(title="Loading...", description=u.ICON['load'])
+        loading_embed_message = discord.Embed(title="Loading...", description=r.ICON['load'])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hands_msg = await ctx.send(embed=loading_embed_message)
 
@@ -170,13 +170,13 @@ class Pvp(commands.Cog):
                     players.append(dd.p_ids.info[ind])
 
                 elif dd.hps.info[ind][0] < 0 or dd.staminas.info[ind] < 0:
-                    dd.descriptions.info[ind].append(f"•{u.ICON['dead']}")
+                    dd.descriptions.info[ind].append(f"•{r.ICON['dead']}")
                     dd.effects.info[ind] = {}
 
             while players:
                 try:
                     check = lambda m: (
-                            m.content.startswith(u.PREF)
+                            m.content.startswith(r.PREF)
                             and m.author.id in players
                             and m.channel == ctx.channel
                     )
@@ -195,7 +195,7 @@ class Pvp(commands.Cog):
                 else:
                     index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
                     the_message = dd.interpret_message(
-                        replied_message.content[len(u.PREF):],
+                        replied_message.content[len(r.PREF):],
                         str(dd.players.info[index]), index
                     )
 
@@ -221,13 +221,13 @@ class Pvp(commands.Cog):
                         if not dd.hand_sizes.info[index] == 6:
                             dd.hand_sizes.info[index] += 1
 
-                        dd.descriptions.info[index].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
+                        dd.descriptions.info[index].append(f"{r.ICON['ski']}{r.ICON['kip']}\n")
 
                     elif the_message == "flee":
                         players.remove(replied_message.author.id)
                         dd.hps.info[index][0] = 0
                         dd.staminas.info[index] = 0
-                        dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
+                        dd.descriptions.info[index].append(f"{r.ICON['fle']}{r.ICON['lee']}\n")
 
                     elif the_message == "backpack":
                         await ctx.send(

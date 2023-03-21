@@ -1,7 +1,7 @@
 import copy
 
-from .constants import *
-from ..resources import *
+from ..resources import ITEMS, ITEM_ABB
+from ..resources import ICON, SCALE, CARDS, CARDS_TEMP
 
 
 def cards_dict(lvl: str | int, name: str):

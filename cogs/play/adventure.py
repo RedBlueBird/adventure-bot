@@ -5,7 +5,6 @@ import discord
 from discord.ext import commands
 
 from helpers import db_manager as dm, util as u, resources as r, checks
-from helpers.battle import BattleData
 
 import views.adventure.games as g
 import views.adventure.hometown as ht
@@ -40,7 +39,7 @@ def setup_minigame(
     logs = [f"• {rule}" for rule in r.MINIGAMES[game_name].rules]
     embed.add_field(name="Rules", value="\n".join(logs))
 
-    embed.set_footer(text=f"{u.PREF}exit -quit minigame")
+    embed.set_footer(text=f"{r.PREF}exit -quit minigame")
     if show_map:
         if r.MINIGAMES[game_name].img is not None:
             return (
@@ -72,24 +71,24 @@ class Adventure(commands.Cog):
         show_map = dm.get_user_map(a.id)
 
         adventure = False
+        raid_lvls = None
         # region hometown exploration
-        loading = discord.Embed(title="Loading...", description=u.ICON['load'])
+        loading = discord.Embed(title="Loading...", description=r.ICON["load"])
         adv_msg = await ctx.send(embed=loading)
-
         while True:
             embed = discord.Embed(
                 title=f"{a.display_name}'s Adventure",
-                description=f"{u.HTOWN[pos]['description']}",
+                description=f"{r.HTOWN[pos].description}",
                 color=discord.Color.gold()
             )
             embed.set_thumbnail(url=a.avatar.url)
 
             file = discord.File(
-                mark_location("hometown_map", *u.HTOWN[pos]["coordinate"]),
+                mark_location("hometown_map", *r.HTOWN[pos].coordinate),
                 filename="hometown_map.png"
             )
 
-            view = ht.Decision(a, u.HTOWN[pos]["choices"], file)
+            view = ht.Decision(a, r.HTOWN[pos].choices, file)
             attach = [file] if show_map else []
             await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
@@ -112,15 +111,15 @@ class Adventure(commands.Cog):
                 )
                 break
 
-            state = u.HTOWN[pos]["choices"][choice]
+            state = r.HTOWN[pos].choices[choice]
 
-            if state[1] == "self":
-                if state[0] in u.HTOWN:
-                    pos = state[0]
+            if state.action == "self":
+                if state.pos in r.HTOWN:
+                    pos = state.pos
                 else:
                     await ctx.reply("Sorry, this route is still in development!")
 
-            elif state[1] == "selling":
+            elif state.action == "selling":
                 view = ht.Sell(a)
                 embed.set_footer(
                     text="You can use `a.info item (name)` "
@@ -134,7 +133,7 @@ class Adventure(commands.Cog):
                 await view.wait()
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "buying":
+            elif state.action == "buying":
                 offers = [
                     "forest fruit", "fruit salad", "raft", "torch", "herb",
                     "health potion", "power potion", "large health potion",
@@ -158,7 +157,7 @@ class Adventure(commands.Cog):
 
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "chest":
+            elif state.action == "chest":
                 embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl) \
                     .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
                 view = ht.Chest(a)
@@ -171,17 +170,17 @@ class Adventure(commands.Cog):
 
                 inv = dm.get_user_inventory(a.id)
 
-            elif state[1] == "minigame":
+            elif state.action == "minigame":
                 dm.queues[a.id] = "playing a minigame"
-                if state[0] == "coin flip":
+                if state.pos == "coin flip":
                     view = g.CoinFlip(a)
-                elif state[0] == "fishing":
+                elif state.pos == "fishing":
                     view = g.Fishing(a)
-                elif state[0] == "blackjack":
+                elif state.pos == "blackjack":
                     view = g.Blackjack(a)
 
                 embed, img = setup_minigame(
-                    u.HTOWN[pos]["choices"][choice][0],
+                    r.HTOWN[pos].choices[choice].pos,
                     show_map
                 )
                 await adv_msg.edit(
@@ -192,12 +191,12 @@ class Adventure(commands.Cog):
                 await view.wait()
                 dm.queues[a.id] = "wandering around town"
 
-            elif state[1] == "adventure":
+            elif state.action == "adventure":
                 if dm.get_user_deck_count(a.id) != 12:
                     await ctx.reply("You need 12 cards in your deck first!")
                     continue
 
-                if state[0] == "boss raid":
+                if state.pos == "boss raid":
                     lvl_req = 9
                     if lvl < lvl_req:
                         await ctx.reply(
@@ -248,7 +247,7 @@ class Adventure(commands.Cog):
         gems = dm.get_user_gem(a.id)
         xp = dm.get_user_exp(a.id)
 
-        adv = u.ADVENTURES[pos]
+        adv = r.ADVENTURES[pos]
         start = "main", "start", 0
         embed = discord.Embed(
             title=f"{a.display_name}'s {pos.title()} Adventure",

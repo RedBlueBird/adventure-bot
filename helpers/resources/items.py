@@ -6,10 +6,7 @@ from pydantic import validator, root_validator, ConfigDict, Extra
 from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
-from ..util.constants import SCALE
-
-ITEMS = load_json("items")
-ITEM_ABB = load_json("item_abbreviations")
+from .constants import SCALE
 
 
 @dataclass(config=ConfigDict(extra=Extra.allow))
@@ -72,7 +69,8 @@ def item(name: str, max_stat=100 * SCALE[0]) -> Item:
     return ret
 
 
-for abb, n in ITEM_ABB.items():
-    ITEM_ABB[abb] = n.lower()
-for n, i in ITEMS.items():
+ITEM_ABB: dict[str, str] = load_json("item_abbreviations")
+raw_items = load_json("items")
+ITEMS: dict[str, Item] = {}
+for n, i in raw_items.items():
     ITEMS[n] = Item(**i)

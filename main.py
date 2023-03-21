@@ -15,7 +15,7 @@ from helpers import db_manager as dm
 import cogs
 
 import exceptions
-from helpers.util import PREF
+from helpers.resources import PREF
 
 
 def walk_modules(start: str) -> t.Iterator[ModuleType]:

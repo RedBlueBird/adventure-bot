@@ -1,4 +1,4 @@
-from helpers import util as u
+from helpers import resources as r
 from helpers.battle import Player
 from helpers.util import cards_dict_temp, rarity_cost
 
@@ -21,7 +21,7 @@ class Card:
         if card_attribute in self.card:
             self.owner.dialogue.append(
                 f"• {self.card[card_attribute]} "
-                f"{u.ICON[icon_attribute]}{u.ICON['crit'] if crit else ''}"
+                f"{r.ICON[icon_attribute]}{r.ICON['crit'] if crit else ''}"
                 f"» #{target.id} {target.icon}"
             )
 

@@ -6,9 +6,7 @@ from pydantic import root_validator, ConfigDict, Extra
 from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
-from ..util.constants import SCALE
-
-MOBS = load_json("mobs") 
+from .constants import SCALE
 
 
 @dataclass(config=ConfigDict(extra=Extra.allow))
@@ -55,5 +53,7 @@ def mob(name: str, lvl: int) -> Mob:
     return ret
 
 
-for n, m in MOBS.items():
+raw_mobs = load_json("mobs")
+MOBS: dict[str, Mob] = {}
+for n, m in raw_mobs.items():
     MOBS[n] = Mob(**m)

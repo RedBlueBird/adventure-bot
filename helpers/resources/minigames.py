@@ -4,7 +4,7 @@ from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
 
-MINIGAMES = load_json("minigames")
+raw_minigames = load_json("minigames")
 
 
 @dataclass
@@ -13,5 +13,6 @@ class Minigame:
     img: str | None = dataclasses.field(default=None)
 
 
-for name, game in MINIGAMES.items():
+MINIGAMES: dict[str, Minigame] = {}
+for name, game in raw_minigames.items():
     MINIGAMES[name] = Minigame(**game)
