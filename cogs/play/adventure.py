@@ -301,9 +301,9 @@ class Adventure(commands.Cog):
 
             match npos.action:
                 case "item":
-                    pass
+                    pass  # TODO
                 case "trade":
-                    pass
+                    pass  # TODO
                 case "exit":
                     end_cause = "win"
                     if journey == "enchanted forest":
@@ -311,11 +311,11 @@ class Adventure(commands.Cog):
                         dm.set_user_badge(a.id, badges | (1 << 5))
                     break
                 case "fight":
-                    pass
+                    pass  # TODO
 
             nsubsec = adv[npos.section][npos.subsec]
             nnode = None
-            while nnode is None:
+            while nnode is None:  # TODO: this spawn logic is extremely scuffed
                 for op in nsubsec:
                     if any(
                         spawn.lb <= dist <= spawn.ub
