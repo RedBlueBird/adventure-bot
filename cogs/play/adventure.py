@@ -251,12 +251,10 @@ class Adventure(commands.Cog):
         hp = max_hp
         stamina = 100
         dist = 0
-        badges = dm.get_user_badge(a.id)
 
         coins = dm.get_user_coin(a.id)
         gems = dm.get_user_gem(a.id)
         xp = dm.get_user_exp(a.id)
-
         inv = dm.get_user_inventory(a.id)
 
         adv = r.ADVENTURES[journey]
@@ -264,17 +262,17 @@ class Adventure(commands.Cog):
         curr_op = adv[start[0]][start[1]][start[2]]
         end_cause = None
         while True:
-            view = Decision(a, curr_op.choices or ["Continue"])
-
             embed = discord.Embed(
                 title=f"{a.display_name}'s {journey.title()} Adventure",
-                description=curr_op.description
+                description=curr_op.description,
+                color=discord.Color.green()
             )
+            view = Decision(a, curr_op.choices or ["Continue"])
             await adv_msg.edit(embed=embed, view=view, attachments=[])
             await view.wait()
             decision = view.decision
 
-            if decision == "exit":
+            if decision is None or decision == "exit":
                 end_cause = "leave"
                 break
 
@@ -306,6 +304,12 @@ class Adventure(commands.Cog):
                     pass
                 case "trade":
                     pass
+                case "exit":
+                    end_cause = "win"
+                    if journey == "enchanted forest":
+                        badges = dm.get_user_badge(a.id)
+                        dm.set_user_badge(a.id, badges | (1 << 5))
+                    break
                 case "fight":
                     pass
 
@@ -324,7 +328,7 @@ class Adventure(commands.Cog):
             curr_op = nnode
 
         dm.set_user_inventory(a.id, inv)
-        await ctx.reply("adventure finished")
+        await ctx.reply(f"adventure finished. end cause: {end_cause}")
 
 
 async def setup(bot):

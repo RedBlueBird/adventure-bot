@@ -93,12 +93,11 @@ class Info(commands.Cog):
 
         badges = dm.get_user_badge(user.id)
         if badges != 2 ** 30:
-            badges = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
+            icons = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
             owned_badges = []
-            for i in range(29):
-                if badges % 2 == 1:
-                    owned_badges.append(r.ICON[badges[i]])
-                badges = badges >> 1
+            for i in range(len(icons)):
+                if badges & (1 << i):  # Checks if the ith bit is set
+                    owned_badges.append(r.ICON[icons[i]])
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
 
         embed.set_footer(
