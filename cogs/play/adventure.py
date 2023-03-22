@@ -313,19 +313,16 @@ class Adventure(commands.Cog):
                 case "fight":
                     pass  # TODO
 
-            nsubsec = adv[npos.section][npos.subsec]
-            nnode = None
-            while nnode is None:  # TODO: this spawn logic is extremely scuffed
-                for op in nsubsec:
-                    if any(
-                        spawn.lb <= dist <= spawn.ub
-                        and random.random() <= spawn.prob
-                        for spawn in op.spawns
-                    ):
-                        nnode = op
+            valid_ops = []
+            weights = []
+            for op in adv[npos.section][npos.subsec]:
+                for s in op.spawns:
+                    if s.lb <= dist <= s.ub:
+                        valid_ops.append(op)
+                        weights.append(s.prob)
                         break
-            
-            curr_op = nnode
+
+            curr_op = random.choices(valid_ops, weights)[0]
 
         dm.set_user_inventory(a.id, inv)
         await ctx.reply(f"adventure finished. end cause: {end_cause}")
