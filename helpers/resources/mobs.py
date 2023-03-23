@@ -69,4 +69,3 @@ raw_mobs = load_json("mobs")
 MOBS: dict[str, Mob] = {}
 for n, m in raw_mobs.items():
     MOBS[n] = Mob(**m)
-    print(MOBS[n])
