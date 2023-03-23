@@ -1,4 +1,4 @@
-import dataclasses
+from dataclasses import field
 
 from pydantic import validator, root_validator, PositiveInt
 from pydantic.dataclasses import dataclass
@@ -21,8 +21,8 @@ class ItemReq:
 class AdventureChoice:
     section: str
     subsec: str
-    action: str | None = dataclasses.field(default=None)
-    reqs: list[ItemReq] = dataclasses.field(default_factory=list)
+    action: str | None = field(default=None)
+    reqs: list[ItemReq] = field(default_factory=list)
 
 
 @dataclass
@@ -42,11 +42,11 @@ class AdventureNode:
     description: str
     spawns: list[SpawnRange]
 
-    choices: dict[str, AdventureChoice] | None = dataclasses.field(default=None)
-    to: AdventureChoice | None = dataclasses.field(default=None)
+    choices: dict[str, AdventureChoice] | None = field(default=None)
+    to: AdventureChoice | None = field(default=None)
 
-    encounters: dict[str, list[float]] = dataclasses.field(default_factory=dict)
-    items: dict[str, tuple[PositiveInt, PositiveInt]] = dataclasses.field(default_factory=dict)
+    encounters: dict[str, list[float]] = field(default_factory=dict)
+    items: dict[str, tuple[int, int]] = field(default_factory=dict)
 
     @root_validator
     def choices_or_to_not_both(cls, vals):
@@ -60,7 +60,7 @@ class AdventureNode:
 
     @validator("items")
     def valid_item_ranges(cls, items: dict[str, tuple[int, int]]):
-        assert all(lb <= ub for lb, ub in items.values())
+        assert all(0 <= lb <= ub for lb, ub in items.values())
         return items
 
 

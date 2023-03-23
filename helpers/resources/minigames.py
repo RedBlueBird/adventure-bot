@@ -1,4 +1,4 @@
-import dataclasses
+from dataclasses import field
 
 from pydantic.dataclasses import dataclass
 
@@ -10,7 +10,7 @@ raw_minigames = load_json("minigames")
 @dataclass
 class Minigame:
     rules: list[str]
-    img: str | None = dataclasses.field(default=None)
+    img: str | None = field(default=None)
 
 
 MINIGAMES: dict[str, Minigame] = {}

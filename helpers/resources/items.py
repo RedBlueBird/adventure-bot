@@ -1,5 +1,5 @@
 import typing as t
-import dataclasses
+from dataclasses import field
 from copy import deepcopy
 
 from pydantic import validator, root_validator, ConfigDict, Extra
@@ -27,9 +27,9 @@ class Item:
 
     weight: int
     sell: int
-    buy: int | None = dataclasses.field(default=None)
+    buy: int | None = field(default=None)
 
-    extra: dict[str, t.Any] = dataclasses.field(default_factory=dict)
+    extra: dict[str, t.Any] = field(default_factory=dict)
 
     @validator("name")
     def name_lower(cls, v: str):
