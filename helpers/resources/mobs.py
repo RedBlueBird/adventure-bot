@@ -1,8 +1,8 @@
 import typing as t
-import dataclasses
+from dataclasses import field
 from copy import deepcopy
 
-from pydantic import root_validator, ConfigDict, Extra
+from pydantic import validator, root_validator, ConfigDict, Extra
 from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
@@ -13,9 +13,9 @@ from .constants import SCALE
 class DeathReward:
     coins: tuple[int, int] | int
     exps: tuple[int, int] | int
-    gems: tuple[int, int] | int = dataclasses.field(default=(0, 0))
+    gems: tuple[int, int] | int = field(default=(0, 0))
 
-    mats: dict[str, int | tuple[int, int]] = dataclasses.field(default_factory=dict)
+    mats: dict[str, int | tuple[int, int]] = field(default_factory=dict)
 
     @root_validator(pre=True)
     def build_extra(cls, values: dict[str, t.Any]) -> dict[str, t.Any]:
@@ -33,6 +33,17 @@ class DeathReward:
 
 
 @dataclass
+class Trade:
+    prob: float
+    reqs: list[tuple[str, int]]
+
+    @validator("prob")
+    def valid_prob(cls, val: float):
+        assert 0 <= val <= 1
+        return val
+
+
+@dataclass
 class Mob:
     name: str
     brief: str
@@ -44,6 +55,7 @@ class Mob:
     death_rwd: DeathReward
 
     deck: list[str]
+    trades: dict[str, Trade] | None = field(default=None)
 
 
 def mob(name: str, lvl: int) -> Mob:
@@ -57,3 +69,4 @@ raw_mobs = load_json("mobs")
 MOBS: dict[str, Mob] = {}
 for n, m in raw_mobs.items():
     MOBS[n] = Mob(**m)
+    print(MOBS[n])
