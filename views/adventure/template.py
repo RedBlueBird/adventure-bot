@@ -7,7 +7,7 @@ class AdventureTemplate(ui.View):
         super().__init__()
         self.user = user
 
-    @ui.button(label="Exit", style=discord.ButtonStyle.red, row=4)
+    @ui.button(label="Exit", style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):
         await i.response.defer()
         self.stop()
