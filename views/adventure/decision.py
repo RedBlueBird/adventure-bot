@@ -3,7 +3,6 @@ import typing as t
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm, util as u
 from views.adventure.template import InteractionCheckMixin, Backpack
 
 
