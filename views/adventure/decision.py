@@ -4,7 +4,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import InteractionCheckMixin, Backpack
 
 
 class DecisionSelect(ui.Select["Decision"]):
@@ -22,14 +22,15 @@ class DecisionSelect(ui.Select["Decision"]):
         self.view.stop()
 
 
-class Decision(AdventureTemplate):
+class Decision(ui.View, InteractionCheckMixin):
     def __init__(
             self,
             user: discord.Member,
             choices: t.Iterable[str],
             loc_file: discord.File | None = None
     ):
-        super().__init__(user)
+        super().__init__()
+        self.user = user
 
         self.decision = None
         self.add_item(DecisionSelect(choices))
@@ -37,8 +38,8 @@ class Decision(AdventureTemplate):
         self.show_map = None
         self.loc_img = loc_file
         if loc_file is None:
-            self.remove_item(self.children[2])
-
+            self.remove_item(self.children[1])
+        
     @ui.button(label="Backpack", row=1, style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):
         inv = dm.get_user_inventory(self.user.id)
@@ -61,4 +62,5 @@ class Decision(AdventureTemplate):
     @ui.button(label="Exit", row=1, style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):
         self.decision = "exit"
-        await super().exit(i, button)
+        await i.response.defer()
+        self.stop()

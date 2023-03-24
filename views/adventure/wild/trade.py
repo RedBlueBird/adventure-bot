@@ -2,7 +2,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u, resources as r
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import Exit, Backpack, InteractionCheckMixin
 from ...confirm import Confirm
 
 
@@ -71,19 +71,14 @@ class TradeSelect(ui.Select["Trade"]):
         await msg.delete(delay=5)
 
 
-class Trade(AdventureTemplate):
+class Trade(ui.View, InteractionCheckMixin):
     def __init__(
             self, user: discord.Member,
             trades: dict[str, list[tuple[str, int]]]
     ):
-        super().__init__(user)
+        super().__init__()
+        self.user = user
         self.trades = trades
         self.add_item(TradeSelect(trades))
-
-    @ui.button(label="Backpack", style=discord.ButtonStyle.blurple)
-    async def backpack(self, i: discord.Interaction, button: ui.Button):
-        inv = dm.get_user_inventory(self.user.id)
-        await i.response.send_message(
-            embed=u.container_embed(inv, "Backpack"),
-            ephemeral=True
-        )
+        self.add_item(Backpack())
+        self.add_item(Exit())

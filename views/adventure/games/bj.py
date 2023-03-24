@@ -3,7 +3,7 @@ import discord.ui as ui
 
 import helpers.db_manager as dm
 from helpers.util.poker import Value, Deck, Card
-from ..template import AdventureTemplate
+from ..template import Exit, InteractionCheckMixin
 
 BJ = 21
 BET = 50
@@ -24,7 +24,7 @@ def bj_val(cards: list[Card]) -> int:
     return total
 
 
-class BlackjackBoard(ui.View):
+class BlackjackBoard(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member):
         super().__init__()
         self.user = user
@@ -34,6 +34,8 @@ class BlackjackBoard(ui.View):
         self.player = self.deck.draw_n(2)
         self.dealer = self.deck.draw_n(2)
         self.result = None
+
+        self.add_item(Exit())
 
     def deck_size(self) -> int:
         return len(self.deck)
@@ -116,15 +118,6 @@ class BlackjackBoard(ui.View):
         else:
             await self.lose(i)
 
-    async def interaction_check(self, i: discord.Interaction) -> bool:
-        if i.user != self.user:
-            await i.response.send_message(
-                "You aren't the explorer here!",
-                ephemeral=True
-            )
-            return False
-        return True
-
     def board_embed(self) -> discord.Embed:
         board = discord.Embed(title="Blackjack")
 
@@ -141,7 +134,11 @@ class BlackjackBoard(ui.View):
         return board
 
 
-class Blackjack(AdventureTemplate):
+class Blackjack(ui.View, InteractionCheckMixin):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user = user
+
     @ui.button(label="Play a round!", style=discord.ButtonStyle.blurple)
     async def play(self, i: discord.Interaction, button: ui.Button):
         coins = dm.get_user_coin(self.user.id)

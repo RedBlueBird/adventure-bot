@@ -4,7 +4,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u, resources as r
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
 def transfer(
@@ -102,7 +102,12 @@ class DepositForm(ui.Modal, title="Deposit something!"):
         await submit_chest_form(i, "deposit", self.item.value, self.amt.value)
 
 
-class Chest(AdventureTemplate):
+class Chest(ui.View, InteractionCheckMixin):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user = user
+        self.add_item(Exit("Close Chest"))
+
     @ui.button(label="Take", style=discord.ButtonStyle.blurple)
     async def take(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(TakeForm(i.user, i.message))
@@ -110,8 +115,3 @@ class Chest(AdventureTemplate):
     @ui.button(label="Deposit", style=discord.ButtonStyle.blurple)
     async def deposit(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(DepositForm(i.user, i.message))
-
-    @ui.button(label="Close Chest", style=discord.ButtonStyle.red)
-    async def exit(self, i: discord.Interaction, button: ui.Button):
-        await i.response.defer()
-        self.stop()
