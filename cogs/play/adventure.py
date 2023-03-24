@@ -8,8 +8,7 @@ from discord.ext import commands
 from helpers import db_manager as dm, util as u, resources as r, checks
 
 from views.adventure import Decision
-import views.adventure.games as g
-import views.adventure.hometown as ht
+from views.adventure import games as g, hometown as ht, wild as w
 
 
 def choices_list(choices) -> str:
@@ -75,7 +74,7 @@ class Adventure(commands.Cog):
         raid_lvl = None
         # region hometown exploration
         loading = discord.Embed(title="Loading...", description=r.ICON["load"])
-        adv_msg = await ctx.send(embed=loading)
+        adv_msg = await ctx.reply(embed=loading, mention_author=False)
         while True:
             embed = discord.Embed(
                 title=f"{a.display_name}'s Adventure",
@@ -236,96 +235,108 @@ class Adventure(commands.Cog):
         # endregion
 
         if adventure:
-            await self.explore(ctx, adv_msg, pos, raid_lvl)
+            await explore(ctx, adv_msg, pos, raid_lvl)
 
 
-    async def explore(
-            self, ctx: commands.Context,
-            adv_msg: discord.Message,
-            journey: str, raid_lvl: int | None
-    ):
-        a = ctx.author
+async def explore(
+        ctx: commands.Context,
+        adv_msg: discord.Message,
+        journey: str, raid_lvl: int | None
+):
+    a = ctx.author
 
-        lvl = dm.get_user_level(a.id)
-        max_hp = u.level_hp(lvl)
-        hp = max_hp
-        stamina = 100
-        dist = 0
+    lvl = dm.get_user_level(a.id)
+    max_hp = u.level_hp(lvl)
+    hp = max_hp
+    stamina = 100
+    dist = 0
 
-        coins = dm.get_user_coin(a.id)
-        gems = dm.get_user_gem(a.id)
-        xp = dm.get_user_exp(a.id)
-        inv = dm.get_user_inventory(a.id)
+    coins = dm.get_user_coin(a.id)
+    gems = dm.get_user_gem(a.id)
+    xp = dm.get_user_exp(a.id)
+    inv = dm.get_user_inventory(a.id)
 
-        adv = r.ADVENTURES[journey]
-        start = "main", "start", 0
-        curr_op = adv[start[0]][start[1]][start[2]]
-        end_cause = None
-        while True:
-            embed = discord.Embed(
-                title=f"{a.display_name}'s {journey.title()} Adventure",
-                description=curr_op.description,
-                color=discord.Color.green()
-            )
-            view = Decision(a, curr_op.choices or ["Continue"])
-            await adv_msg.edit(embed=embed, view=view, attachments=[])
-            await view.wait()
-            decision = view.decision
+    adv = r.ADVENTURES[journey]
+    start = "main", "start", 0
+    curr_op = adv[start[0]][start[1]][start[2]]
+    end_cause = None
+    while True:
+        embed = discord.Embed(
+            title=f"{a.display_name}'s {journey.title()} Adventure",
+            description=curr_op.description,
+            color=discord.Color.green()
+        )
+        view = Decision(a, curr_op.choices or ["Continue"])
+        await adv_msg.edit(embed=embed, view=view, attachments=[])
+        await view.wait()
+        decision = view.decision
 
-            if decision is None or decision == "exit":
-                end_cause = "leave"
-                break
+        if decision is None or decision == "exit":
+            end_cause = "leave"
+            break
 
-            if curr_op.choices is not None:
-                npos = curr_op.choices[decision]
-                req_filled = True
-                for req in npos.reqs:
-                    if inv.get(req.name, 0) < req.amt:
-                        req_filled = False
-                        break
-                
-                if not req_filled:
-                    bad_msg = await ctx.reply("You don't have those items!")
-                    await bad_msg.delete(delay=5)
-                    # Have them make the decision again (inefficient, but lmao)
-                    continue
-                
-                for req in npos.reqs:
-                    inv[req.name] -= req.amt if req.taken else 0
-                    if inv[req.name] == 0:
-                        del inv[req.name]
-
-                dm.set_user_inventory(a.id, inv)
-            else:
-                npos = curr_op.to
-
-            match npos.action:
-                case "item":
-                    pass  # TODO
-                case "trade":
-                    pass  # TODO
-                case "exit":
-                    end_cause = "win"
-                    if journey == "enchanted forest":
-                        badges = dm.get_user_badge(a.id)
-                        dm.set_user_badge(a.id, badges | (1 << 5))
+        if curr_op.choices is not None:
+            npos = curr_op.choices[decision]
+            req_filled = True
+            for req in npos.reqs:
+                if inv.get(req.name, 0) < req.amt:
+                    req_filled = False
                     break
-                case "fight":
-                    pass  # TODO
 
-            valid_ops = []
-            weights = []
-            for op in adv[npos.section][npos.subsec]:
-                for s in op.spawns:
-                    if s.lb <= dist <= s.ub:
-                        valid_ops.append(op)
-                        weights.append(s.prob)
-                        break
+            if not req_filled:
+                bad_msg = await ctx.reply("You don't have those items!")
+                await bad_msg.delete(delay=5)
+                # Have them make the decision again (inefficient, but lmao)
+                continue
 
-            curr_op = random.choices(valid_ops, weights)[0]
+            for req in npos.reqs:
+                inv[req.name] -= req.amt if req.taken else 0
+                if inv[req.name] == 0:
+                    del inv[req.name]
 
-        dm.set_user_inventory(a.id, inv)
-        await ctx.reply(f"adventure finished. end cause: {end_cause}")
+            dm.set_user_inventory(a.id, inv)
+        else:
+            npos = curr_op.to
+
+        match npos.action:
+            case "item":
+                pass  # TODO
+            case "trade":
+                # maybe vary the description based on a random list?
+                embed = discord.Embed(
+                    title="Trader",
+                    description="Rafts, swords, crossbows. "
+                                "You want it? It's yours my friend, "
+                                "as long as you have enough materials."
+                )
+                view = w.Trade(a, {"raft": [("wood", 5)]})
+                await adv_msg.edit(embed=embed, view=view)
+                await view.wait()
+            case "exit":
+                end_cause = "win"
+                if journey == "enchanted forest":
+                    badges = dm.get_user_badge(a.id)
+                    dm.set_user_badge(a.id, badges | (1 << 5))
+                break
+            case "fight":
+                pass  # TODO
+
+        valid_ops = []
+        weights = []
+        for op in adv[npos.section][npos.subsec]:
+            for s in op.spawns:
+                if s.lb <= dist <= s.ub:
+                    valid_ops.append(op)
+                    weights.append(s.weight)
+                    break
+
+        curr_op = random.choices(valid_ops, weights)[0]
+
+    dm.set_user_inventory(a.id, inv)
+    await adv_msg.edit(
+        content=f"adventure finished. end cause: {end_cause}",
+        embed=None, view=None
+    )
 
 
 async def setup(bot):

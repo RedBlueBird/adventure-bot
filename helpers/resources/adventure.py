@@ -29,12 +29,7 @@ class AdventureChoice:
 class SpawnRange:
     lb: int
     ub: int
-    prob: float
-
-    @validator("prob")
-    def valid_prob(cls, prob):
-        assert 0 <= prob <= 1
-        return prob
+    weight: float
 
 
 @dataclass

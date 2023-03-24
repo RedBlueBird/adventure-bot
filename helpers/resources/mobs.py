@@ -21,7 +21,7 @@ class DeathReward:
     def build_extra(cls, values: dict[str, t.Any]) -> dict[str, t.Any]:
         """https://stackoverflow.com/a/69618110/12128483"""
         req_fields = {
-            field.alias for field in cls.__pydantic_model__.__fields__.values()
+            f.alias for f in cls.__pydantic_model__.__fields__.values()
         }  # to support alias
 
         mats = {}

@@ -29,7 +29,7 @@ class SellForm(ui.Modal, title="Sell something!"):
 
         inv = dm.get_user_inventory(self.user.id)
 
-        if inv.get(name, {}).get("items", 0) < amt:
+        if inv.get(name, 0) < amt:
             await i.response.send_message(
                 "You don't have enough of those items in your backpack!",
                 ephemeral=True
