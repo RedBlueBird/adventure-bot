@@ -4,7 +4,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u, resources as r
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
 class BuyForm(ui.Modal, title="Buy something!"):
@@ -68,9 +68,11 @@ class BuyForm(ui.Modal, title="Buy something!"):
         )
 
 
-class Shop(AdventureTemplate):
+class Shop(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
-        super().__init__(user)
+        super().__init__()
+        self.user = user
+        self.add_item(Exit())
         self.items = offers
 
     @ui.button(label="Purchase", style=discord.ButtonStyle.blurple)

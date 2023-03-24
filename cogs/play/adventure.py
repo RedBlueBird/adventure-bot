@@ -11,13 +11,6 @@ from views.adventure import Decision
 from views.adventure import games as g, hometown as ht, wild as w
 
 
-def choices_list(choices) -> str:
-    logs = []
-    for c in choices:
-        logs.append(f"**[{len(logs) + 1}]** {c}")
-    return "\n".join(logs)
-
-
 def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
     background = Image.open(f"resources/img/{bg_pic}.png")
     new_image = Image.open("resources/img/marker.png")
@@ -276,9 +269,9 @@ async def explore(
             break
 
         if curr_op.choices is not None:
-            npos = curr_op.choices[decision]
+            choice = curr_op.choices[decision]
             req_filled = True
-            for req in npos.reqs:
+            for req in choice.reqs:
                 if inv.get(req.name, 0) < req.amt:
                     req_filled = False
                     break
@@ -289,27 +282,35 @@ async def explore(
                 # Have them make the decision again (inefficient, but lmao)
                 continue
 
-            for req in npos.reqs:
+            for req in choice.reqs:
                 inv[req.name] -= req.amt if req.taken else 0
                 if inv[req.name] == 0:
                     del inv[req.name]
 
             dm.set_user_inventory(a.id, inv)
         else:
-            npos = curr_op.to
+            choice = curr_op.to
 
-        match npos.action:
+        match choice.action:
             case "item":
                 pass  # TODO
             case "trade":
+                trader = r.mob(list(curr_op.encounters.keys())[0])
+                assert trader.trades is not None
+
+                to_include = {}
+                for item, trade in trader.trades.items():
+                    if random.random() <= trade.prob:
+                        to_include[item] = trade.reqs
+
                 # maybe vary the description based on a random list?
                 embed = discord.Embed(
-                    title="Trader",
-                    description="Rafts, swords, crossbows. "
+                    title=trader.name.title(),
+                    description="I have so many recipes in my crafting book. "
                                 "You want it? It's yours my friend, "
                                 "as long as you have enough materials."
                 )
-                view = w.Trade(a, {"raft": [("wood", 5)]})
+                view = w.Trade(a, to_include)
                 await adv_msg.edit(embed=embed, view=view)
                 await view.wait()
             case "exit":
@@ -323,7 +324,7 @@ async def explore(
 
         valid_ops = []
         weights = []
-        for op in adv[npos.section][npos.subsec]:
+        for op in adv[choice.section][choice.subsec]:
             for s in op.spawns:
                 if s.lb <= dist <= s.ub:
                     valid_ops.append(op)

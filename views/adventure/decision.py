@@ -3,8 +3,7 @@ import typing as t
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm, util as u
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import InteractionCheckMixin, Backpack
 
 
 class DecisionSelect(ui.Select["Decision"]):
@@ -22,30 +21,27 @@ class DecisionSelect(ui.Select["Decision"]):
         self.view.stop()
 
 
-class Decision(AdventureTemplate):
+class Decision(ui.View, InteractionCheckMixin):
     def __init__(
             self,
             user: discord.Member,
             choices: t.Iterable[str],
             loc_file: discord.File | None = None
     ):
-        super().__init__(user)
+        super().__init__()
 
+        self.user = user
+        
         self.decision = None
-        self.add_item(DecisionSelect(choices))
-
         self.show_map = None
         self.loc_img = loc_file
         if loc_file is None:
-            self.remove_item(self.children[2])
-
-    @ui.button(label="Backpack", row=1, style=discord.ButtonStyle.blurple)
-    async def backpack(self, i: discord.Interaction, button: ui.Button):
-        inv = dm.get_user_inventory(self.user.id)
-        await i.response.send_message(
-            embed=u.container_embed(inv, "Backpack"),
-            ephemeral=True
-        )
+            self.remove_item(self.children[0])
+        
+        exit_button = self.children[1]
+        self.remove_item(exit_button)
+        for i in [Backpack(row=1), exit_button, DecisionSelect(choices)]:
+            self.add_item(i)
 
     @ui.button(label="Toggle Map", row=1, style=discord.ButtonStyle.blurple)
     async def toggle_map(self, i: discord.Interaction, button: ui.Button):
@@ -61,4 +57,5 @@ class Decision(AdventureTemplate):
     @ui.button(label="Exit", row=1, style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):
         self.decision = "exit"
-        await super().exit(i, button)
+        await i.response.defer()
+        self.stop()

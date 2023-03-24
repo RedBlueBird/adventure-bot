@@ -2,7 +2,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm, util as u, resources as r
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
 class SellForm(ui.Modal, title="Sell something!"):
@@ -54,7 +54,12 @@ class SellForm(ui.Modal, title="Sell something!"):
         await self.sell_msg.edit(embed=u.container_embed(inv))
 
 
-class Sell(AdventureTemplate):
+class Sell(ui.View, InteractionCheckMixin):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user = user
+        self.add_item(Exit())
+
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)
     async def sell(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(SellForm(self.user, i.message))

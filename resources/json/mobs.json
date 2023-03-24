@@ -786,7 +786,6 @@
         "brief": "A specialist in various kinds of potions and medicine.",
         "trades": {
             "Health Potion": {
-                "prob": 0.6,
                 "reqs": [
                     [
                         "Herb",
@@ -799,7 +798,6 @@
                 ]
             },
             "Power Potion": {
-                "prob": 0.6,
                 "reqs": [
                     [
                         "Herb",
@@ -812,7 +810,7 @@
                 ]
             },
             "Large Health Potion": {
-                "prob": 0.1,
+                "prob": 0.3,
                 "reqs": [
                     [
                         "Health Potion",
@@ -821,7 +819,7 @@
                 ]
             },
             "Large Power Potion": {
-                "prob": 0.1,
+                "prob": 0.3,
                 "reqs": [
                     [
                         "Power Potion",
@@ -869,7 +867,6 @@
         "brief": "Skilled craftsmen who have spent many days toiling in the forges to make everything from swords to crossbows.",
         "trades": {
             "Raft": {
-                "prob": 0.6,
                 "reqs": [
                     [
                         "Wood",
@@ -878,7 +875,6 @@
                 ]
             },
             "Wooden Sword": {
-                "prob": 0.6,
                 "reqs": [
                     [
                         "Wood",
@@ -887,7 +883,6 @@
                 ]
             },
             "Wooden Bow": {
-                "prob": 0.5,
                 "reqs": [
                     [
                         "Wood",
@@ -896,7 +891,7 @@
                 ]
             },
             "Stone Sword": {
-                "prob": 0.2,
+                "prob": 0.8,
                 "reqs": [
                     [
                         "Stone",
@@ -905,7 +900,7 @@
                 ]
             },
             "Iron Sword": {
-                "prob": 0.06,
+                "prob": 0.2,
                 "reqs": [
                     [
                         "Iron Ore",
@@ -914,7 +909,7 @@
                 ]
             },
             "Iron Crossbow": {
-                "prob": 0.06,
+                "prob": 0.1,
                 "reqs": [
                     [
                         "Iron Ore",
@@ -923,7 +918,7 @@
                 ]
             },
             "Crystal Sword": {
-                "prob": 0.01,
+                "prob": 0.05,
                 "reqs": [
                     [
                         "Crystal",

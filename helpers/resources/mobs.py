@@ -13,7 +13,7 @@ from .constants import SCALE
 class DeathReward:
     coins: tuple[int, int] | int
     exps: tuple[int, int] | int
-    gems: tuple[int, int] | int = field(default=(0, 0))
+    gems: tuple[int, int] | int = (0, 0)
 
     mats: dict[str, int | tuple[int, int]] = field(default_factory=dict)
 
@@ -33,9 +33,9 @@ class DeathReward:
 
 
 @dataclass
-class Trade:
-    prob: float
+class Trade:    
     reqs: list[tuple[str, int]]
+    prob: float = 1
 
     @validator("prob")
     def valid_prob(cls, val: float):
@@ -55,10 +55,10 @@ class Mob:
     death_rwd: DeathReward
 
     deck: list[str]
-    trades: dict[str, Trade] | None = field(default=None)
+    trades: dict[str, Trade] | None = None
 
 
-def mob(name: str, lvl: int) -> Mob:
+def mob(name: str, lvl: int = 1) -> Mob:
     lvl = SCALE[1] ** (lvl - 1) * SCALE[0]
     ret = deepcopy(MOBS[name.lower()])
     ret.health = round(ret.health * lvl)
