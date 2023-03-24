@@ -18,7 +18,7 @@ class Backpack(ui.Button):
     def __init__(self, label: str = "Backpack", row: int | None = None):
         super().__init__(label=label, row=row, style=discord.ButtonStyle.blurple)
     
-    async def callback(self, i: discord.Interaction, button: ui.Button):
+    async def callback(self, i: discord.Interaction):
         inv = dm.get_user_inventory(self.view.user.id)
         await i.response.send_message(
             embed=u.container_embed(inv, "Backpack"),
