@@ -30,23 +30,20 @@ class Decision(ui.View, InteractionCheckMixin):
             loc_file: discord.File | None = None
     ):
         super().__init__()
+
         self.user = user
-
+        
         self.decision = None
-        self.add_item(DecisionSelect(choices))
-
         self.show_map = None
         self.loc_img = loc_file
         if loc_file is None:
-            self.remove_item(self.children[1])
+            self.remove_item(self.children[0])
         
-    @ui.button(label="Backpack", row=1, style=discord.ButtonStyle.blurple)
-    async def backpack(self, i: discord.Interaction, button: ui.Button):
-        inv = dm.get_user_inventory(self.user.id)
-        await i.response.send_message(
-            embed=u.container_embed(inv, "Backpack"),
-            ephemeral=True
-        )
+        exit_button = self.children[1]
+        self.remove_item(exit_button)
+        self.add_item(Backpack(row=1))
+        self.add_item(exit_button)
+        self.add_item(DecisionSelect(choices))
 
     @ui.button(label="Toggle Map", row=1, style=discord.ButtonStyle.blurple)
     async def toggle_map(self, i: discord.Interaction, button: ui.Button):

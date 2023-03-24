@@ -35,8 +35,6 @@ class BlackjackBoard(ui.View, InteractionCheckMixin):
         self.dealer = self.deck.draw_n(2)
         self.result = None
 
-        self.add_item(Exit())
-
     def deck_size(self) -> int:
         return len(self.deck)
 
