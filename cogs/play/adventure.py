@@ -306,7 +306,7 @@ async def explore(
                 # maybe vary the description based on a random list?
                 embed = discord.Embed(
                     title=trader.name.title(),
-                    description="I've got so many things I can give you. "
+                    description="I have so many recipes in my crafting book. "
                                 "You want it? It's yours my friend, "
                                 "as long as you have enough materials."
                 )
