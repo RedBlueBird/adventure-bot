@@ -10,7 +10,7 @@ raw_minigames = load_json("minigames")
 @dataclass
 class Minigame:
     rules: list[str]
-    img: str | None = field(default=None)
+    img: str | None = None
 
 
 MINIGAMES: dict[str, Minigame] = {}

@@ -8,7 +8,10 @@ from ...confirm import Confirm
 
 class TradeSelect(ui.Select["Trade"]):
     def __init__(self, trades: dict[str, list[tuple[str, int]]]):
-        self.trades = {c.lower(): req for c, req in trades.items()}
+        self.trades = {
+            c.lower(): [(r_[0].lower(), r_[1]) for r_ in req]
+            for c, req in trades.items()
+        }
         
         choices = []
         for c in self.trades:
@@ -44,12 +47,13 @@ class TradeSelect(ui.Select["Trade"]):
                 content="Hey, your pack's too full, I won't be able to fit it in!",
                 view=None
             )
+        print(inv)
         for item, amt in reqs:
             if inv.get(item, 0) < amt:
                 await msg.edit(
                     content="Sorry pal, I can't give credits. "
                             "Come back when you're a little, mmmmmm, RICHER.",
-                    view=None
+                    embed=None, view=None
                 )
                 break
         else:
@@ -63,7 +67,8 @@ class TradeSelect(ui.Select["Trade"]):
                 content=f"Alright! You traded for a {product.title()}.",
                 embed=None, view=None
             )
-            await msg.delete(delay=5)
+        
+        await msg.delete(delay=5)
 
 
 class Trade(AdventureTemplate):

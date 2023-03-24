@@ -27,7 +27,7 @@ class Item:
 
     weight: int
     sell: int
-    buy: int | None = field(default=None)
+    buy: int | None = None
 
     extra: dict[str, t.Any] = field(default_factory=dict)
 

@@ -21,7 +21,7 @@ class ItemReq:
 class AdventureChoice:
     section: str
     subsec: str
-    action: str | None = field(default=None)
+    action: str | None = None
     reqs: list[ItemReq] = field(default_factory=list)
 
 
@@ -37,8 +37,8 @@ class AdventureNode:
     description: str
     spawns: list[SpawnRange]
 
-    choices: dict[str, AdventureChoice] | None = field(default=None)
-    to: AdventureChoice | None = field(default=None)
+    choices: dict[str, AdventureChoice] | None = None
+    to: AdventureChoice | None = None
 
     encounters: dict[str, list[float]] = field(default_factory=dict)
     items: dict[str, tuple[int, int]] = field(default_factory=dict)
