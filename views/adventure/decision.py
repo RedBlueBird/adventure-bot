@@ -41,9 +41,8 @@ class Decision(ui.View, InteractionCheckMixin):
         
         exit_button = self.children[1]
         self.remove_item(exit_button)
-        self.add_item(Backpack(row=1))
-        self.add_item(exit_button)
-        self.add_item(DecisionSelect(choices))
+        for i in [Backpack(row=1), exit_button, DecisionSelect(choices)]:
+            self.add_item(i)
 
     @ui.button(label="Toggle Map", row=1, style=discord.ButtonStyle.blurple)
     async def toggle_map(self, i: discord.Interaction, button: ui.Button):
