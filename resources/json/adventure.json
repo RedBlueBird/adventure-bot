@@ -478,12 +478,6 @@
             "item": [
                 {
                     "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
-                    "items": {
-                        "weird mushroom": [
-                            1,
-                            1
-                        ]
-                    },
                     "choices": {
                         "Pick up the mushroom": {
                             "section": "main",
@@ -501,16 +495,17 @@
                             "ub": 7000,
                             "weight": 0.2
                         }
+                    ],
+                    "item": [
+                        "weird mushroom",
+                        [
+                            1,
+                            1
+                        ]
                     ]
                 },
                 {
                     "description": "You see some strange looking leaves. No, upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
-                    "items": {
-                        "herb": [
-                            1,
-                            1
-                        ]
-                    },
                     "choices": {
                         "Pick up the herb": {
                             "section": "main",
@@ -528,16 +523,17 @@
                             "ub": 7000,
                             "weight": 0.05
                         }
+                    ],
+                    "item": [
+                        "herb",
+                        [
+                            1,
+                            1
+                        ]
                     ]
                 },
                 {
                     "description": "You see some red fruits hanging on a tree. These fruits can come in handy, able to replenish your energy when you are in need of it",
-                    "items": {
-                        "forest fruit": [
-                            3,
-                            4
-                        ]
-                    },
                     "choices": {
                         "Collect some forest fruits": {
                             "section": "main",
@@ -560,16 +556,17 @@
                             "ub": 2000,
                             "weight": 0.05
                         }
+                    ],
+                    "item": [
+                        "forest fruit",
+                        [
+                            3,
+                            4
+                        ]
                     ]
                 },
                 {
                     "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
-                    "items": {
-                        "wood": [
-                            3,
-                            4
-                        ]
-                    },
                     "choices": {
                         "Cut down a few trees for wood": {
                             "section": "main",
@@ -597,16 +594,17 @@
                             "ub": 3000,
                             "weight": 0.05
                         }
+                    ],
+                    "item": [
+                        "wood",
+                        [
+                            3,
+                            4
+                        ]
                     ]
                 },
                 {
                     "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
-                    "items": {
-                        "stone": [
-                            2,
-                            3
-                        ]
-                    },
                     "choices": {
                         "Mine some stones": {
                             "section": "main",
@@ -629,16 +627,17 @@
                             "ub": 3000,
                             "weight": 0.1
                         }
+                    ],
+                    "item": [
+                        "stone",
+                        [
+                            2,
+                            3
+                        ]
                     ]
                 },
                 {
                     "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
-                    "items": {
-                        "iron ore": [
-                            1,
-                            2
-                        ]
-                    },
                     "choices": {
                         "Mine some iron ores": {
                             "section": "main",
@@ -661,6 +660,13 @@
                             "ub": 7000,
                             "weight": 0.1
                         }
+                    ],
+                    "item": [
+                        "iron ore",
+                        [
+                            1,
+                            2
+                        ]
                     ]
                 }
             ],
@@ -1111,12 +1117,6 @@
                 },
                 {
                     "description": "While walking through the cave, you noticed some mushrooms beneath you!",
-                    "items": {
-                        "weird mushroom": [
-                            1,
-                            2
-                        ]
-                    },
                     "choices": {
                         "Pick up up the mushrooms": {
                             "section": "dark cave",
@@ -1138,6 +1138,13 @@
                             "ub": 10000,
                             "weight": 0.2
                         }
+                    ],
+                    "item": [
+                        "weird mushroom",
+                        [
+                            1,
+                            2
+                        ]
                     ]
                 }
             ]
@@ -1500,12 +1507,6 @@
             "item": [
                 {
                     "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
-                    "items": {
-                        "weird mushroom": [
-                            1,
-                            1
-                        ]
-                    },
                     "choices": {
                         "Pick up the mushroom": {
                             "section": "main",
@@ -1523,16 +1524,17 @@
                             "ub": 10000,
                             "weight": 0.2
                         }
+                    ],
+                    "item": [
+                        "weird mushroom",
+                        [
+                            1,
+                            1
+                        ]
                     ]
                 },
                 {
                     "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
-                    "items": {
-                        "wood": [
-                            3,
-                            4
-                        ]
-                    },
                     "choices": {
                         "Cut down a few trees for wood": {
                             "section": "main",
@@ -1560,16 +1562,17 @@
                             "ub": 3000,
                             "weight": 0.05
                         }
+                    ],
+                    "item": [
+                        "wood",
+                        [
+                            3,
+                            4
+                        ]
                     ]
                 },
                 {
                     "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
-                    "items": {
-                        "stone": [
-                            2,
-                            3
-                        ]
-                    },
                     "choices": {
                         "Mine some stones": {
                             "section": "main",
@@ -1592,16 +1595,17 @@
                             "ub": 3000,
                             "weight": 0.1
                         }
+                    ],
+                    "item": [
+                        "stone",
+                        [
+                            2,
+                            3
+                        ]
                     ]
                 },
                 {
                     "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
-                    "items": {
-                        "iron ore": [
-                            1,
-                            2
-                        ]
-                    },
                     "choices": {
                         "Mine some iron ores": {
                             "section": "main",
@@ -1624,6 +1628,13 @@
                             "ub": 10000,
                             "weight": 0.1
                         }
+                    ],
+                    "item": [
+                        "iron ore",
+                        [
+                            1,
+                            2
+                        ]
                     ]
                 }
             ],

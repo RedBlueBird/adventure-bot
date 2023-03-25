@@ -44,10 +44,13 @@ class TradeSelect(ui.Select["Trade"]):
         inv = dm.get_user_inventory(i.user.id)
         if u.bp_weight(inv) + r.item(product).weight > r.BP_CAP:
             await msg.edit(
-                content="Hey, your pack's too full, I won't be able to fit it in!",
+                content="Hey, your pack's too full. "
+                        "I couldn't fit it in if I tried.",
                 view=None
             )
-        print(inv)
+            await msg.delete(delay=5)
+            return
+
         for item, amt in reqs:
             if inv.get(item, 0) < amt:
                 await msg.edit(
@@ -64,10 +67,9 @@ class TradeSelect(ui.Select["Trade"]):
             dm.set_user_inventory(i.user.id, inv)
 
             await msg.edit(
-                content=f"Alright! You traded for a {product.title()}.",
+                content=f"Alright man. Here's your {product.title()}.",
                 embed=None, view=None
             )
-        
         await msg.delete(delay=5)
 
 

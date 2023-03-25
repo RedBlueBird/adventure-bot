@@ -41,7 +41,7 @@ class AdventureNode:
     to: AdventureChoice | None = None
 
     encounters: dict[str, list[float]] = field(default_factory=dict)
-    items: dict[str, tuple[int, int]] = field(default_factory=dict)
+    item: tuple[str, tuple[int, int]] | None = None
 
     @root_validator
     def choices_or_to_not_both(cls, vals):
@@ -53,10 +53,14 @@ class AdventureNode:
         assert all(all(0 <= float(p) <= 1 for p in e) for e in e.values())
         return e
 
-    @validator("items")
-    def valid_item_ranges(cls, items: dict[str, tuple[int, int]]):
-        assert all(0 <= lb <= ub for lb, ub in items.values())
-        return items
+    @validator("item")
+    def valid_item_ranges(cls, item: tuple[str, tuple[int, int]] | None):
+        if item is None:
+            return item
+
+        lb, ub = item[1]
+        assert lb <= ub
+        return item
 
 
 raw_adventures = load_json("adventure")

@@ -37,8 +37,8 @@ class Decision(ui.View, InteractionCheckMixin):
         self.loc_img = loc_file
         if loc_file is None:
             self.remove_item(self.children[0])
-        
-        exit_button = self.children[1]
+
+        exit_button = self.children[0]
         self.remove_item(exit_button)
         for i in [Backpack(row=1), exit_button, DecisionSelect(choices)]:
             self.add_item(i)

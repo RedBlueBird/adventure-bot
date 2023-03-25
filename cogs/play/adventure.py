@@ -35,10 +35,7 @@ def setup_minigame(
     embed.set_footer(text=f"{r.PREF}exit -quit minigame")
     if show_map:
         if r.MINIGAMES[game_name].img is not None:
-            return (
-                embed,
-                discord.File(r.MINIGAMES[game_name].img)
-            )
+            return embed, discord.File(r.MINIGAMES[game_name].img)
         else:
             return embed, None
     else:
@@ -199,7 +196,10 @@ class Adventure(commands.Cog):
                         )
                         continue
                     if dm.get_user_ticket(a.id) < 1:
-                        await ctx.reply("You need a raid ticket first!", ephemeral=True)
+                        await ctx.reply(
+                            "You need a raid ticket first!",
+                            ephemeral=True
+                        )
                         continue
 
                     embed = discord.Embed(
@@ -211,8 +211,6 @@ class Adventure(commands.Cog):
                     await adv_msg.edit(embed=embed, view=view)
                     await view.wait()
 
-                    if view.exit:
-                        continue
                     if view.level is not None:
                         raid_lvl = view.level
                         dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
@@ -293,7 +291,24 @@ async def explore(
 
         match choice.action:
             case "item":
-                pass  # TODO
+                stored = u.bp_weight(inv)
+                if stored >= r.BP_CAP:
+                    msg = await ctx.reply(
+                        "Your backpack was too full: "
+                        "you have no choice but to ignore the items.",
+                        mention_author=False
+                    )
+                else:
+                    name, (lb, ub) = curr_op.item
+                    to_add = min(r.BP_CAP - stored, random.randint(lb, ub))
+                    inv[name] = inv.get(name, 0) + to_add
+
+                    msg = await ctx.reply(
+                        f"You got {to_add} {name.title()}!",
+                        mention_author=False
+                    )
+
+                await msg.delete(delay=5)
             case "trade":
                 trader = r.mob(list(curr_op.encounters.keys())[0])
                 assert trader.trades is not None
@@ -306,7 +321,7 @@ async def explore(
                 # maybe vary the description based on a random list?
                 embed = discord.Embed(
                     title=trader.name.title(),
-                    description="I have so many recipes in my crafting book. "
+                    description="I have *so* many recipes in my crafting book. "
                                 "You want it? It's yours my friend, "
                                 "as long as you have enough materials."
                 )
