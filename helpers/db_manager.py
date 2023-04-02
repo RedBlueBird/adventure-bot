@@ -399,7 +399,9 @@ def get_user_premium(uid: int) -> dt.datetime:
 
 
 def has_premium(uid: int) -> bool:
-    return get_user_premium(uid) > dt.datetime.now(dt.timezone.utc)
+    exp_date = get_user_premium(uid).timestamp()
+    now = dt.datetime.now(dt.timezone.utc).timestamp()
+    return exp_date >= now
 
 
 def set_user_premium(uid: int, value: dt.datetime):
