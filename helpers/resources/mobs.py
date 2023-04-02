@@ -1,8 +1,8 @@
 import typing as t
-import dataclasses
+from dataclasses import field
 from copy import deepcopy
 
-from pydantic import root_validator, ConfigDict, Extra
+from pydantic import validator, root_validator, ConfigDict, Extra
 from pydantic.dataclasses import dataclass
 
 from helpers.json_loader import load_json
@@ -13,15 +13,15 @@ from .constants import SCALE
 class DeathReward:
     coins: tuple[int, int] | int
     exps: tuple[int, int] | int
-    gems: tuple[int, int] | int = dataclasses.field(default=(0, 0))
+    gems: tuple[int, int] | int = (0, 0)
 
-    mats: dict[str, int | tuple[int, int]] = dataclasses.field(default_factory=dict)
+    mats: dict[str, int | tuple[int, int]] = field(default_factory=dict)
 
     @root_validator(pre=True)
     def build_extra(cls, values: dict[str, t.Any]) -> dict[str, t.Any]:
         """https://stackoverflow.com/a/69618110/12128483"""
         req_fields = {
-            field.alias for field in cls.__pydantic_model__.__fields__.values()
+            f.alias for f in cls.__pydantic_model__.__fields__.values()
         }  # to support alias
 
         mats = {}
@@ -30,6 +30,17 @@ class DeathReward:
                 mats[field_name] = values.pop(field_name)
         values["mats"] = mats
         return values
+
+
+@dataclass
+class Trade:    
+    reqs: list[tuple[str, int]]
+    prob: float = 1
+
+    @validator("prob")
+    def valid_prob(cls, val: float):
+        assert 0 <= val <= 1
+        return val
 
 
 @dataclass
@@ -44,9 +55,10 @@ class Mob:
     death_rwd: DeathReward
 
     deck: list[str]
+    trades: dict[str, Trade] | None = None
 
 
-def mob(name: str, lvl: int) -> Mob:
+def mob(name: str, lvl: int = 1) -> Mob:
     lvl = SCALE[1] ** (lvl - 1) * SCALE[0]
     ret = deepcopy(MOBS[name.lower()])
     ret.health = round(ret.health * lvl)

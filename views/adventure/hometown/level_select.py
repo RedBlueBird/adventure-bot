@@ -1,13 +1,15 @@
 import discord
 import discord.ui as ui
 
-from views.adventure.template import AdventureTemplate
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
-class LevelSelect(AdventureTemplate):
+class LevelSelect(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member):
-        super().__init__(user)
+        super().__init__()
+        self.user = user
         self.level = None
+        self.add_item(Exit())
 
     @discord.ui.select(
         options=[

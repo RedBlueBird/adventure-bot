@@ -1,4 +1,4 @@
-import dataclasses
+from dataclasses import field
 
 from pydantic import validator, root_validator, PositiveInt
 from pydantic.dataclasses import dataclass
@@ -21,20 +21,15 @@ class ItemReq:
 class AdventureChoice:
     section: str
     subsec: str
-    action: str | None = dataclasses.field(default=None)
-    reqs: list[ItemReq] = dataclasses.field(default_factory=list)
+    action: str | None = None
+    reqs: list[ItemReq] = field(default_factory=list)
 
 
 @dataclass
 class SpawnRange:
     lb: int
     ub: int
-    prob: float
-
-    @validator("prob")
-    def valid_prob(cls, prob):
-        assert 0 <= prob <= 1
-        return prob
+    weight: float
 
 
 @dataclass
@@ -42,11 +37,11 @@ class AdventureNode:
     description: str
     spawns: list[SpawnRange]
 
-    choices: dict[str, AdventureChoice] | None = dataclasses.field(default=None)
-    to: AdventureChoice | None = dataclasses.field(default=None)
+    choices: dict[str, AdventureChoice] | None = None
+    to: AdventureChoice | None = None
 
-    encounters: dict[str, list[float]] = dataclasses.field(default_factory=dict)
-    items: dict[str, tuple[PositiveInt, PositiveInt]] = dataclasses.field(default_factory=dict)
+    encounters: dict[str, list[float]] = field(default_factory=dict)
+    item: tuple[str, tuple[int, int]] | None = None
 
     @root_validator
     def choices_or_to_not_both(cls, vals):
@@ -58,10 +53,14 @@ class AdventureNode:
         assert all(all(0 <= float(p) <= 1 for p in e) for e in e.values())
         return e
 
-    @validator("items")
-    def valid_item_ranges(cls, items: dict[str, tuple[int, int]]):
-        assert all(lb <= ub for lb, ub in items.values())
-        return items
+    @validator("item")
+    def valid_item_ranges(cls, item: tuple[str, tuple[int, int]] | None):
+        if item is None:
+            return item
+
+        lb, ub = item[1]
+        assert lb <= ub
+        return item
 
 
 raw_adventures = load_json("adventure")
@@ -74,5 +73,3 @@ for loc, adv in raw_adventures.items():
             ADVENTURES[loc][sec][subsec] = []
             for v, option in enumerate(adv[sec][subsec]):
                 ADVENTURES[loc][sec][subsec].append(AdventureNode(**option))
-
-print(ADVENTURES)

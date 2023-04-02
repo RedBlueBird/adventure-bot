@@ -374,12 +374,12 @@ def set_user_map(uid: int, value: bool):
 
 
 def get_user_badge(uid: int) -> int:
-    cur.execute(f"SELECT all_badges FROM players WHERE uid = {uid}")
+    cur.execute(f"SELECT badges FROM players WHERE uid = {uid}")
     return cur.fetchall()[0][0]
 
 
 def set_user_badge(uid: int, value: int):
-    cur.execute(f"UPDATE players SET all_badges = {value} WHERE uid = {uid}")
+    cur.execute(f"UPDATE players SET badges = {value} WHERE uid = {uid}")
     db.commit()
 
 
