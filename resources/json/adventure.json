@@ -697,7 +697,6 @@
             "trap": [
                 {
                     "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
-                    "trap": "reaction",
                     "damage": [
                         5,
                         10
@@ -706,6 +705,9 @@
                         3,
                         5
                     ],
+                    "instant": {
+                        "trap": "reaction"
+                    },
                     "to": {
                         "section": "arrow trap",
                         "subsec": "main"
@@ -725,7 +727,6 @@
                 },
                 {
                     "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
-                    "trap": "memorize",
                     "damage": [
                         10,
                         15
@@ -738,6 +739,9 @@
                         3,
                         4
                     ],
+                    "instant": {
+                        "trap": "memorize"
+                    },
                     "to": {
                         "section": "start",
                         "subsec": "main"
@@ -1665,7 +1669,6 @@
             "trap": [
                 {
                     "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
-                    "trap": "reaction",
                     "damage": [
                         5,
                         10
@@ -1674,6 +1677,9 @@
                         3,
                         5
                     ],
+                    "instant": {
+                        "trap": "reaction"
+                    },
                     "to": {
                         "section": "arrow trap",
                         "subsec": "main"
@@ -1693,7 +1699,6 @@
                 },
                 {
                     "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
-                    "trap": "memorize",
                     "damage": [
                         10,
                         15
@@ -1706,6 +1711,9 @@
                         3,
                         4
                     ],
+                    "instant": {
+                        "trap": "memorize"
+                    },
                     "to": {
                         "section": "start",
                         "subsec": "main"

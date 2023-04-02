@@ -252,6 +252,11 @@ async def explore(
     curr_op = adv[start[0]][start[1]][start[2]]
     end_cause = None
     while True:
+        if curr_op.instant is not None:
+            instant = curr_op.instant
+            if instant.trap is not None:
+                pass
+
         embed = discord.Embed(
             title=f"{a.display_name}'s {journey.title()} Adventure",
             description=curr_op.description,
@@ -307,8 +312,8 @@ async def explore(
                         f"You got {to_add} {name.title()}!",
                         mention_author=False
                     )
-
                 await msg.delete(delay=5)
+
             case "trade":
                 trader = r.mob(list(curr_op.encounters.keys())[0])
                 assert trader.trades is not None
@@ -321,19 +326,21 @@ async def explore(
                 # maybe vary the description based on a random list?
                 embed = discord.Embed(
                     title=trader.name.title(),
-                    description="I have *so* many recipes in my crafting book. "
+                    description="I have *so* many things in my recipe book. "
                                 "You want it? It's yours my friend, "
                                 "as long as you have enough materials."
                 )
                 view = w.Trade(a, to_include)
                 await adv_msg.edit(embed=embed, view=view)
                 await view.wait()
+
             case "exit":
                 end_cause = "win"
                 if journey == "enchanted forest":
                     badges = dm.get_user_badge(a.id)
                     dm.set_user_badge(a.id, badges | (1 << 5))
                 break
+
             case "fight":
                 pass  # TODO
 

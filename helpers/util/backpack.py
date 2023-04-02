@@ -1,5 +1,3 @@
-import typing as t
-
 import discord
 
 from ..resources import item, BP_CAP
@@ -7,10 +5,6 @@ from ..resources import item, BP_CAP
 
 def bp_weight(bp: dict[str, int]):
     return sum(item(i).weight * bp[i] for i in bp)
-
-
-def cleared_bp(bp: dict[str, int]):
-    return {i: amt for i, amt in bp.items() if amt > 0}
 
 
 def chest_storage(level: int):

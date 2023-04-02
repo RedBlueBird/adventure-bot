@@ -33,10 +33,21 @@ class SpawnRange:
 
 
 @dataclass
+class Instant:
+    trap: str | None = None
+
+    @root_validator
+    def only_one(cls, vals):
+        assert sum(i is not None for i in vals.values()) == 1
+        return vals
+
+
+@dataclass
 class AdventureNode:
     description: str
     spawns: list[SpawnRange]
 
+    instant: Instant | None = None
     choices: dict[str, AdventureChoice] | None = None
     to: AdventureChoice | None = None
 
@@ -73,3 +84,4 @@ for loc, adv in raw_adventures.items():
             ADVENTURES[loc][sec][subsec] = []
             for v, option in enumerate(adv[sec][subsec]):
                 ADVENTURES[loc][sec][subsec].append(AdventureNode(**option))
+                print(ADVENTURES[loc][sec][subsec])
