@@ -458,11 +458,13 @@ def add_user_quests(quests: list[tuple[int, int, int, int, int]]):
     cur.executemany(operation, quests)
     db.commit()
 
+
 def delete_user_quest(quest_id: int):
     params = (quest_id,)
     operation = "DELETE FROM quest WHERE id = %s"
     cur.execute(operation, params)
     db.commit()
+
 
 def set_user_quest_progress(quest_id: int, progress: int):
     params = (progress, quest_id)
@@ -470,10 +472,12 @@ def set_user_quest_progress(quest_id: int, progress: int):
     cur.execute(operation, params)
     db.commit()
 
+
 def get_user_next_quest(uid: int) -> dt.datetime | None:
     operation = "SELECT next_quest FROM players WHERE uid = %s"
     cur.execute(operation, (uid,))
     return cur.fetchall()[0][0]
+
 
 def set_user_next_quest(uid: int, next_quest: dt.datetime | None):
     operation = "UPDATE players SET next_quest = %s WHERE uid = %s"
