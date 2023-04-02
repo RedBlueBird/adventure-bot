@@ -1,6 +1,4 @@
 import typing as t
-import random
-import math
 import datetime as dt
 
 import discord
