@@ -133,7 +133,7 @@ class Card(commands.Cog):
             await msg.edit(content="Upgrading canceled.", view=None)
             return
 
-        dm.log_quest(7, 1, a.id)
+        await u.update_quest(ctx, a.id, 7, 1)
         dm.set_user_coin(a.id, coins - upgrade_cost)
         dm.delete_user_cards([(other_card_id, a.id)])
         dm.set_card_level(card_id, card[1] + 1)

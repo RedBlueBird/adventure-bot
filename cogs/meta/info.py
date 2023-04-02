@@ -1,7 +1,6 @@
 import typing as t
 import random
 import math
-import time as times
 import datetime as dt
 
 import discord
@@ -29,8 +28,9 @@ class Info(commands.Cog):
             return
 
         user_premium = dm.get_user_premium(user.id)
-        if user_premium > dt.datetime.today():
-            days_left = (user_premium - dt.datetime.today()).days
+        now = dt.datetime.now(dt.timezone.utc)
+        if user_premium > now:
+            days_left = (user_premium - now).days
             description_msg = f"14\n{r.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
                               f"{days_left} days remaining\n"
             tickets = 10
@@ -80,14 +80,14 @@ class Info(commands.Cog):
             inline=False
         )
 
-        quests = dm.get_user_quest(user.id)
+        next_quest = dm.get_user_next_quest(user.id)
+        nq = u.time_converter(int((next_quest-now).total_seconds())) if next_quest is not None else "--"
         embed.add_field(
             name="Tasks",
             value=f"{r.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
                   description_msg +
                   f"{r.ICON['timer']}**Next daily: **{dts}\n"
-                  f"{r.ICON['timer']}**Next quest: "
-                  f"**{u.time_converter(int(quests.split(',')[-1]) - int(times.time()))}",
+                  f"{r.ICON['timer']}**Next quest: **{nq}",
             inline=False
         )
 
@@ -119,71 +119,38 @@ class Info(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
             return
 
-        user_quest = dm.get_user_quest(user.id)
-        user_premium = dm.get_user_premium(user.id)
+        quests = dm.get_user_quests(user.id)
+        u.add_quests(user.id, quests)
 
-        quests = user_quest.split(",")
-        is_premium = user_premium > dt.datetime.today()
-
-        if (len(quests) < 4 and not is_premium) or (len(quests) < 5 and is_premium):
-            if int(quests[-1]) - int(times.time()) <= 1:
-                # premium members have to wait less and get one more quest slot as well
-                quests_count = abs(math.floor((int(times.time()) - int(quests[-1])) / (1800 - 900 * is_premium))) + 1
-                extra_time = (int(times.time()) - int(quests[-1])) % (1800 - 900 * is_premium)
-                if (4 + is_premium) - len(quests) < quests_count:
-                    quests_count = (4 + is_premium) - len(quests)
-                    extra_time = 0
-
-                quests[-1] = str(int(times.time()) + (900 + 900 * is_premium) - extra_time)
-
-                for _ in range(quests_count):
-                    quest_id = math.ceil(u.log_level_gen(random.randint(1, 2 ** 8)) / 2) - 2
-                    award_type = 1
-                    if quest_id > 0 and random.randint(1, 100) >= 75:
-                        award_type = 2
-                    elif random.randint(1, 100) >= 101:
-                        award_type = 3
-                    received_quest_types = [int(quests[x].split(".")[1]) for x in range(len(quests) - 1)]
-                    new_quest_type = random.randint(1, 8)
-                    while new_quest_type in received_quest_types:
-                        new_quest_type = random.randint(1, 8)
-                    quests.insert(-1, f"{quest_id}{award_type}.{new_quest_type}.0")
-
-                dm.set_user_quest(user.id, ','.join(quests))
-
-        if len(quests) == 1:
+        if not quests:
             embed = discord.Embed(
                 title=f"{user.display_name}'s Quests:",
                 description="You don't have any quests.\nCome back later for more!",
                 color=discord.Color.green()
             )
         else:
-            bad = 4 + is_premium
-            if len(quests) == bad:
-                embed = discord.Embed(
-                    title=f"{user.display_name}'s Quests:",
-                    description=f"You can't have more than {bad - 1} quests active!",
-                    color=discord.Color.gold()
-                )
-            else:
-                embed = discord.Embed(
-                    title=f"{user.display_name}'s Quests:",
-                    color=discord.Color.gold()
-                )
-
-            for q in quests[:-1]:
-                quest = u.quest_index(q)
+            embed = discord.Embed(
+                title=f"{user.display_name}'s Quests:",
+                color=discord.Color.gold()
+            )
+            for quest in quests:
+                quest_info = u.quest_info(quest[1], quest[2], quest[3])
                 embed.add_field(
-                    name=f"**{quest[2]} {u.quest_str_rep(q.split('.')[1], quest[0])}**",
-                    value=f"Finished {math.floor(100 * int(q.split('.')[2]) / quest[0])}%\n"
-                          f"Reward: **{''.join(quest[1::2])} {quest[4]} {r.ICON['exp']}**",
+                    name=f"**{quest_info['rarity']} {quest_info['description']}**",
+                    value=f"Finished {quest[4]}/{quest_info['requirement']}\n"
+                          f"Reward: **{quest_info['reward']['exp']} {r.ICON['exp']}"
+                          f" {quest_info['reward']['other']} {r.ICON[quest_info['reward']['type']]}**",
                     inline=False
                 )
 
         embed.set_thumbnail(url=user.avatar.url)
-        time_left = u.time_converter(int(quests[-1]) - int(times.time()))
-        if time_left != "Right Now":
-            embed.set_footer(text=f"{time_left} left till a new quest")
+        next_quest = dm.get_user_next_quest(user.id)
+        if next_quest is not None:
+            time_left = u.time_converter(int((next_quest-dt.datetime.now(dt.timezone.utc)).total_seconds()))
+            if time_left != "Right Now":
+                embed.set_footer(text=f"{time_left} left till a new quest")
+        else:
+            embed.set_footer(text="You have reached the maximum number of quests. Finish some to get more!")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(

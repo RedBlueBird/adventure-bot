@@ -365,8 +365,8 @@ class Pvp(commands.Cog):
                 if p in winner:
                     if dd.turns >= 10:
                         if gamble_medals > 0:
-                            dm.log_quest(4, 1, id_)
-                        dm.log_quest(6, gamble_medals, id_)
+                            await u.update_quest(ctx, id_, 4, 1)
+                        await u.update_quest(ctx, id_, 6, gamble_medals)
 
                     dm.set_user_medal(id_, dm.get_user_medal(id_) + medal_amt)
                     dm.set_user_exp(id_, dm.get_user_exp(id_) + xp_amt)

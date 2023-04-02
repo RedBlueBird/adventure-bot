@@ -1,30 +1,30 @@
 import math
+import random
 import datetime as dt
 
 from ..resources import SCALE
 
 
-def time_converter(seconds: str | int) -> str:
+def time_converter(seconds: int) -> str:
     """
     Returns a string representation of the amount of time given in seconds.
     :param seconds: The amount of seconds to convert.
     :return: A string representation of how many days, hours, etc. that is.
     """
-    seconds = max(0, int(seconds))
+    if seconds <= 0:
+        return "Right now"
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
 
-    if days != 0:
+    if days > 0:
         return f"{days}d, {hours}h, {minutes}m, and {seconds}s"
-    if hours != 0:
+    if hours > 0:
         return f"{hours}h, {minutes}m, and {seconds}s"
-    elif minutes != 0:
+    if minutes > 0:
         return f"{minutes}m, and {seconds}s"
-    elif seconds > 0:
+    if seconds > 0:
         return f"{seconds}s"
-    else:
-        return "Right Now"
 
 
 def time_til_midnight() -> str:
@@ -62,3 +62,14 @@ def level_hp(lvl: int) -> int:
 
 def clamp(i: int, lo: int, hi: int) -> int:
     return max(lo, min(i, hi))
+
+
+def randint_log(a: int, b: int) -> int:
+    """Selects a random number in the range [a, b]
+    with successive numbers having half the chance of the previous to be selected.
+    :param a: The minimum number that can be selected.
+    :param b: The maximum number that can be selected.
+    :return: A number in the range [a, b].
+    """
+    c = random.randint(0, 2 ** (b - a + 1) - 2)
+    return a + math.floor(-math.log2(1 - c / (2 ** (b - a + 1))))

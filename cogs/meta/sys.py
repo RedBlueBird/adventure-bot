@@ -39,8 +39,9 @@ class Sys(commands.Cog):
         dm.add_user(a.id)
         dm.set_user_coin(a.id, 250)
         dm.set_user_gem(a.id, 5)
-        dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
-        dm.set_user_register_date(a.id, dt.datetime.today())
+        now = dt.datetime.now(dt.datetime.utc)
+        dm.set_user_premium(a.id, now + dt.timedelta(days=7))
+        dm.set_user_register_date(a.id, now)
         dm.set_user_position(a.id, "home")
         dm.set_user_inventory(a.id, "{}")
         dm.set_user_storage(a.id, "{}")
@@ -82,7 +83,7 @@ class Sys(commands.Cog):
 
             # At levels 17 and 27, the user gets a week of free premium.
             if lvl + 1 in [17, 27]:
-                dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
+                dm.set_user_premium(a.id, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=7))
 
             if r.LEVELS[lvl - 1]:
                 level_msg.extend(r.LEVELS[lvl - 1].format(r.PREF).split("\n"))
@@ -110,43 +111,10 @@ class Sys(commands.Cog):
             dm.set_user_coin(a.id, dm.get_user_gem(a.id) + gem_gain)
         # endregion
 
-        # region Quest Completion Check (scuffed)
-        quests = dm.get_user_quest(a.id).split(",")
-        if len(quests) > 1:
-            quest_com = [
-                math.floor(int(quests[x].split(".")[2]) / u.quest_index(quests[x])[0] * 100)
-                for x in range(len(quests) - 1)
-            ]
-            for x in range(len(quests) - 1):
-                if quest_com[x] >= 100:
-                    quest = u.quest_index(quests[x])
-                    embed = discord.Embed(
-                        title=f"QUEST COMPLETE {a.name}!",
-                        description=None,
-                        color=discord.Color.green()
-                    )
-                    embed.add_field(
-                        name=f"**{quest[2]} {u.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
-                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {r.ICON['exp']}**",
-                        # " +1{r.ICON['token']}**",
-                        inline=False
-                    )
-                    embed.set_thumbnail(url=a.avatar.url)
-                    await ctx.channel.send(embed=embed)
-
-                    gained = [0, 0, quest[4]]  # coin, gem, exp
-                    if quest[3] == r.ICON["coin"]:
-                        gained[0] += int(quest[1])
-                    elif quest[3] == r.ICON["gem"]:
-                        gained[1] += int(quest[1])
-
-                    quests.remove(quests[x])
-                    dm.set_user_coin(a.id, dm.get_user_coin(a.id) + gained[0])
-                    dm.set_user_gem(a.id, dm.get_user_gem(a.id) + gained[1])
-                    dm.set_user_exp(a.id, dm.get_user_exp(a.id) + gained[2])
-                    dm.set_user_token(a.id, dm.get_user_token(a.id) + 1)
-                    dm.set_user_quest(a.id, ','.join(quests))
-                    break
+        # region Quest Completion Check (temporary)
+        quests = dm.get_user_quests(a.id)
+        for quest in quests:
+            await u.update_quest(ctx, a.id, quest[1], 0)
         # endregion
 
         # region Gold Spawn Logic

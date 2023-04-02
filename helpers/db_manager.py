@@ -48,17 +48,6 @@ def is_registered(uid: int) -> bool:
     return bool(cur.fetchall()[0][0])
 
 
-def log_quest(quest_type: int, value: int, uid: int):
-    cur.execute(f"SELECT quests FROM players WHERE uid = {uid}")
-    quests = cur.fetchall()[0][0].split(",")
-    for x in range(len(quests) - 1):
-        if quests[x].split(".")[1] == str(quest_type):
-            quests[x] = ".".join(quests[x].split(".")[0:2]) + "." + str(int(quests[x].split(".")[2]) + value)
-            break
-    cur.execute(f"UPDATE players SET quests = '{','.join(quests)}' WHERE uid = {uid}")
-    db.commit()
-
-
 def get_id(uid: int) -> int:
     cur.execute(f"SELECT id FROM players WHERE uid = {uid}")
     return cur.fetchall()[0][0]
@@ -176,16 +165,6 @@ def get_user_streak(uid: int) -> int:
 
 def set_user_streak(uid: int, value: int):
     cur.execute(f"UPDATE players SET streak = {value} WHERE uid = {uid}")
-    db.commit()
-
-
-def get_user_quest(uid: int) -> str:
-    cur.execute(f"SELECT quests FROM players WHERE uid = {uid}")
-    return cur.fetchall()[0][0]
-
-
-def set_user_quest(uid: int, value: str):
-    cur.execute(f"UPDATE players SET quests = '{value}' WHERE uid = {uid}")
     db.commit()
 
 
@@ -420,7 +399,7 @@ def get_user_premium(uid: int) -> dt.datetime:
 
 
 def has_premium(uid: int) -> bool:
-    return get_user_premium(uid) > dt.datetime.today()
+    return get_user_premium(uid) > dt.datetime.now(dt.timezone.utc)
 
 
 def set_user_premium(uid: int, value: dt.datetime):
@@ -454,6 +433,50 @@ def get_leaderboard(
         f"ORDER BY {','.join(order)} LIMIT {limit}"
     )
     return cur.fetchall()
+
+
+def get_user_quests(uid: int, quest_type: int = -1) -> list[tuple[int, int, int, int, int]]:
+    operation = "SELECT id, quest_type, reward_type, rarity, progress FROM quest WHERE uid = %s"
+    params = (uid,)
+    if quest_type != -1:
+        operation += " AND quest_type = %s"
+        params = (uid, quest_type)
+    cur.execute(operation, params)
+    return cur.fetchall()
+
+
+def get_user_quests_count(uid: int) -> int:
+    operation = "SELECT COUNT(*) FROM quest WHERE uid = %s"
+    cur.execute(operation, (uid,))
+    return cur.fetchall()[0][0]
+
+
+def add_user_quests(quests: list[tuple[int, int, int, int, int]]):
+    operation = "INSERT INTO quest (uid, quest_type, reward_type, rarity, progress) VALUES (%s, %s, %s, %s, %s)"
+    cur.executemany(operation, quests)
+    db.commit()
+
+def delete_user_quest(quest_id: int):
+    params = (quest_id,)
+    operation = "DELETE FROM quest WHERE id = %s"
+    cur.execute(operation, params)
+    db.commit()
+
+def set_user_quest_progress(quest_id: int, progress: int):
+    params = (progress, quest_id)
+    operation = "UPDATE quest SET progress = %s WHERE id = %s"
+    cur.execute(operation, params)
+    db.commit()
+
+def get_user_next_quest(uid: int) -> dt.datetime | None:
+    operation = "SELECT next_quest FROM players WHERE uid = %s"
+    cur.execute(operation, (uid,))
+    return cur.fetchall()[0][0]
+
+def set_user_next_quest(uid: int, next_quest: dt.datetime | None):
+    operation = "UPDATE players SET next_quest = %s WHERE uid = %s"
+    cur.execute(operation, (next_quest, uid))
+    db.commit()
 
 
 if __name__ == "__main__":
