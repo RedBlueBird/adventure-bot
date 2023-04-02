@@ -84,4 +84,3 @@ for loc, adv in raw_adventures.items():
             ADVENTURES[loc][sec][subsec] = []
             for v, option in enumerate(adv[sec][subsec]):
                 ADVENTURES[loc][sec][subsec].append(AdventureNode(**option))
-                print(ADVENTURES[loc][sec][subsec])
