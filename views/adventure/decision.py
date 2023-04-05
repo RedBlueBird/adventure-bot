@@ -35,12 +35,15 @@ class Decision(ui.View, InteractionCheckMixin):
         self.decision = None
         self.show_map = None
         self.loc_img = loc_file
-        if loc_file is None:
-            self.remove_item(self.children[0])
 
-        exit_button = self.children[0]
+        toggle, exit_button = self.children
+        self.remove_item(toggle)
         self.remove_item(exit_button)
-        for i in [Backpack(row=1), exit_button, DecisionSelect(choices)]:
+
+        order = [Backpack(row=1), exit_button, DecisionSelect(choices)]
+        if loc_file is not None:
+            order.insert(1, toggle)
+        for i in order:
             self.add_item(i)
 
     @ui.button(label="Toggle Map", row=1, style=discord.ButtonStyle.blurple)

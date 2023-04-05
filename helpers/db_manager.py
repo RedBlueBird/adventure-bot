@@ -454,34 +454,30 @@ def get_user_quests_count(uid: int) -> int:
 
 
 def add_user_quests(quests: list[tuple[int, int, int, int, int]]):
-    operation = "INSERT INTO quest (uid, quest_type, reward_type, rarity, progress) VALUES (%s, %s, %s, %s, %s)"
+    operation = "INSERT INTO quest " \
+                "(uid, quest_type, reward_type, rarity, progress) " \
+                "VALUES (%s, %s, %s, %s, %s)"
     cur.executemany(operation, quests)
     db.commit()
 
 
 def delete_user_quest(quest_id: int):
-    params = (quest_id,)
-    operation = "DELETE FROM quest WHERE id = %s"
-    cur.execute(operation, params)
+    cur.execute(f"DELETE FROM quest WHERE id = {quest_id}")
     db.commit()
 
 
 def set_user_quest_progress(quest_id: int, progress: int):
-    params = (progress, quest_id)
-    operation = "UPDATE quest SET progress = %s WHERE id = %s"
-    cur.execute(operation, params)
+    cur.execute(f"UPDATE quest SET progress = {progress} WHERE id = {quest_id}")
     db.commit()
 
 
 def get_user_next_quest(uid: int) -> dt.datetime | None:
-    operation = "SELECT next_quest FROM players WHERE uid = %s"
-    cur.execute(operation, (uid,))
+    cur.execute(f"SELECT next_quest FROM players WHERE uid = {uid}")
     return cur.fetchall()[0][0]
 
 
 def set_user_next_quest(uid: int, next_quest: dt.datetime | None):
-    operation = "UPDATE players SET next_quest = %s WHERE uid = %s"
-    cur.execute(operation, (next_quest, uid))
+    cur.execute(f"UPDATE players SET next_quest = {next_quest} WHERE uid = {uid}")
     db.commit()
 
 

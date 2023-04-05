@@ -22,14 +22,14 @@ class Fun(commands.Cog):
 
         t = await ctx.reply(f"Reply `{r.PREF}` as close as you can to {wait_time} seconds!")
         try:
-            message = await self.bot.wait_for(
+            msg = await self.bot.wait_for(
                 "message", timeout=70,
                 check=checks.valid_reply("", ctx.author, ctx.message.channel)
             )
         except asyncio.TimeoutError:
             await ctx.reply(f"Time's up!")
         else:
-            recorded = (message.created_at - t.created_at).total_seconds()
+            recorded = (msg.created_at - t.created_at).total_seconds()
             off = round(abs(wait_time - recorded) * 1000) / 1000
             await ctx.reply(
                 f"You replied in {recorded} seconds, which "
