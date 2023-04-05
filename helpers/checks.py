@@ -1,4 +1,5 @@
 import typing as t
+from collections import abc
 
 import discord
 
@@ -8,7 +9,7 @@ from helpers import db_manager as dm, resources as r
 T = t.TypeVar("T")
 
 
-def is_admin() -> t.Callable[[T], T]:
+def is_admin() -> abc.Callable[[T], T]:
     """Checks if the calling user is an owner of the bot"""
 
     async def predicate(context: commands.Context) -> bool:
