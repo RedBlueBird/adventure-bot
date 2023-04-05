@@ -325,7 +325,7 @@ class Adventure(commands.Cog):
                     reaction_embed.set_field_at(
                         0, name="Alright...",
                         value="What were those letters?\n"
-                              "Type `a.[what you remember]`!"
+                              f"Type `{r.PREF}[what you remember]`!"
                     )
                     reaction_embed.set_image(url=None)
                     await adv_msg.edit(embed=reaction_embed, attachments=[])
