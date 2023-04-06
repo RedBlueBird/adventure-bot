@@ -16,8 +16,8 @@ from views.adventure import games as g, hometown as ht, wild as w
 
 def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
     background = Image.open(f"resources/img/{bg_pic}.png")
-    new_image = Image.open("resources/img/marker.png")
-    background.paste(new_image, (10 + 32 * x, 32 * y), new_image)
+    mark = Image.open("resources/img/marker.png")
+    background.paste(mark, (10 + 32 * x, 32 * y), mark)
 
     out = io.BytesIO()
     background.save(out, format="png")
@@ -137,124 +137,125 @@ class Adventure(commands.Cog):
                 break
 
             state = r.HTOWN[pos].choices[choice]
+            match state.action:
+                case "self":
+                    if state.pos in r.HTOWN:
+                        pos = state.pos
+                    else:
+                        await ctx.reply("Sorry, this route is still in development!")
 
-            if state.action == "self":
-                if state.pos in r.HTOWN:
-                    pos = state.pos
-                else:
-                    await ctx.reply("Sorry, this route is still in development!")
-
-            elif state.action == "selling":
-                view = ht.Sell(a)
-                embed.set_footer(
-                    text="You can use `a.info item (name)` "
-                         "to check the sell price of an item!"
-                )
-                await adv_msg.edit(
-                    content=None,
-                    embed=u.container_embed(inv),
-                    view=view
-                )
-                await view.wait()
-                inv = dm.get_user_inventory(a.id)
-
-            elif state.action == "buying":
-                offers = [
-                    "forest fruit", "fruit salad", "raft", "torch", "herb",
-                    "health potion", "large health potion",
-                    "power potion", "large power potion",
-                    "resurrection amulet", "teleportation stone"
-                ]
-                offer_str = []
-                for o in map(r.item, offers):
-                    offer_str.append(
-                        f"[{o.rarity}/{o.weight}] {o.name} - {o.buy} gc"
+                case "selling":
+                    view = ht.Sell(a)
+                    embed.set_footer(
+                        text="You can use `a.info item (name)` "
+                             "to check the sell price of an item!"
                     )
+                    await adv_msg.edit(
+                        content=None,
+                        embed=u.container_embed(inv),
+                        view=view
+                    )
+                    await view.wait()
+                    inv = dm.get_user_inventory(a.id)
 
-                embed = discord.Embed(
-                    title="Jessie's Shop:",
-                    description="I have everything adventurers need!\n"
-                                "```" + "\n".join(offer_str) + "```",
-                    color=discord.Color.gold()
-                )
-                view = ht.Shop(a, offers)
-                await adv_msg.edit(embed=embed, view=view)
-                await view.wait()
-
-                inv = dm.get_user_inventory(a.id)
-
-            elif state.action == "chest":
-                embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl) \
-                    .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
-                view = ht.Chest(a)
-                await adv_msg.edit(
-                    content=None,
-                    embed=embed,
-                    view=view
-                )
-                await view.wait()
-
-                inv = dm.get_user_inventory(a.id)
-
-            elif state.action == "minigame":
-                dm.queues[a.id] = "playing a minigame"
-                if state.pos == "coin flip":
-                    view = g.CoinFlip(a)
-                elif state.pos == "fishing":
-                    view = g.Fishing(a)
-                elif state.pos == "blackjack":
-                    view = g.Blackjack(a)
-
-                embed, img = setup_minigame(
-                    r.HTOWN[pos].choices[choice].pos,
-                    show_map
-                )
-                await adv_msg.edit(
-                    embed=embed,
-                    attachments=[] if img is None else [img],
-                    view=view
-                )
-                await view.wait()
-                dm.queues[a.id] = "wandering around town"
-
-            elif state.action == "adventure":
-                if dm.get_user_deck_count(a.id) != 12:
-                    await ctx.reply("You need 12 cards in your deck first!")
-                    continue
-
-                if state.pos == "boss raid":
-                    lvl_req = 9
-                    if lvl < lvl_req:
-                        await ctx.reply(
-                            f"You need to be at least "
-                            f"level {lvl_req} to fight a boss!",
-                            ephemeral=True
+                case "buying":
+                    offers = [
+                        "forest fruit", "fruit salad", "raft", "torch", "herb",
+                        "health potion", "large health potion",
+                        "power potion", "large power potion",
+                        "resurrection amulet", "teleportation stone"
+                    ]
+                    offer_str = []
+                    for o in map(r.item, offers):
+                        offer_str.append(
+                            f"[{o.rarity}/{o.weight}] {o.name} - {o.buy} gc"
                         )
-                        continue
-                    if dm.get_user_ticket(a.id) < 1:
-                        await ctx.reply(
-                            "You need a raid ticket first!",
-                            ephemeral=True
-                        )
-                        continue
 
                     embed = discord.Embed(
-                        title="Raid Preparation",
-                        description="How hard do you want the raid to be?",
-                        color=discord.Color.yellow()
+                        title="Jessie's Shop:",
+                        description="I have everything adventurers need!\n"
+                                    "```" + "\n".join(offer_str) + "```",
+                        color=discord.Color.gold()
                     )
-                    view = ht.LevelSelect(a)
+                    view = ht.Shop(a, offers)
                     await adv_msg.edit(embed=embed, view=view)
                     await view.wait()
 
-                    if view.level is not None:
-                        raid_lvl = view.level
-                        dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
-                        adventure = True
-                else:
-                    adventure = True
+                    inv = dm.get_user_inventory(a.id)
 
-                break
+                case "chest":
+                    inv_str = u.container_str(inv)
+                    embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl) \
+                        .add_field(name="Your Backpack", value=f"```{inv_str}```")
+                    view = ht.Chest(a)
+                    await adv_msg.edit(
+                        content=None,
+                        embed=embed,
+                        view=view
+                    )
+                    await view.wait()
+
+                    inv = dm.get_user_inventory(a.id)
+
+                case "minigame":
+                    dm.queues[a.id] = "playing a minigame"
+                    if state.pos == "coin flip":
+                        view = g.CoinFlip(a)
+                    elif state.pos == "fishing":
+                        view = g.Fishing(a)
+                    elif state.pos == "blackjack":
+                        view = g.Blackjack(a)
+
+                    embed, img = setup_minigame(
+                        r.HTOWN[pos].choices[choice].pos,
+                        show_map
+                    )
+                    await adv_msg.edit(
+                        embed=embed,
+                        attachments=[] if img is None else [img],
+                        view=view
+                    )
+                    await view.wait()
+                    dm.queues[a.id] = "wandering around town"
+
+                case "adventure":
+                    if dm.get_user_deck_count(a.id) != 12:
+                        await ctx.reply("You need 12 cards in your deck first!")
+                        continue
+
+                    if state.pos == "boss raid":
+                        lvl_req = 9
+                        if lvl < lvl_req:
+                            await ctx.reply(
+                                f"You need to be at least "
+                                f"level {lvl_req} to fight a boss!",
+                                ephemeral=True
+                            )
+                            continue
+                        if dm.get_user_ticket(a.id) < 1:
+                            await ctx.reply(
+                                "You need a raid ticket first!",
+                                ephemeral=True
+                            )
+                            continue
+
+                        embed = discord.Embed(
+                            title="Raid Preparation",
+                            description="How hard do you want the raid to be?",
+                            color=discord.Color.yellow()
+                        )
+                        view = ht.LevelSelect(a)
+                        await adv_msg.edit(embed=embed, view=view)
+                        await view.wait()
+
+                        if view.level is not None:
+                            raid_lvl = view.level
+                            dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
+                            adventure = True
+                    else:
+                        adventure = True
+
+                    break  # out of the exploration loop
 
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
@@ -274,7 +275,6 @@ class Adventure(commands.Cog):
         lvl = dm.get_user_level(a.id)
         max_hp = u.level_hp(lvl)
         hp = max_hp
-        stamina = 100
         dist = 0
 
         coins = dm.get_user_coin(a.id)
