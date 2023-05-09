@@ -103,11 +103,11 @@ class AdventurerBot(commands.Bot):
         elif isinstance(error, exceptions.UserSkillIssue):
             embed.description = f"You need to be at least level {error.req_lvl} to unlock this command!"
         elif isinstance(error, commands.MissingPermissions):
-            embed.description = "You are missing the permission(s) `" + \
+            embed.description = "You're missing the permission(s) `" + \
                                 ", ".join(error.missing_permissions) + \
                                 "` to execute this command!"
         elif isinstance(error, commands.BotMissingPermissions):
-            embed.description = "I am missing the permission(s) `" + \
+            embed.description = "I'm missing the permission(s) `" + \
                                 ", ".join(error.missing_permissions) + \
                                 "` to fully perform this command!"
         elif isinstance(error, commands.MissingRequiredArgument):

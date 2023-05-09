@@ -25,9 +25,10 @@ class Info(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered!")
             return
 
-        user_premium = dm.get_user_premium(user.id)
-        now = dt.datetime.now(dt.timezone.utc)
+        user_premium = dm.get_user_premium(user.id).timestamp()
+        now = dt.datetime.now(dt.timezone.utc).timestamp()
         if user_premium > now:
+            # TODO: this will literally error
             days_left = (user_premium - now).days
             description_msg = f"14\n{r.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
                               f"{days_left} days remaining\n"
@@ -78,8 +79,8 @@ class Info(commands.Cog):
             inline=False
         )
 
-        next_quest = dm.get_user_next_quest(user.id)
-        nq = u.time_converter(int((next_quest-now).total_seconds())) if next_quest is not None else "--"
+        next_quest = dm.get_user_next_quest(user.id).timestamp()
+        nq = u.time_converter(int(next_quest - now)) if next_quest is not None else "--"
         embed.add_field(
             name="Tasks",
             value=f"{r.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
