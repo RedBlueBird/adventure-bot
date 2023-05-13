@@ -16,7 +16,9 @@ class Admin(commands.Cog):
         self.bot = bot
 
     async def cog_before_invoke(self, ctx: Context):
-        to_print = f"{ctx.author}:\n{ctx.message.content}\n{ctx.command}"
+        msg = ctx.message.content
+        insert = f"\n{msg}\n" if msg else ""
+        to_print = f"{ctx.author}:{insert}{ctx.command}"
         print(to_print, file=self.log_to, flush=True)
 
     @commands.hybrid_group(description="Redeem something! (Admin only)")
