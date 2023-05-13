@@ -1,6 +1,6 @@
 import json
 import math
-import logging
+import datetime
 
 import discord
 from discord.ext import commands
@@ -8,20 +8,16 @@ from discord.ext.commands import Context
 
 from helpers import db_manager as dm, util as u, resources as r, checks
 
-logging.basicConfig(
-    filename="bot_log.txt",
-    filemode="a",
-    format="%(asctime)s - %(message)s",
-    level=logging.INFO
-)
-
 
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
+        self.log_to = open("bot_log.txt", "a")
+        print(f"Cog started on {datetime.datetime.now()}", file=self.log_to, flush=True)
         self.bot = bot
 
     async def cog_before_invoke(self, ctx: Context):
-        logging.info(f"{ctx.author}: {ctx.message.content}")
+        to_print = f"{ctx.author}:\n{ctx.message.content}\n{ctx.command}"
+        print(to_print, file=self.log_to, flush=True)
 
     @commands.hybrid_group(description="Redeem something! (Admin only)")
     @checks.is_admin()
