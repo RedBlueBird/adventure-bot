@@ -412,9 +412,7 @@ class Adventure(commands.Cog):
                     # maybe vary the description based on a random list?
                     embed = discord.Embed(
                         title=trader.name.title(),
-                        description="I have *so* many things in my recipe book. "
-                                    "You want it? It's yours my friend, "
-                                    "as long as you have enough materials."
+                        description=trader.dialogue
                     )
                     decision_view = w.Trade(a, to_include)
                     await adv_msg.edit(embed=embed, view=decision_view)

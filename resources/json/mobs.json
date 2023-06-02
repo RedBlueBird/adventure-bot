@@ -751,8 +751,8 @@
         "brief": "A powerful wizard who seeks to overcome death itself. They are stronger than an average lich, and with an arsenal of powerful healing spells, they are nearly unstoppable.",
         "_comment": "what healing spells there's literally only one rejuvenate"
     },
-    "potioneer": {
-        "name": "Potioneer",
+    "brewer": {
+        "name": "Brewer",
         "rarity": "R",
         "health": 80,
         "energy_lag": 4,
@@ -784,6 +784,7 @@
             "Meditate"
         ],
         "brief": "A specialist in various kinds of potions and medicine.",
+        "dialogue": "Want some dru-I mean, potions? I can cook up anything you want! Strength potions, health potions, weed potions...",
         "trades": {
             "Health Potion": {
                 "reqs": [
@@ -865,6 +866,7 @@
             "Quick Shot"
         ],
         "brief": "Skilled craftsmen who have spent many days toiling in the forges to make everything from swords to crossbows.",
+        "dialogue": "Rafts, swords, crossbows. You want it? It's yours my friend, as long as you have enough materials.",
         "trades": {
             "Raft": {
                 "reqs": [

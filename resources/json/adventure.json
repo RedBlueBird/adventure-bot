@@ -762,13 +762,13 @@
             ],
             "trader": [
                 {
-                    "description": "You meet a skilled potioneer. They may have some helpful supplies you can use on your journeys.",
+                    "description": "You meet a skilled brewer. They may have some helpful supplies you can use on your journeys.",
                     "encounters": {
-                        "Potioneer": [
+                        "Brewer": [
                             1
                         ]
                     },
-                    "name": "potioneer",
+                    "name": "brewer",
                     "choices": {
                         "Ask what this person has to offer": {
                             "section": "main",
@@ -1734,13 +1734,13 @@
             ],
             "trader": [
                 {
-                    "description": "You meet a skilled potioneer. They may have some helpful supplies you can use on your journeys.",
+                    "description": "You meet a skilled brewer. They may have some helpful supplies you can use on your journeys.",
                     "encounters": {
-                        "Potioneer": [
+                        "Brewer": [
                             1
                         ]
                     },
-                    "name": "potioneer",
+                    "name": "brewer",
                     "choices": {
                         "Ask what this person has to offer": {
                             "section": "main",

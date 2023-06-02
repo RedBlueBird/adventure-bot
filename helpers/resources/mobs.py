@@ -47,6 +47,7 @@ class Trade:
 class Mob:
     name: str
     brief: str
+    dialogue: str = ""
 
     rarity: t.Literal["C", "R", "E", "L"]
     health: int
