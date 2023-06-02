@@ -257,6 +257,7 @@ class Adventure(commands.Cog):
 
                     break  # out of the exploration loop
 
+        # save their current state before setting them on an adventure
         dm.set_user_map(a.id, show_map)
         dm.set_user_inventory(a.id, inv)
         dm.set_user_position(a.id, pos)

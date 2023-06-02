@@ -47,7 +47,6 @@ class Trade:
 class Mob:
     name: str
     brief: str
-    dialogue: str = ""
 
     rarity: t.Literal["C", "R", "E", "L"]
     health: int
@@ -57,6 +56,7 @@ class Mob:
 
     deck: list[str]
     trades: dict[str, Trade] | None = None
+    dialogue: str = ""  # default arguments have to follow so
 
 
 def mob(name: str, lvl: int = 1) -> Mob:
