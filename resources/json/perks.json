@@ -9,13 +9,8 @@
     "description": "Receive a 40% defense buff",
     "multiplier": [0, 0.4, 0, 0, 0]
   },
-  "lethal aim": {
-    "name": "Lethal Aim",
-    "description": "Receive a 10% accuracy buff",
-    "multiplier": [0, 0, 10, 0, 0]
-  },
-  "infuriated strength": {
-    "name": "Infuriated Strength",
+  "berserker": {
+    "name": "Berserker",
     "description": "Your crit chance increases by 10%",
     "multiplier": [0, 0, 0, 10, 0]
   },

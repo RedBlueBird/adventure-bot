@@ -1,8 +1,8 @@
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm, util as u
-from views.adventure.template import AdventureTemplate
+from helpers import db_manager as dm, util as u, resources as r
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
 class SellForm(ui.Modal, title="Sell something!"):
@@ -24,12 +24,12 @@ class SellForm(ui.Modal, title="Sell something!"):
             return
         amt = int(amt)
 
-        item = u.items_dict(self.item.value.lower())
-        name = item['name'].lower()
+        item = r.item(self.item.value.lower())
+        name = item.name
 
         inv = dm.get_user_inventory(self.user.id)
 
-        if inv.get(name, {}).get("items", 0) < amt:
+        if inv.get(name, 0) < amt:
             await i.response.send_message(
                 "You don't have enough of those items in your backpack!",
                 ephemeral=True
@@ -38,23 +38,28 @@ class SellForm(ui.Modal, title="Sell something!"):
 
         dm.set_user_coin(
             self.user.id,
-            dm.get_user_coin(self.user.id) + item["sell"] * amt
+            dm.get_user_coin(self.user.id) + item.sell * amt
         )
         inv[name] -= amt
         if inv[name] == 0:
             del inv[name]
 
-        descr = f"[{item['rarity']}/{item['weight']}]"
+        descr = f"[{item.rarity}/{item.weight}]"
         await i.response.send_message(
             f"You just sold **{descr} {name.title()} x{amt}** "
-            f"for {item['sell'] * amt} {u.ICON['coin']}!",
+            f"for {item.sell * amt} {r.ICON['coin']}!",
             ephemeral=True
         )
         dm.set_user_inventory(self.user.id, inv)
         await self.sell_msg.edit(embed=u.container_embed(inv))
 
 
-class Sell(AdventureTemplate):
+class Sell(ui.View, InteractionCheckMixin):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user = user
+        self.add_item(Exit())
+
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)
     async def sell(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(SellForm(self.user, i.message))

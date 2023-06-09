@@ -3,7 +3,7 @@ import math
 
 import discord
 
-from helpers import db_manager as dm, util as u
+from helpers import db_manager as dm, resources as r
 from .player import Player
 
 
@@ -20,7 +20,7 @@ class BattleData2:
         self.team_orders = list(range(1, 7))
         random.shuffle(self.team_orders)
 
-        icons = [u.ICON[i] for i in ["ppr", "ppp", "ppw", "ppb", "ppo", "ppg"]]
+        icons = [r.ICON[i] for i in ["ppr", "ppp", "ppw", "ppb", "ppo", "ppg"]]
         pps = dict(zip(self.team_orders, icons))
         for player in players:
             player.icon = pps[player.id]
@@ -29,7 +29,7 @@ class BattleData2:
         for player in self.players:
             dm.set_user_battle_command(player.user.id, "")
 
-        embed = discord.Embed(title="Loading...", description=u.ICON["load"])
+        embed = discord.Embed(title="Loading...", description=r.ICON["load"])
         return embed
 
     def player_selector(self, uid: int) -> Player:
@@ -56,9 +56,9 @@ class BattleData2:
             player_dialogue = "\n".join(player.dialogue[:])
             embed.add_field(
                 name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
-                value=f"**{u.ICON['hp']} {player.hp}/{player.max_hp}**\n"
-                      f"**{u.ICON['sta']} {player.stamina} "
-                      f"{u.ICON['engy']} {player.stored_energy}**\n"
+                value=f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**\n"
+                      f"**{r.ICON['sta']} {player.stamina} "
+                      f"{r.ICON['engy']} {player.stored_energy}**\n"
                       f"{player_dialogue}"
             )
         embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 1), 12)} energy/round)")
@@ -76,7 +76,7 @@ class BattleData2:
         ]
         hand.append(f"Next: {player.deck[player.hand_size].display_name}")
 
-        embed = discord.Embed(description=f"• `{u.PREF}move (card number1)(target number1)` to use card(s)")
+        embed = discord.Embed(description=f"• `{r.PREF}move (card number1)(target number1)` to use card(s)")
         embed.add_field(
             name=f"{player.user.name}'s deck",
             value="\n".join(hand)
@@ -101,11 +101,11 @@ class BattleData2:
         if moves == [""]:
             moves = []
             p.skip = True
-            p.dialogue = [f"{u.ICON['ski']}{u.ICON['kip']}"]
+            p.dialogue = [f"{r.ICON['ski']}{r.ICON['kip']}"]
         for move in moves:
             if move == "flee":
                 p.flee = True
-                p.dialogue = [f"{u.ICON['fle']}{u.ICON['lee']}"]
+                p.dialogue = [f"{r.ICON['fle']}{r.ICON['lee']}"]
                 break
             if len(move) != 2:
                 error_msg = "Make sure your input is correct!"
@@ -120,7 +120,7 @@ class BattleData2:
             energy_cost += p.deck[int(move[0])].get_energy_cost()
 
         if error_msg != "":
-            error_msg += f" e.g. `{u.PREF}move 12` to play the 1st card in your hand on player #2."
+            error_msg += f" e.g. `{r.PREF}move 12` to play the 1st card in your hand on player #2."
         elif energy_cost > p.stored_energy:
             error_msg = f"You don't have enough energy ({energy_cost} energy) to use those cards!"
 
@@ -142,7 +142,7 @@ class BattleData2:
         if p.hp <= 0:
             p.hp = 0
             p.dead = True
-            p.dialogue = [u.ICON['dead']]
+            p.dialogue = [r.ICON['dead']]
         p.inbox = []
 
         while self.turn >= len(self.players) or self.players[self.turn].dead or self.players[self.turn].flee:

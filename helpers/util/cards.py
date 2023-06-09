@@ -1,7 +1,7 @@
 import random
 import math
 
-from .constants import *
+from ..resources import CARD_LIST
 from .assets import cards_dict
 from .general import log_level_gen
 
@@ -50,11 +50,14 @@ def rarity_cost(name: str):
     return f"{card['rarity']}/{card['cost']}"
 
 
-def card_coin_cost(name: str, lvl: int) -> int:
-    price_factor = {
+def price_factor(name: str) -> int:
+    return {
         r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])
     }.get(cards_dict(1, name)["rarity"], 1)
-    return int(1.6 ** lvl * 50 * price_factor)
+
+
+def card_coin_cost(name: str, lvl: int) -> int:
+    return int(1.6 ** lvl * 50 * price_factor(name))
 
 
 def sort_cards(cards: list[tuple[int, str, int]], order: int):

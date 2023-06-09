@@ -1,14 +1,11 @@
 import typing as t
-import random
-import math
-import time as times
 import datetime as dt
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from views import Shop, CardPages, Decks, Leaderboard
 
 
@@ -28,10 +25,12 @@ class Info(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered!")
             return
 
-        user_premium = dm.get_user_premium(user.id)
-        if user_premium > dt.datetime.today():
-            days_left = (user_premium - dt.datetime.today()).days
-            description_msg = f"14\n{u.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
+        user_premium = dm.get_user_premium(user.id).timestamp()
+        now = dt.datetime.now(dt.timezone.utc).timestamp()
+        if user_premium > now:
+            # TODO: this will literally error
+            days_left = (user_premium - now).days
+            description_msg = f"14\n{r.ICON['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " \
                               f"{days_left} days remaining\n"
             tickets = 10
         else:
@@ -41,7 +40,7 @@ class Info(commands.Cog):
         tick_msg = ""
         lvl = dm.get_user_level(user.id)
         if lvl >= 4:
-            tick_msg = f"{u.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
+            tick_msg = f"{r.ICON['tick']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
 
         descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
         embed = discord.Embed(
@@ -56,15 +55,15 @@ class Info(commands.Cog):
         if lvl < 30:
             embed.add_field(
                 name=f"Current Level: {lvl}",
-                value=f"{u.ICON['exp']} {xp}/{u.level_xp(lvl)}\n"
-                      f"{u.ICON['hp']} {hp}",
+                value=f"{r.ICON['exp']} {xp}/{u.level_xp(lvl)}\n"
+                      f"{r.ICON['hp']} {hp}",
                 inline=False
             )
         else:
             embed.add_field(
                 name=f"Max Level: {lvl}",
-                value=f"{u.ICON['exp']} {xp}\n"
-                      f"{u.ICON['hp']} {hp}",
+                value=f"{r.ICON['exp']} {xp}\n"
+                      f"{r.ICON['hp']} {hp}",
                 inline=False
             )
 
@@ -72,33 +71,32 @@ class Info(commands.Cog):
         dts = "Right now!" if user_daily.date() != dt.date.today() else u.time_til_midnight()
         embed.add_field(
             name="Currency",
-            value=f"{u.ICON['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
-                  f"{u.ICON['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
-                  f"{u.ICON['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
-                  f"{u.ICON['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
+            value=f"{r.ICON['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
+                  f"{r.ICON['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
+                  f"{r.ICON['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
+                  f"{r.ICON['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
                   f"{tick_msg}",
             inline=False
         )
 
-        quests = dm.get_user_quest(user.id)
+        next_quest = dm.get_user_next_quest(user.id).timestamp()
+        nq = u.time_converter(int(next_quest - now)) if next_quest is not None else "--"
         embed.add_field(
             name="Tasks",
-            value=f"{u.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
+            value=f"{r.ICON['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/" +
                   description_msg +
-                  f"{u.ICON['timer']}**Next daily: **{dts}\n"
-                  f"{u.ICON['timer']}**Next quest: "
-                  f"**{u.time_converter(int(quests.split(',')[-1]) - int(times.time()))}",
+                  f"{r.ICON['timer']}**Next daily: **{dts}\n"
+                  f"{r.ICON['timer']}**Next quest: **{nq}",
             inline=False
         )
 
         badges = dm.get_user_badge(user.id)
         if badges != 2 ** 30:
-            badges = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
+            icons = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
             owned_badges = []
-            for i in range(29):
-                if badges % 2 == 1:
-                    owned_badges.append(u.ICON[badges[i]])
-                badges = badges >> 1
+            for i in range(len(icons)):
+                if badges & (1 << i):  # Checks if the ith bit is set
+                    owned_badges.append(r.ICON[icons[i]])
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
 
         embed.set_footer(
@@ -119,71 +117,38 @@ class Info(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
             return
 
-        user_quest = dm.get_user_quest(user.id)
-        user_premium = dm.get_user_premium(user.id)
+        quests = dm.get_user_quests(user.id)
+        u.add_quests(user.id, quests)
 
-        quests = user_quest.split(",")
-        is_premium = user_premium > dt.datetime.today()
-
-        if (len(quests) < 4 and not is_premium) or (len(quests) < 5 and is_premium):
-            if int(quests[-1]) - int(times.time()) <= 1:
-                # premium members have to wait less and get one more quest slot as well
-                quests_count = abs(math.floor((int(times.time()) - int(quests[-1])) / (1800 - 900 * is_premium))) + 1
-                extra_time = (int(times.time()) - int(quests[-1])) % (1800 - 900 * is_premium)
-                if (4 + is_premium) - len(quests) < quests_count:
-                    quests_count = (4 + is_premium) - len(quests)
-                    extra_time = 0
-
-                quests[-1] = str(int(times.time()) + (900 + 900 * is_premium) - extra_time)
-
-                for _ in range(quests_count):
-                    quest_id = math.ceil(u.log_level_gen(random.randint(1, 2 ** 8)) / 2) - 2
-                    award_type = 1
-                    if quest_id > 0 and random.randint(1, 100) >= 75:
-                        award_type = 2
-                    elif random.randint(1, 100) >= 101:
-                        award_type = 3
-                    received_quest_types = [int(quests[x].split(".")[1]) for x in range(len(quests) - 1)]
-                    new_quest_type = random.randint(1, 8)
-                    while new_quest_type in received_quest_types:
-                        new_quest_type = random.randint(1, 8)
-                    quests.insert(-1, f"{quest_id}{award_type}.{new_quest_type}.0")
-
-                dm.set_user_quest(user.id, ','.join(quests))
-
-        if len(quests) == 1:
+        if not quests:
             embed = discord.Embed(
                 title=f"{user.display_name}'s Quests:",
                 description="You don't have any quests.\nCome back later for more!",
                 color=discord.Color.green()
             )
         else:
-            bad = 4 + is_premium
-            if len(quests) == bad:
-                embed = discord.Embed(
-                    title=f"{user.display_name}'s Quests:",
-                    description=f"You can't have more than {bad - 1} quests active!",
-                    color=discord.Color.gold()
-                )
-            else:
-                embed = discord.Embed(
-                    title=f"{user.display_name}'s Quests:",
-                    color=discord.Color.gold()
-                )
-
-            for q in quests[:-1]:
-                quest = u.quest_index(q)
+            embed = discord.Embed(
+                title=f"{user.display_name}'s Quests:",
+                color=discord.Color.gold()
+            )
+            for quest in quests:
+                quest_info = u.quest_info(quest[1], quest[2], quest[3])
                 embed.add_field(
-                    name=f"**{quest[2]} {u.quest_str_rep(q.split('.')[1], quest[0])}**",
-                    value=f"Finished {math.floor(100 * int(q.split('.')[2]) / quest[0])}%\n"
-                          f"Reward: **{''.join(quest[1::2])} {quest[4]} {u.ICON['exp']}**",
+                    name=f"**{quest_info['rarity']} {quest_info['description']}**",
+                    value=f"Finished {quest[4]}/{quest_info['requirement']}\n"
+                          f"Reward: **{quest_info['reward']['exp']} {r.ICON['exp']}"
+                          f" {quest_info['reward']['other']} {r.ICON[quest_info['reward']['type']]}**",
                     inline=False
                 )
 
         embed.set_thumbnail(url=user.avatar.url)
-        time_left = u.time_converter(int(quests[-1]) - int(times.time()))
-        if time_left != "Right Now":
-            embed.set_footer(text=f"{time_left} left till a new quest")
+        next_quest = dm.get_user_next_quest(user.id)
+        if next_quest is not None:
+            time_left = u.time_converter(int((next_quest-dt.datetime.now(dt.timezone.utc)).total_seconds()))
+            if time_left != "Right Now":
+                embed.set_footer(text=f"{time_left} left till a new quest")
+        else:
+            embed.set_footer(text="You have reached the maximum number of quests. Finish some to get more!")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
@@ -225,8 +190,8 @@ class Info(commands.Cog):
                 await ctx.reply("The deck slot number must between 1-6!")
                 return
 
-            if dm.get_user_level(user.id) < u.DECK_LVL_REQ[slot]:
-                await ctx.reply(f"You need to reach level {u.DECK_LVL_REQ[slot]} to get that deck slot!")
+            if dm.get_user_level(user.id) < r.DECK_LVL_REQ[slot]:
+                await ctx.reply(f"You need to reach level {r.DECK_LVL_REQ[slot]} to get that deck slot!")
                 return
 
         view = Decks(user, slot)

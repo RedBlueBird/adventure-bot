@@ -3,8 +3,8 @@ import typing as t
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm, util as u
-from views.adventure.template import AdventureTemplate
+from helpers import db_manager as dm, util as u, resources as r
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
 def transfer(
@@ -15,13 +15,13 @@ def transfer(
     if amt <= 0:
         raise ValueError("That's an invalid amount to take!")
 
-    item = u.items_dict(item.lower())
-    name = item["name"].lower()
-    descr = f"{amt} **[{item['rarity']}/{item['weight']}] {item['name']}**"
+    item = r.item(item.lower())
+    name = item.name.lower()
+    descr = f"{amt} **[{item.rarity}/{item.weight}] {item.name}**"
     if from_.get(name, 0) < amt:
         raise ValueError(f"You don't have {descr} in your {from_name}!")
 
-    weight = item["weight"] * amt
+    weight = item.weight * amt
     if u.bp_weight(to) + weight > to_storage:
         raise ValueError(f"Your {to_name} doesn't have enough space for {descr}!")
 
@@ -57,7 +57,7 @@ async def submit_chest_form(
             transfer(
                 item, amt,
                 chest, "chest",
-                inv, "backpack", u.BP_CAP
+                inv, "backpack", r.BP_CAP
             )
         else:
             transfer(
@@ -102,7 +102,12 @@ class DepositForm(ui.Modal, title="Deposit something!"):
         await submit_chest_form(i, "deposit", self.item.value, self.amt.value)
 
 
-class Chest(AdventureTemplate):
+class Chest(ui.View, InteractionCheckMixin):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user = user
+        self.add_item(Exit("Close Chest"))
+
     @ui.button(label="Take", style=discord.ButtonStyle.blurple)
     async def take(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(TakeForm(i.user, i.message))
@@ -110,8 +115,3 @@ class Chest(AdventureTemplate):
     @ui.button(label="Deposit", style=discord.ButtonStyle.blurple)
     async def deposit(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(DepositForm(i.user, i.message))
-
-    @ui.button(label="Close Chest", style=discord.ButtonStyle.red)
-    async def exit(self, i: discord.Interaction, button: ui.Button):
-        await i.response.defer()
-        self.stop()

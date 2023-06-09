@@ -2,7 +2,7 @@ import random
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, resources as r, checks
 from helpers.battle import BattleData2, Player, Card
 from views.battle import PvpInvite, Select, Actions
 
@@ -58,7 +58,7 @@ class Pvp2(commands.Cog):
 
         req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
         if gamble_medals > 0:
-            req_msg += f"{a.mention} wants to battle with {gamble_medals} {u.ICON['medal']}!\n"
+            req_msg += f"{a.mention} wants to battle with {gamble_medals} {r.ICON['medal']}!\n"
         else:
             req_msg += f"{a.mention} wants to have a friendly battle!\n"
 

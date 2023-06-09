@@ -1,76 +1,76 @@
 import discord
 
-from helpers import db_manager as dm, util as u
+from helpers import db_manager as dm, util as u, resources as r
 
 PACKS = [
     {
         "name": "**Basic Pack**",
-        "value": f"Cost: **3** {u.ICON['gem']}\n"
+        "value": f"Cost: **3** {r.ICON['gem']}\n"
                  "• contains 3 (lv 4-10) cards\n"
-                 f"`{u.PREF}buy basic`"
+                 f"`{r.PREF}buy basic`"
     },
     {
         "name": "**Fire Pack**",
-        "value": f"Cost: **5** {u.ICON['gem']}\n"
+        "value": f"Cost: **5** {r.ICON['gem']}\n"
                  "• contains 4 (lv 4-10) cards with a\nhigher chance of fire cards\n"
-                 f"`{u.PREF}buy fire`"
+                 f"`{r.PREF}buy fire`"
     },
     {
         "name": "**Evil Pack**",
-        "value": f"Cost: **5** {u.ICON['gem']}\n"
+        "value": f"Cost: **5** {r.ICON['gem']}\n"
                  "• contains 4 (lv 4-10) cards with a\nhigher chance of curse cards\n"
-                 f"`{u.PREF}buy evil`"
+                 f"`{r.PREF}buy evil`"
     },
     {
         "name": "**Electric Pack**",
-        "value": f"Cost: **5** {u.ICON['gem']}\n"
+        "value": f"Cost: **5** {r.ICON['gem']}\n"
                  "• contains 4 (lv 4-10) cards with a\nhigher chance of electric cards\n"
-                 f"`{u.PREF}buy electric`"
+                 f"`{r.PREF}buy electric`"
     },
     {
         "name": "**Defensive Pack**",
-        "value": f"Cost: **5** {u.ICON['gem']}\n"
+        "value": f"Cost: **5** {r.ICON['gem']}\n"
                  "• contains 4 (lv 4-10) cards with a\nhigher chance of defense cards\n"
-                 f"`{u.PREF}buy defensive`"
+                 f"`{r.PREF}buy defensive`"
     },
     {
         "name": "**Pro Pack**",
-        "value": f"Cost: **24** {u.ICON['gem']}\n"
+        "value": f"Cost: **24** {r.ICON['gem']}\n"
                  "• contains 6 (lv 7-10) cards\n"
-                 f"`{u.PREF}buy pro`"
+                 f"`{r.PREF}buy pro`"
     },
     # {
     #     "name": "**Anniversary Pack**",
-    #     "value": f"Cost: **40** {u.icon['token']}\n"
+    #     "value": f"Cost: **40** {r.ICON['token']}\n"
     #              "• contains **[EX/7] Confetti Cannon**\n"
-    #              f"`{u.prefix}buy confetti`"
+    #              f"`{r.PREFix}buy confetti`"
     # }
 ]
 
 CURRENCY = [
     {
         "name": "**1000 Golden Coins**",
-        "value": f"Cost: **3** {u.ICON['gem']}\n`{u.PREF}buy coins gc1`"
+        "value": f"Cost: **3** {r.ICON['gem']}\n`{r.PREF}buy coins gc1`"
     },
     {
         "name": "**2250 Golden Coins**",
-        "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy coins gc2`"
+        "value": f"Cost: **6** {r.ICON['gem']}\n`{r.PREF}buy coins gc2`"
     },
     {
         "name": "**11000 Golden Coins**",
-        "value": f"Cost: **24** {u.ICON['gem']}\n`{u.PREF}buy coins gc3`"
+        "value": f"Cost: **24** {r.ICON['gem']}\n`{r.PREF}buy coins gc3`"
     },
     {
         "name": "**1 Raid Ticket**",
-        "value": f"Cost: **2** {u.ICON['gem']}\n`{u.PREF}buy tickets rt1`"
+        "value": f"Cost: **2** {r.ICON['gem']}\n`{r.PREF}buy tickets rt1`"
     },
     {
         "name": "**2 Raid Tickets**",
-        "value": f"Cost: **4** {u.ICON['gem']}\n`{u.PREF}buy tickets rt2`"
+        "value": f"Cost: **4** {r.ICON['gem']}\n`{r.PREF}buy tickets rt2`"
     },
     {
         "name": "**3 Raid Tickets**",
-        "value": f"Cost: **6** {u.ICON['gem']}\n`{u.PREF}buy tickets rt3`"
+        "value": f"Cost: **6** {r.ICON['gem']}\n`{r.PREF}buy tickets rt3`"
     }
 ]
 
@@ -88,8 +88,8 @@ class Shop(discord.ui.View):
         user_deals = dm.get_user_deals(self.uid).split(",")
         embed = discord.Embed(
             title="Shop - Daily Deals:",
-            description=f"{u.ICON['coin']} **{self.coins}** "
-                        f"{u.ICON['gem']} **{self.gems}**",
+            description=f"{r.ICON['coin']} **{self.coins}** "
+                        f"{r.ICON['gem']} **{self.gems}**",
             color=discord.Color.gold()
         )
 
@@ -100,8 +100,8 @@ class Shop(discord.ui.View):
                 cost = round(1.6 ** int(card[0]) * 50 * u.price_factor(card[1]))
                 embed.add_field(
                     name=f"**[{rarity}] {card[1]} lv: {card[0]}**",
-                    value=f"Cost: **{cost}** {u.ICON['coin']}\n"
-                          f"`{u.PREF}buy card {v + 1}`"
+                    value=f"Cost: **{cost}** {r.ICON['coin']}\n"
+                          f"`{r.PREF}buy card {v + 1}`"
                 )
             else:
                 embed.add_field(
@@ -110,7 +110,7 @@ class Shop(discord.ui.View):
                 )
 
         embed.set_footer(
-            text=f"Wait {u.time_til_midnight()} or do `{u.PREF}buy r` to refresh the shop"
+            text=f"Wait {u.time_til_midnight()} or do `{r.PREF}buy r` to refresh the shop"
         )
 
         await i.response.edit_message(embed=embed)
@@ -119,8 +119,8 @@ class Shop(discord.ui.View):
     async def card_packs(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Card Packs:",
-            description=f"{u.ICON['coin']} **{self.coins}** {u.ICON['gem']} "
-                        f"**{self.gems}** {u.ICON['token']} **{self.tokens}**",
+            description=f"{r.ICON['coin']} **{self.coins}** {r.ICON['gem']} "
+                        f"**{self.gems}** {r.ICON['token']} **{self.tokens}**",
             color=discord.Color.green()
         )
 
@@ -134,7 +134,7 @@ class Shop(discord.ui.View):
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Currencies:",
-            description=f"{u.ICON['coin']} **{self.coins}** {u.ICON['gem']} **{self.gems}**",
+            description=f"{r.ICON['coin']} **{self.coins}** {r.ICON['gem']} **{self.gems}**",
             color=discord.Color.green()
         )
         for field in CURRENCY:

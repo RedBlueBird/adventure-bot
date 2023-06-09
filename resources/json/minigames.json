@@ -10,15 +10,14 @@
             "80% when between `0.124` and `0.050`",
             "100% when below `0.049`"
         ],
-        "image": "resources/img/fishing_map.png"
+        "img": "resources/img/fishing_map.png"
     },
     "coin flip": {
         "rules": [
             "Each coin flip costs 50 golden coins",
             "You get 50 coins if it lands on what you bet",
             "You lose 50 if it doesn't"
-        ],
-        "image": null
+        ]
     },
     "blackjack": {
         "rules": [
@@ -32,7 +31,6 @@
             "the dealer's if no one went above 21",
             "You also win when the dealer went above 21 but you didn't",
             "You tie when you both have same total value"
-        ],
-        "image": null
+        ]
     }
 }

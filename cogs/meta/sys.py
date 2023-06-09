@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u
+from helpers import db_manager as dm, util as u, resources as r
 
 
 class Sys(commands.Cog):
@@ -39,8 +39,9 @@ class Sys(commands.Cog):
         dm.add_user(a.id)
         dm.set_user_coin(a.id, 250)
         dm.set_user_gem(a.id, 5)
-        dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
-        dm.set_user_register_date(a.id, dt.datetime.today())
+        now = dt.datetime.now(dt.datetime.utc)
+        dm.set_user_premium(a.id, now + dt.timedelta(days=7))
+        dm.set_user_register_date(a.id, now)
         dm.set_user_position(a.id, "home")
         dm.set_user_inventory(a.id, "{}")
         dm.set_user_storage(a.id, "{}")
@@ -56,7 +57,7 @@ class Sys(commands.Cog):
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
-            f"Welcome to Adventure Bot! Do `{u.PREF}tutorial` to get started!"
+            f"Welcome to Adventure Bot! Do `{r.PREF}tutorial` to get started!"
         )
 
     @commands.Cog.listener()
@@ -75,17 +76,17 @@ class Sys(commands.Cog):
             level_msg = []
             if (lvl + 1) % 2 == 0:
                 add_hp = round(
-                    (u.SCALE[1] ** math.floor((lvl + 1) / 2) -
-                     u.SCALE[1] ** math.floor(lvl / 2)) * 100 * u.SCALE[0]
+                    (r.SCALE[1] ** math.floor((lvl + 1) / 2) -
+                     r.SCALE[1] ** math.floor(lvl / 2)) * 100 * r.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
             # At levels 17 and 27, the user gets a week of free premium.
             if lvl + 1 in [17, 27]:
-                dm.set_user_premium(a.id, dt.datetime.today() + dt.timedelta(days=7))
+                dm.set_user_premium(a.id, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=7))
 
-            if u.LEVELS[lvl - 1]:
-                level_msg.extend(u.LEVELS[lvl - 1].format(u.PREF).split("\n"))
+            if r.LEVELS[lvl - 1]:
+                level_msg.extend(r.LEVELS[lvl - 1].format(r.PREF).split("\n"))
 
             embed = discord.Embed(
                 title=f"Congratulations {a.name}!",
@@ -97,8 +98,8 @@ class Sys(commands.Cog):
             gem_gain = math.ceil((lvl + 1) / 5) + 1
             embed.add_field(
                 name=f"You're now level {lvl + 1}!",
-                value=f"+{coin_gain} {u.ICON['coin']} \n"
-                      f"+{gem_gain} {u.ICON['gem']} \n"
+                value=f"+{coin_gain} {r.ICON['coin']} \n"
+                      f"+{gem_gain} {r.ICON['gem']} \n"
                       "```» " + "\n\n» ".join(level_msg) + "```"
             )
             embed.set_thumbnail(url=a.avatar.url)
@@ -110,43 +111,10 @@ class Sys(commands.Cog):
             dm.set_user_coin(a.id, dm.get_user_gem(a.id) + gem_gain)
         # endregion
 
-        # region Quest Completion Check (scuffed)
-        quests = dm.get_user_quest(a.id).split(",")
-        if len(quests) > 1:
-            quest_com = [
-                math.floor(int(quests[x].split(".")[2]) / u.quest_index(quests[x])[0] * 100)
-                for x in range(len(quests) - 1)
-            ]
-            for x in range(len(quests) - 1):
-                if quest_com[x] >= 100:
-                    quest = u.quest_index(quests[x])
-                    embed = discord.Embed(
-                        title=f"QUEST COMPLETE {a.name}!",
-                        description=None,
-                        color=discord.Color.green()
-                    )
-                    embed.add_field(
-                        name=f"**{quest[2]} {u.quest_str_rep(quests[x].split('.')[1], quest[0])}**",
-                        value=f"**+{' '.join(quest[1::2])} +{quest[4]} {u.ICON['exp']}**",
-                        # " +1{u.icon['token']}**",
-                        inline=False
-                    )
-                    embed.set_thumbnail(url=a.avatar.url)
-                    await ctx.channel.send(embed=embed)
-
-                    gained = [0, 0, quest[4]]  # coin, gem, exp
-                    if quest[3] == u.ICON["coin"]:
-                        gained[0] += int(quest[1])
-                    elif quest[3] == u.ICON["gem"]:
-                        gained[1] += int(quest[1])
-
-                    quests.remove(quests[x])
-                    dm.set_user_coin(a.id, dm.get_user_coin(a.id) + gained[0])
-                    dm.set_user_gem(a.id, dm.get_user_gem(a.id) + gained[1])
-                    dm.set_user_exp(a.id, dm.get_user_exp(a.id) + gained[2])
-                    dm.set_user_token(a.id, dm.get_user_token(a.id) + 1)
-                    dm.set_user_quest(a.id, ','.join(quests))
-                    break
+        # region Quest Completion Check (temporary)
+        quests = dm.get_user_quests(a.id)
+        for quest in quests:
+            await u.update_quest(ctx, a.id, quest[1], 0)
         # endregion
 
         # region Gold Spawn Logic
@@ -158,25 +126,25 @@ class Sys(commands.Cog):
 
             await ctx.channel.send(embed=discord.Embed(
                 title=f"A bag of gold showed up out of nowhere!",
-                description=f"Quick! Type `{u.PREF}collect {amt} coins` to collect them!\n"
+                description=f"Quick! Type `{r.PREF}collect {amt} coins` to collect them!\n"
                             f"They'll be gone in 10 minutes!",
                 color=discord.Color.green()
             ))
             try:
                 rep: discord.Message = await self.bot.wait_for(
                     "message", timeout=600.0,
-                    check=lambda m: m.content.lower() == f"{u.PREF}collect {amt} coins"
+                    check=lambda m: m.content.lower() == f"{r.PREF}collect {amt} coins"
                 )
                 user_coin = dm.get_user_coin(a.id)
                 if user_coin:
                     dm.set_user_coin(a.id, user_coin + amt)
                     if random.randint(1, 100) == 1:
                         dm.set_user_gem(a.id, dm.get_user_gem(a.id) + 1)
-                        msg = f"You got {amt} {u.ICON['coin']} and a bonus {u.ICON['gem']}!"
+                        msg = f"You got {amt} {r.ICON['coin']} and a bonus {r.ICON['gem']}!"
                     else:
-                        msg = f"You got {amt} {u.ICON['coin']}!"
+                        msg = f"You got {amt} {r.ICON['coin']}!"
                 else:
-                    msg = f"You have to register in this bot first with `{u.PREF}register`!"
+                    msg = f"You have to register in this bot first with `{r.PREF}register`!"
 
                 await rep.reply(msg)
             except asyncio.TimeoutError:

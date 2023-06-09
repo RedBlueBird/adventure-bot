@@ -6,7 +6,7 @@ from copy import deepcopy
 import discord
 from discord.ext import commands
 
-from helpers import util as u, checks
+from helpers import util as u, resources as r, checks
 from helpers.battle import BattleData
 from views import Confirm
 
@@ -41,14 +41,14 @@ class Tutorial(commands.Cog):
             return
 
         await start_msg.edit(content="Alright, let's get started then! :smile:", view=None)
-        loading_embed_message = discord.Embed(title="Loading...", description=u.ICON["load"])
+        loading_embed_message = discord.Embed(title="Loading...", description=r.ICON["load"])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hand_msg = await ctx.send(embed=loading_embed_message)
 
-        tutorial = deepcopy(u.TUTORIAL)
-        tutorial["procedure"] = [msg.format(prefix=u.PREF) for msg in tutorial["procedure"]]
+        tutorial = deepcopy(r.TUTORIAL)
+        tutorial["procedure"] = [msg.format(prefix=r.PREF) for msg in tutorial["procedure"]]
         tutorial["triggered_message"] = {
-            step: [msg.format(prefix=u.PREF) for msg in msgs]
+            step: [msg.format(prefix=r.PREF) for msg in msgs]
             for step, msgs in tutorial["triggered_message"].items()
         }
         tutorial["players"][0] = author
@@ -128,8 +128,8 @@ class Tutorial(commands.Cog):
                     await ctx.reply("did you go afk? :weary:")
                     return
 
-                action = dd.interpret_message(reply.content[len(u.PREF):], str(dd.players.info[1]), 1)
-                content = reply.content[len(u.PREF):].lower()
+                action = dd.interpret_message(reply.content[len(r.PREF):], str(dd.players.info[1]), 1)
+                content = reply.content[len(r.PREF):].lower()
                 if content == "exit":
                     action = "exit"
 
@@ -186,7 +186,7 @@ class Tutorial(commands.Cog):
                                 )
                     if dd.hand_sizes.info[1] != 6:
                         dd.hand_sizes.info[1] += 1
-                    dd.descriptions.info[1].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
+                    dd.descriptions.info[1].append(f"{r.ICON['ski']}{r.ICON['kip']}\n")
                     is_turn_over = True
                 elif action == "flee":
                     for y in range(dd.hand_sizes.info[1]):
@@ -205,10 +205,10 @@ class Tutorial(commands.Cog):
                         dd.hand_sizes.info[1] += 1
                     if random.randint(1, 100) > 0:
                         dd.descriptions.info[1].append(
-                            f"{u.ICON['fle']}{u.ICON['lee']} {u.ICON['mi']}{u.ICON['ss']}\n"
+                            f"{r.ICON['fle']}{r.ICON['lee']} {r.ICON['mi']}{r.ICON['ss']}\n"
                         )
                     else:
-                        dd.descriptions.info[1].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
+                        dd.descriptions.info[1].append(f"{r.ICON['fle']}{r.ICON['lee']}\n")
                         dd.afk = 8
                     if step == 20:
                         try:
@@ -348,7 +348,7 @@ class Tutorial(commands.Cog):
                         if not dd.hand_sizes.info[enemy] != 6:
                             dd.hand_sizes.info[enemy] += 1
                         dd.descriptions.info[enemy].insert(
-                            len(dd.descriptions.info[enemy]), f"{u.ICON['ski']}{u.ICON['kip']}\n"
+                            len(dd.descriptions.info[enemy]), f"{r.ICON['ski']}{r.ICON['kip']}\n"
                         )
                     elif enemy_action == "flee":
                         dd.afk = len(dd.players.info) + enemy
@@ -460,7 +460,7 @@ class Tutorial(commands.Cog):
                         dd.hand_sizes.info[enemy] -= len(dd.move_numbers.info[enemy]) - z - 1
                 # dd.decke_index.insert(dd.move_numbere_index - 1, dd.decke_index.pop(dd.hand_size[1]-1))
                 elif dd.hps.info[enemy][0] <= 0 or dd.staminas.info[enemy] <= 0:
-                    dd.descriptions.info[enemy].append(f"•{u.ICON['dead']}")
+                    dd.descriptions.info[enemy].append(f"•{r.ICON['dead']}")
                     dd.effects.info[enemy] = {}
 
             if dd.afk == 0:

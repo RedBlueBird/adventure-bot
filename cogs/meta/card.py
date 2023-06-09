@@ -3,7 +3,7 @@ import math
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from views import Confirm
 
 
@@ -48,7 +48,7 @@ class Card(commands.Cog):
             return
         msg += "You sure you want to discard:\n" + \
                 "\n".join(discard_msg) + \
-                f"\n{u.ICON['bers']} *(Discarded cards can't be retrieved!)*"
+                f"\n{r.ICON['bers']} *(Discarded cards can't be retrieved!)*"
 
         view = Confirm()
         msg = await ctx.reply(msg, view=view)
@@ -107,7 +107,7 @@ class Card(commands.Cog):
             await ctx.reply(
                 "The sacrificial card you chose "
                 "is currently in one of your deck slots-\n"
-                f"Do `{u.PREF}remove {other_card_id}` first before you sacrifice it!"
+                f"Do `{r.PREF}remove {other_card_id}` first before you sacrifice it!"
             )
             return
 
@@ -121,7 +121,7 @@ class Card(commands.Cog):
         msg = await ctx.reply(
             f"**[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}**\n"
             f"**[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}**\n"
-            f"Upgrading cost {upgrade_cost} {u.ICON['coin']}.",
+            f"Upgrading cost {upgrade_cost} {r.ICON['coin']}.",
             view=view
         )
         await view.wait()
@@ -133,15 +133,15 @@ class Card(commands.Cog):
             await msg.edit(content="Upgrading canceled.", view=None)
             return
 
-        dm.log_quest(7, 1, a.id)
+        await u.update_quest(ctx, a.id, 7, 1)
         dm.set_user_coin(a.id, coins - upgrade_cost)
         dm.delete_user_cards([(other_card_id, a.id)])
         dm.set_card_level(card_id, card[1] + 1)
 
         embed = discord.Embed(
             title="Card upgraded successfully!",
-            description=f"-{upgrade_cost} {u.ICON['coin']} "
-                        f"+{(card[1] + 1) * 10} {u.ICON['exp']}",
+            description=f"-{upgrade_cost} {r.ICON['coin']} "
+                        f"+{(card[1] + 1) * 10} {r.ICON['exp']}",
             color=discord.Color.green()
         )
         embed.add_field(

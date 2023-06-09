@@ -6,7 +6,7 @@ import typing as t
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, checks
+from helpers import db_manager as dm, util as u, resources as r, checks
 from helpers.battle import BattleData
 from views.battle import RaidInvite, Select
 
@@ -58,7 +58,7 @@ class Raid(commands.Cog):
         people = [ctx.author] + people
         req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n" \
                   f"Wanna raid a level {difficulty} boss with {a.mention}?\n" \
-                  f"Keep in mind that you'll need one {u.ICON['tick']}."
+                  f"Keep in mind that you'll need one {r.ICON['tick']}."
         view = RaidInvite(ctx.author, people)
         await msg.edit(content=req_msg, view=view)
         await view.wait()
@@ -98,13 +98,13 @@ class Raid(commands.Cog):
         enemies = ["Lich Lord"]
         ad_decks = [
             random.sample(
-                [f"{levels}.{x}" for x in u.mobs_dict(levels, e)["deck"]],
-                len(u.mobs_dict(levels, e)['deck'])
+                [f"{levels}.{x}" for x in r.mob(e, levels).deck],
+                len(r.mob(e, levels).deck)
             )
             for e in enemies
         ]
         ad_hps = [
-            [u.mobs_dict(levels, e)["health"], 0, u.mobs_dict(levels, e)['health'], 0, 0]
+            [r.mob(e, levels).health, 0, r.mob(e, levels).health, 0, 0]
             for e in enemies
         ]
 
@@ -120,11 +120,11 @@ class Raid(commands.Cog):
             decks=decks + ad_decks,
             backpacks=bps + [{} for _ in range(len(enemies))],
             hps=hps + ad_hps,
-            stamina=[35 for _ in range(members)] + [u.mobs_dict(levels, i)["stamina"] for i in enemies],
+            stamina=[35 for _ in range(members)] + [r.mob(i, levels).stamina for i in enemies],
             counts=len(enemies) + members
         )
 
-        loading_embed = discord.Embed(title="Loading...", description=u.ICON['load'])
+        loading_embed = discord.Embed(title="Loading...", description=r.ICON['load'])
         stats_msg = await ctx.send(embed=loading_embed)
         hands_msg = await ctx.send(embed=loading_embed)
 
@@ -168,7 +168,7 @@ class Raid(commands.Cog):
                     players.append(dd.p_ids.info[ind])
 
                 elif dd.hps.info[ind][0] < 0 or dd.staminas.info[ind] < 0:
-                    dd.descriptions.info[ind].append(f"•{u.ICON['dead']}")
+                    dd.descriptions.info[ind].append(f"•{r.ICON['dead']}")
                     dd.effects.info[ind] = {}
 
             print(players)
@@ -191,7 +191,7 @@ class Raid(commands.Cog):
                 else:
                     index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
                     msg = dd.interpret_message(
-                        replied_message.content[len(u.PREF):],
+                        replied_message.content[len(r.PREF):],
                         str(dd.players.info[index]), index
                     )
 
@@ -217,13 +217,13 @@ class Raid(commands.Cog):
                         if not dd.hand_sizes.info[index] == 6:
                             dd.hand_sizes.info[index] += 1
 
-                        dd.descriptions.info[index].append(f"{u.ICON['ski']}{u.ICON['kip']}\n")
+                        dd.descriptions.info[index].append(f"{r.ICON['ski']}{r.ICON['kip']}\n")
 
                     elif msg == "flee":
                         players.remove(replied_message.author.id)
                         dd.hps.info[index][0] = 0
                         dd.staminas.info[index] = 0
-                        dd.descriptions.info[index].append(f"{u.ICON['fle']}{u.ICON['lee']}\n")
+                        dd.descriptions.info[index].append(f"{r.ICON['fle']}{r.ICON['lee']}\n")
 
                     elif msg == "backpack":
                         await ctx.send(embed=u.container_embed(dd.backpacks.info[index],
@@ -322,7 +322,7 @@ class Raid(commands.Cog):
                         if not dd.hand_sizes.info[e_index] == 6:
                             dd.hand_sizes.info[e_index] += 1
                         dd.descriptions.info[e_index].insert(len(dd.descriptions.info[e_index]),
-                                                             f"{u.ICON['ski']}{u.ICON['kip']}\n")
+                                                             f"{r.ICON['ski']}{r.ICON['kip']}\n")
                         correct_format = True
                     elif msg == "flee":
                         dd.afk = len(dd.players.info) + e_index
@@ -392,7 +392,7 @@ class Raid(commands.Cog):
                         dd.hand_sizes.info[e_index] -= len(dd.move_numbers.info[e_index]) - z - 1
                 # dd.deck_index.insert(dd.move_numbere_index - 1, dd.deck_index.pop(dd.hand_size[1]-1))
                 elif dd.hps.info[e_index][0] <= 0 or dd.staminas.info[e_index] <= 0:
-                    dd.descriptions.info[e_index].append(f"•{u.ICON['dead']}")
+                    dd.descriptions.info[e_index].append(f"•{r.ICON['dead']}")
                     dd.effects.info[e_index] = {}
             if dd.afk == 0:
                 cards_length = [len(i) for i in list(dd.used_cards.info.values())]
@@ -423,7 +423,7 @@ class Raid(commands.Cog):
                 for i in range(1, len(dd.used_cards.info) + 1):
                     dd.used_cards.info[i] = []
                 for i in range(1, len(dd.players.info) + 1):
-                    energy_lags = u.mobs_dict(1, dd.players.info[i])["energy_lag"] if i > members else 4
+                    energy_lags = r.mob(dd.players.info[i], 1).energy_lag if i > members else 4
                     if dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags) > 12:
                         dd.stored_energies.info[i] = 12
                     else:
@@ -452,15 +452,15 @@ class Raid(commands.Cog):
                 await hands_msg.edit(embed=dd.show_hand())
 
                 coin_loot = loot_factor * sum([
-                    random.randint(*u.mobs_dict(levels, e)["death reward"]['coins'])
+                    random.randint(*r.mob(e, levels).death_rwd.coins)
                     for e in enemies
                 ])
                 exp_loot = loot_factor * sum([
-                    random.randint(*u.mobs_dict(levels, e)["death reward"]['exps'])
+                    random.randint(*r.mob(e, levels).death_rwd.exps)
                     for e in enemies
                 ])
                 gem_loot = loot_factor * sum([
-                    random.randint(*u.mobs_dict(levels, e)["death reward"]['gems'])
+                    random.randint(*r.mob(e, levels).death_rwd.gems)
                     for e in enemies
                 ]) // 100
 

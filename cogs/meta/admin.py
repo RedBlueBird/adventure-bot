@@ -1,27 +1,25 @@
 import json
 import math
-import logging
+import datetime
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u, checks
-
-logging.basicConfig(
-    filename="resources/text/bot_log.txt",
-    filemode="a",
-    format="%(asctime)s - %(message)s",
-    level=logging.INFO
-)
+from helpers import db_manager as dm, util as u, resources as r, checks
 
 
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
+        self.log_to = open("bot_log.txt", "a")
+        print(f"Cog started on {datetime.datetime.now()}", file=self.log_to, flush=True)
         self.bot = bot
 
     async def cog_before_invoke(self, ctx: Context):
-        logging.info(f"{ctx.author}: {ctx.message.content}")
+        msg = ctx.message.content
+        insert = f"\n{msg}\n" if msg else ""
+        to_print = f"{ctx.author}:{insert}{ctx.command}"
+        print(to_print, file=self.log_to, flush=True)
 
     @commands.hybrid_group(description="Redeem something! (Admin only)")
     @checks.is_admin()
@@ -29,8 +27,8 @@ class Admin(commands.Cog):
     async def redeem(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = discord.Embed(title="Here's the things you can redeem:") \
-                .add_field(name="Cards", value=f"`{u.PREF}redeem card (card name) (card level) (recipient)`") \
-                .add_field(name="Items", value=f"`{u.PREF}redeem coins (item name) (item amt) (recipient)`")
+                .add_field(name="Cards", value=f"`{r.PREF}redeem card (card name) (card level) (recipient)`") \
+                .add_field(name="Items", value=f"`{r.PREF}redeem item (item name) (item amt) (recipient)`")
             await ctx.reply(embed=embed)
 
     @redeem.command()
@@ -49,13 +47,14 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
-        item = u.items_dict(item.replace("_", " "))["name"].lower()
+        item = r.item(item.replace("_", " "))
+        name = item.name
         inv = dm.get_user_inventory(recipient.id)
 
-        if amt > 0 and item not in inv:
-            inv[item] = {"items": amt}
+        if amt > 0 and name not in inv:
+            inv[name] = amt
         else:
-            inv[item] += amt
+            inv[name] += amt
 
         inv_delete = []
         for i in inv:
@@ -67,9 +66,8 @@ class Admin(commands.Cog):
         dm.set_user_inventory(recipient.id, json.dumps(inv))
         await ctx.reply(
             f"{recipient.mention}, you received "
-            f"**[{u.items_dict(item)['rarity']}/"
-            f"{u.items_dict(item)['weight']}] "
-            f"{item}** x{math.floor(int(amt))} "
+            f"**[{item.rarity}/{item.weight}] "
+            f"{name.title()}** x{math.floor(int(amt))} "
             f"from {ctx.author.mention}"
         )
 
@@ -80,7 +78,7 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def end_season(self, ctx: Context):
         """Resets the PVP season and gives each player their medals."""
-        for d in dm.get_all_userid():
+        for d in dm.get_all_uid():
             medals = dm.get_user_medal(d)
 
             earned_coins = medals * 5
@@ -93,10 +91,10 @@ class Admin(commands.Cog):
             new_medals = (medals - cap) // 2 + cap if medals > cap else medals
 
             msg = f"The season ended!" \
-                  f"You now have {new_medals} {u.ICON['medal']} (from {medals}) "\
-                  f"\n+{earned_coins} {u.ICON['coin']}!"
+                  f"You now have {new_medals} {r.ICON['medal']} (from {medals}) "\
+                  f"\n+{earned_coins} {r.ICON['coin']}!"
             if earned_gems > 0:
-                msg += f"\n + {earned_gems} {u.ICON['gem']}"
+                msg += f"\n + {earned_gems} {r.ICON['gem']}"
 
             user = await self.bot.fetch_user(d)
             await user.send(msg)
@@ -110,17 +108,17 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def test(self, ctx: Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.reply(u.ICON["load"])
+        loading = await ctx.reply(r.ICON["load"])
 
         def print_all(table: str) -> None:
             dm.cur.execute(f"SELECT * FROM {table}")
             result = dm.cur.fetchall()
-            for r in result:
-                print(r)
+            for i in result:
+                print(i)
 
         print_all("temp")
         print_all("temp_cards")
-        print(u.ADMINS)
+        print(r.ADMINS)
         print(dm.queues)
 
         guilds = list(self.bot.guilds)

@@ -1,16 +1,33 @@
 import discord
 import discord.ui as ui
 
+from helpers import db_manager as dm, util as u
 
-class AdventureTemplate(ui.View):
-    def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
 
-    @ui.button(label="Exit", style=discord.ButtonStyle.red)
-    async def exit(self, i: discord.Interaction, button: ui.Button):
+class Exit(ui.Button):
+    def __init__(self, label: str = "Exit", row: int | None = None):
+        super().__init__(label=label, row=row, style=discord.ButtonStyle.danger)
+    
+    async def callback(self, i: discord.Interaction):
+        assert self.view is not None
         await i.response.defer()
-        self.stop()
+        self.view.stop()
+
+
+class Backpack(ui.Button):
+    def __init__(self, label: str = "Backpack", row: int | None = None):
+        super().__init__(label=label, row=row, style=discord.ButtonStyle.blurple)
+    
+    async def callback(self, i: discord.Interaction):
+        inv = dm.get_user_inventory(self.view.user.id)
+        await i.response.send_message(
+            embed=u.container_embed(inv, "Backpack"),
+            ephemeral=True
+        )
+
+
+class InteractionCheckMixin:
+    user: discord.Member
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
         if i.user != self.user:

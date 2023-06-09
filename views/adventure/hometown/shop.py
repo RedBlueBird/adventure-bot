@@ -3,8 +3,8 @@ import typing as t
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm, util as u
-from views.adventure.template import AdventureTemplate
+from helpers import db_manager as dm, util as u, resources as r
+from views.adventure.template import Exit, InteractionCheckMixin
 
 
 class BuyForm(ui.Modal, title="Buy something!"):
@@ -26,8 +26,8 @@ class BuyForm(ui.Modal, title="Buy something!"):
             return
         amt = int(amt)
 
-        item = u.items_dict(self.item.value.lower())
-        name = item["name"].lower()
+        item = r.item(self.item.value.lower())
+        name = item.name.lower()
         if name not in self.offers:
             await i.response.send_message(
                 "Sorry, I don't have that item!",
@@ -36,7 +36,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
             return
 
         inv = dm.get_user_inventory(self.user.id)
-        if item["weight"] * amt > u.BP_CAP - u.bp_weight(inv):
+        if item.weight * amt > r.BP_CAP - u.bp_weight(inv):
             await i.response.send_message(
                 "You don't have enough space in your backpack for these items!",
                 ephemeral=True
@@ -44,14 +44,14 @@ class BuyForm(ui.Modal, title="Buy something!"):
             return
 
         coins = dm.get_user_coin(self.user.id)
-        if item["buy"] * amt > coins:
+        if item.buy * amt > coins:
             await i.response.send_message(
                 "You can't afford that much stuff!",
                 ephemeral=True
             )
             return
 
-        coins -= item["buy"] * amt
+        coins -= item.buy * amt
         if name in inv:
             inv[name] += amt
         else:
@@ -62,15 +62,17 @@ class BuyForm(ui.Modal, title="Buy something!"):
 
         await i.response.send_message(
             f"You just bought "
-            f"**[{item['rarity']}/{item['weight']}] {name.title()} x{amt}** "
-            f"for {item['buy'] * amt} {u.ICON['coin']}!",
+            f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
+            f"for {item.buy * amt} {r.ICON['coin']}!",
             ephemeral=True
         )
 
 
-class Shop(AdventureTemplate):
+class Shop(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
-        super().__init__(user)
+        super().__init__()
+        self.user = user
+        self.add_item(Exit())
         self.items = offers
 
     @ui.button(label="Purchase", style=discord.ButtonStyle.blurple)

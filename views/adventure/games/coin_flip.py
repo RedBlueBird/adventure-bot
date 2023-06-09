@@ -5,7 +5,7 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm
-from ..template import AdventureTemplate
+from ..template import InteractionCheckMixin, Exit
 
 
 class Bet(Enum):
@@ -77,15 +77,16 @@ async def bet(
     dm.set_user_coin(user.id, coins + inc)
 
 
-class CoinFlip(AdventureTemplate):
+class CoinFlip(ui.View, InteractionCheckMixin):
     def __init__(
             self, user: discord.Member,
             bet_amt: int = 50, edge_factor: int = 1000
     ):
-        super().__init__(user)
+        super().__init__()
         self.user = user
         self.bet_amt = bet_amt
         self.edge_factor = edge_factor
+        self.add_item(Exit())
 
     @ui.button(label="Bet heads", style=discord.ButtonStyle.blurple)
     async def heads(self, i: discord.Interaction, button: discord.Button):

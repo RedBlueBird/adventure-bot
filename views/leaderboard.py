@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u
+from helpers import db_manager as dm, resources as r
 
 
 class Leaderboard(discord.ui.View):
@@ -61,11 +61,11 @@ class Leaderboard(discord.ui.View):
 
     @discord.ui.select(
         options=[
-            discord.SelectOption(label="Level", emoji=u.ICON["exp"]),
-            discord.SelectOption(label="Coins", emoji=u.ICON["coin"]),
-            discord.SelectOption(label="Gems", emoji=u.ICON["gem"]),
-            discord.SelectOption(label="Medals", emoji=u.ICON["medal"]),
-            discord.SelectOption(label="Tokens", emoji=u.ICON["token"]),
+            discord.SelectOption(label="Level", emoji=r.ICON["exp"]),
+            discord.SelectOption(label="Coins", emoji=r.ICON["coin"]),
+            discord.SelectOption(label="Gems", emoji=r.ICON["gem"]),
+            discord.SelectOption(label="Medals", emoji=r.ICON["medal"]),
+            discord.SelectOption(label="Tokens", emoji=r.ICON["token"]),
         ]
     )
     async def select_leaderboard(self, i: discord.Interaction, select: discord.ui.Select):

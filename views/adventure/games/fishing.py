@@ -6,11 +6,11 @@ import discord
 import discord.ui as ui
 
 from helpers import db_manager as dm
-from ..template import AdventureTemplate
+from ..template import InteractionCheckMixin, Exit
 
 BAIT_COST = 50
 
-with open("resources/text/fish.json") as read:
+with open("resources/json/fish.json") as read:
     FISH = json.load(read)
 RARITIES = list(FISH.keys())
 RARITY_PROBS = [FISH[f]["chance"] for f in FISH]
@@ -80,7 +80,12 @@ class Bait(ui.View):
         self.stop()
 
 
-class Fishing(AdventureTemplate):
+class Fishing(ui.View, InteractionCheckMixin):
+    def __init__(self, user: discord.Member):
+        super().__init__()
+        self.user = user
+        self.add_item(Exit())
+
     @ui.button(label="Start fishing!", style=discord.ButtonStyle.blurple)
     async def bait(self, i: discord.Interaction, button: ui.Button):
         coins = dm.get_user_coin(self.user.id)

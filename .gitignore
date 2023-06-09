@@ -150,4 +150,4 @@ adventure-bot.code-workspace
 # Secret file
 config.json
 
-resources/text/bot_log.txt
+bot_log.txt
