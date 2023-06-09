@@ -14,13 +14,11 @@
         "name": "Shield",
         "cost": 2,
         "rarity": "C",
-        "block": 10,
-        "eff_acc": 100,
-        "attacks": 1,
-        "acc": 100,
-        "crit": 0,
-        "mod": {},
-        "description": "Blocks ${block} damage for your target",
+        "block": 6,
+        "cblock": 12,
+        "crit": 50,
+        "desc": "Blocks ${block} of each incoming damage for your target",
+        "crit_desc": "Blocks ${cblock} of each incoming damage for your target",
         "brief": "A basic defensive skill everyone should learn to protect themselves. Although, it's rather ineffective against piercing damage"
     },
     "zap": {
