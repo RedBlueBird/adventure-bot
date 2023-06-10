@@ -33,7 +33,7 @@ class DeathReward:
 
 
 @dataclass
-class Trade:    
+class Trade:
     reqs: list[tuple[str, int]]
     prob: float = 1
 
