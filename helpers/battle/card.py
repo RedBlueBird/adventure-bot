@@ -32,26 +32,27 @@ class Card:
             self.crit_write(target=target)
             return
 
-        # The player using the cards himself played gets priority
-        if self.owner.id != target.id:
-            target.inbox.append(self.use)
-        else:
-            target.inbox.
+        target.inbox[self.card["priority"]].append(self.use)
+
         self.get_attribute_written(card_attribute="block", icon_attribute="block", target=target)
         self.get_attribute_written(card_attribute="dmg", icon_attribute="dmg", target=target)
 
     def crit_write(self, target: Player):
         self.owner.crit -= 100
 
-        # The player using the cards himself played gets priority
-        target.inbox.append(self.crit_use)
+        target.inbox[self.card["priority"]].append(self.crit_use)
+
         self.get_attribute_written(card_attribute="cblock", icon_attribute="block", target=target, crit=True)
         self.get_attribute_written(card_attribute="cdmg", icon_attribute="dmg", target=target, crit=True)
 
     def use(self, target: Player):
         if "dmg" in self.card:
-            target.hp -= self.card["dmg"]
+            target.hp -= max(0, self.card["dmg"] - target.block)
+        if "block" in self.card:
+            target.block += self.card["block"]
 
     def crit_use(self, target: Player):
         if "cdmg" in self.card:
-            target.hp -= self.card["cdmg"]
+            target.hp -= max(0, self.card["cdmg"] - target.block)
+        if "cblock" in self.card:
+            target.block += self.card["cblock"]

@@ -98,6 +98,8 @@ class BattleData2:
         moves = dm.get_user_battle_command(p.user.id).split(" ")
         dm.set_user_battle_command(p.user.id, "")
         energy_cost = 0
+
+        #region processing non-card move responses
         if moves == [""]:
             moves = []
             p.skip = True
@@ -126,7 +128,11 @@ class BattleData2:
 
         if error_msg != "":
             return f"{p.user.mention} {error_msg}"
+        #endregion
 
+        print(p.inbox)
+
+        #region updating player status
         p.crit = 0
         for move in moves:
             if move == "flee":
@@ -137,14 +143,22 @@ class BattleData2:
             p.deck.append(p.deck.pop(selection))
             p.hand_size -= 1
         p.hand_size = min(6, p.hand_size + 1)
-        for use_card in p.inbox:
-            use_card(target=p)
+
+        print(p.inbox)
+
+        for priority in range(3,0,-1):
+            for use_card in p.inbox[priority]:
+                use_card(target=p)
+
         if p.hp <= 0:
             p.hp = 0
             p.dead = True
             p.dialogue = [r.ICON['dead']]
-        p.inbox = []
+        p.inbox = {1:[],2:[],3:[]}
+        p.block = 0
+        #endregion
 
+        #region cleansing dead players from the board
         while self.turn >= len(self.players) or self.players[self.turn].dead or self.players[self.turn].flee:
             if self.turn >= len(self.players):
                 if self.game_end:
@@ -160,4 +174,5 @@ class BattleData2:
                 self.turn = -1
             self.turn += 1
         self.turn += 1
+        #endregion
         return None

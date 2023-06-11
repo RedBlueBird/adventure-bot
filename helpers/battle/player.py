@@ -14,6 +14,7 @@ class Player:
         self.level = level
         self.hp = 100  # u.level_hp(level)
         self.max_hp = 100  # u.level_hp(level)
+        self.block = 0
         self.stamina = 30
         self.stored_energy = 2
         self.deck = deck
@@ -23,4 +24,4 @@ class Player:
         self.flee = False
         self.skip = False
         self.crit = 0
-        self.inbox = []
+        self.inbox = {1:[],2:[],3:[]}
