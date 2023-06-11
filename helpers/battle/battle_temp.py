@@ -130,8 +130,6 @@ class BattleData2:
             return f"{p.user.mention} {error_msg}"
         #endregion
 
-        print(p.inbox)
-
         #region updating player status
         p.crit = 0
         for move in moves:
@@ -143,8 +141,6 @@ class BattleData2:
             p.deck.append(p.deck.pop(selection))
             p.hand_size -= 1
         p.hand_size = min(6, p.hand_size + 1)
-
-        print(p.inbox)
 
         for priority in range(3,0,-1):
             for use_card in p.inbox[priority]:
