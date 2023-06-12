@@ -25,3 +25,4 @@ class Player:
         self.skip = False
         self.crit = 0
         self.inbox = {1:[],2:[],3:[]}
+        self.effects = {}

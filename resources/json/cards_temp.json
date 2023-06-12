@@ -3,12 +3,12 @@
         "name": "Stab",
         "cost": 1,
         "rarity": "C",
-        "dmg": 4,
-        "cdmg": 8,
+        "damage": 4,
+        "cdamage": 8,
         "crit": 60,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target.",
+        "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles.",
         "brief": "A basic attack any swordsman can use."
     },
@@ -29,8 +29,8 @@
         "name": "Zap",
         "cost": 2,
         "rarity": "C",
-        "dmg": 4,
-        "cdmg": 4,
+        "damage": 4,
+        "cdamage": 4,
         "eff": {
             "target": {
                 "stun": 2
@@ -44,7 +44,7 @@
         "crit": 10,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${dmg} damage and applies 2 stun effects to your target",
+        "desc": "Deals ${damage} damage and applies 2 Stun effects to your target",
         "cdesc": "Priority increases to 2.",
         "brief": "A simple electric spell that every magician must master to be taken seriously."
     },
@@ -65,14 +65,14 @@
         "name": "Explode",
         "cost": 5,
         "rarity": "R",
-        "dmg": 20,
-        "cdmg": 40,
-        "self_dmg": 4,
-        "cself_dmg": 8,
+        "damage": 20,
+        "cdamage": 40,
+        "self_damage": 4,
+        "cself_damage": 8,
         "crit": 25,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target and ${self_damage} damage to yourself",
+        "desc": "Deals ${damage} damage to your target and ${self_damage} damage to yourself",
         "cdesc": "Both damage doubles",
         "brief": "This volatile spell does lots of damage... to everyone. Not even the user is guaranteed safety."
     },
@@ -93,10 +93,10 @@
         "name": "Sacrifice",
         "cost": 5,
         "rarity": "E",
-        "self_dmg": 15,
-        "cself_dmg": 15,
-        "dmg": 15,
-        "cdmg": 15,
+        "self_damage": 15,
+        "cself_damage": 15,
+        "damage": 15,
+        "cdamage": 15,
         "eff": {
             "target": {
                 "curse": 4
@@ -110,16 +110,16 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target and yourself. Also applies 4 curse effects to your target",
-        "cdesc": "Applies 2 additional curse effects to your target",
+        "desc": "Deals ${damage} damage to your target and yourself. Also applies 4 Curse effects to your target",
+        "cdesc": "Applies 2 additional Curse effects to your target",
         "brief": "A volatile spell capable of dealing massive amounts of damage to your target, but it can also harm yourself as well."
     },
     "flashy fireworks": {
         "name": "Flashy Fireworks",
         "cost": 5,
         "rarity": "EX",
-        "dmg": 1,
-        "cdmg": 3,
+        "damage": 1,
+        "cdamage": 3,
         "eff": {
             "target": {
                 "burn": 1
@@ -135,7 +135,7 @@
         "crit": 15,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x5 damage to your target, applying 1 burn effect for each hit",
+        "desc": "Deals ${damage} x5 damage to your target, applying 1 Burn effect for each hit",
         "cdesc": "Damage triples.",
         "brief": "Happy New Year! Shoot off a burst of fireworks, dealing repeated damage to your target."
     },
@@ -143,14 +143,14 @@
         "name": "Multi Punches",
         "cost": 3,
         "rarity": "C",
-        "dmg": 4,
-        "cdmg": 4,
+        "damage": 4,
+        "cdamage": 4,
         "attacks": 3,
         "cattacks": 5,
         "crit": 25,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x3 damage to your target.",
+        "desc": "Deals ${damage} x3 damage to your target.",
         "cdesc": "Throw additional x2 more punches.",
         "brief": "One of the most advanced offensive moves in martial arts, dealing a quick burst of damage to your enemies."
     },
@@ -158,13 +158,13 @@
         "name": "Punch",
         "cost": 2,
         "rarity": "C",
-        "dmg": 8,
-        "cdmg": 16,
+        "damage": 8,
+        "cdamage": 16,
         "attacks": 1,
         "crit": 50,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target. Doesn't use any stamina.",
+        "desc": "Deals ${damage} damage to your target. Doesn't use any stamina.",
         "cdesc": "Damage doubles.",
         "brief": "A very basic attack... But it can still be deadly."
     },
@@ -172,13 +172,13 @@
         "name": "Strike",
         "cost": 1,
         "rarity": "C",
-        "dmg": 3,
-        "cdmg": 6,
+        "damage": 3,
+        "cdamage": 6,
         "attacks": 1,
         "crit": 30,
         "priority": 2,
         "cpriority": 3,
-        "desc": "Deals ${dmg} damage to your target.",
+        "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles. Priority increases to 3.",
         "brief": "A single swift strike."
     },
@@ -186,8 +186,8 @@
         "name": "Fireball",
         "cost": 3,
         "rarity": "R",
-        "dmg": 6,
-        "cdmg": 12,
+        "damage": 6,
+        "cdamage": 12,
         "eff": {
             "target": {
                 "burn": 2
@@ -202,7 +202,7 @@
         "crit": 15,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deal ${dmg} damage and applies 2 burn effects to your target",
+        "desc": "Deal ${damage} damage and applies 2 Burn effects to your target",
         "cdesc": "Damage doubles.",
         "brief": "This hot ball of fire can be used in battle, but most magicians simply use it to cook food and keep themselves warm."
     },
@@ -235,7 +235,7 @@
         "name": "Lightning Bolt",
         "cost": 7,
         "rarity": "E",
-        "dmg": 9,
+        "damage": 9,
         "eff": {
             "target": {
                 "stun": 3
@@ -250,7 +250,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${dmg} damage to your target and applies 3 stun effects.",
+        "desc": "Deals ${damage} damage to your target and applies 3 Stun effects.",
         "cdesc": "Priority increases to 2",
         "brief": "A much more deadly and advanced form of the simple zap spell, able to heavily damage and stun anyone."
     },
@@ -261,7 +261,7 @@
         "eff_app": {
             "target": {
                 "burn": {
-                    "dmg": 2,
+                    "damage": 2,
                     "cap": 10,
                     "clear": false
                 }
@@ -270,7 +270,7 @@
         "ceff_app": {
             "target": {
                 "burn": {
-                    "dmg": 2,
+                    "damage": 2,
                     "cap": 15,
                     "clear": false
                 }
@@ -280,16 +280,16 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${eff_app} damage to your target for every burn effect they have (max 10x).",
-        "cdesc": "Set max burn effect applicable to 15x.",
+        "desc": "Deals ${eff_app} damage to your target for every Burn effect they have (max 10x).",
+        "cdesc": "Set max Burn effect applicable to 15x.",
         "brief": "This cocktail is made of highly flammable alcohol.  Some drink... while others throw."
     },
     "insult": {
         "name": "Insult",
         "cost": 2,
         "rarity": "C",
-        "dmg": 5,
-        "cdmg": 10,
+        "damage": 5,
+        "cdamage": 10,
         "eff": {
             "target": {
                 "curse": 2
@@ -304,9 +304,9 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target and applies 2 curse effects.",
-        "cdesc": "Double the damage, double the applied curse effects",
-        "brief": "Magicians sometimes insult each other to stack up curse effects on their target."
+        "desc": "Deals ${damage} damage to your target and applies 2 Curse effects.",
+        "cdesc": "Double the damage, double the applied Curse effects",
+        "brief": "Magicians sometimes insult each other to stack up Curse effects on their target."
     },
     "aim": {
         "name": "Aim",
@@ -339,7 +339,7 @@
         "eff_app": {
             "target": {
                 "burn": {
-                    "dmg": 5,
+                    "damage": 5,
                     "cap": 15,
                     "clear": true
                 }
@@ -348,7 +348,7 @@
         "ceff_app": {
             "target": {
                 "burn": {
-                    "dmg": 5,
+                    "damage": 5,
                     "cap": 20,
                     "clear": true
                 }
@@ -358,8 +358,8 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${eff_app} damage to your target for every curse effect they have (max x15), but then removes up to 15 curse effects from your target.",
-        "cdesc": "Set the max curse effect applicable to 20x.",
+        "desc": "Deals ${eff_app} damage to your target for every Curse effect they have (max x15), but then removes up to 15 Curse effects from your target.",
+        "cdesc": "Set the max Curse effect applicable to 20x.",
         "brief": "This is one of the most painful spells a magician can use on an opponent. However, it requires a lot of preparation to use correctly."
     },
     "hellfire": {
@@ -367,8 +367,8 @@
         "cost": 4,
         "rarity": "L",
         "attacks": 2,
-        "dmg": 5,
-        "cdmg": 5,
+        "damage": 5,
+        "cdamage": 5,
         "crit": 20,
         "eff": {
             "target": {
@@ -385,7 +385,7 @@
         "stay": true,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x2 damage to your target, There's a 60% chance to apply 1 burn and 1 curse to your target for each hit, and this card will stay on your hand after being used",
+        "desc": "Deals ${damage} x2 damage to your target, There's a 60% chance to apply 1 burn and 1 curse to your target for each hit, and this card will stay on your hand after being used",
         "cdesc": "Double the effects applied.",
         "brief": "This spell summons fierce blue flames straight from the underworld. They seem to have odd properties... besides their ability to toast the best marshmallows ever."
     },
@@ -418,12 +418,12 @@
                 "poision": 1
             }
         },
-        "dmg": 3,
-        "cdmg": 6,
+        "damage": 3,
+        "cdamage": 6,
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x4 damage to your target, applying 1 poison effect for each hit.",
+        "desc": "Deals ${damage} x4 damage to your target, applying 1 poison effect for each hit.",
         "cdesc": "Damage doubles.",
         "brief": "Summons 4 murder hornets out of thin air that excel at inflicting continuous pain to their target."
     },
@@ -450,13 +450,13 @@
             }
         },
         "crit": 0,
-        "dmg": 4,
-        "cdmg": 4,
-        "self_dmg": 4,
-        "cself_dmg": 4,
+        "damage": 4,
+        "cdamage": 4,
+        "self_damage": 4,
+        "cself_damage": 4,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x2 damage, applying a burn, curse, poison, and stun effect to your target while dealing ${self_damage} damage to yourself for each hit that landed",
+        "desc": "Deals ${damage} x2 damage, applying a burn, curse, poison, and Stun effect to your target while dealing ${self_damage} damage to yourself for each hit that landed",
         "cdesc": "Deal one additional attack.",
         "brief": "Who said four leaf clovers bring good luck?  This clover is filled with the anger, madness, grief, and misery of hundreds of past generations. Only the most nefarious dare to use this on their opponents."
     },
@@ -464,8 +464,8 @@
         "name": "Confetti Cannon",
         "cost": 7,
         "rarity": "EX",
-        "dmg": 12,
-        "cdmg": 12,
+        "damage": 12,
+        "cdamage": 12,
         "attacks": 1,
         "crit": 0,
         "spawn": {
@@ -480,7 +480,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and spawns 2 temporary **[NA/1] Distraction lv: ${level}** cards into your opponent's cards",
+        "desc": "Deals ${damage} damage and spawns 2 temporary **[NA/1] Distraction lv: ${level}** cards into your opponent's cards",
         "cdesc": "Spawn 2 additional **[NA/1] Distraction lv: ${level}** cards.",
         "brief": "CHEERS! Adventure bot anniversary event exclusive card. Shoot off some confetti, distracting your opponent in the process!"
     },
@@ -488,13 +488,13 @@
         "name": "Tsunami Wave",
         "cost": 6,
         "rarity": "EX",
-        "dmg": 10,
+        "damage": 10,
         "attacks": 1,
         "crit": 10,
         "clear_eff_all": true,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${dmg} damage, removing all burn effects from all players",
+        "desc": "Deals ${damage} damage, removing all Burn effects from all players",
         "cdesc": "Priority increases to 2.",
         "brief": "Who doesn't love a good, violent bath under the sun?"
     },
@@ -502,8 +502,8 @@
         "name": "Butterflies",
         "cost": 2,
         "rarity": "C",
-        "dmg": 5,
-        "cdmg": 10,
+        "damage": 5,
+        "cdamage": 10,
         "attacks": 1,
         "crit": 0,
         "spawn": {
@@ -518,7 +518,7 @@
         },
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${dmg} damage to your target and randomly spawns 1 temporary **[NA/1] Distraction lv: ${level}** into your opponent's cards. Doesn't use any stamina.",
+        "desc": "Deals ${damage} damage to your target and randomly spawns 1 temporary **[NA/1] Distraction lv: ${level}** into your opponent's cards. Doesn't use any stamina.",
         "cdesc": "Damage doubles, cards spawn doubles.",
         "brief": "Oh look, butterflies! Their cuteness is precisely what makes them a good distraction during battles!"
     },
@@ -543,8 +543,8 @@
         "name": "Fury Slashes",
         "cost": 4,
         "rarity": "R",
-        "dmg": 5,
-        "cdmg": 10,
+        "damage": 5,
+        "cdamage": 10,
         "attacks": 2,
         "crit": 25,
         "eff": {
@@ -559,7 +559,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x2 damage to your target, applying 1 berserk effect to yourself per landed hit",
+        "desc": "Deals ${damage} x2 damage to your target, applying 1 berserk effect to yourself per landed hit",
         "cdesc": "Damage doubles.",
         "brief": "An advanced fighting technique that temporarily strengthens your future attacks."
     },
@@ -567,13 +567,13 @@
         "name": "Slash",
         "cost": 3,
         "rarity": "C",
-        "dmg": 10,
-        "cdmg": 20,
+        "damage": 10,
+        "cdamage": 20,
         "attacks": 1,
         "crit": 15,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target.",
+        "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles.",
         "brief": "A basic but reliable attack all swordsman are taught during their."
     },
@@ -581,8 +581,8 @@
         "name": "Ignite",
         "cost": 1,
         "rarity": "C",
-        "dmg": 1,
-        "cdmg": 2,
+        "damage": 1,
+        "cdamage": 2,
         "eff": {
             "target": {
                 "burn": 1
@@ -597,16 +597,16 @@
         "crit": 10,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${dmg} damage, applying 1 burn effect to your target.",
-        "cdesc": "Damage doubles, burn effects applied doubles, priority increases to 2.",
+        "desc": "Deals ${damage} damage, applying 1 Burn effect to your target.",
+        "cdesc": "Damage doubles, Burn effects applied doubles, priority increases to 2.",
         "brief": "A basic fire spell magicians often use to start a fireplace"
     },
     "sting": {
         "name": "Sting",
         "cost": 2,
         "rarity": "C",
-        "pdmg": 4,
-        "cpdmg": 8,
+        "pierce_damage": 4,
+        "cpierce_damage": 8,
         "eff": {
             "target": {
                 "poison": 2
@@ -621,7 +621,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} pierce damage and applies 2 poison effects to your target.",
+        "desc": "Deals ${damage} pierce damage and applies 2 poison effects to your target.",
         "cdesc": "Damage doubles.",
         "brief": "A small sting containing some poison."
     },
@@ -629,8 +629,8 @@
         "name": "Snowball",
         "cost": 2,
         "rarity": "C",
-        "dmg": 6,
-        "cdmg": 12,
+        "damage": 6,
+        "cdamage": 12,
         "eff": {
             "target": {
                 "chill": 4
@@ -645,7 +645,7 @@
         "crit": 10,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 4 chill effects to your target",
+        "desc": "Deals ${damage} damage and applies 4 chill effects to your target",
         "cdesc": "Damage doubles.",
         "brief": "What's more fun than throwing giant hardened snowballs at each other during battle? It might slow them down a bit too!"
     },
@@ -655,13 +655,13 @@
         "rarity": "E",
         "tramp": 8,
         "ctramp": 16,
-        "dmg": 5,
-        "cdmg": 10,
+        "damage": 5,
+        "cdamage": 10,
         "attacks": 1,
         "crit": 20,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Decrease your target's defense by ${tramp} and deals ${dmg} damage to your target.",
+        "desc": "Decrease your target's defense by ${tramp} and deals ${damage} damage to your target.",
         "cdesc": "Defense decrease and damage doubles.",
         "brief": "A powerful attack used to punish those who try to block."
     },
@@ -669,8 +669,8 @@
         "name": "Bats Swarm",
         "cost": 5,
         "rarity": "R",
-        "dmg": 4,
-        "cdmg": 4,
+        "damage": 4,
+        "cdamage": 4,
         "attacks": 3,
         "crit": 10,
         "eff": {
@@ -685,7 +685,7 @@
         },
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deal ${dmg} x3 damage to your target and applies 1 recover effect to yourself for each hit.",
+        "desc": "Deal ${damage} x3 damage to your target and applies 1 recover effect to yourself for each hit.",
         "cdesc": "Priority increases to 2.",
         "brief": "A group of four devilish little bats."
     },
@@ -693,18 +693,18 @@
         "name": "Spikes Bomb",
         "cost": 5,
         "rarity": "E",
-        "dmg": 5,
-        "cdmg": 5,
+        "damage": 5,
+        "cdamage": 5,
         "attacks": 5,
         "crit": 0,
         "ccrit": 100,
         "on_hand": {
-            "dmg": 5,
+            "damage": 5,
             "priority": 1
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${on_hand_self_damage} damage to yourself for each turn this is in your hand. Deals ${dmg} x5 damage to your target when used.",
+        "desc": "Deals ${on_hand_self_damage} damage to yourself for each turn this is in your hand. Deals ${damage} x5 damage to your target when used.",
         "cdesc": "Increase crit by 100%.",
         "brief": "A reworked version of Explode which is easier to cast and deals more damage at the cost of being much more difficult to maintain."
     },
@@ -712,8 +712,8 @@
         "name": "Pandemic",
         "cost": 6,
         "rarity": "L",
-        "dmg": 12,
-        "cdmg": 24,
+        "damage": 12,
+        "cdamage": 24,
         "attacks": 1,
         "crit": 0,
         "eff": {
@@ -744,7 +744,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 4 poison effects to your target, also spawning 4 temporary **[NA/0] Virus lv: ${level}** into both your target's cards and your cards.",
+        "desc": "Deals ${damage} damage and applies 4 poison effects to your target, also spawning 4 temporary **[NA/0] Virus lv: ${level}** into both your target's cards and your cards.",
         "cdesc": "Double damage.",
         "brief": "A highly contagious plague created by dark forces beyond comprehension. A precarious magic, it's nearly impossible to counter, and it affects everyone including the caster within mere seconds of its release."
     },
@@ -752,8 +752,8 @@
         "name": "Ice Spike",
         "cost": 3,
         "rarity": "R",
-        "dmg": 8,
-        "cdmg": 16,
+        "damage": 8,
+        "cdamage": 16,
         "attacks": 1,
         "eff": {
             "target": {
@@ -768,7 +768,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} piercing damage and applies 3 chill effects to your target.",
+        "desc": "Deals ${damage} piercing damage and applies 3 chill effects to your target.",
         "cdesc": "Damage doubles.",
         "brief": "A long sharp lance made of hardened ice. Simply touching the tip can pierce your skin and freeze your blood."
     },
@@ -776,8 +776,8 @@
         "name": "Quick Shot",
         "cost": 2,
         "rarity": "R",
-        "dmg": 4,
-        "cdmg": 8,
+        "damage": 4,
+        "cdamage": 8,
         "attacks": 1,
         "eff": {
             "self": {
@@ -792,7 +792,7 @@
         "crit": 10,
         "priority": 2,
         "cpriority": 2,
-        "desc": "Deals ${dmg} damage and applies 1 bullseye effect to yourself",
+        "desc": "Deals ${damage} damage and applies 1 bullseye effect to yourself",
         "cdesc": "Damage doubles.",
         "brief": "A quick, cheap shot at your opponents."
     },
@@ -800,10 +800,10 @@
         "name": "Skeletal Slay",
         "cost": 4,
         "rarity": "EX",
-        "dmg": 3,
-        "cdmg": 0,
-        "pdmg": 0,
-        "cpdmg": 6,
+        "damage": 3,
+        "cdamage": 0,
+        "pierce_damage": 0,
+        "cpierce_damage": 6,
         "attacks": 3,
         "eff": {
             "target": {
@@ -818,7 +818,7 @@
         "crit": 50,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x3 damage, applying 1 curse effect per landed hit.",
+        "desc": "Deals ${damage} x3 damage, applying 1 Curse effect per landed hit.",
         "cdesc": "All damage doubles and becomes pierced.",
         "brief": "Swinging this cursed spike made from the spine of an ancient dragon grants the owner unstoppable evil power."
     },
@@ -842,8 +842,8 @@
         "name": "Ice Breaker",
         "cost": 5,
         "rarity": "E",
-        "dmg": 4,
-        "cdmg": 8,
+        "damage": 4,
+        "cdamage": 8,
         "attacks": 4,
         "crit": 30,
         "ccrit": 100,
@@ -856,7 +856,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x4 damage to your target. If your target is frozen, this attack deal 50% more damage.",
+        "desc": "Deals ${damage} x4 damage to your target. If your target is frozen, this attack deal 50% more damage.",
         "cdesc": "Damage doubles. If your target is frozen, crit increases by 100% instead 30% in addition to 50% more damage.",
         "brief": "An advanced spell that's been perfected over the centuries, designed to maximize its damage against frozen foes."
     },
@@ -878,7 +878,7 @@
         "name": "Reckless Assault",
         "cost": 7,
         "rarity": "E",
-        "idmg": 14,
+        "inverse_damage": 14,
         "eff": {
             "self": {
                 "berserk": 4,
@@ -1058,10 +1058,10 @@
         "crit": 0,
         "attacks": 1,
         "damage": 30,
-        "cdmg": 60,
+        "cdamage": 60,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target",
+        "desc": "Deals ${damage} damage to your target",
         "cdesc": "Damage doubles.",
         "brief": "You approached, they screamed. You waved, they died."
     },
@@ -1095,11 +1095,11 @@
                 "seriate": 4
             }
         },
-        "dmg": 5,
-        "cdmg": 10,
+        "damage": 5,
+        "cdamage": 10,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target and applies 2 Seriate effects to yourself",
+        "desc": "Deals ${damage} damage to your target and applies 2 Seriate effects to yourself",
         "cdesc": "Damage doubles and apply 4 Seriate effects instead 2.",
         "brief": "A preparation spell to initiate a frenzy killing mode. On use, the user obtains the ability to get stronger for every regular move being used. Can become very deadly."
     },
@@ -1112,7 +1112,7 @@
         "eff_app": {
             "target": {
                 "curse": {
-                    "dmg": 5,
+                    "damage": 5,
                     "cap": 15,
                     "clear": true
                 }
@@ -1121,7 +1121,7 @@
         "ceff_app": {
             "target": {
                 "burn": {
-                    "dmg": 5,
+                    "damage": 5,
                     "cap": 25,
                     "clear": false
                 }
@@ -1129,8 +1129,8 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "You gain ${eff_app} health for every curse effect your target has (max 15), and this also removes up to 15 curse effects from your target",
-        "cdesc": "Maximum curse effects applicable increases to 25.",
+        "desc": "You gain ${eff_app} health for every Curse effect your target has (max 15), and this also removes up to 15 Curse effects from your target",
+        "cdesc": "Maximum Curse effects applicable increases to 25.",
         "brief": "A reworked Execration, healing the caster based on their enemy's curses instead of dealing amplified damage."
     },
     "incapacitate": {
@@ -1139,8 +1139,8 @@
         "rarity": "C",
         "crit": 15,
         "attacks": 1,
-        "dmg": 4,
-        "cdmg": 8,
+        "damage": 4,
+        "cdamage": 8,
         "eff": {
             "target": {
                 "feeble": 2
@@ -1153,7 +1153,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 2 Feeble effects to your target",
+        "desc": "Deals ${damage} damage and applies 2 Feeble effects to your target",
         "cdesc": "Damage doubles, apply 4 Feeble effects instead 2.",
         "brief": "A sly attack. Commonly used by thieves, this allows them to steal things easily."
     },
@@ -1163,8 +1163,8 @@
         "rarity": "C",
         "crit": 20,
         "attacks": 1,
-        "dmg": 10,
-        "cdmg": 20,
+        "damage": 10,
+        "cdamage": 20,
         "eff": {
             "target": {
                 "feeble": 3
@@ -1177,7 +1177,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 3 Feeble effects to your target",
+        "desc": "Deals ${damage} damage and applies 3 Feeble effects to your target",
         "cdesc": "Damage doubles, apply 6 Feeble effects instead 3.",
         "brief": "An improved version of Incapacitate. Mastered only by truly skilled fighters."
     },
@@ -1187,8 +1187,8 @@
         "rarity": "R",
         "crit": 0,
         "attacks": 1,
-        "dmg": 30,
-        "cdmg": 30,
+        "damage": 30,
+        "cdamage": 30,
         "eff": {
             "target": {
                 "recover": 8
@@ -1201,7 +1201,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 8 Recover effects to your target",
+        "desc": "Deals ${damage} damage and applies 8 Recover effects to your target",
         "cdesc": "Apply 4 Recover effects instead 4.",
         "brief": "A death blow to end the suffering and misery of a poor soul. However, it can heal them if not used carefully."
     },
@@ -1209,8 +1209,8 @@
         "name": "Dragonmaster",
         "cost": 1,
         "rarity": "M",
-        "dmg": 1,
-        "self_dmg": 1,
+        "damage": 1,
+        "self_damage": 1,
         "attacks": 1,
         "eff": {
             "target": {
@@ -1226,7 +1226,7 @@
         "ccrit": 100,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and 1000 burn effects to your target and ${self_damage} damage to yourself",
+        "desc": "Deals ${damage} damage and 1000 Burn effects to your target and ${self_damage} damage to yourself",
         "cdesc": "Next Crit increases to 100%.",
         "brief": "A card that can only be used by the Dragon boss."
     },
@@ -1234,14 +1234,14 @@
         "name": "Ironfire",
         "cost": 1,
         "rarity": "M",
-        "dmg": 1,
-        "self_dmg": 100,
+        "damage": 1,
+        "self_damage": 100,
         "attacks": 1,
         "crit": 0,
         "ccrit": 100,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target and ${self_damage} damage to yourself",
+        "desc": "Deals ${damage} damage to your target and ${self_damage} damage to yourself",
         "cdesc": "Next Crit increases to 100%",
         "brief": "A card that can be only used by the Ironfire boss."
     },
@@ -1262,7 +1262,7 @@
         "crit": 0,
         "on_hand": {
             "attacks": 1,
-            "dmg": 1,
+            "damage": 1,
             "eff": {
                 "self": {
                     "curse": 1
@@ -1271,14 +1271,14 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${on_hand_damage} damage and applies 1 curse effect to yourself for every turn where this is in your hand. Does nothing when used.",
+        "desc": "Deals ${on_hand_damage} damage and applies 1 Curse effect to yourself for every turn where this is in your hand. Does nothing when used.",
         "brief": "A temporary card spawned in a player's cards. Temporary cards can usually only be used once."
     },
     "virus": {
         "name": "Virus",
         "cost": 0,
         "rarity": "NA",
-        "dmg": 0,
+        "damage": 0,
         "attacks": 1,
         "crit": 0,
         "spawn": {
@@ -1319,12 +1319,12 @@
         "cost": 1,
         "rarity": "M",
         "loot": 1,
-        "dmg": 4,
+        "damage": 4,
         "attacks": 1,
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} to your target and steals some golden coins as well.",
+        "desc": "Deals ${damage} to your target and steals some golden coins as well.",
         "brief": "A quick attack used by thieves who steal golden coins from traders or adventurers in the blink of an eye."
     },
     "steal": {
@@ -1332,12 +1332,12 @@
         "cost": 2,
         "rarity": "M",
         "steal": 1,
-        "dmg": 4,
+        "damage": 4,
         "attacks": 1,
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to your target and steals an item from their inventory.",
+        "desc": "Deals ${damage} damage to your target and steals an item from their inventory.",
         "brief": "A sneak attack that can snatch a possession of the target, but the technique is quite hard to master. The life of a thief isn't easy."
     },
     "smash": {
@@ -1354,12 +1354,12 @@
                 "stun": 2
             }
         },
-        "dmg": 15,
+        "damage": 15,
         "attacks": 1,
         "crit": 25,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 2 stun effects to your target.",
+        "desc": "Deals ${damage} damage and applies 2 Stun effects to your target.",
         "brief": "A tremendous blow that deals massive damage. Only the strongest warriors have enough strength to use this attack."
     },
     "battle cry": {
@@ -1383,7 +1383,7 @@
         "crit": 0,
         "priority": 2,
         "cpriority": 2,
-        "desc": "Your target gains ${heal} health and applies 3 recover and bullseye effects to said target.",
+        "desc": "Your target gains ${heal} health and applies 3 Recover and Bullseye effects to said target.",
         "brief": "Nothing can bring back the spirit of a soldier like a good ol' battle cry."
     },
     "enrage": {
@@ -1415,7 +1415,7 @@
         },
         "priority": 2,
         "cpriority": 2,
-        "desc": "Your target gains ${heal} health, applies 4 berserk effects, and spawns a **[M/3] Battle Cry lv: ${level}** into your target's cards.",
+        "desc": "Your target gains ${heal} health, applies 4 Berserk effects, and spawns a **[M/3] Battle Cry lv: ${level}** into your target's cards.",
         "brief": "Absolute rage, incomprehensible emotion. This display of rage can allow monsters to temporarily surpass their physical limits."
     },
     "paranoid": {
@@ -1423,7 +1423,7 @@
         "cost": 2,
         "rarity": "M",
         "attacks": 1,
-        "dmg": 1,
+        "damage": 1,
         "crit": 0,
         "eff": {
             "target": {
@@ -1447,7 +1447,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage and applies 3 chill effects to your target. This also spawns 1 temporary **[NA/1] Haunted lv: ${level}** into your target's cards.",
+        "desc": "Deals ${damage} damage and applies 3 Chill effects to your target. This also spawns 1 temporary **[NA/1] Haunted lv: ${level}** into your target's cards.",
         "brief": "People who suffer from paranoia will often hear the steps of the unseen..."
     },
     "demonic ritual": {
@@ -1456,8 +1456,8 @@
         "rarity": "M",
         "crit": 0,
         "attacks": 1,
-        "dmg": 10,
-        "self_dmg": 10,
+        "damage": 10,
+        "self_damage": 10,
         "spawn": {
             "target": {
                 "Dark Resurrection": 1
@@ -1470,7 +1470,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} damage to both your target and yourself and randomly spawns 1 temporary **[NA/0] Dark Resurrection lv: ${level}** into your card stack.",
+        "desc": "Deals ${damage} damage to both your target and yourself and randomly spawns 1 temporary **[NA/0] Dark Resurrection lv: ${level}** into your card stack.",
         "brief": "One of the most evil and dangerous dark magic spells created in the world. However, because this spell is so old and almost impossible to master, even some of the most renowned adventurers don't know about the existence of this magic."
     },
     "devour": {
@@ -1543,7 +1543,7 @@
         "eff_app": {
             "target": {
                 "burn": {
-                    "dmg": 2,
+                    "damage": 2,
                     "cap": 100,
                     "clear": false
                 }
@@ -1552,7 +1552,7 @@
         "ceff_app": {
             "target": {
                 "burn": {
-                    "dmg": 2,
+                    "damage": 2,
                     "cap": 100,
                     "clear": false
                 }
@@ -1562,7 +1562,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${eff_app} x7 damage to your target for every burn effect your target has.",
+        "desc": "Deals ${eff_app} x7 damage to your target for every Burn effect your target has.",
         "brief": "An immensely powerful flame-based attack used only by the Red Wyvern."
     },
     "rapid burst": {
@@ -1571,7 +1571,7 @@
         "rarity": "M",
         "crit": 0,
         "attacks": 7,
-        "dmg": 6,
+        "damage": 6,
         "eff": {
             "target": {
                 "burn": 1
@@ -1584,7 +1584,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${dmg} x7 damage with a 90% chance to apply 1 Burn effect to your target for each hit.",
+        "desc": "Deals ${damage} x7 damage with a 90% chance to apply 1 Burn effect to your target for each hit.",
         "brief": "Miniature fireballs rain down from above. Only Red Wyverns and dragons can use effectively."
     },
     "rejuvenate": {
@@ -1660,7 +1660,6 @@
             "target": { 
                 "eff": [
                     "burn",
-                    "poison",
                     "stun",
                     "chill",
                     "freeze",
@@ -1671,7 +1670,7 @@
             }
         },
         "attacks": 1,
-        "desc": "Your target gains ${heal} health and has all negative effects except poison removed, and applies 5 Recover effects to yourself. This card costs 2 stamina.",
+        "desc": "Your target gains ${heal} health and has all negative effects except Poison removed, and applies 5 Recover effects to yourself. This card costs 2 stamina.",
         "brief": "A natural ability wielded by liches. It heals them at the cost of draining their energy."
     }
 }

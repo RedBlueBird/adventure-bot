@@ -12,7 +12,7 @@ RARITIES = {
 }
 
 
-def fill_args(card: dict, level: int):
+def fill_args(card: dict, level: int, type: str):
     param = [
         "block", "absorb", "heal", "tramp", "damage", "self_damage", "crush",
         "revenge", "lich_revenge", "eff_app", "inverse_damage"
@@ -30,7 +30,7 @@ def fill_args(card: dict, level: int):
         if p == "eff_app" and p in args:
             args[p] = args[p][0]
 
-    return Template(card["description"]).safe_substitute(args)
+    return Template(card[type]).safe_substitute(args)
 
 
 class EntitySearch(commands.Cog):
@@ -55,13 +55,14 @@ class EntitySearch(commands.Cog):
             return
 
         card = u.cards_dict(level, " ".join(name.lower().split("_")))
+
         info_str = [
             f"**Name:** {card['name']}",
             f"**Level:** {level}",
             f"**Rarity:** {RARITIES[card['rarity']]}",
             f"**Energy Cost:** {card['cost']}",
-            f"**Accuracy:** {card['acc']}%",
-            f"**Critical Chance:** {card['crit']}%"
+            f"**Crit:** {card['crit']}%",
+            f"**Priority:** {card['priority']}"
         ]
 
         if card["rarity"] == "M":
@@ -71,7 +72,8 @@ class EntitySearch(commands.Cog):
 
         embed = discord.Embed(title="Card's info:", color=discord.Color.green())
         embed.add_field(name="Description:", value="\n".join(info_str), inline=False)
-        embed.add_field(name="Uses:", value=fill_args(card, level), inline=False)
+        embed.add_field(name="Uses:", value=fill_args(card, level, "desc"), inline=False)
+        embed.add_field(name="On Crit:", value=fill_args(card, level, "cdesc"), inline=False)
         embed.add_field(name="Brief:", value=card["brief"], inline=False)
 
         await ctx.send(embed=embed)
