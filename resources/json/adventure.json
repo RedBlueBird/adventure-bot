@@ -3,7 +3,7 @@
         "main": {
             "start": [
                 {
-                    "description": "You walk towards the Gate of Terror. You feel a chill at the mere sight of it.",
+                    "description": "You walk towards the Gate of Terror. Just looking at it sends a chill down your spine.",
                     "choices": {
                         "Adventure Forward": {
                             "section": "main",
@@ -21,7 +21,7 @@
             ],
             "boss": [
                 {
-                    "description": "You notice a large shadow sweep across the ground as a figure flies through the sky. In a flash, the wind unleashes its power as a monstrous claw hits the ground. The creature waves its strong wings while arcing its head back to let out a roar. The Red Wyvern shoots a burst of flame, ready to turn you to ash with its legendary power.",
+                    "description": "You notice a large shadow sweep across the ground. As soon as you notice it, a monstrous limb hits the ground. As the creature lets out a deafeaning roar, you realize that it is a Red Wyvern. You remember hearing about this legendary creature at the bar, but seeing it for the first time is something magical. Maybe you should take a selfie?",
                     "encounters": {
                         "Red Wyvern": [
                             1
@@ -67,7 +67,7 @@
             ],
             "end": [
                 {
-                    "description": "At last! You have conquered your adversary! However, there will be more terrors to come.",
+                    "description": "Congratulations on defeating such a powerful enemy! The amount of bragging rights you now have is nigh-endless.",
                     "spawns": [
                         {
                             "lb": 0,
@@ -83,7 +83,7 @@
         "main": {
             "start": [
                 {
-                    "description": "What to do next?",
+                    "description": "What do you want to do?",
                     "choices": {
                         "Adventure Forward": {
                             "section": "main",
@@ -297,7 +297,7 @@
                     ]
                 },
                 {
-                    "description": "A pack of goblins spots you from their campfire. You have a feeling that you're going to become dinner if you don't fight.",
+                    "description": "A pack of goblins spots you from their campfire. You feel you're going to become dinner if you don't fight.",
                     "encounters": {
                         "Goblin": [
                             1
@@ -341,7 +341,7 @@
                     ]
                 },
                 {
-                    "description": "Armed goblin soldiers drop down from ropes and you find yourself completely surrounded!",
+                    "description": "You notice the trees around you are speaking goblinese. Suddenly, a group of goblin soldiers drops down and surrounds you completely!",
                     "encounters": {
                         "Goblin Chief": [
                             1
@@ -372,7 +372,7 @@
                     ]
                 },
                 {
-                    "description": "Living slimes ooze out of a nearby puddle!",
+                    "description": "Slimes ooze out of a nearby puddle!",
                     "encounters": {
                         "Slime": [
                             1,
@@ -441,7 +441,7 @@
                     ]
                 },
                 {
-                    "description": "Oh no! You realize you've crossed into an Ogre's territory...",
+                    "description": "Oh no! You realize you've crossed into an ogre's territory...",
                     "encounters": {
                         "Ogre Gladiator": [
                             1,
@@ -505,7 +505,7 @@
                     ]
                 },
                 {
-                    "description": "You see some strange looking leaves. No, upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
+                    "description": "You see some strange leaves. Upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
                     "choices": {
                         "Pick up the herb": {
                             "section": "main",
@@ -533,7 +533,7 @@
                     ]
                 },
                 {
-                    "description": "You see some red fruits hanging on a tree. These fruits can come in handy, able to replenish your energy when you are in need of it",
+                    "description": "You see some red fruits hanging on a tree. These useful fruits can replenish your energy when you're running low on health.",
                     "choices": {
                         "Collect some forest fruits": {
                             "section": "main",
@@ -568,7 +568,7 @@
                 {
                     "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
                     "choices": {
-                        "Cut down a few trees for wood": {
+                        "Do a little deforestation": {
                             "section": "main",
                             "subsec": "start",
                             "action": "item"
@@ -604,7 +604,7 @@
                     ]
                 },
                 {
-                    "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
+                    "description": "You found some durable rocks. Though more durable than wood, they're also a bit heavier.",
                     "choices": {
                         "Mine some stones": {
                             "section": "main",
@@ -637,9 +637,9 @@
                     ]
                 },
                 {
-                    "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
+                    "description": "Out of the corner of your eye, you see some iron ore deep in ravine. Iron is much better than either wood or stone- that is, if you manage to smelt it.",
                     "choices": {
-                        "Mine some iron ores": {
+                        "Mine some ore": {
                             "section": "main",
                             "subsec": "start",
                             "action": "item"
@@ -696,7 +696,7 @@
             ],
             "trap": [
                 {
-                    "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
+                    "description": "You hear the pluck of a bowstring from behind. As you turn around, you see an arrow flying at you!",
                     "damage": [
                         5,
                         10
@@ -726,7 +726,7 @@
                     ]
                 },
                 {
-                    "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
+                    "description": "As you walk, you notice traps hidden in the dirt. Can you avoid stepping on them?",
                     "damage": [
                         10,
                         15

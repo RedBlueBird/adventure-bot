@@ -10,7 +10,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles.",
-        "brief": "A basic attack any swordsman can use."
+        "brief": "Stabby stab stab."
     },
     "shield": {
         "name": "Shield",
@@ -23,7 +23,7 @@
         "cpriority": 2,
         "desc": "Blocks ${block} of each incoming damage for your target",
         "cdesc": "Block doubles.",
-        "brief": "A basic defensive skill everyone should learn to protect themselves. Although, it's rather ineffective against piercing damage"
+        "brief": "Blocky block block? Regardless, this won't work against piercing damage."
     },
     "zap": {
         "name": "Zap",
@@ -46,7 +46,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} damage and applies 2 Stun effects to your target",
         "cdesc": "Priority increases to 2.",
-        "brief": "A simple electric spell that every magician must master to be taken seriously."
+        "brief": "One of the most basic spells. If you can't even do this, you should go back to spell school or something."
     },
     "absorb": {
         "name": "Absorb",
@@ -59,7 +59,7 @@
         "cpriority": 2,
         "desc": "Your target absorbs ${absorb} damage.",
         "cdesc": "Absorbtion doubles.",
-        "brief": "A more advanced defensive technique that can protect and heal you as well."
+        "brief": "Somehow this turns damage into healing. No one knows how it works, but who really cares?"
     },
     "explode": {
         "name": "Explode",
@@ -74,7 +74,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target and ${self_damage} damage to yourself",
         "cdesc": "Both damage doubles",
-        "brief": "This volatile spell does lots of damage... to everyone. Not even the user is guaranteed safety."
+        "brief": "Megumin's favorite spell."
     },
     "heal": {
         "name": "Heal",
@@ -87,7 +87,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health.",
         "cdesc": "Heal doubles",
-        "brief": "A simple skill magicians should learn to heal injuries."
+        "brief": "There's no hospitals here. This is the closest you'll get to free healthcare."
     },
     "sacrifice": {
         "name": "Sacrifice",
@@ -112,7 +112,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target and yourself. Also applies 4 Curse effects to your target",
         "cdesc": "Applies 2 additional Curse effects to your target",
-        "brief": "A volatile spell capable of dealing massive amounts of damage to your target, but it can also harm yourself as well."
+        "brief": "This curse sacrifices a bit of your vitality for some damage. Be careful not to kill yourself, though. That would be *so* embarassing (and deadly)."
     },
     "flashy fireworks": {
         "name": "Flashy Fireworks",
@@ -137,7 +137,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x5 damage to your target, applying 1 Burn effect for each hit",
         "cdesc": "Damage triples.",
-        "brief": "Happy New Year! Shoot off a burst of fireworks, dealing repeated damage to your target."
+        "brief": "Give your target a taste of the New Year experienece with these AdventureWorks:tm:!"
     },
     "multi punches": {
         "name": "Multi Punches",
@@ -152,7 +152,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x3 damage to your target.",
         "cdesc": "Throw additional x2 more punches.",
-        "brief": "One of the most advanced offensive moves in martial arts, dealing a quick burst of damage to your enemies."
+        "brief": "Some insanely smart martial artist went, \"What if you punched *more than once?*\" And thus this move was born."
     },
     "punch": {
         "name": "Punch",
@@ -166,7 +166,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target. Doesn't use any stamina.",
         "cdesc": "Damage doubles.",
-        "brief": "A very basic attack... But it can still be deadly."
+        "brief": "Throw a hand."
     },
     "strike": {
         "name": "Strike",
@@ -180,7 +180,7 @@
         "cpriority": 3,
         "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles. Priority increases to 3.",
-        "brief": "A single swift strike."
+        "brief": "A swift strike that looks a lot like a Pokemon move."
     },
     "fireball": {
         "name": "Fireball",
@@ -204,7 +204,7 @@
         "cpriority": 1,
         "desc": "Deal ${damage} damage and applies 2 Burn effects to your target",
         "cdesc": "Damage doubles.",
-        "brief": "This hot ball of fire can be used in battle, but most magicians simply use it to cook food and keep themselves warm."
+        "brief": "Many wizards also use this spell for cooking and heat."
     },
     "aid": {
         "name": "Aid",
@@ -228,7 +228,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health along with 4 recover effects.",
         "cdesc": "Heal doubles, and apply 2 additional recover effects.",
-        "brief": "This advanced form of healing can heal even the deepest wounds.",
+        "brief": "The long-awaited sequel to the heal spell, it even gives you some regeneration!",
         "_comment": "but it can't heal the wounds inside your hard. (where are you dad you said you'd get milk and come back)"
     },
     "lightning bolt": {
@@ -252,7 +252,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} damage to your target and applies 3 Stun effects.",
         "cdesc": "Priority increases to 2",
-        "brief": "A much more deadly and advanced form of the simple zap spell, able to heavily damage and stun anyone."
+        "brief": "This spell actually takes a lot more work than stock zap. You have to summon clouds, get all the particles line up and whatnot..."
     },
     "cocktail": {
         "name": "Cocktail",
@@ -282,7 +282,7 @@
         "cpriority": 2,
         "desc": "Deals ${eff_app} damage to your target for every Burn effect they have (max 10x).",
         "cdesc": "Set max Burn effect applicable to 15x.",
-        "brief": "This cocktail is made of highly flammable alcohol.  Some drink... while others throw."
+        "brief": "Unleash your inner anarchist with this highly flammable alcohol."
     },
     "insult": {
         "name": "Insult",
@@ -306,7 +306,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target and applies 2 Curse effects.",
         "cdesc": "Double the damage, double the applied Curse effects",
-        "brief": "Magicians sometimes insult each other to stack up Curse effects on their target."
+        "brief": "***E-MOTIONAL DAMAGE!***"
     },
     "aim": {
         "name": "Aim",
@@ -330,7 +330,7 @@
         "cpriority": 2,
         "desc": "Blocks ${block} damage and applies 3 bullseye effects to your target.",
         "cdesc": "Double the block, apply 2 additional bullseye effects.",
-        "brief": "When things get messy, this will help you calm down and focus on your opponent."
+        "brief": "A simple deep breath can do wonders."
     },
     "execration": {
         "name": "Execration",
@@ -360,7 +360,7 @@
         "cpriority": 1,
         "desc": "Deals ${eff_app} damage to your target for every Curse effect they have (max x15), but then removes up to 15 Curse effects from your target.",
         "cdesc": "Set the max Curse effect applicable to 20x.",
-        "brief": "This is one of the most painful spells a magician can use on an opponent. However, it requires a lot of preparation to use correctly."
+        "brief": "One wizard says they saw their enemey literally get dragged into hell after the wizard cast this spell. They're probably lying, but it's a cool thing to imagine."
     },
     "hellfire": {
         "name": "Hellfire",
@@ -387,7 +387,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x2 damage to your target, There's a 60% chance to apply 1 burn and 1 curse to your target for each hit, and this card will stay on your hand after being used",
         "cdesc": "Double the effects applied.",
-        "brief": "This spell summons fierce blue flames straight from the underworld. They seem to have odd properties... besides their ability to toast the best marshmallows ever."
+        "brief": "Summons blue flames straight from hell that can be used for great s'mores. Surely no one would use this spell for other purposes, right?"
     },
     "revenge": {
         "name": "Revenge",
@@ -425,7 +425,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x4 damage to your target, applying 1 poison effect for each hit.",
         "cdesc": "Damage doubles.",
-        "brief": "Summons 4 murder hornets out of thin air that excel at inflicting continuous pain to their target."
+        "brief": "Ya like jazz?"
     },
     "cursed clover": {
         "name": "Cursed Clover",
@@ -458,7 +458,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x2 damage, applying a burn, curse, poison, and Stun effect to your target while dealing ${self_damage} damage to yourself for each hit that landed",
         "cdesc": "Deal one additional attack.",
-        "brief": "Who said four leaf clovers bring good luck?  This clover is filled with the anger, madness, grief, and misery of hundreds of past generations. Only the most nefarious dare to use this on their opponents."
+        "brief": "The two-leaf clover, evil sibling of the four-leaf clover, excels at inflicting physical and psychological damage to everyone. Geez, who hurt it so bad?"
     },
     "confetti cannon": {
         "name": "Confetti Cannon",
@@ -482,7 +482,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage and spawns 2 temporary **[NA/1] Distraction lv: ${level}** cards into your opponent's cards",
         "cdesc": "Spawn 2 additional **[NA/1] Distraction lv: ${level}** cards.",
-        "brief": "CHEERS! Adventure bot anniversary event exclusive card. Shoot off some confetti, distracting your opponent in the process!"
+        "brief": "How the hell do you manage to pull a cannon out of nowhere?"
     },
     "tsunami wave": {
         "name": "Tsunami Wave",
@@ -496,7 +496,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} damage, removing all Burn effects from all players",
         "cdesc": "Priority increases to 2.",
-        "brief": "Who doesn't love a good, violent bath under the sun?"
+        "brief": "Your clothes getting wet is the last thing you'll be worrying about."
     },
     "butterflies": {
         "name": "Butterflies",
@@ -520,7 +520,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} damage to your target and randomly spawns 1 temporary **[NA/1] Distraction lv: ${level}** into your opponent's cards. Doesn't use any stamina.",
         "cdesc": "Damage doubles, cards spawn doubles.",
-        "brief": "Oh look, butterflies! Their cuteness is precisely what makes them a good distraction during battles!"
+        "brief": "What kind of buffoon would get distracted by some stupid butterf-oh look, that one has like a rainbow pattern! It's so cute!"
     },
     "relic": {
         "name": "Relic",
@@ -537,7 +537,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health and draws 2 more cards. There's a 75% chance that this card will stay on your hand after being used.",
         "cdesc": "Heal doubles, draw 2 additional cards.",
-        "brief": "An ancient relic recovered from the ruins of a sacred temple. Legends say that if a user has it for long enough, it can make their hopes and dreams come true."
+        "brief": "I play RELIC! It allows me to draw TWO ADDITIONAL CARDS from my deck!"
     },
     "fury slashes": {
         "name": "Fury Slashes",
@@ -575,7 +575,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles.",
-        "brief": "A basic but reliable attack all swordsman are taught during their."
+        "brief": "It's in the name. You *slash*. What more is there?"
     },
     "ignite": {
         "name": "Ignite",
@@ -599,7 +599,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} damage, applying 1 Burn effect to your target.",
         "cdesc": "Damage doubles, Burn effects applied doubles, priority increases to 2.",
-        "brief": "A basic fire spell magicians often use to start a fireplace"
+        "brief": "This can be done through magic, but most just settle for throwing a match on their target instead."
     },
     "sting": {
         "name": "Sting",
@@ -623,7 +623,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} pierce damage and applies 2 poison effects to your target.",
         "cdesc": "Damage doubles.",
-        "brief": "A small sting containing some poison."
+        "brief": "When you're tired of bees screwing it up, just do the darn thing yourself."
     },
     "snowball": {
         "name": "Snowball",
@@ -647,7 +647,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage and applies 4 chill effects to your target",
         "cdesc": "Damage doubles.",
-        "brief": "What's more fun than throwing giant hardened snowballs at each other during battle? It might slow them down a bit too!"
+        "brief": "Slushballs are just plain dirty. Doesn't mean you can't use them though."
     },
     "trample": {
         "name": "Trample",
@@ -663,7 +663,7 @@
         "cpriority": 1,
         "desc": "Decrease your target's defense by ${tramp} and deals ${damage} damage to your target.",
         "cdesc": "Defense decrease and damage doubles.",
-        "brief": "A powerful attack used to punish those who try to block."
+        "brief": "Your target will think they're safe behind their shield until you pull this move on them."
     },
     "bats swarm": {
         "name": "Bats Swarm",
