@@ -118,8 +118,9 @@ class Card:
         target.inbox[self.card[f"{'c' if is_crit else ''}priority"]].append(self.crit_use if is_crit else self.use)
 
         self.owner.dialogue.append(f"» {self.display_name}")
-        self.get_basics_written(target, is_crit)
-        self.get_effects_written(target, is_crit)
+        for i in range(self.card[f"{'c' if is_crit else ''}attacks"]):
+            self.get_basics_written(target, is_crit)
+            self.get_effects_written(target, is_crit)
 
     def use(self, target: Player, crit: bool = False):
         if self.get_basics_used(target, crit):
