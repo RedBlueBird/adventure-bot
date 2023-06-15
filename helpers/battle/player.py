@@ -15,6 +15,7 @@ class Player:
         self.hp = 100  # u.level_hp(level)
         self.max_hp = 100  # u.level_hp(level)
         self.block = 0
+        self.absorb = 0
         self.stamina = 30
         self.stored_energy = 2
         self.deck = deck

@@ -131,8 +131,11 @@ class BattleData2:
         #endregion
 
         #region updating player status
-        if "stun" in p.effects:
+        for effect in p.effects:
+            p.dialogue.append(f"• {p.effects[effect]}{r.ICON[effect]}")
+        if "stun" in p.effects and p.effects["stun"] > 0:
             p.crit -= 50
+            
         for move in moves:
             if move == "flee":
                 break
@@ -152,10 +155,13 @@ class BattleData2:
             p.dead = True
             p.dialogue = [r.ICON['dead']]
         for effect in p.effects:
-            if effect != "curse":
+            if effect != "curse" and p.effects[effect] > 0:
                 p.effects[effect] -= 1
+            elif p.effects[effect] < 0:
+                p.effects[effect] *= -1
         p.inbox = {1:[],2:[],3:[]}
         p.block = 0
+        p.absorb = 0
         p.crit = 0
         #endregion
 
