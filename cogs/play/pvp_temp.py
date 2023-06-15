@@ -86,7 +86,7 @@ class Pvp2(commands.Cog):
                     level=dm.get_user_level(p.id),
                     user=p,
                     team=t_id,
-                    id_=counter,
+                    id=counter,
                     deck=player_deck
                 )
                 for card in player.deck:

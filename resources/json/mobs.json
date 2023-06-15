@@ -190,7 +190,7 @@
             "Strike",
             "Strike"
         ],
-        "brief": "Lightweight, fast, and evasive, these archer elves often live in the forests hunting animals by themselves."
+        "brief": "Lightweight, fast, and evasive, these archer elves often live in the forests by themselves and hunt animals for food."
     },
     "tree giant": {
         "name": "Tree Giant",
@@ -255,7 +255,7 @@
             "Battle Cry",
             "Battle Cry"
         ],
-        "brief": "These muscular and heavily armored ogre gladiators usually carry a spiky bat as their weapon. Fear their strong attacks!"
+        "brief": "These muscular and heavily armored ogre gladiators usually carry a spiky bat as their weapon. A single strike is usually enough to send a person to the stratosphere!"
     },
     "crystal golem": {
         "name": "Crystal Golem",
