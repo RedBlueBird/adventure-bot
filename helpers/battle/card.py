@@ -3,7 +3,8 @@ from helpers.battle import Player
 from helpers.util import cards_dict_temp, rarity_cost
 
 basic_attributes = [["block","block"],["damage","dmg"], ["absorb","absorb"], ["self_damage", "dmg"],
-                    ["heal", "heal"]]
+                    ["heal", "heal"], ["revenge", "dmg"]]
+effect_attributes = ["eff", "eff_app"]
 
 class Card:
     def __init__(self, level: int, name: str, owner: Player = None):
@@ -42,69 +43,98 @@ class Card:
 
             self.write_attribute(card_attribute=self.card[curr_attribute], icon_attribute=icon_name, target=side_target, crit=crit)
 
+    def use_basics(self, side_target: Player, attribute: str, amount: int):
+        worked = False
+        if attribute == "damage":
+            side_target.hp += min(amount, side_target.absorb)
+            side_target.hp -= max(0, amount - (side_target.block + side_target.absorb))
+            side_target.hp = min(side_target.hp, side_target.max_hp)
+            if amount > side_target.block + side_target.absorb:
+                worked = True
+        if attribute == "block":
+            side_target.block += amount
+            worked = True
+        if attribute == "absorb":
+            side_target.absorb += amount
+            worked = True
+        if attribute == "heal":
+            side_target.hp += max(side_target.hp + amount, side_target.max_hp)
+            worked = True
+        return worked
+            
     def get_basics_used(self, target: Player, crit: bool = False):
         worked = False
+        used_any = False
         for attribute, icon_name in basic_attributes:
-            curr_attribute = attribute
-            curr_attribute = f"{'c' if crit else ''}{curr_attribute}"
+            curr_attribute = f"{'c' if crit else ''}{attribute}"
             if curr_attribute not in self.card:
                 curr_attribute = attribute
             if curr_attribute not in self.card:
                 continue
-            
+            used_any = True
+
             side_target = target 
             if attribute.startswith("self_"):
                 side_target = self.owner
                 attribute = attribute[len("self_"):]
 
-            if attribute == "damage":
-                side_target.hp += min(self.card[curr_attribute], side_target.absorb)
-                side_target.hp -= max(0, self.card[curr_attribute] - (side_target.block + side_target.absorb))
-                side_target.hp = min(side_target.hp, side_target.max_hp)
-                if self.card[curr_attribute] > side_target.block + side_target.absorb:
-                    worked = True
-            if attribute == "block":
-                side_target.block += self.card[curr_attribute]
-                worked = True
-            if attribute == "absorb":
-                side_target.absorb += self.card[curr_attribute]
-                worked = True
-            if attribute == "heal":
-                side_target.hp += max(side_target.hp + self.card[curr_attribute], side_target.max_hp)
-                worked = True
-        return True
+            amount = self.card[curr_attribute]
+            if attribute == "revenge":
+                amount = round(amount * (1 - side_target.hp / side_target.max_hp) ** 2)
+                attribute = "damage"
+
+            worked = self.use_basics(side_target, attribute, amount)
+        return worked or (worked == used_any)
 
     def get_effects_written(self, target: Player, crit: bool = False):
-        eff = f"{'c' if crit else ''}eff"
-        if eff not in self.card:
-            crit = False
-            eff = "eff"
-        if eff not in self.card:
-            return
-        for side in self.card[eff]:
-            for effect in self.card[eff][side]:
-                side_target = target if side == "target" else self.owner
-                if side == "target":
-                    self.write_attribute(self.card[eff][side][effect], effect, side_target, crit)
+        for attribute in effect_attributes:
+            curr_attribute = f"{'c' if crit else ''}{attribute}"
+            if curr_attribute not in self.card:
+                curr_attribute = attribute
+            if curr_attribute not in self.card:
+                continue
+
+            for side in self.card[curr_attribute]:
+                for effect in self.card[curr_attribute][side]:
+                    side_target = target if side == "target" else self.owner
+                    effect_dir = self.card[curr_attribute][side][effect]
+                    
+                    if attribute == "eff":
+                        self.write_attribute(effect_dir, effect, side_target, crit)
+                    if attribute == "eff_app":
+                        effect_count = min(target.effects[effect], effect_dir["cap"])
+                        self.write_attribute(effect_dir["damage"]*effect_count, effect, side_target, crit)
+                        if effect_dir["clear"]:
+                             self.write_attribute(-effect_count, effect, side_target, crit)
 
     def get_effects_used(self, target: Player, crit: bool = False):
-        eff = f"{'c' if crit else ''}eff"
-        if eff not in self.card:
-            crit = False
-            eff = "eff"
-        if eff not in self.card:
-            return
-        for side in self.card[eff]:
-            for effect in self.card[eff][side]:
-                side_target = target if side == "target" else self.owner
-                if effect not in side_target.effects:
-                    side_target.effects[effect] = 0
-                # Effects applied this turn should not decrease by 1 at end of turn cuz they arent used yet
-                # Use negative sign to mark effects that are just applied
-                if side_target.effects[effect] > 0:
-                    side_target.effects[effect] += self.card[eff][side][effect]    
-                else:
-                    side_target.effects[effect] -= self.card[eff][side][effect] 
+        for attribute in effect_attributes:
+            curr_attribute = f"{'c' if crit else ''}{attribute}"
+            if curr_attribute not in self.card:
+                curr_attribute = attribute
+            if curr_attribute not in self.card:
+                continue
+
+            for side in self.card[curr_attribute]:
+                for effect in self.card[curr_attribute][side]:
+                    side_target = target if side == "target" else self.owner
+                    effect_dir = self.card[curr_attribute][side][effect]   
+
+                    if attribute == "eff":
+                        # Effects applied this turn should not decrease by 1 at end of turn cuz they arent used yet
+                        # Use negative sign to mark effects that are just applied
+                        if effect not in side_target.effects:
+                            side_target.effects[effect] = 0
+
+                        if side_target.effects[effect] > 0:
+                            side_target.effects[effect] += effect_dir   
+                        else:
+                            side_target.effects[effect] -= effect_dir
+                    if attribute == "eff_app":
+                        effect_count = min(target.effects[effect], effect_dir["cap"])
+                        self.use_basics(side_target, "damage", effect_dir["damage"]*effect_count)
+                        if effect_dir["clear"]:
+                            side_target.effects[effect] -= effect_count
 
     def write(self, target: Player):
         is_crit = False

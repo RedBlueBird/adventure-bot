@@ -423,7 +423,7 @@
         "ccrit": 100,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${revenge} * (health / max_health) ^ 2 to your target.",
+        "desc": "Deals ${revenge} * (1 - health / max_health) ^ 2 to your target.",
         "cdesc": "Increase crit by 100%",
         "brief": "The perfect counter play when you are running low on health."
     },

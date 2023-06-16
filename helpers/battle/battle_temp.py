@@ -135,6 +135,12 @@ class BattleData2:
             p.dialogue.append(f"• {p.effects[effect]}{r.ICON[effect]}")
         if "stun" in p.effects and p.effects["stun"] > 0:
             p.crit -= 50
+        if "burn" in p.effects and p.effects["burn"] > 0:
+            p.hp = max(0, round(p.max_hp * 0.02))
+        if "recover" in p.effects and p.effects["recover"] > 0:
+            p.hp = min(p.max_hp, round(p.max_hp * 0.02))
+        if "poison" in p.effects and p.effects["poison"] > 0:
+            p.stamina = max(0, p.stamina - 1)
             
         for move in moves:
             if move == "flee":
@@ -142,8 +148,9 @@ class BattleData2:
             target = self.players[int(move[1]) - 1]
             selection = int(move[0]) - 1
             p.deck[selection].write(target=target)
-            p.deck.append(p.deck.pop(selection))
-            p.hand_size -= 1
+            if not "stay" in p.deck[selection].card:
+                p.deck.append(p.deck.pop(selection))
+                p.hand_size -= 1
         p.hand_size = min(6, p.hand_size + 1)
 
         for priority in range(3,0,-1):
