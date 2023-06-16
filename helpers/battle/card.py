@@ -24,7 +24,10 @@ class Card:
     ):
         icon_name = icon_attribute
         if is_icon:
-            icon_name = r.ICON[icon_attribute]
+            if icon_attribute in r.ICON:
+                icon_name = r.ICON[icon_attribute]
+            elif icon_attribute in r.I_CONVERT:
+                icon_name = r.I_CONVERT[icon_attribute]
 
         self.owner.dialogue.append(
             f"• {card_attribute} "
