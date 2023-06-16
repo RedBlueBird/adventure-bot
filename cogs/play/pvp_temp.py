@@ -78,7 +78,7 @@ class Pvp2(commands.Cog):
                 if p not in view.user_team:
                     continue
                 player_deck = [
-                    Card(name=i[1], level=i[2])
+                    Card(name=i[1], lvl=i[2])
                     for i in dm.get_user_deck(p.id, dm.get_user_deck_slot(p.id))
                 ]
                 random.shuffle(player_deck)
