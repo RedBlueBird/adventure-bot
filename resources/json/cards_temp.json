@@ -901,7 +901,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x4 damage to your target. If your target is frozen, this attack deal 50% more damage.",
         "cdesc": "Damage doubles. If your target is frozen, crit increases by 100% instead 30% in addition to 50% more damage.",
-        "brief": "An advanced spell that's been perfected over the centuries, designed to maximize its damage against frozen foes."
+        "brief": "Whoever invented this spell must really hate popsicles."
     },
     "heavy shield": {
         "name": "Heavy Shield",
@@ -916,7 +916,7 @@
         "cpriority": 2,
         "desc": "Block ${block} damage for your target",
         "cdesc": "Block doubles.",
-        "brief": "An enhanced shield that can block almost anything."
+        "brief": "Your normal shield, but better!"
     },
     "reckless assault": {
         "name": "Reckless Assault",
@@ -948,7 +948,7 @@
         "cpriority": 2,
         "desc": "Deals ${inverse_damage} damage to yourself and applies 2 burn, 2 curse, 2 poison, 2 bullseye, and 4 berserk effects to yourself",
         "cdesc": "Berserk and Bullseye effects applied double.",
-        "brief": "Whenever someone uses this reckless spell, the user either really knows what they are doing or they're just extremely stupid."
+        "brief": "You'll be just like Leroy Jenkins after using this."
     },
     "seed": {
         "name": "Seed",
@@ -1099,7 +1099,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health, and this also applies 1 Recover, 2 Bullseye, and 2 Restore effects to said target.",
         "cdesc": "Repeat the ability x2 times instead x1.",
-        "brief": "A legendary clover blessed with legendary healing powers."
+        "brief": "This clover absolutely loathes its two-leafed cousin. Every time a the Thanksgiving Clover Reunion rolls around they argue over the littlest things."
     },
     "terminate": {
         "name": "Terminate",
@@ -1114,7 +1114,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target",
         "cdesc": "Damage doubles.",
-        "brief": "You approached, they screamed. You waved, they died."
+        "brief": "Certified by Arnold Schwarzenegger himself, your enemies won't even know what hit them."
     },
     "crush": {
         "name": "Crush",
