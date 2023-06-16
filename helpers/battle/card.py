@@ -1,10 +1,11 @@
+import random
 from helpers import resources as r
 from helpers.battle import Player
 from helpers.util import cards_dict_temp, rarity_cost
 
 basic_attributes = [["block","block"],["damage","dmg"], ["absorb","absorb"], ["self_damage", "dmg"],
-                    ["heal", "heal"], ["revenge", "dmg"]]
-effect_attributes = ["eff", "eff_app"]
+                    ["heal", "heal"], ["revenge", "dmg"], ["clear_eff_all", ""]]
+effect_attributes = ["eff", "eff_app", "spawn"]
 
 class Card:
     def __init__(self, level: int, name: str, owner: Player = None):
@@ -19,11 +20,15 @@ class Card:
     def write_attribute(
             self,
             card_attribute: str, icon_attribute: str,
-            target: Player, crit: bool = False
+            target: Player, crit: bool = False, is_icon: bool = True
     ):
+        icon_name = icon_attribute
+        if is_icon:
+            icon_name = r.ICON[icon_attribute]
+
         self.owner.dialogue.append(
             f"• {card_attribute} "
-            f"{r.ICON[icon_attribute]}{r.ICON['crit'] if crit else ''}"
+            f"{icon_name}{r.ICON['crit'] if crit else ''}"
             f"» #{target.id} {target.icon}"
         )
 
@@ -41,7 +46,15 @@ class Card:
             if attribute.startswith("self_"):
                 side_target = self.owner
 
-            self.write_attribute(card_attribute=self.card[curr_attribute], icon_attribute=icon_name, target=side_target, crit=crit)
+            amount = self.card[curr_attribute]
+            if attribute == "revenge":
+                amount = round(amount * (1 - side_target.hp / side_target.max_hp) ** 2)
+                attribute = "damage"
+            if attribute == "clear_eff_all":
+                side_target.dialogue.append("• All effects cleared")
+                continue
+
+            self.write_attribute(card_attribute=amount, icon_attribute=icon_name, target=side_target, crit=crit)
 
     def use_basics(self, side_target: Player, attribute: str, amount: int):
         worked = False
@@ -82,6 +95,9 @@ class Card:
             if attribute == "revenge":
                 amount = round(amount * (1 - side_target.hp / side_target.max_hp) ** 2)
                 attribute = "damage"
+            if attribute == "clear_eff_all":
+                for effect in side_target.effects:
+                    side_target.effects[effect] = 0
 
             worked = self.use_basics(side_target, attribute, amount)
         return worked or (worked == used_any)
@@ -106,6 +122,8 @@ class Card:
                         self.write_attribute(effect_dir["damage"]*effect_count, effect, side_target, crit)
                         if effect_dir["clear"]:
                              self.write_attribute(-effect_count, effect, side_target, crit)
+                    if attribute == "spawn":
+                        self.write_attribute(effect_dir[effect], Card(self.level, effect, side_target).display_name, side_target, crit, False)
 
     def get_effects_used(self, target: Player, crit: bool = False):
         for attribute in effect_attributes:
@@ -135,6 +153,8 @@ class Card:
                         self.use_basics(side_target, "damage", effect_dir["damage"]*effect_count)
                         if effect_dir["clear"]:
                             side_target.effects[effect] -= effect_count
+                    if attribute == "spawn":
+                        self.insert(random.randint(side_target.hand_size, len(side_target.deck)), Card(self.level, effect, side_target))
 
     def write(self, target: Player):
         is_crit = False

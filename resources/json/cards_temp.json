@@ -521,7 +521,7 @@
         "clear_eff_all": true,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${damage} damage, removing all Burn effects from all players",
+        "desc": "Deals ${damage} damage, removing all effects from the target player.",
         "cdesc": "Priority increases to 2.",
         "brief": "Your clothes getting wet is the last thing you'll be worrying about."
     },

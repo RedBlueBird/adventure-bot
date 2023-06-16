@@ -149,7 +149,8 @@ class BattleData2:
             selection = int(move[0]) - 1
             p.deck[selection].write(target=target)
             if not "stay" in p.deck[selection].card:
-                p.deck.append(p.deck.pop(selection))
+                if p.deck[selection].card["rarity"] != "NA":
+                    p.deck.append(p.deck.pop(selection))
                 p.hand_size -= 1
         p.hand_size = min(6, p.hand_size + 1)
 
