@@ -12,7 +12,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target.",
         "cdesc": "Damage doubles.",
-        "brief": "Stabby stab stab."
+        "brief": "This is an elaborate attack that involves putting your sword in your target's body."
     },
     "shield": {
         "name": "Shield",
@@ -27,7 +27,7 @@
         "cpriority": 2,
         "desc": "Blocks ${block} of each incoming damage for your target",
         "cdesc": "Block doubles.",
-        "brief": "Blocky block block? Regardless, this won't work against piercing damage."
+        "brief": "Hate dying? Just say No with this shield! Regardless, this won't work against piercing damage."
     },
     "zap": {
         "name": "Zap",
@@ -508,7 +508,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage and spawns 2 temporary **[NA/1] Distraction lv: ${level}** cards into your opponent's cards",
         "cdesc": "Spawn 2 additional **[NA/1] Distraction lv: ${level}** cards.",
-        "brief": "How the hell do you manage to pull a cannon out of nowhere?"
+        "brief": "How the hell do you manage to get a cannon out here?"
     },
     "tsunami wave": {
         "name": "Tsunami Wave",
@@ -566,7 +566,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health and draws 2 more cards. There's a 75% chance that this card will stay on your hand after being used.",
         "cdesc": "Heal doubles, draw 2 additional cards.",
-        "brief": "I play RELIC! It allows me to draw TWO ADDITIONAL CARDS from my deck!"
+        "brief": "I play **RELIC**! It allows me to draw **TWO ADDITIONAL CARDS** from my deck!"
     },
     "fury slashes": {
         "name": "Fury Slashes",
@@ -698,7 +698,7 @@
         "cpriority": 1,
         "desc": "Decrease your target's defense by ${tramp} and deals ${damage} damage to your target.",
         "cdesc": "Defense decrease and damage doubles.",
-        "brief": "Your target will think they're safe behind their shield until you pull this move on them."
+        "brief": "Your target will think they're safe behind their shield, but little do they know about this move."
     },
     "bats swarm": {
         "name": "Bats Swarm",
@@ -743,7 +743,7 @@
         "cpriority": 1,
         "desc": "Deals ${on_hand_self_damage} damage to yourself for each turn this is in your hand. Deals ${damage} x5 damage to your target when used.",
         "cdesc": "Increase crit by 100%.",
-        "brief": "A reworked version of Explode which is easier to cast and deals more damage at the cost of being much more difficult to maintain."
+        "brief": "Literally just a bomb with spikes on it. Who thought this was a good idea?"
     },
     "pandemic": {
         "name": "Pandemic",
@@ -784,7 +784,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage and applies 4 poison effects to your target, also spawning 4 temporary **[NA/0] Virus lv: ${level}** into both your target's cards and your cards.",
         "cdesc": "Double damage.",
-        "brief": "A highly contagious plague created by dark forces beyond comprehension. A precarious magic, it's nearly impossible to counter, and it affects everyone including the caster within mere seconds of its release."
+        "brief": "COVID-19."
     },
     "ice spike": {
         "name": "Ice Spike",
@@ -809,7 +809,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} piercing damage and applies 3 chill effects to your target.",
         "cdesc": "Damage doubles.",
-        "brief": "A long sharp lance made of hardened ice. Simply touching the tip can pierce your skin and freeze your blood."
+        "brief": "Just being near this darn thing will give you frostbite: don't even *think* about licking it."
     },
     "quick shot": {
         "name": "Quick Shot",
@@ -834,7 +834,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} damage and applies 1 bullseye effect to yourself",
         "cdesc": "Damage doubles.",
-        "brief": "A quick, cheap shot at your opponents."
+        "brief": "Who needs a bow when you can just throw the arrow yourself?"
     },
     "skeletal slay": {
         "name": "Skeletal Slay",
@@ -861,7 +861,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x3 damage, applying 1 Curse effect per landed hit.",
         "cdesc": "All damage doubles and becomes pierced.",
-        "brief": "Swinging this cursed spike made from the spine of an ancient dragon grants the owner unstoppable evil power."
+        "brief": "This cursed sword made from the bones of the damned can cut through the toughest of enemies. It's also great for cooking."
     },
     "meditate": {
         "name": "Meditate",
@@ -878,7 +878,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health, and you draw 2 cards when used",
         "cdesc": "Heal doubles, and draw 3 cards instead 2.",
-        "brief": "Meditate... Relax your body, forget about stress, and concentrate."
+        "brief": "Your enemies can't attack you while your meditating. It's the law."
     },
     "ice breaker": {
         "name": "Ice Breaker",
