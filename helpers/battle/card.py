@@ -4,7 +4,7 @@ from helpers.battle import Player
 from helpers.util import cards_dict_temp, rarity_cost
 
 basic_attributes = [["block","block"],["damage","dmg"], ["absorb","absorb"], ["self_damage", "dmg"],
-                    ["heal", "heal"], ["revenge", "dmg"], ["clear_eff_all", ""]]
+                    ["heal", "heal"], ["revenge", "dmg"], ["clear_eff_all", ""], ["draw", "book"]]
 effect_attributes = ["eff", "eff_app", "spawn"]
 
 class Card:
@@ -73,6 +73,8 @@ class Card:
         if attribute == "heal":
             side_target.hp += max(side_target.hp + amount, side_target.max_hp)
             worked = True
+        if attribute == "draw":
+            side_target.hand_size = min(6, side_target.hand_size + amount)
         return worked
             
     def get_basics_used(self, target: Player, crit: bool = False):
@@ -168,6 +170,9 @@ class Card:
         target.inbox[self.card[f"{'c' if is_crit else ''}priority"]].append(self.crit_use if is_crit else self.use)
 
         self.owner.dialogue.append(f"» {self.display_name}")
+        if "berserk" in self.owner.effects and self.owner.effects["berserk"] > 0:
+            self.owner.crit += 25
+            self.write_attribute("25%", "Crit", self.owner, False, False)
         for i in range(self.card[f"{'c' if is_crit else ''}attacks"]):
             self.get_basics_written(target, is_crit)
             self.get_effects_written(target, is_crit)

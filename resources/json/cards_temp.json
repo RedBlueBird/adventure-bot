@@ -564,7 +564,7 @@
         "cdraw": 4,
         "priority": 2,
         "cpriority": 2,
-        "desc": "Your target gains ${heal} health and draws 2 more cards. There's a 75% chance that this card will stay on your hand after being used.",
+        "desc": "Your target gains ${heal} health and draws 2 more cards. This card will stay on your hand after being used.",
         "cdesc": "Heal doubles, draw 2 additional cards.",
         "brief": "I play **RELIC**! It allows me to draw **TWO ADDITIONAL CARDS** from my deck!"
     },
