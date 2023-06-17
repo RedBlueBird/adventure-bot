@@ -1,7 +1,7 @@
 import random
 from helpers import resources as r
 from helpers.battle import Player
-from helpers.util import cards_dict_temp, rarity_cost
+from helpers.util import cards_dict, rarity_cost
 
 BASIC_ATTRS = [
     ["block","block"],
@@ -21,7 +21,7 @@ class Card:
         self.owner = owner
         self.lvl = lvl
         self.display_name = f"**[{rarity_cost(name)}] {name}** lv: {lvl}"
-        self.card = cards_dict_temp(lvl, name)
+        self.card = cards_dict(lvl, name)
 
     def get_energy_cost(self):
         return self.card["cost"]
@@ -205,6 +205,8 @@ class Card:
         for i in range(self.card[f"{'c' if is_crit else ''}attacks"]):
             self.get_basics_written(target, is_crit)
             self.get_effects_written(target, is_crit)
+
+        print(self.owner.level)
 
     def use(self, target: Player, crit: bool = False):
         for i in range(self.card[f"{'c' if crit else ''}attacks"]):

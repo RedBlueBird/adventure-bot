@@ -380,7 +380,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${eff_app} damage to your target for every Curse effect they have (max x15), but then removes up to 15 Curse effects from your target.",
+        "desc": "Deals ${eff_app_target_burn_damage} damage to your target for every Curse effect they have (max x15), but then removes up to 15 Curse effects from your target.",
         "cdesc": "Set the max Curse effect applicable to 20x.",
         "brief": "One wizard says they saw their enemey literally get dragged into hell after the wizard cast this spell. They're probably lying, but it's a cool thing to imagine."
     },
@@ -1166,7 +1166,7 @@
         "eff_app": {
             "target": {
                 "curse": {
-                    "damage": 5,
+                    "heal": 5,
                     "cap": 15,
                     "clear": true
                 }
@@ -1175,7 +1175,7 @@
         "ceff_app": {
             "target": {
                 "burn": {
-                    "damage": 5,
+                    "heal": 5,
                     "cap": 25,
                     "clear": false
                 }
@@ -1183,7 +1183,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "You gain ${eff_app} health for every Curse effect your target has (max 15), and this also removes up to 15 Curse effects from your target",
+        "desc": "You gain ${eff_app_target_curse_heal} health for every Curse effect your target has (max 15), and this also removes up to 15 Curse effects from your target",
         "cdesc": "Maximum Curse effects applicable increases to 25.",
         "brief": "A reworked Execration, healing the caster based on their enemy's curses instead of dealing amplified damage."
     },
@@ -1639,7 +1639,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${eff_app} x7 damage to your target for every Burn effect your target has.",
+        "desc": "Deals ${eff_app_target_burn_damage} x7 damage to your target for every Burn effect your target has.",
         "brief": "An immensely powerful flame-based attack used only by the Red Wyvern."
     },
     "rapid burst": {
@@ -1662,7 +1662,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${damage} x7 damage with a 90% chance to apply 1 Burn effect to your target for each hit.",
+        "desc": "Deals ${damage} x7 damage and apply 1 Burn effect to your target for each hit.",
         "brief": "Miniature fireballs rain down from above. Only Red Wyverns and dragons can use effectively."
     },
     "rejuvenate": {

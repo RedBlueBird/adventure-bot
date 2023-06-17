@@ -14,8 +14,8 @@ RARITIES = {
 
 def fill_args(card: dict, level: int, type: str):
     param = [
-        "block", "absorb", "heal", "tramp", "damage", "self_damage", "crush",
-        "revenge", "lich_revenge", "eff_app", "inverse_damage"
+        "block", "absorb", "heal", "tramp", "damage", "self_damage", "pierce_damage", "crush",
+        "revenge", "lich_revenge", "inverse_damage"
     ]
 
     on_hand = card.get("on_hand", {})
@@ -27,8 +27,21 @@ def fill_args(card: dict, level: int, type: str):
         if p in on_hand:
             args[f"on_hand_{p}"] = on_hand[p]
 
-        if p == "eff_app" and p in args:
-            args[p] = args[p][0]
+        # c_attr = "_".split(i[len("eff_app"):])
+        # card[i][c_attr[0]][c_attr[1]][c_attr[2]] = round(card[i][c_attr[0]][c_attr[1]][c_attr[2]] * lvl)
+        if "eff_app" in card:
+            curr_dir = ["eff_app"]
+            for side in card["eff_app"]:
+                curr_dir.append(side)
+                for effect in card["eff_app"][side]:
+                    curr_dir.append(effect)
+                    for attr in card["eff_app"][side][effect]:
+                        curr_dir.append(attr)
+                        if attr in param:
+                            args["_".join(curr_dir)] = card["eff_app"][side][effect][attr]
+                        del curr_dir[-1]
+                    del curr_dir[-1]
+                del curr_dir[-1]
 
     return Template(card[type]).safe_substitute(args)
 
