@@ -98,7 +98,7 @@
         "priority": 2,
         "cpriority": 2,
         "desc": "Your target gains ${heal} health.",
-        "cdesc": "Heal doubles",
+        "cdesc": "Heal doubles.",
         "brief": "There's no hospitals here. This is the closest you'll get to free healthcare."
     },
     "sacrifice": {
@@ -299,7 +299,7 @@
         "crit": 0,
         "priority": 1,
         "cpriority": 2,
-        "desc": "Deals ${eff_app} damage to your target for every Burn effect they have (max 10x).",
+        "desc": "Deals ${eff_app_target_burn_damage} damage to your target for every Burn effect they have (max 10x).",
         "cdesc": "Set max Burn effect applicable to 15x.",
         "brief": "Unleash your inner anarchist with this highly flammable alcohol."
     },

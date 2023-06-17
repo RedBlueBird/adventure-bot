@@ -29,7 +29,7 @@ class Card:
     def write_attr(
             self,
             card_attr: str, icon_attr: str,
-            target: Player, crit: bool = False, is_icon: bool = True
+            target: Player, crit: bool = False, is_icon: bool = True, is_dotted = False
     ):
         icon_name = icon_attr
         if is_icon:
@@ -39,12 +39,14 @@ class Card:
                 icon_name = r.I_CONVERT[icon_attr]
 
         self.owner.dialogue.append(
-            f"• {card_attr} "
+            f"{'•' if is_dotted else '‎ ‎ '} {card_attr} "
             f"{icon_name}{r.ICON['crit'] if crit else ''}"
-            f"» #{target.id} {target.icon}"
+            f"» #{target.id}{target.icon}"
         )
 
     def get_basics_written(self, target: Player, crit: bool = False):
+        used_any = False
+        is_dotted = False
         for attr, icon_name in BASIC_ATTRS:
             # If cdamage field doesn't exist in the cards json, use damage field instead cdamage even if crit = true
             curr_attr = attr
@@ -53,6 +55,10 @@ class Card:
                 curr_attr = attr
             if curr_attr not in self.card:
                 continue
+            is_dotted = False
+            if used_any == False:
+                used_any = True
+                is_dotted = True
 
             side_target = target
             if attr.startswith("self_"):
@@ -66,7 +72,7 @@ class Card:
                 side_target.dialogue.append("• All effects cleared")
                 continue
 
-            self.write_attr(card_attr=amt, icon_attr=icon_name, target=side_target, crit=crit)
+            self.write_attr(card_attr=amt, icon_attr=icon_name, target=side_target, crit=crit, is_dotted=is_dotted)
 
     def use_basics(self, side_target: Player, attr: str, amt: int):
         worked = False
@@ -86,7 +92,7 @@ class Card:
             worked = True
         
         if attr == "heal":
-            side_target.hp += max(side_target.hp + amt, side_target.max_hp)
+            side_target.hp = min(side_target.hp + amt, side_target.max_hp)
             worked = True
         
         if attr == "draw":
@@ -201,8 +207,9 @@ class Card:
             self.get_effects_written(target, is_crit)
 
     def use(self, target: Player, crit: bool = False):
-        if self.get_basics_used(target, crit):
-            self.get_effects_used(target, crit)
+        for i in range(self.card[f"{'c' if crit else ''}attacks"]):
+            if self.get_basics_used(target, crit):
+                self.get_effects_used(target, crit)
 
     def crit_use(self, target: Player, crit: bool = True):
         self.use(target, crit)

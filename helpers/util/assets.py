@@ -19,11 +19,18 @@ def cards_dict(lvl: str | int, name: str):
         }
 
     card = copy.deepcopy(CARDS[name.lower()])
+    basics = ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]
     for i in card:
-        if i in ["block", "absorb", "heal", "tramp", "damage", "self_damage", "crush", "revenge", "lich_revenge"]:
+        if i in basics:
             card[i] = round(card[i] * lvl)
-        elif i == "eff_app":
-            card[i][0] = round(card[i][0] * lvl)
+        elif i.startswith("eff_app"):
+            for side in card[i]:
+                for effect in card[i][side]:
+                    for attr in card[i][side][effect]:
+                        if attr in basics:
+                            card[i][side][effect][attr] = round( card[i][side][effect][attr] * lvl)
+            # c_attr = "_".split(i[len("eff_app"):])
+            # card[i][c_attr[0]][c_attr[1]][c_attr[2]] = round(card[i][c_attr[0]][c_attr[1]][c_attr[2]] * lvl)
         elif i == "inverse_damage":
             card[i] = round(card[i] * inverse_level)
         elif i == "on_hand":

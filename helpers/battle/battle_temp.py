@@ -132,13 +132,15 @@ class BattleData2:
 
         #region updating player status
         for effect in p.effects:
-            p.dialogue.append(f"• {p.effects[effect]}{r.ICON[effect]}")
+            if p.effects[effect] <= 0:
+                continue
+            p.dialogue.append(f"• {p.effects[effect]}{r.I_CONVERT[effect]}")
         if "stun" in p.effects and p.effects["stun"] > 0:
             p.crit -= 50
         if "burn" in p.effects and p.effects["burn"] > 0:
-            p.hp = max(0, round(p.max_hp * 0.02))
+            p.hp = max(0, round(p.hp - p.max_hp * 0.04))
         if "recover" in p.effects and p.effects["recover"] > 0:
-            p.hp = min(p.max_hp, round(p.max_hp * 0.02))
+            p.hp = min(p.max_hp, round(p.max_hp * 0.04))
         if "poison" in p.effects and p.effects["poison"] > 0:
             p.stamina = max(0, p.stamina - 1)
             
@@ -150,8 +152,13 @@ class BattleData2:
             p.deck[selection].write(target=target)
             if not "stay" in p.deck[selection].card:
                 if p.deck[selection].card["rarity"] != "NA":
-                    p.deck.append(p.deck.pop(selection))
-                p.hand_size -= 1
+                    p.deck.append(p.deck[selection])
+        p.hand_size -= len(moves)
+        moves.sort()
+        for i in range(len(moves)-1, -1, -1):
+            if move == "flee":
+                break
+            p.deck.pop(int(moves[i][0])-1)
         p.hand_size = min(6, p.hand_size + 1)
 
         for priority in range(3,0,-1):

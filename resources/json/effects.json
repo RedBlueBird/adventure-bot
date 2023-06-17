@@ -1,7 +1,7 @@
 {
     "burn": {
         "name": "Burn",
-        "description": "Blockable. Decreases by 1 every turn. \nThe user loses 2% of their health for each turn this is active. \nNullified out by chill effects."
+        "description": "Blockable. Decreases by 1 every turn. \nThe user loses 4% of their health for each turn this is active. \nNullified out by chill effects."
     },
     "stun": {
         "name": "Stun",
@@ -13,7 +13,7 @@
     },
     "recover": {
         "name": "Recover",
-        "description": "Blockable. Decreases by 1 every turn. \nThe user gains 2% of their max health per turn."
+        "description": "Blockable. Decreases by 1 every turn. \nThe user gains 4% of their max health per turn."
     },
     "curse": {
         "name": "Curse",
