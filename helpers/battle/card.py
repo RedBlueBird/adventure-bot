@@ -177,7 +177,7 @@ class Card:
                             side_target.effects[effect] -= effect_dir
                     
                     if attr == "eff_app":
-                        effect_count = min(target.effects[effect], effect_dir["cap"])
+                        effect_count = max(0, min(target.effects[effect], effect_dir["cap"]))
                         self.use_basics(side_target, "damage", effect_dir["damage"]*effect_count)
                         if effect_dir["clear"]:
                             side_target.effects[effect] -= effect_count

@@ -153,6 +153,7 @@ class BattleData2:
             if not "stay" in p.deck[selection].card:
                 if p.deck[selection].card["rarity"] != "NA":
                     p.deck.append(p.deck[selection])
+        p.stored_energy -= energy_cost
         p.hand_size -= len(moves)
         moves.sort()
         for i in range(len(moves)-1, -1, -1):
@@ -160,6 +161,7 @@ class BattleData2:
                 break
             p.deck.pop(int(moves[i][0])-1)
         p.hand_size = min(6, p.hand_size + 1)
+        print(" \n".join(p.dialogue))
 
         for priority in range(3,0,-1):
             for use_card in p.inbox[priority]:
