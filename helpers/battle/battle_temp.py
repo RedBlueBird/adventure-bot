@@ -159,7 +159,7 @@ class BattleData2:
         for i in range(len(moves)-1, -1, -1):
             if moves[0] == "flee":
                 break
-            if "stay" in p.deck[int(move[i][0])-1].card:
+            if "stay" in p.deck[int(moves[i][0])-1].card:
                 p.hand_size += 1
                 continue
             p.deck.pop(int(moves[i][0])-1)
