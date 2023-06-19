@@ -150,13 +150,14 @@ class BattleData2:
             target = self.players[int(move[1]) - 1]
             selection = int(move[0]) - 1
             p.deck[selection].write(target=target)
-            if p.deck[selection].card["rarity"] != "NA":
+            if not "stay" in p.deck[selection].card:
+                if p.deck[selection].card["rarity"] != "NA":
                     p.deck.append(p.deck[selection])
         p.stored_energy -= energy_cost
         p.hand_size -= len(moves)
         moves.sort()
         for i in range(len(moves)-1, -1, -1):
-            if move == "flee":
+            if moves[0] == "flee":
                 break
             if "stay" in p.deck[int(move[i][0])-1].card:
                 p.hand_size += 1
