@@ -155,16 +155,14 @@ class BattleData2:
         p.stored_energy -= energy_cost
         p.hand_size -= len(moves)
         moves.sort()
-        print([x.display_name for x in p.deck])
         for i in range(len(moves)-1, -1, -1):
             if move == "flee":
                 break
-            if "stay" in p.deck[i].card:
+            if "stay" in p.deck[int(move[i][0])-1].card:
                 p.hand_size += 1
                 continue
             p.deck.pop(int(moves[i][0])-1)
         p.hand_size = min(6, p.hand_size + 1)
-        print([x.display_name for x in p.deck])
         print(" \n".join(p.dialogue))
 
         for priority in range(3,0,-1):

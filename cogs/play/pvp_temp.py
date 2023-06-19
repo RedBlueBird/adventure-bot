@@ -86,7 +86,7 @@ class Pvp2(commands.Cog):
                 player = Player(
                     level=dm.get_user_level(p.id),
                     hp=100*math.floor(dm.get_user_level(p.id)/2),
-                    max_hp=100*math.floor(dm.get_user_level(p.id)),
+                    max_hp=100*math.floor(dm.get_user_level(p.id)/2),
                     user=p,
                     team=t_id,
                     id=counter,
