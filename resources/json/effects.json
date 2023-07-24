@@ -21,7 +21,7 @@
     },
     "bullseye": {
         "name": "Bullseye",
-        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset to 50% initially."
+        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset to +50% initially."
     },
     "berserk": {
         "name": "Berserk",

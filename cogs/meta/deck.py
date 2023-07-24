@@ -88,6 +88,7 @@ class Deck(commands.Cog):
         a = ctx.author
         slot = dm.get_user_deck_slot(a.id)
         swap = []
+        reverse = False
         for cid in [new, old]:
             name = dm.get_card_name(a.id, cid)
             lvl = dm.get_card_level(a.id, cid)
@@ -96,16 +97,23 @@ class Deck(commands.Cog):
             err = None
             if not name:
                 err = f"You don't have a card #`{cid}`!"
-            elif decks[slot - 1] == 1 and cid == new:
-                err = f"Card #{new} is already in a deck of yours!"
-            elif decks[slot - 1] == 0 and cid == old:
-                err = f"Card #{old} isn't in your deck!"
-            else:
-                swap.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{cid}`")
+            elif cid == new:
+                if decks[slot - 1] == 1:
+                    reverse = True
+            elif cid == old:
+                if decks[slot - 1] == 0 and not reverse:
+                    err = f"Card #{old} isn't in your deck!"
+                elif decks[slot - 1] == 1 and reverse:
+                    err = f"Card #{new} is already in a deck of yours!"
 
             if err is not None:
                 await ctx.reply(err)
                 return
+            else:
+                swap.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{cid}`")
+        if reverse:
+            swap = swap[::-1]
+            new, old = old, new
 
         dm.set_user_card_deck(a.id, slot, 1, new)
         dm.set_user_card_deck(a.id, slot, 0, old)

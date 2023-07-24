@@ -24,6 +24,8 @@ class BattleData2:
         pps = dict(zip(self.team_orders, icons))
         for player in players:
             player.icon = pps[player.id]
+            player.dialogue.append(f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**")
+            player.dialogue.append(f"**{r.ICON['sta']} {player.stamina} {r.ICON['engy']} {player.stored_energy}**")
 
     def set_up(self) -> discord.Embed:
         for player in self.players:
@@ -41,9 +43,11 @@ class BattleData2:
         return player
 
     def show_stats(self) -> discord.Embed:
+        print(self.turn)
+        print("^^^ turn")
         p = self.players[self.turn - 1]
         p.skip = False
-        p.stored_energy = min(12, p.stored_energy + math.ceil(self.round / 1))
+        p.stored_energy = min(12, p.stored_energy + math.ceil(self.round / 2))
 
         turn_msg = ""
         if self.turn > len(self.players):
@@ -53,15 +57,28 @@ class BattleData2:
         embed = discord.Embed(title=None, description=turn_msg)
 
         for player in self.players:
-            player_dialogue = "\n".join(player.dialogue[:])
-            embed.add_field(
-                name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
-                value=f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**\n"
-                      f"**{r.ICON['sta']} {player.stamina} "
-                      f"{r.ICON['engy']} {player.stored_energy}**\n"
-                      f"{player_dialogue}"
-            )
-        embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 1), 12)} energy/round)")
+            print("---0-0-0-")
+            print(player.dialogue)
+            if not player.dead:
+                player.dialogue[0] = f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**"
+                player.dialogue[1] = f"**{r.ICON['sta']} {player.stamina} {r.ICON['engy']} {player.stored_energy}**"
+
+            curr_dialogue = 1
+            player_dialogue = "\n".join(player.dialogue[:curr_dialogue])
+            while curr_dialogue < len(player.dialogue):
+                while len(player_dialogue + "\n" + player.dialogue[curr_dialogue]) <= 1000:
+                    player_dialogue += "\n" + player.dialogue[curr_dialogue]
+                    curr_dialogue += 1
+                    if curr_dialogue == len(player.dialogue):
+                        break
+                embed.add_field(
+                    name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
+                    value=f"{player_dialogue}"
+                )
+                if curr_dialogue < len(player.dialogue):
+                    player_dialogue = ""
+                     
+        embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 2), 12)} energy/round)")
 
         return embed
 
@@ -93,7 +110,7 @@ class BattleData2:
         if p.id != self.turn:
             return f"{p.user.mention} It is currently {self.players[self.turn - 1].user.name}'s turn!"
 
-        p.dialogue = []
+        del p.dialogue[2:]
         error_msg = ""
         moves = dm.get_user_battle_command(p.user.id).split(" ")
         dm.set_user_battle_command(p.user.id, "")
@@ -103,11 +120,11 @@ class BattleData2:
         if moves == [""]:
             moves = []
             p.skip = True
-            p.dialogue = [f"{r.ICON['ski']}{r.ICON['kip']}"]
+            p.dialogue.append(f"{r.ICON['ski']}{r.ICON['kip']}")
         for move in moves:
             if move == "flee":
                 p.flee = True
-                p.dialogue = [f"{r.ICON['fle']}{r.ICON['lee']}"]
+                p.dialogue.append(f"{r.ICON['fle']}{r.ICON['lee']}")
                 break
             if len(move) != 2:
                 error_msg = "Make sure your input is correct!"
@@ -137,6 +154,8 @@ class BattleData2:
             p.dialogue.append(f"• {p.effects[effect]}{r.I_CONVERT[effect]}")
         if "stun" in p.effects and p.effects["stun"] > 0:
             p.crit -= 50
+        if "bullseye" in p.effects and p.effects["bullseye"] > 0:
+            p.crit += 50
         if "burn" in p.effects and p.effects["burn"] > 0:
             p.hp = max(0, round(p.hp - p.max_hp * 0.04))
         if "recover" in p.effects and p.effects["recover"] > 0:
@@ -164,7 +183,6 @@ class BattleData2:
                 continue
             p.deck.pop(int(moves[i][0])-1)
         p.hand_size = min(6, p.hand_size + 1)
-        print(" \n".join(p.dialogue))
 
         for priority in range(3,0,-1):
             for use_card in p.inbox[priority]:
@@ -186,7 +204,7 @@ class BattleData2:
         #endregion
 
         #region cleansing dead players from the board
-        while self.turn >= len(self.players) or self.players[self.turn].dead or self.players[self.turn].flee:
+        while not self.game_end and (self.turn >= len(self.players) or self.players[self.turn].dead or self.players[self.turn].flee):
             if self.turn >= len(self.players):
                 if self.game_end:
                     break
@@ -202,4 +220,5 @@ class BattleData2:
             self.turn += 1
         self.turn += 1
         #endregion
+
         return None
