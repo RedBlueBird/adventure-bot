@@ -349,8 +349,8 @@
         "crit": 0,
         "priority": 2,
         "cpriority": 2,
-        "desc": "Blocks ${block} damage and applies 3 bullseye effects to your target.",
-        "cdesc": "Double the block, apply 2 additional bullseye effects.",
+        "desc": "Blocks ${block} damage and applies 3 Bullseye effects to your target.",
+        "cdesc": "Double the block, apply 2 additional Bullseye effects.",
         "brief": "A simple deep breath can do wonders."
     },
     "execration": {
@@ -359,7 +359,7 @@
         "rarity": "E",
         "eff_app": {
             "target": {
-                "burn": {
+                "curse": {
                     "damage": 5,
                     "cap": 15,
                     "clear": true
@@ -368,7 +368,7 @@
         },
         "ceff_app": {
             "target": {
-                "burn": {
+                "curse": {
                     "damage": 5,
                     "cap": 20,
                     "clear": true
@@ -408,7 +408,7 @@
         "stay": true,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${damage} x2 damage to your target, There's a 60% chance to apply 1 burn and 1 curse to your target for each hit, and this card will stay on your hand after being used",
+        "desc": "Deals ${damage} x2 damage to your target, and apply 1 burn and 1 curse to your target for each hit, and this card will stay on your hand after being used",
         "cdesc": "Double the effects applied.",
         "brief": "Summons blue flames straight from hell that can be used for great s'mores. Surely no one would use this spell for other purposes, right?"
     },
@@ -427,8 +427,8 @@
         "cdesc": "Increase crit by 100%",
         "brief": "The perfect counter play when you are running low on health."
     },
-    "bee swarm": {
-        "name": "Bee Swarm",
+    "bees swarm": {
+        "name": "Bees Swarm",
         "cost": 4,
         "rarity": "R",
         "attacks": 4,
@@ -440,7 +440,7 @@
         },
         "ceff": {
             "target": {
-                "poision": 1
+                "poison": 1
             }
         },
         "damage": 3,
@@ -481,7 +481,7 @@
         "cself_damage": 4,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${damage} x2 damage, applying a burn, curse, poison, and Stun effect to your target while dealing ${self_damage} damage to yourself for each hit that landed",
+        "desc": "Deals ${damage} x2 damage, applying a Burn, Curse, Poison, and Stun effect to your target while dealing ${self_damage} damage to yourself for each hit that landed",
         "cdesc": "Deal one additional attack.",
         "brief": "The two-leaf clover, evil sibling of the four-leaf clover, excels at inflicting physical and psychological damage to everyone. Geez, who hurt it so bad?"
     },
@@ -589,7 +589,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${damage} x2 damage to your target, applying 1 berserk effect to yourself per landed hit",
+        "desc": "Deals ${damage} x2 damage to your target, applying 1 Berserk effect to yourself per landed hit",
         "cdesc": "Damage doubles.",
         "brief": "An advanced fighting technique that temporarily strengthens your future attacks."
     },

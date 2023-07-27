@@ -66,7 +66,7 @@ class Card:
 
             amt = self.card[curr_attr]
             if attr == "revenge":
-                amt = round(amt * (1 - side_target.hp / side_target.max_hp) ** 2)
+                amt = round(amt * (1 - self.owner.hp / self.owner.max_hp) ** 2)
                 attr = "damage"
             if attr == "clear_eff_all":
                 side_target.dialogue.append("• All effects cleared")
@@ -118,7 +118,7 @@ class Card:
 
             amt = self.card[curr_attr]
             if attr == "revenge":
-                amt = round(amt * (1 - side_target.hp / side_target.max_hp) ** 2)
+                amt = round(amt * (1 - self.owner.hp / self.owner.max_hp) ** 2)
                 attr = "damage"
             if attr == "clear_eff_all":
                 for effect in side_target.effects:
@@ -144,13 +144,15 @@ class Card:
                         self.write_attr(effect_dir, effect, side_target, crit)
                     
                     if attr == "eff_app":
+                        if not effect in target.effects: 
+                            continue
                         effect_count = min(target.effects[effect], effect_dir["cap"])
                         self.write_attr(effect_dir["damage"]*effect_count, effect, side_target, crit)
                         if effect_dir["clear"]:
                              self.write_attr(-effect_count, effect, side_target, crit)
                     
                     if attr == "spawn":
-                        self.write_attr(effect_dir[effect], Card(self.lvl, effect, side_target).display_name, side_target, crit, False)
+                        self.write_attr(effect_dir, Card(self.lvl, effect, side_target).display_name, side_target, crit, False)
 
     def get_effects_used(self, target: Player, crit: bool = False):
         for attr in EFF_ATTRS:
@@ -177,13 +179,16 @@ class Card:
                             side_target.effects[effect] -= effect_dir
                     
                     if attr == "eff_app":
+                        if not effect in target.effects:
+                            continue
                         effect_count = max(0, min(target.effects[effect], effect_dir["cap"]))
                         self.use_basics(side_target, "damage", effect_dir["damage"]*effect_count)
                         if effect_dir["clear"]:
                             side_target.effects[effect] -= effect_count
 
                     if attr == "spawn":
-                        self.insert(random.randint(side_target.hand_size, len(side_target.deck)), Card(self.lvl, effect, side_target))
+                        for spawn_card in range(effect_dir):
+                            side_target.deck.insert(random.randint(side_target.hand_size, len(side_target.deck)), Card(self.lvl, effect, side_target))
 
     def write(self, target: Player):
         is_crit = False
