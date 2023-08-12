@@ -27,7 +27,7 @@
         "cpriority": 2,
         "desc": "Blocks ${block} of each incoming damage for your target",
         "cdesc": "Block doubles.",
-        "brief": "Hate dying? Just say No with this shield! Regardless, this won't work against piercing damage."
+        "brief": "Hate dying? Just Say No with this shield! Regardless, this won't work against piercing damage."
     },
     "zap": {
         "name": "Zap",
@@ -151,7 +151,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} x5 damage to your target, applying 1 Burn effect for each hit",
         "cdesc": "Damage triples.",
-        "brief": "Give your target a taste of the New Year experienece with these AdventureWorks:tm:!"
+        "brief": "Give your target a taste of the New Year experience with these AdventureWorks:tm:!"
     },
     "multi punches": {
         "name": "Multi Punches",
