@@ -5,7 +5,7 @@
     },
     "stun": {
         "name": "Stun",
-        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset to -50% initially."
+        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset by -50% initially."
     },
     "poison": {
         "name": "Poison",
@@ -21,11 +21,11 @@
     },
     "bullseye": {
         "name": "Bullseye",
-        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset to +50% initially."
+        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset by +50% initially."
     },
     "berserk": {
         "name": "Berserk",
-        "description": "Blockable. Decreases by 1 every turn. \nEach card used will increase the user's Crit by an additional 25%."
+        "description": "Blockable. Decreases by 1 every turn. \nWhile in effect, each card used will increase the user's Crit by an additional 25%."
     },
     "chill": {
         "name": "Chill",
@@ -41,10 +41,10 @@
     },
     "seriate": {
         "name": "Seriate",
-        "description": "Unblockable. Decreases by 1 every turn. \nFor each card the user plays, they gain 1 Seriate effect. Each turn, the user's Crit will be offset by 10% for each Seriate effect they have."
+        "description": "Unblockable. Decreases by 1 every turn. \nEach turn, the user's Crit will be offset by +10% for each Seriate effect they have."
     },
     "feeble": {
         "name": "Feeble",
-        "description": "Blockable. Decreases by 1 every turn. \nEach damage coming directly from opponent's attacks will increase in damage by an additional 1%."
+        "description": "Blockable. Decreases by 1 every turn. \nEach damage coming directly from opponent's attacks after shielded/absorbed will increases by an additional 25%."
     }
 }

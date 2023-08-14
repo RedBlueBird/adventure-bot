@@ -637,8 +637,8 @@
         "name": "Sting",
         "cost": 2,
         "rarity": "C",
-        "pierce_damage": 4,
-        "cpierce_damage": 8,
+        "damage": 4,
+        "cdamage": 8,
         "eff": {
             "target": {
                 "poison": 2
@@ -652,9 +652,9 @@
         "attacks": 1,
         "cattacks": 1, 
         "crit": 0,
-        "priority": 1,
-        "cpriority": 1,
-        "desc": "Deals ${damage} pierce damage and applies 2 poison effects to your target.",
+        "priority": 2,
+        "cpriority": 2,
+        "desc": "Deals ${damage} damage and applies 2 poison effects to your target.",
         "cdesc": "Damage doubles.",
         "brief": "When you're tired of bees screwing it up, just do the darn thing yourself."
     },
@@ -685,7 +685,7 @@
     },
     "trample": {
         "name": "Trample",
-        "cost": 3,
+        "cost": 4,
         "rarity": "E",
         "tramp": 8,
         "ctramp": 16,
@@ -729,10 +729,10 @@
         "name": "Spikes Bomb",
         "cost": 5,
         "rarity": "E",
-        "damage": 5,
-        "cdamage": 5,
-        "attacks": 5,
-        "cattacks": 5, 
+        "damage": 6,
+        "cdamage": 6,
+        "attacks": 4,
+        "cattacks": 4, 
         "crit": 0,
         "ccrit": 100,
         "on_hand": {
@@ -741,7 +741,7 @@
         },
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${on_hand_self_damage} damage to yourself for each turn this is in your hand. Deals ${damage} x5 damage to your target when used.",
+        "desc": "Deals ${on_hand_self_damage} damage to yourself for each turn this is in your hand. Deals ${damage} x4 damage to your target when used.",
         "cdesc": "Increase crit by 100%.",
         "brief": "Literally just a bomb with spikes on it. Who thought this was a good idea?"
     },
@@ -805,9 +805,9 @@
             }
         },
         "crit": 0,
-        "priority": 1,
-        "cpriority": 1,
-        "desc": "Deals ${damage} piercing damage and applies 3 chill effects to your target.",
+        "priority": 2,
+        "cpriority": 2,
+        "desc": "Deals ${damage} damage and applies 3 chill effects to your target.",
         "cdesc": "Damage doubles.",
         "brief": "Just being near this darn thing will give you frostbite: don't even *think* about licking it."
     },
@@ -841,9 +841,7 @@
         "cost": 4,
         "rarity": "EX",
         "damage": 3,
-        "cdamage": 0,
-        "pierce_damage": 0,
-        "cpierce_damage": 6,
+        "cdamage": 6,
         "attacks": 3,
         "cattacks": 3, 
         "eff": {
@@ -858,9 +856,9 @@
         },
         "crit": 50,
         "priority": 1,
-        "cpriority": 1,
+        "cpriority": 2,
         "desc": "Deals ${damage} x3 damage, applying 1 Curse effect per landed hit.",
-        "cdesc": "All damage doubles and becomes pierced.",
+        "cdesc": "All damage doubles and priority increases to 2.",
         "brief": "This cursed sword made from the bones of the damned can cut through the toughest of enemies. It's also great for cooking."
     },
     "meditate": {
@@ -922,7 +920,8 @@
         "name": "Reckless Assault",
         "cost": 7,
         "rarity": "E",
-        "inverse_damage": 14,
+        "damage": 14,
+        "cdamage": 14,
         "eff": {
             "self": {
                 "berserk": 4,
@@ -946,7 +945,7 @@
         "crit": 0,
         "priority": 2,
         "cpriority": 2,
-        "desc": "Deals ${inverse_damage} damage to yourself and applies 2 burn, 2 curse, 2 poison, 2 bullseye, and 4 berserk effects to yourself",
+        "desc": "Deals ${damage} damage to yourself and applies 2 burn, 2 curse, 2 poison, 2 bullseye, and 4 berserk effects to yourself",
         "cdesc": "Berserk and Bullseye effects applied double.",
         "brief": "You'll be just like Leroy Jenkins after using this."
     },
@@ -1118,24 +1117,34 @@
     },
     "crush": {
         "name": "Crush",
-        "cost": 4,
+        "cost": 6,
         "rarity": "E",
         "crit": 100,
         "attacks": 1,
         "cattacks": 1, 
-        "crush": 10,
-        "ccrush": 10,
+        "tramp": 12,
+        "ctramp": 24,
+        "eff": {
+            "target": {
+                "stun": 1
+            }
+        },
+        "ceff": {
+            "target": {
+                "stun": 2
+            }
+        },
         "priority": 1,
-        "cpriority": 2,
-        "desc": "Deals ${crush} damage to your opponent. Immune to target's block but still can be absorbed.",
-        "cdesc": "Priority is increased to 2.",
+        "cpriority": 1,
+        "desc": "Decrease your target's defense by ${tramp}, and apply 1 Stun effect to your target.",
+        "cdesc": "Defense decrease and applied effect doubles.",
         "brief": "A technique designed to counter attack the attack counters."
     },
     "beatdown": {
         "name": "Beatdown",
-        "cost": 3,
+        "cost": 4,
         "rarity": "R",
-        "crit": 0,
+        "crit": 50,
         "attacks": 1,
         "cattacks": 1, 
         "eff": {
@@ -1152,8 +1161,8 @@
         "cdamage": 10,
         "priority": 1,
         "cpriority": 1,
-        "desc": "Deals ${damage} damage to your target and applies 2 Seriate effects to yourself",
-        "cdesc": "Damage doubles and apply 4 Seriate effects instead 2.",
+        "desc": "Deals ${damage} damage to your target and applies 4 Seriate effects to yourself",
+        "cdesc": "Damage doubles and apply 8 Seriate effects instead 4.",
         "brief": "A preparation spell to initiate a frenzy killing mode. On use, the user obtains the ability to get stronger for every regular move being used. Can become very deadly."
     },
     "soul drain": {
@@ -1191,7 +1200,7 @@
         "name": "Incapacitate",
         "cost": 3,
         "rarity": "C",
-        "crit": 15,
+        "crit": 40,
         "attacks": 1,
         "cattacks": 1, 
         "damage": 4,
@@ -1216,7 +1225,7 @@
         "name": "Immobilize",
         "cost": 6,
         "rarity": "C",
-        "crit": 20,
+        "crit": 60,
         "attacks": 1,
         "cattacks": 1, 
         "damage": 10,
@@ -1239,7 +1248,7 @@
     },
     "coup de grace": {
         "name": "Coup De Grace",
-        "cost": 4,
+        "cost": 7,
         "rarity": "R",
         "crit": 0,
         "attacks": 1,
@@ -1248,18 +1257,18 @@
         "cdamage": 30,
         "eff": {
             "target": {
-                "recover": 8
+                "recover": 10
             }
         },
         "ceff": {
             "target": {
-                "recover": 4
+                "recover": 5
             }
         },
         "priority": 1,
         "cpriority": 1,
         "desc": "Deals ${damage} damage and applies 8 Recover effects to your target",
-        "cdesc": "Apply 4 Recover effects instead 4.",
+        "cdesc": "Apply 5 Recover effects instead 10.",
         "brief": "A death blow to end the suffering and misery of a poor soul. However, it can heal them if not used carefully."
     },
     "dragonmaster": {

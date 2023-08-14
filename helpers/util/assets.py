@@ -22,9 +22,8 @@ def cards_dict(lvl: str | int, name: str):
     param = ["block", "absorb", "heal", "tramp", "damage", "self_damage", "pierce_damage", "crush", "revenge", "lich_revenge"]
     for i in card:
         if i in param:
-            print(card[i])
-            print(i)
-            print(lvl)
+            card[i] = round(card[i] * lvl)
+        elif i in ["c"+j for j in param]:
             card[i] = round(card[i] * lvl)
         elif i.startswith("eff_app"):
             for side in card[i]:

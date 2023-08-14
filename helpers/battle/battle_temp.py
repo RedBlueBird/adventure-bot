@@ -142,6 +142,8 @@ class BattleData2:
             error_msg += f" e.g. `{r.PREF}move 12` to play the 1st card in your hand on player #2."
         elif energy_cost > p.stored_energy:
             error_msg = f"You don't have enough energy ({energy_cost} energy) to use those cards!"
+        elif "freeze" in p.effects and p.effects["freeze"] > 0 and len(moves) != 0:
+            error_msg = f"You are frozen, can't place any cards this turn!"
 
         if error_msg != "":
             return f"{p.user.mention} {error_msg}"
@@ -162,7 +164,11 @@ class BattleData2:
             p.hp = min(p.max_hp, round(p.max_hp * 0.04))
         if "poison" in p.effects and p.effects["poison"] > 0:
             p.stamina = max(0, p.stamina - 1)
-            
+        if "restore" in p.effects and p.effects["restore"] > 0:
+            p.stored_energy = max(12, p.stored_energy + 1)
+        if "seriate" in p.effects and p.effects["seriate"] > 0:
+            p.crit += p.effects["seriate"] * 10 
+
         for move in moves:
             if move == "flee":
                 break
@@ -182,6 +188,8 @@ class BattleData2:
                 p.hand_size += 1
                 continue
             p.deck.pop(int(moves[i][0])-1)
+        for card in range(p.hand_size):
+            p.deck[card].write_on_hand(target=p)
         p.hand_size = min(6, p.hand_size + 1)
 
         for priority in range(3,0,-1):
@@ -195,8 +203,13 @@ class BattleData2:
         for effect in p.effects:
             if effect != "curse" and p.effects[effect] > 0:
                 p.effects[effect] -= 1
-            elif p.effects[effect] < 0:
+            if p.effects[effect] < 0:
                 p.effects[effect] *= -1
+        if "chill" in p.effects and p.effects["chill"] >= 7:
+            p.effects["chill"] -= 7
+            if "freeze" not in p.effects:
+                p.effects["freeze"] = 0
+            p.effects["freeze"] += 1
         p.inbox = {1:[],2:[],3:[]}
         p.block = 0
         p.absorb = 0
