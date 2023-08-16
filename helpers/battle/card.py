@@ -4,10 +4,10 @@ from helpers.battle import Player
 from helpers.util import cards_dict, rarity_cost
 
 BASIC_ATTRS = [
-    ["block","block"],
-    ["absorb","absorb"],
+    ["block", "block"],
+    ["absorb", "absorb"],
     ["tramp", "block"],
-    ["damage","dmg"],
+    ["damage", "dmg"],
     ["self_damage", "dmg"],
     ["heal", "heal"],
     ["revenge", "dmg"],
@@ -16,6 +16,39 @@ BASIC_ATTRS = [
     ["rewrite", ""]
 ]
 EFF_ATTRS = ["eff", "eff_app", "spawn"]
+
+
+def use_basics(side_target: Player, attr: str, amt: int):
+    worked = False
+    if attr == "damage":
+        multiplier = 1
+        if "feeble" in side_target.effects and side_target.effects["feeble"] > 0:
+            multiplier += 0.25
+
+        side_target.hp += min(amt, side_target.absorb)
+        dmg = round((amt - (max(0, side_target.block) + max(0, side_target.absorb))) * multiplier)
+        side_target.hp -= max(0, dmg)
+
+        side_target.hp = min(side_target.hp, side_target.max_hp)
+        if amt > side_target.block + side_target.absorb:
+            worked = True
+
+    if attr == "block":
+        side_target.block += amt
+        worked = True
+
+    if attr == "absorb":
+        side_target.absorb += amt
+        worked = True
+
+    if attr == "heal":
+        side_target.hp = min(side_target.hp + amt, side_target.max_hp)
+        worked = True
+
+    if attr == "draw":
+        side_target.hand_size = min(6, side_target.hand_size + amt)
+
+    return worked
 
 
 class Card:
@@ -31,7 +64,8 @@ class Card:
     def write_attr(
             self,
             card_attr: str, icon_attr: str,
-            target: Player, crit: bool = False, is_icon: bool = True, is_dotted = False
+            target: Player, crit: bool = False,
+            is_icon: bool = True, is_dotted=False
     ):
         icon_name = icon_attr
         if is_icon:
@@ -46,41 +80,13 @@ class Card:
             f"» #{target.id}{target.icon}"
         )
 
-    def use_basics(self, side_target: Player, attr: str, amt: int):
-        worked = False
-        if attr == "damage":
-            multiplier = 1
-            if "feeble" in side_target.effects and side_target.effects["feeble"] > 0:
-                multiplier += 0.25
-            side_target.hp += min(amt, side_target.absorb)
-            side_target.hp -= max(0, round((amt - (max(0,side_target.block) + max(0,side_target.absorb))) * multiplier))
-            side_target.hp = min(side_target.hp, side_target.max_hp)
-            if amt > side_target.block + side_target.absorb:
-                worked = True
-        
-        if attr == "block":
-            side_target.block += amt
-            worked = True
-        
-        if attr == "absorb":
-            side_target.absorb += amt
-            worked = True
-        
-        if attr == "heal":
-            side_target.hp = min(side_target.hp + amt, side_target.max_hp)
-            worked = True
-        
-        if attr == "draw":
-            side_target.hand_size = min(6, side_target.hand_size + amt)
-        
-        return worked
-
     def get_basics_written(self, target: Player, crit: bool = False, card_dir: str = None):
         used_any = False
         is_dotted = False
-        card_dir = self.card if card_dir == None else self.card[card_dir]
+        card_dir = self.card if card_dir is None else self.card[card_dir]
         for attr, icon_name in BASIC_ATTRS:
-            # If cdamage field doesn't exist in the cards json, use damage field instead cdamage even if crit = true
+            # If the cdamage field doesn't exist in the cards json,
+            # use damage field instead cdamage even if crit = true
             is_icon = True
             curr_attr = attr
             curr_attr = f"{'c' if crit else ''}{curr_attr}"
@@ -89,7 +95,7 @@ class Card:
             if curr_attr not in card_dir:
                 continue
             is_dotted = False
-            if used_any == False:
+            if not used_any:
                 used_any = True
                 is_dotted = True
 
@@ -111,12 +117,15 @@ class Card:
                 is_icon = False
                 amt = f"Changed to {Card(self.lvl, amt, self.owner).display_name}"
 
-            self.write_attr(card_attr=amt, icon_attr=icon_name, target=side_target, crit=crit, is_icon=True, is_dotted=is_dotted)
+            self.write_attr(
+                card_attr=amt, icon_attr=icon_name, target=side_target,
+                crit=crit, is_icon=True, is_dotted=is_dotted
+            )
 
-    def get_basics_used(self, target: Player, crit: bool = False, card_dir: str = None):
+    def get_basics_used(self, target: Player, crit: bool = False, card_dir: str | None = None):
         worked = False
         used_any = False
-        card_dir = self.card if card_dir == None else self.card[card_dir]
+        card_dir = self.card if card_dir is None else self.card[card_dir]
         for attr, icon_name in BASIC_ATTRS:
             curr_attr = f"{'c' if crit else ''}{attr}"
             if curr_attr not in card_dir:
@@ -125,7 +134,7 @@ class Card:
                 continue
             used_any = True
 
-            side_target = target 
+            side_target = target
             if attr.startswith("self_"):
                 side_target = self.owner
                 attr = attr[len("self_"):]
@@ -144,11 +153,11 @@ class Card:
                 self.display_name = f"**[{rarity_cost(amt)}] {amt}** lv: {self.lvl}"
                 self.card = cards_dict(self.lvl, amt)
 
-            worked = self.use_basics(side_target, attr, amt)
+            worked = use_basics(side_target, attr, amt)
         return worked or (worked == used_any)
 
     def get_effects_written(self, target: Player, crit: bool = False, card_dir: str = None):
-        card_dir = self.card if card_dir == None else self.card[card_dir]
+        card_dir = self.card if card_dir is None else self.card[card_dir]
         for attr in EFF_ATTRS:
             curr_attr = f"{'c' if crit else ''}{attr}"
             if curr_attr not in card_dir:
@@ -160,23 +169,27 @@ class Card:
                 for effect in card_dir[curr_attr][side]:
                     side_target = target if side == "target" else self.owner
                     effect_dir = card_dir[curr_attr][side][effect]
-                    
+
                     if attr == "eff":
                         self.write_attr(effect_dir, effect, side_target, crit)
-                    
+
                     if attr == "eff_app":
-                        if not effect in target.effects: 
+                        if effect not in target.effects:
                             continue
                         effect_count = min(target.effects[effect], effect_dir["cap"])
-                        self.write_attr(effect_dir["damage"]*effect_count, effect, side_target, crit)
+                        self.write_attr(effect_dir["damage"] * effect_count, effect, side_target, crit)
                         if effect_dir["clear"]:
-                             self.write_attr(-effect_count, effect, side_target, crit)
-                    
+                            self.write_attr(-effect_count, effect, side_target, crit)
+
                     if attr == "spawn":
-                        self.write_attr(effect_dir, Card(self.lvl, effect, side_target).display_name, side_target, crit, False)
+                        card = Card(self.lvl, effect, side_target)
+                        self.write_attr(
+                            effect_dir,
+                            card.display_name, side_target, crit, False
+                        )
 
     def get_effects_used(self, target: Player, crit: bool = False, card_dir: str = None):
-        card_dir = self.card if card_dir == None else self.card[card_dir]
+        card_dir = self.card if card_dir is None else self.card[card_dir]
         for attr in EFF_ATTRS:
             curr_attr = f"{'c' if crit else ''}{attr}"
             if curr_attr not in card_dir:
@@ -187,7 +200,7 @@ class Card:
             for side in card_dir[curr_attr]:
                 for effect in card_dir[curr_attr][side]:
                     side_target = target if side == "target" else self.owner
-                    effect_dir = card_dir[curr_attr][side][effect]   
+                    effect_dir = card_dir[curr_attr][side][effect]
 
                     if attr == "eff":
                         # Effects applied this turn should not decrease by 1 at end of turn cuz they arent used yet
@@ -196,21 +209,24 @@ class Card:
                             side_target.effects[effect] = 0
 
                         if side_target.effects[effect] > 0:
-                            side_target.effects[effect] += effect_dir   
+                            side_target.effects[effect] += effect_dir
                         else:
                             side_target.effects[effect] -= effect_dir
-                    
+
                     if attr == "eff_app":
-                        if not effect in target.effects:
+                        if effect not in target.effects:
                             continue
                         effect_count = max(0, min(target.effects[effect], effect_dir["cap"]))
-                        self.use_basics(side_target, "damage", effect_dir["damage"]*effect_count)
+                        use_basics(side_target, "damage", effect_dir["damage"] * effect_count)
                         if effect_dir["clear"]:
                             side_target.effects[effect] -= effect_count
 
                     if attr == "spawn":
                         for spawn_card in range(effect_dir):
-                            side_target.deck.insert(random.randint(side_target.hand_size, len(side_target.deck)), Card(self.lvl, effect, side_target))
+                            side_target.deck.insert(
+                                random.randint(side_target.hand_size, len(side_target.deck)),
+                                Card(self.lvl, effect, side_target)
+                            )
 
     def write(self, target: Player):
         is_crit = False
@@ -229,6 +245,7 @@ class Card:
         if "berserk" in self.owner.effects and self.owner.effects["berserk"] > 0:
             self.owner.crit += 25
             self.write_attr("25%", "Crit", self.owner, False, False)
+
         for i in range(self.card[f"{'c' if is_crit else ''}attacks"]):
             self.get_basics_written(target, is_crit)
             self.get_effects_written(target, is_crit)
@@ -243,10 +260,10 @@ class Card:
             for i in range(attacks):
                 self.get_basics_written(target, is_crit, card_dir)
                 self.get_effects_written(target, is_crit, card_dir)
-    
+
     def use(self, target: Player, crit: bool = False, card_dir: str = None):
         attacks = self.card[f"{'c' if crit else ''}attacks"]
-        if card_dir != None:
+        if card_dir is not None:
             attacks = 1
         for i in range(attacks):
             if self.get_basics_used(target, crit, card_dir):

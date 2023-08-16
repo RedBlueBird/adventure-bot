@@ -28,7 +28,7 @@ class Tutorial(commands.Cog):
 
         view = Confirm("Yeah!", "No thanks.")
         start_msg = await ctx.reply(
-            "Hello!\nYou want to learn the basics of battling in this bot? :smiley:",
+            "Hello!\nYou want to learn the basics of fighting in this bot? :smiley:",
             view=view
         )
         await view.wait()

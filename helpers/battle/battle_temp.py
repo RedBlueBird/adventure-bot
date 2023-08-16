@@ -25,7 +25,9 @@ class BattleData2:
         for player in players:
             player.icon = pps[player.id]
             player.dialogue.append(f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**")
-            player.dialogue.append(f"**{r.ICON['sta']} {player.stamina} {r.ICON['engy']} {player.stored_energy}**")
+            player.dialogue.append(
+                f"**{r.ICON['sta']} {player.stamina} {r.ICON['engy']} {player.stored_energy}**"
+            )
 
     def set_up(self) -> discord.Embed:
         for player in self.players:
@@ -45,6 +47,7 @@ class BattleData2:
     def show_stats(self) -> discord.Embed:
         print(self.turn)
         print("^^^ turn")
+
         p = self.players[self.turn - 1]
         p.skip = False
         p.stored_energy = min(12, p.stored_energy + math.ceil(self.round / 2))
@@ -77,7 +80,7 @@ class BattleData2:
                 )
                 if curr_dialogue < len(player.dialogue):
                     player_dialogue = ""
-                     
+
         embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 2), 12)} energy/round)")
 
         return embed
@@ -85,7 +88,7 @@ class BattleData2:
     def show_deck(self, uid: int) -> discord.Embed:
         player = self.player_selector(uid)
         if player == Player():
-            return discord.Embed(description="Only the alive users battling can interact with this message!")
+            return discord.Embed(description="Only living users that are fighting can interact with this message!")
 
         hand = [
             f"{v + 1}. {i.display_name}" for v, i in
@@ -101,14 +104,14 @@ class BattleData2:
         if player.hand_size < 6:
             embed.set_footer(text=f"{player.hand_size}/6 cards in hand")
         else:
-            embed.set_footer(text="Reached Max Hand")
+            embed.set_footer(text="Max Hand Size")
 
         return embed
 
     def show_finish(self, uid: int) -> str | None:
         p = self.player_selector(uid)
         if p.id != self.turn:
-            return f"{p.user.mention} It is currently {self.players[self.turn - 1].user.name}'s turn!"
+            return f"{p.user.mention} It's {self.players[self.turn - 1].user.name}'s turn right now!"
 
         del p.dialogue[2:]
         error_msg = ""
@@ -116,11 +119,12 @@ class BattleData2:
         dm.set_user_battle_command(p.user.id, "")
         energy_cost = 0
 
-        #region processing non-card move responses
+        # region processing non-card move responses
         if moves == [""]:
             moves = []
             p.skip = True
             p.dialogue.append(f"{r.ICON['ski']}{r.ICON['kip']}")
+
         for move in moves:
             if move == "flee":
                 p.flee = True
@@ -136,7 +140,7 @@ class BattleData2:
                 error_msg = "Make sure the target you choose is valid!"
                 break
 
-            energy_cost += p.deck[int(move[0])-1].get_energy_cost()
+            energy_cost += p.deck[int(move[0]) - 1].get_energy_cost()
 
         if error_msg != "":
             error_msg += f" e.g. `{r.PREF}move 12` to play the 1st card in your hand on player #2."
@@ -147,9 +151,9 @@ class BattleData2:
 
         if error_msg != "":
             return f"{p.user.mention} {error_msg}"
-        #endregion
+        # endregion
 
-        #region updating player status
+        # update player status
         for effect in p.effects:
             if p.effects[effect] <= 0:
                 continue
@@ -167,7 +171,7 @@ class BattleData2:
         if "restore" in p.effects and p.effects["restore"] > 0:
             p.stored_energy = max(12, p.stored_energy + 1)
         if "seriate" in p.effects and p.effects["seriate"] > 0:
-            p.crit += p.effects["seriate"] * 10 
+            p.crit += p.effects["seriate"] * 10
 
         for move in moves:
             if move == "flee":
@@ -175,24 +179,25 @@ class BattleData2:
             target = self.players[int(move[1]) - 1]
             selection = int(move[0]) - 1
             p.deck[selection].write(target=target)
-            if not "stay" in p.deck[selection].card:
+            if "stay" not in p.deck[selection].card:
                 if p.deck[selection].card["rarity"] != "NA":
                     p.deck.append(p.deck[selection])
+
         p.stored_energy -= energy_cost
         p.hand_size -= len(moves)
         moves.sort()
-        for i in range(len(moves)-1, -1, -1):
+        for i in range(len(moves) - 1, -1, -1):
             if moves[0] == "flee":
                 break
-            if "stay" in p.deck[int(moves[i][0])-1].card:
+            if "stay" in p.deck[int(moves[i][0]) - 1].card:
                 p.hand_size += 1
                 continue
-            p.deck.pop(int(moves[i][0])-1)
+            p.deck.pop(int(moves[i][0]) - 1)
         for card in range(p.hand_size):
             p.deck[card].write_on_hand(target=p)
         p.hand_size = min(6, p.hand_size + 1)
 
-        for priority in range(3,0,-1):
+        for priority in range(3, 0, -1):
             for use_card in p.inbox[priority]:
                 use_card(target=p)
 
@@ -200,24 +205,28 @@ class BattleData2:
             p.hp = 0
             p.dead = True
             p.dialogue = [r.ICON['dead']]
+
         for effect in p.effects:
             if effect != "curse" and p.effects[effect] > 0:
                 p.effects[effect] -= 1
             if p.effects[effect] < 0:
                 p.effects[effect] *= -1
+
         if "chill" in p.effects and p.effects["chill"] >= 7:
             p.effects["chill"] -= 7
             if "freeze" not in p.effects:
                 p.effects["freeze"] = 0
             p.effects["freeze"] += 1
-        p.inbox = {1:[],2:[],3:[]}
+
+        p.inbox = {1: [], 2: [], 3: []}
         p.block = 0
         p.absorb = 0
         p.crit = 0
-        #endregion
 
-        #region cleansing dead players from the board
-        while not self.game_end and (self.turn >= len(self.players) or self.players[self.turn].dead or self.players[self.turn].flee):
+        # remove dead players from the board
+        while (not self.game_end and (self.turn >= len(self.players)
+                                      or self.players[self.turn].dead
+                                      or self.players[self.turn].flee)):
             if self.turn >= len(self.players):
                 if self.game_end:
                     break
@@ -232,6 +241,3 @@ class BattleData2:
                 self.turn = -1
             self.turn += 1
         self.turn += 1
-        #endregion
-
-        return None
