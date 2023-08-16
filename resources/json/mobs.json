@@ -29,7 +29,7 @@
             "Stab",
             "Stab"
         ],
-        "brief": "Goblin outcasts that like to steal from adventurers and merchants."
+        "brief": "Goblin thieves have three priorities in life: money, money, and money."
     },
     "goblin bomber": {
         "name": "Goblin Bomber",
@@ -61,7 +61,7 @@
             "Steal",
             "Steal"
         ],
-        "brief": "Suicidal goblins carrying large explosives on their backs."
+        "brief": "Being a goblin bomber sucks. No one wants to come near you, you always risk killing yourself, and management never replies to any demands. But hey, there's generous benefits and high pay!"
     },
     "goblin": {
         "name": "Goblin",
@@ -93,7 +93,7 @@
             "Strike",
             "Strike"
         ],
-        "brief": "Green humanoid creatures that are smaller than average humans. Individually, they don't pose much of a threat, but a group of them can be dangerous."
+        "brief": "One of the most vanilla, basic enemies out there. Just hope you don't encounter too many at once."
     },
     "goblin soldier": {
         "name": "Goblin Soldier",
@@ -125,7 +125,7 @@
             "Quick Shot",
             "Strike"
         ],
-        "brief": "Goblin soldiers are a stronger version of normal goblins trained specifically for battles."
+        "brief": "These pretentious goblins like making up their own titles and medals. Seriously, someone needs to bring them down a notch!"
     },
     "goblin chief": {
         "name": "Goblin Chief",
@@ -158,7 +158,7 @@
             "Ignite",
             "Ignite"
         ],
-        "brief": "These goblins are better just because they found some stick on the ground."
+        "brief": "These goblins obtained their high status from finding a random stick on the ground."
     },
     "archer elf": {
         "name": "Archer Elf",
@@ -423,7 +423,7 @@
             "Insult",
             "Insult"
         ],
-        "brief": "A malicious ghost. Devours the life force of adventurers who pass by."
+        "brief": "Ghosts that are formed from the souls of adventurers who died of cringe."
     },
     "skeleton": {
         "name": "Skeleton",
@@ -487,7 +487,7 @@
             "Insult",
             "Insult"
         ],
-        "brief": "Reanimated dead creatures that have been awakened before they decomposed into skeletons."
+        "brief": "This what happens when you watch VTubers for too long."
     },
     "slime": {
         "name": "Slime",
@@ -519,7 +519,7 @@
             "Sacrifice",
             "Revenge"
         ],
-        "brief": "Seemingly harmless squishy slimes... that can grow into a giant mass, devouring you in a second."
+        "brief": "These are much stronger than your average weak Genshin slimes; don't underestimate them!"
     },
     "phantom": {
         "name": "Phantom",
@@ -551,7 +551,7 @@
             "Slash",
             "Slash"
         ],
-        "brief": "Half transparent armored creatures that glide instead of walk. The books say that they are mutations of ghosts and zombies."
+        "brief": "Extremely different from their MC counterparts, these creatures may be the result of when a zombie and skeleton love each other very much."
     },
     "demon": {
         "name": "Demon",
@@ -583,7 +583,7 @@
             "Paranoid",
             "Paranoid"
         ],
-        "brief": "Black and red figures radiating fiery energy. These powerful beings are said to originate in the underworld."
+        "brief": "These terrifying buff spawns from Hell will incinerate your soul and your heterosexuality."
     },
     "headless knight": {
         "name": "Headless Knight",
@@ -617,7 +617,7 @@
             "Insult",
             "Insult"
         ],
-        "brief": "Courageous royal knights who became undead knights when they died. Riding on skeleton horses, they attack with gleaming lances. Where their heads once were, there are now only fierce blue flames."
+        "brief": "Noble knights that fell to the temptations of Satan. Their decapitated heads make great soccer balls too!"
     },
     "red wyvern": {
         "name": "Red Wyvern",
@@ -681,7 +681,7 @@
             "Combust",
             "Combust"
         ],
-        "brief": "A close relative of dragons, though not nearly as lethal. Be wary of their tough hides and rapid flame-based attacks.",
+        "brief": "A close relative of dragons, though just as lethal. Be wary of their tough hides and rapid flame-based attacks.",
         "tip:": "Make sure not to have many burn effects on you or the Wyvern's combust attack will deal massive damage! You can prevent it by frequent shielding or by casting chill effects on yourself.\n Many of the Wyvern's attack have low accuracy, meaning that keeping it stunned will greatly decrease its average damage. However, be aware that they can clear their effects with Prideful Flight."
     },
     "lich": {
@@ -708,7 +708,7 @@
             "Terminate",
             "Terminate"
         ],
-        "brief": "A wizard who lost their power attempting to defy death. Now, they wander aimlessly."
+        "brief": "An extremely salty wizard who gave up their soul trying to defy death."
     },
     "lich lord": {
         "name": "Lich Lord",
@@ -748,7 +748,7 @@
             "Insult",
             "Skeletal Slay"
         ],
-        "brief": "A powerful wizard who seeks to overcome death itself. They are stronger than an average lich, and with an arsenal of powerful healing spells, they are nearly unstoppable.",
+        "brief": "An even saltier wizard who gave up their soul trying to make their anime waifu real.",
         "_comment": "what healing spells there's literally only one rejuvenate"
     },
     "brewer": {
@@ -865,7 +865,7 @@
             "Heavy Shield",
             "Quick Shot"
         ],
-        "brief": "Skilled craftsmen who have spent many days toiling in the forges to make everything from swords to crossbows.",
+        "brief": "Skilled craftsmen who have years of experience forging weapons in their workshops.",
         "dialogue": "Rafts, swords, crossbows. You want it? It's yours my friend, as long as you have enough materials.",
         "trades": {
             "Raft": {
@@ -954,6 +954,6 @@
             "Absorb",
             "Terminate"
         ],
-        "brief": "An enchanted training dummy! Mainly used to help new adventurers get comfortable with fighting."
+        "brief": "An enchanted training dummy that's mainly used to help new adventurers get comfortable with fighting."
     }
 }
