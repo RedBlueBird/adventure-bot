@@ -344,9 +344,12 @@ class Adventure(commands.Cog):
                     if reply != chars:
                         hp_loss = 200
                         embed.description = f"**Oh no!**\n" \
-                                            f"You screwed up (the letters were {chars}) " \
+                                            f"You misremembered (the letters were {chars}) " \
                                             f"and lost {hp_loss} HP!"
                         hp -= hp_loss
+                        if hp <= 0:
+                            end_cause = "death"
+                            break
                     else:
                         embed.description = "**Awesome!**\nYou got the letters right!"
 

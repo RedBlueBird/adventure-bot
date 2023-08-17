@@ -1,5 +1,6 @@
 import random
 import math
+
 import discord
 from discord.ext import commands
 
@@ -28,7 +29,7 @@ class Pvp2(commands.Cog):
             await ctx.reply("You can't bet that amount of medals!")
             return
 
-        # region UI
+        # region Invitation UI
         view = Select(a)
         msg = await ctx.reply(view=view)
         while True:
@@ -103,6 +104,7 @@ class Pvp2(commands.Cog):
             title = f"A {gamble_medals}-Medal{s} Battle Just Started!"
         else:
             title = "A Friendly Battle Just Started!"
+
         desc = " vs ".join([str(x.user.name) for x in players])
         embed = discord.Embed(
             title=title,
@@ -111,9 +113,7 @@ class Pvp2(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-        dd = BattleData2(
-            players=players
-        )
+        dd = BattleData2(players=players)
         stats_msg = await ctx.send(embed=dd.set_up())
         battle_buttons = Actions(
             battledata=dd,

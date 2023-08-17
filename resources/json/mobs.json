@@ -190,7 +190,7 @@
             "Strike",
             "Strike"
         ],
-        "brief": "Lightweight, fast, and evasive, these archer elves often live in the forests by themselves and hunt animals for food."
+        "brief": "These aren't your average anime elves. Ruthless and efficient, they'll attempt to hunt down anything that moves."
     },
     "tree giant": {
         "name": "Tree Giant",
@@ -223,7 +223,7 @@
             "Sting",
             "Sting"
         ],
-        "brief": "When they sleep, they appear to be normal trees. When they awaken, they will extend their branches, becoming large and imposing. The ground trembles when they lift their roots up from the ground."
+        "brief": "These tree giants can actually talk through their roots! THey mostly use it to tell bad tree puns to each other, though."
     },
     "ogre gladiator": {
         "name": "Ogre Gladiator",
@@ -292,7 +292,7 @@
             "Terminate",
             "Terminate"
         ],
-        "brief": "It has a hard shell, formed by crystals bonded by ancient magic. Harnessing the power of the magic crystals, this golem is one of the most terrifying foes in the Enchanted Forest."
+        "brief": "The crystals on their back function kinda like solar panels. Of course, this means that every so often they have to go to the Golem Washers to prevent too much dust from accumulating on them."
     },
     "ogre berserker": {
         "name": "Ogre Berserker",
@@ -327,7 +327,7 @@
             "Quick Shot",
             "Quick Shot"
         ],
-        "brief": "Ogres that are significantly larger and stronger than other Ogres. Wearing animal pelts and painting their skins with black and white war paint, they appear quite ferocious. They usually carry large swords or axes covered in the blood of their enemies."
+        "brief": "The very definition of an alpha male. Andrew Tate don't got nothing on these hunks of pure testosterone."
     },
     "temple guardian": {
         "name": "Temple Guardian",
@@ -360,7 +360,7 @@
             "Reform",
             "Reform"
         ],
-        "brief": "A titan among titans. Only the most worthy can defeat this Golem that guards the gate leading to the legendary Shrine of Life."
+        "brief": "Literally just a bigger golem. How much bigger you ask? Ten times. Why?"
     },
     "shiniminsus": {
         "name": "Shiniminsus",

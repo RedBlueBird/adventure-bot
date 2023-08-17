@@ -67,7 +67,7 @@
         "cpriority": 2,
         "desc": "Your target absorbs ${absorb} damage.",
         "cdesc": "Absorbtion doubles.",
-        "brief": "Somehow this turns damage into healing. No one knows how it works, but who really cares?"
+        "brief": "Somehow this turns damage into healing. No one knows how it works, but does that really matter?"
     },
     "explode": {
         "name": "Explode",
@@ -99,7 +99,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health.",
         "cdesc": "Heal doubles.",
-        "brief": "There's no hospitals here. This is the closest you'll get to free healthcare."
+        "brief": "There's no hospitals here. This is the closest you'll get to a health plan."
     },
     "sacrifice": {
         "name": "Sacrifice",
@@ -126,7 +126,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target and yourself. Also applies 4 Curse effects to your target",
         "cdesc": "Applies 2 additional Curse effects to your target",
-        "brief": "This curse sacrifices a bit of your vitality for some damage. Be careful not to kill yourself, though. That would be *so* embarassing (and deadly)."
+        "brief": "This curse sacrifices a bit of your vitality for some damage. Be careful not to kill yourself, though. That would be *so* embarrassing (and deadly)."
     },
     "flashy fireworks": {
         "name": "Flashy Fireworks",
@@ -180,7 +180,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target. Doesn't use any stamina.",
         "cdesc": "Damage doubles.",
-        "brief": "Throw a hand."
+        "brief": "Catch these hands!"
     },
     "strike": {
         "name": "Strike",
@@ -220,7 +220,7 @@
         "cpriority": 1,
         "desc": "Deal ${damage} damage and applies 2 Burn effects to your target",
         "cdesc": "Damage doubles.",
-        "brief": "Many wizards also use this spell for cooking and heat."
+        "brief": "This ball of fire also works great at BBQs."
     },
     "aid": {
         "name": "Aid",
@@ -245,8 +245,7 @@
         "cpriority": 2,
         "desc": "Your target gains ${heal} health along with 4 recover effects.",
         "cdesc": "Heal doubles, and apply 2 additional recover effects.",
-        "brief": "The long-awaited sequel to the heal spell, it even gives you some regeneration!",
-        "_comment": "but it can't heal the wounds inside your hard. (where are you dad you said you'd get milk and come back)"
+        "brief": "The long-awaited sequel to the heal spell. After 9 years in development, hopefully it will have been worth the wait."
     },
     "lightning bolt": {
         "name": "Lightning Bolt",
@@ -326,7 +325,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target and applies 2 Curse effects.",
         "cdesc": "Double the damage, double the applied Curse effects",
-        "brief": "***E-MOTIONAL DAMAGE!***"
+        "brief": "Emotional damage."
     },
     "aim": {
         "name": "Aim",
@@ -382,7 +381,7 @@
         "cpriority": 1,
         "desc": "Deals ${eff_app_target_burn_damage} damage to your target for every Curse effect they have (max x15), but then removes up to 15 Curse effects from your target.",
         "cdesc": "Set the max Curse effect applicable to 20x.",
-        "brief": "One wizard says they saw their enemey literally get dragged into hell after the wizard cast this spell. They're probably lying, but it's a cool thing to imagine."
+        "brief": "One wizard says they saw their enemy literally get dragged into Hell after casting this spell. They're probably lying, but it's a cool thing to imagine."
     },
     "hellfire": {
         "name": "Hellfire",
@@ -425,7 +424,7 @@
         "cpriority": 1,
         "desc": "Deals ${revenge} * (1 - health / max_health) ^ 2 to your target.",
         "cdesc": "Increase crit by 100%",
-        "brief": "The perfect counter play when you are running low on health."
+        "brief": "Call an ambulance, but not for you!"
     },
     "bees swarm": {
         "name": "Bees Swarm",
@@ -859,7 +858,7 @@
         "cpriority": 2,
         "desc": "Deals ${damage} x3 damage, applying 1 Curse effect per landed hit.",
         "cdesc": "All damage doubles and priority increases to 2.",
-        "brief": "This cursed sword made from the bones of the damned can cut through the toughest of enemies. It's also great for cooking."
+        "brief": "This cursed sword made from the bones of the damned can cut through the toughest of enemies. It's also great for chopping fruits and veggies."
     },
     "meditate": {
         "name": "Meditate",
@@ -961,7 +960,7 @@
         "priority": 2,
         "cpriority": 2,
         "desc": "Becomes a **[L/2] Sprout lv: ${level}**.",
-        "cdesc": "Becomes  a **[L/4] Sapling lv: ${level}**.",
+        "cdesc": "Becomes a **[L/4] Sapling lv: ${level}**.",
         "brief": "A magical seed, brought from the gardens of the heaven. Who knows what it will become when it sprouts?"
     },
     "sprout": {
@@ -1043,7 +1042,7 @@
         "rewrite": "Seed",
         "desc": "Your target gains ${heal} health, and this applies 6 recover effects, removing all negative effects from your target, and goes back to being a **[L/0] Seed lv: ${level}**",
         "cdesc": "Heal doubles, apply 12 recover effects instead 6.",
-        "brief": "An enchanted tree of healing bearing the symbol of life and prosperity. It drops a single seed upon granting its healing powers to an adventurer."
+        "brief": "An enchanted tree of healing bearing the symbol of life and prosperity. It drops a single seed upon granting its healing powers to its summoner."
     },
     "cache": {
         "name": "Cache",
@@ -1069,7 +1068,7 @@
         "desc": "Your target gains ${heal} health, and this applies 9 Restore effects to your target",
         "cdesc": "Heal doubles, and apply 11 Restore effects instead 9.",
         "requirements": "None",
-        "brief": "An ingenious method devised to invest energy for increased future gain."
+        "brief": "Harness your inner merchant and invest your energy for great returns!"
     },
     "blessed clover": {
         "name": "Blessed Clover",
@@ -1113,7 +1112,7 @@
         "cpriority": 1,
         "desc": "Deals ${damage} damage to your target",
         "cdesc": "Damage doubles.",
-        "brief": "Certified by Arnold Schwarzenegger himself, your enemies won't even know what hit them."
+        "brief": "I need your clothes, your boots, and your motorcycle."
     },
     "crush": {
         "name": "Crush",
@@ -1138,7 +1137,7 @@
         "cpriority": 1,
         "desc": "Decrease your target's defense by ${tramp}, and apply 1 Stun effect to your target.",
         "cdesc": "Defense decrease and applied effect doubles.",
-        "brief": "A technique designed to counter attack the attack counters."
+        "brief": "Counter-attack the attack counters with this scuffed move."
     },
     "beatdown": {
         "name": "Beatdown",
