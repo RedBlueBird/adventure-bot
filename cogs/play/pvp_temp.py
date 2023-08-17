@@ -86,8 +86,8 @@ class Pvp2(commands.Cog):
                 random.shuffle(player_deck)
                 player = Player(
                     level=dm.get_user_level(p.id),
-                    hp=100*math.floor(dm.get_user_level(p.id)/2),
-                    max_hp=100*math.floor(dm.get_user_level(p.id)/2),
+                    hp=100 * math.floor(dm.get_user_level(p.id) / 2),
+                    max_hp=100 * math.floor(dm.get_user_level(p.id) / 2),
                     user=p,
                     team=t_id,
                     id=counter,

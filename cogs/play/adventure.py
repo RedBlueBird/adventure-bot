@@ -430,7 +430,14 @@ class Adventure(commands.Cog):
                     break
 
                 case "fight":
-                    pass  # TODO
+                    # TODO
+                    enemies = []
+                    for m, probs in curr_op.encounters.items():
+                        for p in probs:
+                            if random.random() < p:
+                                enemies.append(r.mob(m))
+
+                    print(enemies)
 
             valid_ops = []
             weights = []
