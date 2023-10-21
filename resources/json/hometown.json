@@ -1,6 +1,6 @@
 {
     "home": {
-        "description": "Home sweet home! This is the place you rest and depend upon the most. After countless journeys, you always end up in your soft relaxing bed.",
+        "description": "Home sweet home! No matter what life throws at you, you know that at least your house is there for you- even though it's an inanimate object.",
         "coordinate": [
             5,
             4
@@ -21,7 +21,7 @@
         }
     },
     "bed": {
-        "description": "Lying on your bed, you feel all your worries slip away. After an hour or so, though, you force yourself to get up and be productive. The mortgage isn't gonna pay itself!",
+        "description": "Lying on your bed, you feel all your worries slip away. After an hour or so, though, you force yourself to get up and be productive. The rent isn't gonna pay itself!",
         "coordinate": [
             5,
             4
@@ -59,7 +59,7 @@
         }
     },
     "south street": {
-        "description": "You look around and see the houses of various townspeople and adventurers like you.\nTo the west lies a bridge leading to the Enchanted Forest.\nTo the southwest is a passage way leading out of the town.\nTo the southeast is a locked gate blocking the entrance to an open plateau.\nTo the east is the bar famous for its games and cocktails.\nYou can also go to the north side of the town.",
+        "description": "You look around and see the houses of various townspeople and adventurers.\nTo the west lies a bridge leading to the Enchanted Forest.\nTo the southwest is a passage way leading out of the town.\nTo the southeast is a locked gate blocking the entrance to an open plateau.\nTo the east is the bar famous for its games and cocktails.\nYou can also go to the north side of the town.",
         "coordinate": [
             5,
             5
@@ -121,7 +121,7 @@
         }
     },
     "shop": {
-        "description": "This is the town's bustling marketplace! You constantly find yourself squished between other people, but finally make it to the shops where you can buy and sell almost anything.",
+        "description": "You make it to the crowded marketplace and find yourself immediately squished between two vendors offering you apples. After getting them off your back, you make it to the portion reserved for adventurers.",
         "coordinate": [
             5,
             2
@@ -184,7 +184,7 @@
         }
     },
     "enchanted forest": {
-        "description": "This is an ancient forest teeming with magic. Many adventurers have attempted to explore here, but had given up partway through due to its mysterious, unpredictable, and dangerous environment. Legends say that this area contains a mythical power inside a holy shrine, but no one has ever gotten back alive after seeing it.",
+        "description": "This is an ancient forest teeming with magic. Many adventurers have attempted to explore here, but had given up partway through due to its mysterious, unpredictable, and dangerous environment. Legends say that this area contains a mythical power inside a holy shrine, but no one has ever seen it.",
         "coordinate": [
             0,
             5
@@ -201,7 +201,7 @@
         }
     },
     "cemetery": {
-        "description": "Walking through the passage, you find yourself in a cemetery. You remember hearing that this place is a terrifying ghost-filled path to the underworld!",
+        "description": "Walking through the passage, you find yourself in a cemetery. You recall that this place is a terrifying path to the underworld filled with members of the undead.",
         "coordinate": [
             1,
             7
@@ -218,7 +218,7 @@
         }
     },
     "boss raid": {
-        "description": "You walk up to an extremely large gate. The skulls of other less fortunate adventurers adorn two posts next to the gate. What could possibly be behind it?",
+        "description": "You walk up to a monstrous, fiery gate that towers over you. The withered skulls of less fortunate adventurers adorn the gateposts. What could possibly be behind it?",
         "coordinate": [
             6,
             7
@@ -241,7 +241,7 @@
             8
         ],
         "choices": {
-            "Prepare to meet your fate": [
+            "What's the worst that could happen?": [
                 "experimental",
                 "adventure"
             ],
