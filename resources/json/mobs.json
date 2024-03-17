@@ -1,959 +1,959 @@
 {
-    "goblin thief": {
-        "name": "Goblin Thief",
-        "rarity": "C",
-        "health": 20,
-        "energy_lag": 7,
-        "stamina": 20,
-        "death_rwd": {
-            "coins": [
-                20,
-                30
-            ],
-            "exps": [
-                5,
-                10
-            ]
-        },
-        "deck": [
-            "Steal",
-            "Steal",
-            "Steal",
-            "Loot",
-            "Loot",
-            "Loot",
-            "Shield",
-            "Shield",
-            "Stab",
-            "Stab",
-            "Stab",
-            "Stab"
-        ],
-        "brief": "Goblin thieves have three priorities in life: money, money, and money."
+  "goblin thief": {
+    "name": "Goblin Thief",
+    "rarity": "C",
+    "health": 20,
+    "energy_lag": 7,
+    "stamina": 20,
+    "death_rwd": {
+      "coins": [
+        20,
+        30
+      ],
+      "exps": [
+        5,
+        10
+      ]
     },
-    "goblin bomber": {
-        "name": "Goblin Bomber",
-        "rarity": "C",
-        "health": 10,
-        "energy_lag": 7,
-        "stamina": 20,
-        "death_rwd": {
-            "coins": [
-                20,
-                30
-            ],
-            "exps": [
-                10,
-                15
-            ]
-        },
-        "deck": [
-            "Sacrifice",
-            "Sacrifice",
-            "Sacrifice",
-            "Explode",
-            "Explode",
-            "Explode",
-            "Spikes Bomb",
-            "Spikes Bomb",
-            "Loot",
-            "Loot",
-            "Steal",
-            "Steal"
-        ],
-        "brief": "Being a goblin bomber sucks. No one wants to come near you, you always risk killing yourself, and management never replies to any demands. But hey, there's generous benefits and high pay!"
+    "deck": [
+      "Steal",
+      "Steal",
+      "Steal",
+      "Loot",
+      "Loot",
+      "Loot",
+      "Shield",
+      "Shield",
+      "Stab",
+      "Stab",
+      "Stab",
+      "Stab"
+    ],
+    "brief": "Goblin thieves have three priorities in life: money, money, and money."
+  },
+  "goblin bomber": {
+    "name": "Goblin Bomber",
+    "rarity": "C",
+    "health": 10,
+    "energy_lag": 7,
+    "stamina": 20,
+    "death_rwd": {
+      "coins": [
+        20,
+        30
+      ],
+      "exps": [
+        10,
+        15
+      ]
     },
-    "goblin": {
-        "name": "Goblin",
-        "rarity": "C",
-        "health": 15,
-        "energy_lag": 8,
-        "stamina": 15,
-        "death_rwd": {
-            "coins": [
-                2,
-                5
-            ],
-            "exps": [
-                5,
-                10
-            ]
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Stab",
-            "Stab",
-            "Stab",
-            "Aim",
-            "Aim",
-            "Aid",
-            "Aid",
-            "Strike",
-            "Strike",
-            "Strike"
-        ],
-        "brief": "One of the most vanilla, basic enemies out there. Just hope you don't encounter too many at once."
+    "deck": [
+      "Sacrifice",
+      "Sacrifice",
+      "Sacrifice",
+      "Explode",
+      "Explode",
+      "Explode",
+      "Spikes Bomb",
+      "Spikes Bomb",
+      "Loot",
+      "Loot",
+      "Steal",
+      "Steal"
+    ],
+    "brief": "Being a goblin bomber sucks. No one wants to come near you, you always risk killing yourself, and management never replies to any demands. But hey, there's generous benefits and high pay!"
+  },
+  "goblin": {
+    "name": "Goblin",
+    "rarity": "C",
+    "health": 15,
+    "energy_lag": 8,
+    "stamina": 15,
+    "death_rwd": {
+      "coins": [
+        2,
+        5
+      ],
+      "exps": [
+        5,
+        10
+      ]
     },
-    "goblin soldier": {
-        "name": "Goblin Soldier",
-        "rarity": "R",
-        "health": 30,
-        "energy_lag": 6,
-        "stamina": 20,
-        "death_rwd": {
-            "coins": [
-                5,
-                10
-            ],
-            "exps": [
-                10,
-                15
-            ]
-        },
-        "deck": [
-            "Heavy Shield",
-            "Shield",
-            "Stab",
-            "Stab",
-            "Slash",
-            "Slash",
-            "Aim",
-            "Aim",
-            "Heal",
-            "Aid",
-            "Quick Shot",
-            "Strike"
-        ],
-        "brief": "These pretentious goblins like making up their own titles and medals. Seriously, someone needs to bring them down a notch!"
+    "deck": [
+      "Shield",
+      "Shield",
+      "Stab",
+      "Stab",
+      "Stab",
+      "Aim",
+      "Aim",
+      "Aid",
+      "Aid",
+      "Strike",
+      "Strike",
+      "Strike"
+    ],
+    "brief": "One of the most vanilla, basic enemies out there. Just hope you don't encounter too many at once."
+  },
+  "goblin soldier": {
+    "name": "Goblin Soldier",
+    "rarity": "R",
+    "health": 30,
+    "energy_lag": 6,
+    "stamina": 20,
+    "death_rwd": {
+      "coins": [
+        5,
+        10
+      ],
+      "exps": [
+        10,
+        15
+      ]
     },
-    "goblin chief": {
-        "name": "Goblin Chief",
-        "rarity": "E",
-        "health": 60,
-        "energy_lag": 5,
-        "stamina": 30,
-        "death_rwd": {
-            "coins": [
-                20,
-                30
-            ],
-            "exps": [
-                20,
-                30
-            ],
-            "Goblin Staff": 1
-        },
-        "deck": [
-            "Shield",
-            "Absorb",
-            "Heal",
-            "Aid",
-            "Battle Cry",
-            "Battle Cry",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Cocktail",
-            "Ignite",
-            "Ignite"
-        ],
-        "brief": "These goblins obtained their high status from finding a random stick on the ground."
+    "deck": [
+      "Heavy Shield",
+      "Shield",
+      "Stab",
+      "Stab",
+      "Slash",
+      "Slash",
+      "Aim",
+      "Aim",
+      "Heal",
+      "Aid",
+      "Quick Shot",
+      "Strike"
+    ],
+    "brief": "These pretentious goblins like making up their own titles and medals. Seriously, someone needs to bring them down a notch!"
+  },
+  "goblin chief": {
+    "name": "Goblin Chief",
+    "rarity": "E",
+    "health": 60,
+    "energy_lag": 5,
+    "stamina": 30,
+    "death_rwd": {
+      "coins": [
+        20,
+        30
+      ],
+      "exps": [
+        20,
+        30
+      ],
+      "Goblin Staff": 1
     },
-    "archer elf": {
-        "name": "Archer Elf",
-        "rarity": "R",
-        "health": 25,
-        "energy_lag": 4,
-        "stamina": 25,
-        "death_rwd": {
-            "coins": [
-                10,
-                15
-            ],
-            "exps": [
-                15,
-                20
-            ]
-        },
-        "deck": [
-            "Aim",
-            "Aim",
-            "Quick Shot",
-            "Quick Shot",
-            "Cache",
-            "Incapacitate",
-            "Incapacitate",
-            "Incapacitate",
-            "Heal",
-            "Heal",
-            "Strike",
-            "Strike"
-        ],
-        "brief": "These aren't your average anime elves. Ruthless and efficient, they'll attempt to hunt down anything that moves."
+    "deck": [
+      "Shield",
+      "Absorb",
+      "Heal",
+      "Aid",
+      "Battle Cry",
+      "Battle Cry",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Cocktail",
+      "Ignite",
+      "Ignite"
+    ],
+    "brief": "These goblins obtained their high status from finding a random stick on the ground."
+  },
+  "archer elf": {
+    "name": "Archer Elf",
+    "rarity": "R",
+    "health": 25,
+    "energy_lag": 4,
+    "stamina": 25,
+    "death_rwd": {
+      "coins": [
+        10,
+        15
+      ],
+      "exps": [
+        15,
+        20
+      ]
     },
-    "tree giant": {
-        "name": "Tree Giant",
-        "rarity": "C",
-        "health": 25,
-        "energy_lag": 8,
-        "stamina": 40,
-        "death_rwd": {
-            "coins": [
-                5,
-                10
-            ],
-            "exps": [
-                10,
-                15
-            ],
-            "Wood": 1
-        },
-        "deck": [
-            "Absorb",
-            "Absorb",
-            "Heal",
-            "Heal",
-            "Bees Swarm",
-            "Bees Swarm",
-            "Fury Slashes",
-            "Fury Slashes",
-            "Slash",
-            "Slash",
-            "Sting",
-            "Sting"
-        ],
-        "brief": "These tree giants can actually talk through their roots! THey mostly use it to tell bad tree puns to each other, though."
+    "deck": [
+      "Aim",
+      "Aim",
+      "Quick Shot",
+      "Quick Shot",
+      "Cache",
+      "Incapacitate",
+      "Incapacitate",
+      "Incapacitate",
+      "Heal",
+      "Heal",
+      "Strike",
+      "Strike"
+    ],
+    "brief": "These aren't your average anime elves. Ruthless and efficient, they'll attempt to hunt down anything that moves."
+  },
+  "tree giant": {
+    "name": "Tree Giant",
+    "rarity": "C",
+    "health": 25,
+    "energy_lag": 8,
+    "stamina": 40,
+    "death_rwd": {
+      "coins": [
+        5,
+        10
+      ],
+      "exps": [
+        10,
+        15
+      ],
+      "Wood": 1
     },
-    "ogre gladiator": {
-        "name": "Ogre Gladiator",
-        "rarity": "R",
-        "health": 70,
-        "energy_lag": 6,
-        "stamina": 35,
-        "death_rwd": {
-            "coins": [
-                10,
-                15
-            ],
-            "exps": [
-                15,
-                20
-            ]
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Stab",
-            "Stab",
-            "Punch",
-            "Punch",
-            "Smash",
-            "Smash",
-            "Absorb",
-            "Absorb",
-            "Battle Cry",
-            "Battle Cry"
-        ],
-        "brief": "These muscular and heavily armored ogre gladiators usually carry a spiky bat as their weapon. A single strike is usually enough to send a person to the stratosphere!"
+    "deck": [
+      "Absorb",
+      "Absorb",
+      "Heal",
+      "Heal",
+      "Bees Swarm",
+      "Bees Swarm",
+      "Fury Slashes",
+      "Fury Slashes",
+      "Slash",
+      "Slash",
+      "Sting",
+      "Sting"
+    ],
+    "brief": "These tree giants can actually talk through their roots! THey mostly use it to tell bad tree puns to each other, though."
+  },
+  "ogre gladiator": {
+    "name": "Ogre Gladiator",
+    "rarity": "R",
+    "health": 70,
+    "energy_lag": 6,
+    "stamina": 35,
+    "death_rwd": {
+      "coins": [
+        10,
+        15
+      ],
+      "exps": [
+        15,
+        20
+      ]
     },
-    "crystal golem": {
-        "name": "Crystal Golem",
-        "rarity": "E",
-        "health": 100,
-        "energy_lag": 6,
-        "stamina": 25,
-        "death_rwd": {
-            "coins": [
-                15,
-                25
-            ],
-            "exps": [
-                20,
-                30
-            ],
-            "Stone": [
-                1,
-                3
-            ],
-            "Crystal": 1
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Shield",
-            "Heavy Shield",
-            "Heavy Shield",
-            "Crush",
-            "Crush",
-            "Smash",
-            "Smash",
-            "Heal",
-            "Terminate",
-            "Terminate"
-        ],
-        "brief": "The crystals on their back function kinda like solar panels. Of course, this means that every so often they have to go to the Golem Washers to prevent too much dust from accumulating on them."
+    "deck": [
+      "Shield",
+      "Shield",
+      "Stab",
+      "Stab",
+      "Punch",
+      "Punch",
+      "Smash",
+      "Smash",
+      "Absorb",
+      "Absorb",
+      "Battle Cry",
+      "Battle Cry"
+    ],
+    "brief": "These muscular and heavily armored ogre gladiators usually carry a spiky bat as their weapon. A single strike is usually enough to send a person to the stratosphere!"
+  },
+  "crystal golem": {
+    "name": "Crystal Golem",
+    "rarity": "E",
+    "health": 100,
+    "energy_lag": 6,
+    "stamina": 25,
+    "death_rwd": {
+      "coins": [
+        15,
+        25
+      ],
+      "exps": [
+        20,
+        30
+      ],
+      "Stone": [
+        1,
+        3
+      ],
+      "Crystal": 1
     },
-    "ogre berserker": {
-        "name": "Ogre Berserker",
-        "rarity": "L",
-        "health": 200,
-        "energy_lag": 4,
-        "stamina": 50,
-        "death_rwd": {
-            "coins": [
-                100,
-                200
-            ],
-            "exps": [
-                25,
-                50
-            ],
-            "Health Potion": 1,
-            "Power Potion": 1,
-            "Berserker Axe": 1
-        },
-        "deck": [
-            "Fury Slashes",
-            "Fury Slashes",
-            "Fury Slashes",
-            "Enrage",
-            "Enrage",
-            "Enrage",
-            "Heavy Shield",
-            "Heavy Shield",
-            "Heal",
-            "Aid",
-            "Quick Shot",
-            "Quick Shot"
-        ],
-        "brief": "The very definition of an alpha male. Andrew Tate don't got nothing on these hunks of pure testosterone."
+    "deck": [
+      "Shield",
+      "Shield",
+      "Shield",
+      "Heavy Shield",
+      "Heavy Shield",
+      "Crush",
+      "Crush",
+      "Smash",
+      "Smash",
+      "Heal",
+      "Terminate",
+      "Terminate"
+    ],
+    "brief": "The crystals on their back function kinda like solar panels. Of course, this means that every so often they have to go to the Golem Washers to prevent too much dust from accumulating on them."
+  },
+  "ogre berserker": {
+    "name": "Ogre Berserker",
+    "rarity": "L",
+    "health": 200,
+    "energy_lag": 4,
+    "stamina": 50,
+    "death_rwd": {
+      "coins": [
+        100,
+        200
+      ],
+      "exps": [
+        25,
+        50
+      ],
+      "Health Potion": 1,
+      "Power Potion": 1,
+      "Berserker Axe": 1
     },
-    "temple guardian": {
-        "name": "Temple Guardian",
-        "rarity": "L",
-        "health": 2400,
-        "energy_lag": 4,
-        "stamina": 35,
-        "death_rwd": {
-            "coins": [
-                150,
-                250
-            ],
-            "exps": [
-                25,
-                50
-            ],
-            "Health Potion": 1,
-            "Power Potion": 1
-        },
-        "deck": [
-            "Relic",
-            "Relic",
-            "Seed",
-            "Smite",
-            "Seed",
-            "Cache",
-            "Smite",
-            "Seed",
-            "Reform",
-            "Reform",
-            "Reform"
-        ],
-        "brief": "Literally just a bigger golem. How much bigger you ask? Ten times. Why?"
+    "deck": [
+      "Fury Slashes",
+      "Fury Slashes",
+      "Fury Slashes",
+      "Enrage",
+      "Enrage",
+      "Enrage",
+      "Heavy Shield",
+      "Heavy Shield",
+      "Heal",
+      "Aid",
+      "Quick Shot",
+      "Quick Shot"
+    ],
+    "brief": "The very definition of an alpha male. Andrew Tate don't got nothing on these hunks of pure testosterone."
+  },
+  "temple guardian": {
+    "name": "Temple Guardian",
+    "rarity": "L",
+    "health": 2400,
+    "energy_lag": 4,
+    "stamina": 35,
+    "death_rwd": {
+      "coins": [
+        150,
+        250
+      ],
+      "exps": [
+        25,
+        50
+      ],
+      "Health Potion": 1,
+      "Power Potion": 1
     },
-    "shiniminsus": {
-        "name": "Shiniminsus",
-        "rarity": "L",
-        "health": 600,
-        "energy_lag": 2,
-        "stamina": 100,
-        "death_rwd": {
-            "coins": [
-                1000,
-                2000
-            ],
-            "exps": [
-                500,
-                1000
-            ]
-        },
-        "deck": [
-            "Relic",
-            "Seed",
-            "Seed",
-            "Cache",
-            "Regenerate",
-            "Regenerate",
-            "Immobilize",
-            "Immobilize",
-            "Immobilize",
-            "Lightning Bolt",
-            "Lightning Bolt"
-        ],
-        "brief": "The God of Nature, one of the primordial entities of the Earth. A tree figurine who hibernates in the Shrine of Life in the sacred Enchanted Forest while its roots quietly spread across the world."
+    "deck": [
+      "Relic",
+      "Relic",
+      "Seed",
+      "Smite",
+      "Seed",
+      "Cache",
+      "Smite",
+      "Seed",
+      "Reform",
+      "Reform",
+      "Reform"
+    ],
+    "brief": "Literally just a bigger golem. How much bigger you ask? Ten times. Why?"
+  },
+  "shiniminsus": {
+    "name": "Shiniminsus",
+    "rarity": "L",
+    "health": 600,
+    "energy_lag": 2,
+    "stamina": 100,
+    "death_rwd": {
+      "coins": [
+        1000,
+        2000
+      ],
+      "exps": [
+        500,
+        1000
+      ]
     },
-    "ghost": {
-        "name": "Ghost",
-        "rarity": "C",
-        "health": 20,
-        "energy_lag": 7,
-        "stamina": 30,
-        "death_rwd": {
-            "coins": [
-                20,
-                30
-            ],
-            "exps": [
-                5,
-                10
-            ]
-        },
-        "deck": [
-            "Steal",
-            "Steal",
-            "Steal",
-            "Loot",
-            "Loot",
-            "Loot",
-            "Execration",
-            "Paranoid",
-            "Paranoid",
-            "Insult",
-            "Insult",
-            "Insult"
-        ],
-        "brief": "Ghosts that are formed from the souls of adventurers who died of cringe."
+    "deck": [
+      "Relic",
+      "Seed",
+      "Seed",
+      "Cache",
+      "Regenerate",
+      "Regenerate",
+      "Immobilize",
+      "Immobilize",
+      "Immobilize",
+      "Lightning Bolt",
+      "Lightning Bolt"
+    ],
+    "brief": "The God of Nature, one of the primordial entities of the Earth. A tree figurine who hibernates in the Shrine of Life in the sacred Enchanted Forest while its roots quietly spread across the world."
+  },
+  "ghost": {
+    "name": "Ghost",
+    "rarity": "C",
+    "health": 20,
+    "energy_lag": 7,
+    "stamina": 30,
+    "death_rwd": {
+      "coins": [
+        20,
+        30
+      ],
+      "exps": [
+        5,
+        10
+      ]
     },
-    "skeleton": {
-        "name": "Skeleton",
-        "rarity": "C",
-        "health": 25,
-        "energy_lag": 6,
-        "stamina": 20,
-        "death_rwd": {
-            "coins": [
-                2,
-                5
-            ],
-            "exps": [
-                5,
-                10
-            ]
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Shield",
-            "Stab",
-            "Stab",
-            "Stab",
-            "Slash",
-            "Slash",
-            "Slash",
-            "Paranoid",
-            "Paranoid",
-            "Paranoid"
-        ],
-        "brief": "||THEY UNSPOILERED THE TEXT! RRRRATTLE 'EM, BOYS!||"
+    "deck": [
+      "Steal",
+      "Steal",
+      "Steal",
+      "Loot",
+      "Loot",
+      "Loot",
+      "Execration",
+      "Paranoid",
+      "Paranoid",
+      "Insult",
+      "Insult",
+      "Insult"
+    ],
+    "brief": "Ghosts that are formed from the souls of adventurers who died of cringe."
+  },
+  "skeleton": {
+    "name": "Skeleton",
+    "rarity": "C",
+    "health": 25,
+    "energy_lag": 6,
+    "stamina": 20,
+    "death_rwd": {
+      "coins": [
+        2,
+        5
+      ],
+      "exps": [
+        5,
+        10
+      ]
     },
-    "zombie": {
-        "name": "Zombie",
-        "rarity": "C",
-        "health": 35,
-        "energy_lag": 9,
-        "stamina": 35,
-        "death_rwd": {
-            "coins": [
-                5,
-                10
-            ],
-            "exps": [
-                10,
-                15
-            ]
-        },
-        "deck": [
-            "Heavy Shield",
-            "Shield",
-            "Absorb",
-            "Absorb",
-            "Absorb",
-            "Stab",
-            "Stab",
-            "Paranoid",
-            "Paranoid",
-            "Paranoid",
-            "Insult",
-            "Insult"
-        ],
-        "brief": "This what happens when you watch VTubers for too long."
+    "deck": [
+      "Shield",
+      "Shield",
+      "Shield",
+      "Stab",
+      "Stab",
+      "Stab",
+      "Slash",
+      "Slash",
+      "Slash",
+      "Paranoid",
+      "Paranoid",
+      "Paranoid"
+    ],
+    "brief": "||THEY UNSPOILERED THE TEXT! RRRRATTLE 'EM, BOYS!||"
+  },
+  "zombie": {
+    "name": "Zombie",
+    "rarity": "C",
+    "health": 35,
+    "energy_lag": 9,
+    "stamina": 35,
+    "death_rwd": {
+      "coins": [
+        5,
+        10
+      ],
+      "exps": [
+        10,
+        15
+      ]
     },
-    "slime": {
-        "name": "Slime",
-        "rarity": "R",
-        "health": 30,
-        "energy_lag": 8,
-        "stamina": 25,
-        "death_rwd": {
-            "coins": [
-                5,
-                10
-            ],
-            "exps": [
-                10,
-                15
-            ]
-        },
-        "deck": [
-            "Absorb",
-            "Absorb",
-            "Absorb",
-            "Devour",
-            "Devour",
-            "Devour",
-            "Reform",
-            "Reform",
-            "Reform",
-            "Sacrifice",
-            "Sacrifice",
-            "Revenge"
-        ],
-        "brief": "These are much stronger than your average weak Genshin slimes; don't underestimate them!"
+    "deck": [
+      "Heavy Shield",
+      "Shield",
+      "Absorb",
+      "Absorb",
+      "Absorb",
+      "Stab",
+      "Stab",
+      "Paranoid",
+      "Paranoid",
+      "Paranoid",
+      "Insult",
+      "Insult"
+    ],
+    "brief": "This what happens when you watch VTubers for too long."
+  },
+  "slime": {
+    "name": "Slime",
+    "rarity": "R",
+    "health": 30,
+    "energy_lag": 8,
+    "stamina": 25,
+    "death_rwd": {
+      "coins": [
+        5,
+        10
+      ],
+      "exps": [
+        10,
+        15
+      ]
     },
-    "phantom": {
-        "name": "Phantom",
-        "rarity": "R",
-        "health": 40,
-        "energy_lag": 6,
-        "stamina": 40,
-        "death_rwd": {
-            "coins": [
-                10,
-                20
-            ],
-            "exps": [
-                15,
-                20
-            ]
-        },
-        "deck": [
-            "Heavy Shield",
-            "Shield",
-            "Enrage",
-            "Enrage",
-            "Lightning Bolt",
-            "Lightning Bolt",
-            "Zap",
-            "Zap",
-            "Quick Shot",
-            "Quick Shot",
-            "Slash",
-            "Slash"
-        ],
-        "brief": "Extremely different from their MC counterparts, these creatures may be the result of when a zombie and skeleton love each other very much."
+    "deck": [
+      "Absorb",
+      "Absorb",
+      "Absorb",
+      "Devour",
+      "Devour",
+      "Devour",
+      "Reform",
+      "Reform",
+      "Reform",
+      "Sacrifice",
+      "Sacrifice",
+      "Revenge"
+    ],
+    "brief": "These are much stronger than your average weak Genshin slimes; don't underestimate them!"
+  },
+  "phantom": {
+    "name": "Phantom",
+    "rarity": "R",
+    "health": 40,
+    "energy_lag": 6,
+    "stamina": 40,
+    "death_rwd": {
+      "coins": [
+        10,
+        20
+      ],
+      "exps": [
+        15,
+        20
+      ]
     },
-    "demon": {
-        "name": "Demon",
-        "rarity": "E",
-        "health": 70,
-        "energy_lag": 5,
-        "stamina": 35,
-        "death_rwd": {
-            "coins": [
-                20,
-                30
-            ],
-            "exps": [
-                20,
-                30
-            ]
-        },
-        "deck": [
-            "Cocktail",
-            "Cocktail",
-            "Enrage",
-            "Enrage",
-            "Hellfire",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Ignite",
-            "Ignite",
-            "Paranoid",
-            "Paranoid"
-        ],
-        "brief": "These terrifying buff spawns from Hell will incinerate your soul and your heterosexuality."
+    "deck": [
+      "Heavy Shield",
+      "Shield",
+      "Enrage",
+      "Enrage",
+      "Lightning Bolt",
+      "Lightning Bolt",
+      "Zap",
+      "Zap",
+      "Quick Shot",
+      "Quick Shot",
+      "Slash",
+      "Slash"
+    ],
+    "brief": "Extremely different from their MC counterparts, these creatures may be the result of when a zombie and skeleton love each other very much."
+  },
+  "demon": {
+    "name": "Demon",
+    "rarity": "E",
+    "health": 70,
+    "energy_lag": 5,
+    "stamina": 35,
+    "death_rwd": {
+      "coins": [
+        20,
+        30
+      ],
+      "exps": [
+        20,
+        30
+      ]
     },
-    "headless knight": {
-        "name": "Headless Knight",
-        "rarity": "L",
-        "health": 150,
-        "energy_lag": 4,
-        "stamina": 50,
-        "death_rwd": {
-            "coins": [
-                100,
-                200
-            ],
-            "exps": [
-                25,
-                50
-            ],
-            "Large Power Potion": 1,
-            "Resurrection Amulet": 1
-        },
-        "deck": [
-            "Heavy Shield",
-            "Heavy Shield",
-            "Hellfire",
-            "Enrage",
-            "Sacrifice",
-            "Pandemic",
-            "Demonic Ritual",
-            "Demonic Ritual",
-            "Demonic Ritual",
-            "Execration",
-            "Insult",
-            "Insult"
-        ],
-        "brief": "Noble knights that fell to the temptations of Satan. Their decapitated heads make great soccer balls too!"
+    "deck": [
+      "Cocktail",
+      "Cocktail",
+      "Enrage",
+      "Enrage",
+      "Hellfire",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Ignite",
+      "Ignite",
+      "Paranoid",
+      "Paranoid"
+    ],
+    "brief": "These terrifying buff spawns from Hell will incinerate your soul and your heterosexuality."
+  },
+  "headless knight": {
+    "name": "Headless Knight",
+    "rarity": "L",
+    "health": 150,
+    "energy_lag": 4,
+    "stamina": 50,
+    "death_rwd": {
+      "coins": [
+        100,
+        200
+      ],
+      "exps": [
+        25,
+        50
+      ],
+      "Large Power Potion": 1,
+      "Resurrection Amulet": 1
     },
-    "red wyvern": {
-        "name": "Red Wyvern",
-        "rarity": "L",
-        "health": 240,
-        "energy_lag": 3,
-        "stamina": 100,
-        "death_rwd": {
-            "coins": [
-                500,
-                1000
-            ],
-            "exps": [
-                75,
-                150
-            ],
-            "gems": [
-                0,
-                49
-            ]
-        },
-        "deck": [
-            "Harden Scales",
-            "Harden Scales",
-            "Harden Scales",
-            "Harden Scales",
-            "Harden Scales",
-            "Prideful Flight",
-            "Prideful Flight",
-            "Prideful Flight",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Hellfire",
-            "Hellfire",
-            "Rapid Burst",
-            "Rapid Burst",
-            "Combust",
-            "Combust",
-            "Harden Scales",
-            "Harden Scales",
-            "Harden Scales",
-            "Harden Scales",
-            "Harden Scales",
-            "Prideful Flight",
-            "Prideful Flight",
-            "Prideful Flight",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Fireball",
-            "Harden Scales",
-            "Harden Scales",
-            "Rapid Burst",
-            "Rapid Burst",
-            "Combust",
-            "Combust"
-        ],
-        "brief": "A close relative of dragons, though just as lethal. Be wary of their tough hides and rapid flame-based attacks.",
-        "tip:": "Make sure not to have many burn effects on you or the Wyvern's combust attack will deal massive damage! You can prevent it by frequent shielding or by casting chill effects on yourself.\n Many of the Wyvern's attack have low accuracy, meaning that keeping it stunned will greatly decrease its average damage. However, be aware that they can clear their effects with Prideful Flight."
+    "deck": [
+      "Heavy Shield",
+      "Heavy Shield",
+      "Hellfire",
+      "Enrage",
+      "Sacrifice",
+      "Pandemic",
+      "Demonic Ritual",
+      "Demonic Ritual",
+      "Demonic Ritual",
+      "Execration",
+      "Insult",
+      "Insult"
+    ],
+    "brief": "Noble knights that fell to the temptations of Satan. Their decapitated heads make great soccer balls too!"
+  },
+  "red wyvern": {
+    "name": "Red Wyvern",
+    "rarity": "L",
+    "health": 240,
+    "energy_lag": 3,
+    "stamina": 100,
+    "death_rwd": {
+      "coins": [
+        500,
+        1000
+      ],
+      "exps": [
+        75,
+        150
+      ],
+      "gems": [
+        0,
+        49
+      ]
     },
-    "lich": {
-        "name": "Lich",
-        "rarity": "R",
-        "health": 50,
-        "energy_lag": 4,
-        "stamina": 30,
-        "death_rwd": {
-            "coins": 0,
-            "exps": 0
-        },
-        "deck": [
-            "Insult",
-            "Insult",
-            "Skeletal Slay",
-            "Skeletal Slay",
-            "Sacrifice",
-            "Sacrifice",
-            "Regenerate",
-            "Regenerate",
-            "Regenerate",
-            "Terminate",
-            "Terminate",
-            "Terminate"
-        ],
-        "brief": "An extremely salty wizard who gave up their soul trying to defy death."
+    "deck": [
+      "Harden Scales",
+      "Harden Scales",
+      "Harden Scales",
+      "Harden Scales",
+      "Harden Scales",
+      "Prideful Flight",
+      "Prideful Flight",
+      "Prideful Flight",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Hellfire",
+      "Hellfire",
+      "Rapid Burst",
+      "Rapid Burst",
+      "Combust",
+      "Combust",
+      "Harden Scales",
+      "Harden Scales",
+      "Harden Scales",
+      "Harden Scales",
+      "Harden Scales",
+      "Prideful Flight",
+      "Prideful Flight",
+      "Prideful Flight",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Fireball",
+      "Harden Scales",
+      "Harden Scales",
+      "Rapid Burst",
+      "Rapid Burst",
+      "Combust",
+      "Combust"
+    ],
+    "brief": "A close relative of dragons, though just as lethal. Be wary of their tough hides and rapid flame-based attacks.",
+    "tip:": "Make sure not to have many burn effects on you or the Wyvern's combust attack will deal massive damage! You can prevent it by frequent shielding or by casting chill effects on yourself.\n Many of the Wyvern's attack have low accuracy, meaning that keeping it stunned will greatly decrease its average damage. However, be aware that they can clear their effects with Prideful Flight."
+  },
+  "lich": {
+    "name": "Lich",
+    "rarity": "R",
+    "health": 50,
+    "energy_lag": 4,
+    "stamina": 30,
+    "death_rwd": {
+      "coins": 0,
+      "exps": 0
     },
-    "lich lord": {
-        "name": "Lich Lord",
-        "rarity": "L",
-        "health": 500,
-        "energy_lag": 2,
-        "stamina": 75,
-        "death_rwd": {
-            "coins": [
-                500,
-                1000
-            ],
-            "exps": [
-                75,
-                150
-            ],
-            "gems": [
-                0,
-                49
-            ],
-            "crystal": 1
-        },
-        "deck": [
-            "Rejuvenate",
-            "Smite",
-            "Execration",
-            "Skeletal Slay",
-            "Skeletal Slay",
-            "Skeletal Slay",
-            "Terminate",
-            "Terminate",
-            "Terminate",
-            "Terminate",
-            "Insult",
-            "Insult",
-            "Skeletal Slay",
-            "Insult",
-            "Skeletal Slay"
-        ],
-        "brief": "An even saltier wizard who gave up their soul trying to make their anime waifu real.",
-        "_comment": "what healing spells there's literally only one rejuvenate"
+    "deck": [
+      "Insult",
+      "Insult",
+      "Skeletal Slay",
+      "Skeletal Slay",
+      "Sacrifice",
+      "Sacrifice",
+      "Regenerate",
+      "Regenerate",
+      "Regenerate",
+      "Terminate",
+      "Terminate",
+      "Terminate"
+    ],
+    "brief": "An extremely salty wizard who gave up their soul trying to defy death."
+  },
+  "lich lord": {
+    "name": "Lich Lord",
+    "rarity": "L",
+    "health": 500,
+    "energy_lag": 2,
+    "stamina": 75,
+    "death_rwd": {
+      "coins": [
+        500,
+        1000
+      ],
+      "exps": [
+        75,
+        150
+      ],
+      "gems": [
+        0,
+        49
+      ],
+      "crystal": 1
     },
-    "brewer": {
-        "name": "Brewer",
-        "rarity": "R",
-        "health": 80,
-        "energy_lag": 4,
-        "stamina": 45,
-        "death_rwd": {
-            "coins": [
-                30,
-                50
-            ],
-            "exps": [
-                5,
-                10
-            ],
-            "Health Potion": 1,
-            "Power Potion": 1
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Absorb",
-            "Absorb",
-            "Heal",
-            "Heal",
-            "Aid",
-            "Aid",
-            "Bees Swarm",
-            "Bees Swarm",
-            "Bees Swarm",
-            "Meditate"
-        ],
-        "brief": "A specialist in various kinds of potions and medicine.",
-        "dialogue": "Want some dru-I mean, potions? I can cook up anything you want! Strength potions, health potions, weed potions...",
-        "trades": {
-            "Health Potion": {
-                "reqs": [
-                    [
-                        "Herb",
-                        1
-                    ],
-                    [
-                        "Forest Fruit",
-                        2
-                    ]
-                ]
-            },
-            "Power Potion": {
-                "reqs": [
-                    [
-                        "Herb",
-                        1
-                    ],
-                    [
-                        "Forest Fruit",
-                        2
-                    ]
-                ]
-            },
-            "Large Health Potion": {
-                "prob": 0.3,
-                "reqs": [
-                    [
-                        "Health Potion",
-                        2
-                    ]
-                ]
-            },
-            "Large Power Potion": {
-                "prob": 0.3,
-                "reqs": [
-                    [
-                        "Power Potion",
-                        2
-                    ]
-                ]
-            }
-        }
+    "deck": [
+      "Rejuvenate",
+      "Smite",
+      "Execration",
+      "Skeletal Slay",
+      "Skeletal Slay",
+      "Skeletal Slay",
+      "Terminate",
+      "Terminate",
+      "Terminate",
+      "Terminate",
+      "Insult",
+      "Insult",
+      "Skeletal Slay",
+      "Insult",
+      "Skeletal Slay"
+    ],
+    "brief": "An even saltier wizard who gave up their soul trying to make their anime waifu real.",
+    "_comment": "what healing spells there's literally only one rejuvenate"
+  },
+  "brewer": {
+    "name": "Brewer",
+    "rarity": "R",
+    "health": 80,
+    "energy_lag": 4,
+    "stamina": 45,
+    "death_rwd": {
+      "coins": [
+        30,
+        50
+      ],
+      "exps": [
+        5,
+        10
+      ],
+      "Health Potion": 1,
+      "Power Potion": 1
     },
-    "craftsman": {
-        "name": "Craftsman",
-        "rarity": "R",
-        "health": 90,
-        "energy_lag": 4,
-        "stamina": 40,
-        "death_rwd": {
-            "coins": [
-                20,
-                30
-            ],
-            "exps": [
-                5,
-                10
-            ],
-            "Wood": 3,
-            "Stone": [
-                0,
-                3
-            ]
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Slash",
-            "Slash",
-            "Stab",
-            "Stab",
-            "Explode",
-            "Explode",
-            "Aim",
-            "Aim",
-            "Heavy Shield",
-            "Quick Shot"
-        ],
-        "brief": "Skilled craftsmen who have years of experience forging weapons in their workshops.",
-        "dialogue": "Rafts, swords, crossbows. You want it? It's yours my friend, as long as you have enough materials.",
-        "trades": {
-            "Raft": {
-                "reqs": [
-                    [
-                        "Wood",
-                        5
-                    ]
-                ]
-            },
-            "Wooden Sword": {
-                "reqs": [
-                    [
-                        "Wood",
-                        10
-                    ]
-                ]
-            },
-            "Wooden Bow": {
-                "reqs": [
-                    [
-                        "Wood",
-                        10
-                    ]
-                ]
-            },
-            "Stone Sword": {
-                "prob": 0.8,
-                "reqs": [
-                    [
-                        "Stone",
-                        10
-                    ]
-                ]
-            },
-            "Iron Sword": {
-                "prob": 0.2,
-                "reqs": [
-                    [
-                        "Iron Ore",
-                        10
-                    ]
-                ]
-            },
-            "Iron Crossbow": {
-                "prob": 0.1,
-                "reqs": [
-                    [
-                        "Iron Ore",
-                        10
-                    ]
-                ]
-            },
-            "Crystal Sword": {
-                "prob": 0.05,
-                "reqs": [
-                    [
-                        "Crystal",
-                        10
-                    ]
-                ]
-            }
-        }
-    },
-    "dummy": {
-        "name": "Dummy",
-        "rarity": "L",
-        "health": 25,
-        "energy_lag": 4,
-        "stamina": 20,
-        "death_rwd": {
-            "coins": 0,
-            "exps": 5
-        },
-        "deck": [
-            "Shield",
-            "Shield",
-            "Shield",
-            "Stab",
-            "Stab",
-            "Stab",
-            "Aid",
-            "Aid",
-            "Zap",
-            "Absorb",
-            "Absorb",
-            "Terminate"
-        ],
-        "brief": "An enchanted training dummy that's mainly used to help new adventurers get comfortable with fighting."
+    "deck": [
+      "Shield",
+      "Shield",
+      "Absorb",
+      "Absorb",
+      "Heal",
+      "Heal",
+      "Aid",
+      "Aid",
+      "Bees Swarm",
+      "Bees Swarm",
+      "Bees Swarm",
+      "Meditate"
+    ],
+    "brief": "A specialist in various kinds of potions and medicine.",
+    "dialogue": "Want some dru-I mean, potions? I can cook up anything you want! Strength potions, health potions, weed potions...",
+    "trades": {
+      "Health Potion": {
+        "reqs": [
+          [
+            "Herb",
+            1
+          ],
+          [
+            "Forest Fruit",
+            2
+          ]
+        ]
+      },
+      "Power Potion": {
+        "reqs": [
+          [
+            "Herb",
+            1
+          ],
+          [
+            "Forest Fruit",
+            2
+          ]
+        ]
+      },
+      "Large Health Potion": {
+        "prob": 0.3,
+        "reqs": [
+          [
+            "Health Potion",
+            2
+          ]
+        ]
+      },
+      "Large Power Potion": {
+        "prob": 0.3,
+        "reqs": [
+          [
+            "Power Potion",
+            2
+          ]
+        ]
+      }
     }
+  },
+  "craftsman": {
+    "name": "Craftsman",
+    "rarity": "R",
+    "health": 90,
+    "energy_lag": 4,
+    "stamina": 40,
+    "death_rwd": {
+      "coins": [
+        20,
+        30
+      ],
+      "exps": [
+        5,
+        10
+      ],
+      "Wood": 3,
+      "Stone": [
+        0,
+        3
+      ]
+    },
+    "deck": [
+      "Shield",
+      "Shield",
+      "Slash",
+      "Slash",
+      "Stab",
+      "Stab",
+      "Explode",
+      "Explode",
+      "Aim",
+      "Aim",
+      "Heavy Shield",
+      "Quick Shot"
+    ],
+    "brief": "Skilled craftsmen who have years of experience forging weapons in their workshops.",
+    "dialogue": "Rafts, swords, crossbows. You want it? It's yours my friend, as long as you have enough materials.",
+    "trades": {
+      "Raft": {
+        "reqs": [
+          [
+            "Wood",
+            5
+          ]
+        ]
+      },
+      "Wooden Sword": {
+        "reqs": [
+          [
+            "Wood",
+            10
+          ]
+        ]
+      },
+      "Wooden Bow": {
+        "reqs": [
+          [
+            "Wood",
+            10
+          ]
+        ]
+      },
+      "Stone Sword": {
+        "prob": 0.8,
+        "reqs": [
+          [
+            "Stone",
+            10
+          ]
+        ]
+      },
+      "Iron Sword": {
+        "prob": 0.2,
+        "reqs": [
+          [
+            "Iron Ore",
+            10
+          ]
+        ]
+      },
+      "Iron Crossbow": {
+        "prob": 0.1,
+        "reqs": [
+          [
+            "Iron Ore",
+            10
+          ]
+        ]
+      },
+      "Crystal Sword": {
+        "prob": 0.05,
+        "reqs": [
+          [
+            "Crystal",
+            10
+          ]
+        ]
+      }
+    }
+  },
+  "dummy": {
+    "name": "Dummy",
+    "rarity": "L",
+    "health": 25,
+    "energy_lag": 4,
+    "stamina": 20,
+    "death_rwd": {
+      "coins": 0,
+      "exps": 5
+    },
+    "deck": [
+      "Shield",
+      "Shield",
+      "Shield",
+      "Stab",
+      "Stab",
+      "Stab",
+      "Aid",
+      "Aid",
+      "Zap",
+      "Absorb",
+      "Absorb",
+      "Terminate"
+    ],
+    "brief": "An enchanted training dummy that's mainly used to help new adventurers get comfortable with fighting."
+  }
 }

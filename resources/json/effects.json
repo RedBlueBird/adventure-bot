@@ -1,50 +1,50 @@
 {
-    "burn": {
-        "name": "Burn",
-        "description": "Blockable. Decreases by 1 every turn. \nThe user loses 4% of their health for each turn this is active. \nNullified out by chill effects."
-    },
-    "stun": {
-        "name": "Stun",
-        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset by -50% initially."
-    },
-    "poison": {
-        "name": "Poison",
-        "description": "Blockable. Decreases by 1 every turn. \nDrains 1 stamina from the user each turn."
-    },
-    "recover": {
-        "name": "Recover",
-        "description": "Blockable. Decreases by 1 every turn. \nThe user gains 4% of their max health per turn."
-    },
-    "curse": {
-        "name": "Curse",
-        "description": "Unblockable. Never decreases. \nStays on the user, though it doesn't do anything by itself."
-    },
-    "bullseye": {
-        "name": "Bullseye",
-        "description": "Blockable. Decreases by 1 every turn. \nEach turn the user's Crit will be offset by +50% initially."
-    },
-    "berserk": {
-        "name": "Berserk",
-        "description": "Blockable. Decreases by 1 every turn. \nWhile in effect, each card used will increase the user's Crit by an additional 25%."
-    },
-    "chill": {
-        "name": "Chill",
-        "description": "Blockable. Decreases by 1 every turn. \nDoesn't do anything by itself. If a user has 7 or more Chill effects at the end of a turn, they will turn into 1 Freeze effect. \nCanceled out by burn effects."
-    },
-    "freeze": { 
-        "name": "Freeze",
-        "description": "Unblockable. Decreases by 1 every turn. \nForce the user to skip a turn while active. \nFrozen users are immune to chill effects while this lasts."
-    },
-    "restore": {
-        "name": "Restore",
-        "description": "Blockable. Decreases by 1 every turn. \nGenerates 1 extra energy for the user each turn."
-    },
-    "seriate": {
-        "name": "Seriate",
-        "description": "Unblockable. Decreases by 1 every turn. \nEach turn, the user's Crit will be offset by +10% for each Seriate effect they have."
-    },
-    "feeble": {
-        "name": "Feeble",
-        "description": "Blockable. Decreases by 1 every turn. \nEach damage coming directly from opponent's attacks after shielded/absorbed will increases by an additional 25%."
-    }
+  "burn": {
+    "name": "Burn",
+    "description": "Blockable. Decreases by 1 every turn.\nThe user loses 4% of their health for each turn this is active.\nNullified out by chill effects."
+  },
+  "stun": {
+    "name": "Stun",
+    "description": "Blockable. Decreases by 1 every turn.\nEach turn the user's Crit will be offset by -50% initially."
+  },
+  "poison": {
+    "name": "Poison",
+    "description": "Blockable. Decreases by 1 every turn.\nDrains 1 stamina from the user each turn."
+  },
+  "recover": {
+    "name": "Recover",
+    "description": "Blockable. Decreases by 1 every turn.\nThe user gains 4% of their max health per turn."
+  },
+  "curse": {
+    "name": "Curse",
+    "description": "Unblockable. Never decreases.\nStays on the user, though it doesn't do anything by itself."
+  },
+  "bullseye": {
+    "name": "Bullseye",
+    "description": "Blockable. Decreases by 1 every turn.\nEach turn the user's Crit will be offset by +50% initially."
+  },
+  "berserk": {
+    "name": "Berserk",
+    "description": "Blockable. Decreases by 1 every turn.\nWhile in effect, each card used will increase the user's Crit by an additional 25%."
+  },
+  "chill": {
+    "name": "Chill",
+    "description": "Blockable. Decreases by 1 every turn.\nDoesn't do anything by itself. If a user has 7 or more Chill effects at the end of a turn, they will turn into 1 Freeze effect.\nCanceled out by burn effects."
+  },
+  "freeze": {
+    "name": "Freeze",
+    "description": "Unblockable. Decreases by 1 every turn.\nForce the user to skip a turn while active.\nFrozen users are immune to chill effects while this lasts."
+  },
+  "restore": {
+    "name": "Restore",
+    "description": "Blockable. Decreases by 1 every turn.\nGenerates 1 extra energy for the user each turn."
+  },
+  "seriate": {
+    "name": "Seriate",
+    "description": "Unblockable. Decreases by 1 every turn.\nEach turn, the user's Crit will be offset by +10% for each Seriate effect they have."
+  },
+  "feeble": {
+    "name": "Feeble",
+    "description": "Blockable. Decreases by 1 every turn.\nEach damage coming directly from opponent's attacks after shielded/absorbed will increases by an additional 25%."
+  }
 }

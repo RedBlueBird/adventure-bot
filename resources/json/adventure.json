@@ -1,2003 +1,2003 @@
 {
-    "boss raid": {
-        "main": {
-            "start": [
-                {
-                    "description": "You walk towards the Gate of Terror. Just looking at it sends a chill down your spine.",
-                    "choices": {
-                        "Adventure Forward": {
-                            "section": "main",
-                            "subsec": "boss"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "boss": [
-                {
-                    "description": "You notice a large shadow sweep across the ground. As soon as you notice it, a monstrous limb hits the ground. As the creature lets out a deafeaning roar, you realize that it is a Red Wyvern. You remember hearing about this legendary creature at the bar, but seeing it for the first time is something magical. Maybe you should take a selfie?",
-                    "encounters": {
-                        "Red Wyvern": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Red Wyvern": {
-                            "section": "main",
-                            "subsec": "end",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                },
-                {
-                    "description": "You walk through the gate, expecting to see a wyvern, or perhaps a lich lord, but are instead greeted by an absolutely majestic being. It's beautiful form takes your breath away, and the gracefulness of its legs as they scuttle across the ground are like that of a skilled dancer. But you DO get pretty good loot for killing it, though it would be a shame to end the life of such a perfect being.",
-                    "encounters": {
-                        "Spider Fish": [
-                            0
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Spider Fish": {
-                            "section": "main",
-                            "subsec": "end",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.0
-                        }
-                    ]
-                }
-            ],
-            "end": [
-                {
-                    "description": "Congratulations on defeating such a powerful enemy! The amount of bragging rights you now have is nigh-endless.",
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ]
+  "boss raid": {
+    "main": {
+      "start": [
+        {
+          "description": "You walk towards the Gate of Terror. Just looking at it sends a chill down your spine.",
+          "choices": {
+            "Adventure Forward": {
+              "section": "main",
+              "subsec": "boss"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
         }
-    },
-    "enchanted forest": {
-        "main": {
-            "start": [
-                {
-                    "description": "What do you want to do?",
-                    "choices": {
-                        "Adventure Forward": {
-                            "section": "main",
-                            "subsec": "adventure"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "adventure": [
-                {
-                    "description": "Shrine of Life!",
-                    "choices": {
-                        "Continue": {
-                            "section": "shrine of life",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 5000,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                },
-                {
-                    "description": "Boss!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "boss"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 900,
-                            "ub": 1100,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 1900,
-                            "ub": 2100,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 2900,
-                            "ub": 3100,
-                            "weight": 0.4
-                        }
-                    ]
-                },
-                {
-                    "description": "Monsters!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "monster"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.4
-                        }
-                    ]
-                },
-                {
-                    "description": "Items!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "item"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.15
-                        }
-                    ]
-                },
-                {
-                    "description": "Traders!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "trader"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                },
-                {
-                    "description": "Thieves!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "thief"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "Traps!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "trap"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.15
-                        }
-                    ]
-                },
-                {
-                    "description": "River!",
-                    "choices": {
-                        "Continue": {
-                            "section": "river crossing",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 500,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                },
-                {
-                    "description": "Cave!",
-                    "choices": {
-                        "Continue": {
-                            "section": "dark cave",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                }
-            ],
-            "monster": [
-                {
-                    "description": "A tribe of goblins leap out of the undergrowth, weapons at the ready.",
-                    "encounters": {
-                        "Goblin": [
-                            1,
-                            1,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the goblins": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Order the goblins to stay away - 1 Goblin Staff": {
-                            "section": "main",
-                            "subsec": "start",
-                            "reqs": [
-                                {
-                                    "name": "Goblin Staff",
-                                    "amt": 1,
-                                    "taken": false
-                                }
-                            ]
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 500,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 501,
-                            "ub": 1000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "A pack of goblins spots you from their campfire. You feel you're going to become dinner if you don't fight.",
-                    "encounters": {
-                        "Goblin": [
-                            1
-                        ],
-                        "Goblin Soldier": [
-                            1
-                        ],
-                        "Goblin Bomber": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the goblins": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Order the goblins to stay away - 1 Goblin Staff": {
-                            "section": "main",
-                            "subsec": "start",
-                            "reqs": [
-                                {
-                                    "name": "Goblin Staff",
-                                    "amt": 1,
-                                    "taken": false
-                                }
-                            ]
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 501,
-                            "ub": 1500,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 1501,
-                            "ub": 2500,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "You notice the trees around you are speaking goblinese. Suddenly, a group of goblin soldiers drops down and surrounds you completely!",
-                    "encounters": {
-                        "Goblin Chief": [
-                            1
-                        ],
-                        "Goblin Soldier": [
-                            1,
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the goblins": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 1501,
-                            "ub": 3000,
-                            "weight": 0.3
-                        },
-                        {
-                            "lb": 3001,
-                            "ub": 7000,
-                            "weight": 0.25
-                        }
-                    ]
-                },
-                {
-                    "description": "Slimes ooze out of a nearby puddle!",
-                    "encounters": {
-                        "Slime": [
-                            1,
-                            0.5,
-                            0.3
-                        ]
-                    },
-                    "choices": {
-                        "Fight the slimes": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 250,
-                            "ub": 1000,
-                            "weight": 0.2
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "The ground trembles as the trees in front of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
-                    "encounters": {
-                        "Tree Giant": [
-                            1,
-                            1,
-                            0.25
-                        ]
-                    },
-                    "choices": {
-                        "Fight the tree giants": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Torch them - 1 Torch": {
-                            "section": "main",
-                            "subsec": "start",
-                            "reqs": [
-                                {
-                                    "name": "Torch",
-                                    "amt": 1,
-                                    "taken": true
-                                }
-                            ]
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 501,
-                            "ub": 1500,
-                            "weight": 0.1
-                        },
-                        {
-                            "lb": 1501,
-                            "ub": 2500,
-                            "weight": 0.25
-                        }
-                    ]
-                },
-                {
-                    "description": "Oh no! You realize you've crossed into an ogre's territory...",
-                    "encounters": {
-                        "Ogre Gladiator": [
-                            1,
-                            0.2,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the ogre gladiators": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 4000,
-                            "weight": 0.3
-                        },
-                        {
-                            "lb": 4001,
-                            "ub": 7000,
-                            "weight": 0.15
-                        }
-                    ]
-                }
-            ],
-            "item": [
-                {
-                    "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
-                    "choices": {
-                        "Pick up the mushroom": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore it and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 7000,
-                            "weight": 0.2
-                        }
-                    ],
-                    "item": [
-                        "weird mushroom",
-                        [
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "description": "You see some strange leaves. Upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
-                    "choices": {
-                        "Pick up the herb": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore it and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 250,
-                            "ub": 7000,
-                            "weight": 0.05
-                        }
-                    ],
-                    "item": [
-                        "herb",
-                        [
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "description": "You see some red fruits hanging on a tree. These useful fruits can replenish your energy when you're running low on health.",
-                    "choices": {
-                        "Collect some forest fruits": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1000,
-                            "weight": 0.1
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.05
-                        }
-                    ],
-                    "item": [
-                        "forest fruit",
-                        [
-                            3,
-                            4
-                        ]
-                    ]
-                },
-                {
-                    "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
-                    "choices": {
-                        "Do a little deforestation": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.1
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 3000,
-                            "weight": 0.05
-                        }
-                    ],
-                    "item": [
-                        "wood",
-                        [
-                            3,
-                            4
-                        ]
-                    ]
-                },
-                {
-                    "description": "You found some durable rocks. Though more durable than wood, they're also a bit heavier.",
-                    "choices": {
-                        "Mine some stones": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 3000,
-                            "weight": 0.1
-                        }
-                    ],
-                    "item": [
-                        "stone",
-                        [
-                            2,
-                            3
-                        ]
-                    ]
-                },
-                {
-                    "description": "Out of the corner of your eye, you see some iron ore deep in ravine. Iron is much better than either wood or stone- that is, if you manage to smelt it.",
-                    "choices": {
-                        "Mine some ore": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 2001,
-                            "ub": 3000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 3001,
-                            "ub": 7000,
-                            "weight": 0.1
-                        }
-                    ],
-                    "item": [
-                        "iron ore",
-                        [
-                            1,
-                            2
-                        ]
-                    ]
-                }
-            ],
-            "arrow trap": [
-                {
-                    "description": "A lone elf jumped out of the bushes and ambushed you!",
-                    "encounters": {
-                        "Archer Elf": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Elf": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 7000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "trap": [
-                {
-                    "description": "You hear the pluck of a bowstring from behind. As you turn around, you see an arrow flying at you!",
-                    "damage": [
-                        5,
-                        10
-                    ],
-                    "time": [
-                        3,
-                        5
-                    ],
-                    "instant": {
-                        "trap": "reaction"
-                    },
-                    "to": {
-                        "section": "main",
-                        "subsec": "arrow trap"
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 2000,
-                            "weight": 0.3
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 7000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "As you walk, you notice traps hidden in the dirt. Can you avoid stepping on them?",
-                    "damage": [
-                        10,
-                        15
-                    ],
-                    "length": [
-                        6,
-                        8
-                    ],
-                    "time": [
-                        3,
-                        4
-                    ],
-                    "instant": {
-                        "trap": "memorize"
-                    },
-                    "to": {
-                        "section": "main",
-                        "subsec": "start"
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 2000,
-                            "weight": 0.2
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 7000,
-                            "weight": 0.15
-                        }
-                    ]
-                }
-            ],
-            "trader": [
-                {
-                    "description": "You meet a skilled brewer. They may have some helpful supplies you can use on your journeys.",
-                    "encounters": {
-                        "Brewer": [
-                            1
-                        ]
-                    },
-                    "name": "brewer",
-                    "choices": {
-                        "Ask what this person has to offer": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "trade"
-                        },
-                        "Kill them and take their loot": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Leave this person alone": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1000,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 7000,
-                            "weight": 0.6
-                        }
-                    ]
-                },
-                {
-                    "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
-                    "encounters": {
-                        "Craftsman": [
-                            1
-                        ]
-                    },
-                    "name": "craftsman",
-                    "choices": {
-                        "Ask what this person can craft": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "trade"
-                        },
-                        "Kill them and take their loot": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Leave this person alone": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1000,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 7000,
-                            "weight": 0.3
-                        }
-                    ]
-                }
-            ],
-            "thief": [
-                {
-                    "description": "A horde of goblin thieves leaps out of the bushes. The leader points at your backpack and then draws a line across his neck. He seems to be demanding your posessions in exchange for your life!",
-                    "encounters": {
-                        "Goblin Thief": [
-                            1,
-                            0.2
-                        ],
-                        "Goblin Bomber": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the thieves": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Give away some loot and flee": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 7000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "boss": [
-                {
-                    "description": "You see a huge lumbering ogre that's much larger than the others. Wearing animal pelts, and covering its face with black and white war paint, it carries two huge metal blades covered with blood stains. You're nearly paralyzed with fear!",
-                    "encounters": {
-                        "Ogre Berserker": [
-                            1
-                        ],
-                        "Ogre Gladiator": [
-                            1,
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight on!": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1999,
-                            "weight": 1
-                        }
-                    ]
-                },
-                {
-                    "description": "The earth *TREMBLES* as the all mighty Golem awakens from its shell. The guardian of the Holy Shrine, the ultimate barrier between adventurers and treasures. You can either try to get past it or mark your last step upon this forbidden part of the forest and leave.",
-                    "encounters": {
-                        "Temple Guardian": [
-                            1
-                        ],
-                        "Crystal Golem": [
-                            1,
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight on!": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 2000,
-                            "ub": 7000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "end": [
-                {
-                    "description": "You have conquered the Enchanted Forest! You can always come back for resources another time.",
-                    "choices": {
-                        "Return to the Hometown and tell your tale": {
-                            "section": "main",
-                            "subsec": "end",
-                            "action": "exit"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
+      ],
+      "boss": [
+        {
+          "description": "You notice a large shadow sweep across the ground. As soon as you notice it, a monstrous limb hits the ground. As the creature lets out a deafeaning roar, you realize that it is a Red Wyvern. You remember hearing about this legendary creature at the bar, but seeing it for the first time is something magical. Maybe you should take a selfie?",
+          "encounters": {
+            "Red Wyvern": [
+              1
             ]
+          },
+          "choices": {
+            "Fight the Red Wyvern": {
+              "section": "main",
+              "subsec": "end",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
         },
-        "river crossing": {
-            "start": [
-                {
-                    "description": "A river blocks your path. The water flows quickly, and the river is very wide. You could try to wade across, or use/craft a temporary raft to sail over.",
-                    "choices": {
-                        "Wading across the river": {
-                            "section": "river crossing",
-                            "subsec": "legs"
-                        },
-                        "Sail over by raft - 1 Raft": {
-                            "section": "river crossing",
-                            "subsec": "raft",
-                            "reqs": [
-                                {
-                                    "name": "Raft",
-                                    "amt": 1,
-                                    "taken": true
-                                }
-                            ]
-                        },
-                        "Craft a raft and sail over - 8 Wood": {
-                            "section": "river crossing",
-                            "subsec": "craft",
-                            "reqs": [
-                                {
-                                    "name": "Wood",
-                                    "amt": 8,
-                                    "taken": true
-                                }
-                            ]
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.3
-                        }
-                    ]
-                }
-            ],
-            "legs": [
-                {
-                    "description": "You to cross the river, but you may have lost some items in the process. Check your backpack just to be sure.",
-                    "item lose": [
-                        10000,
-                        5
-                    ],
-                    "choices": {
-                        "Continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                }
-            ],
-            "raft": [
-                {
-                    "description": "You nearly make it to the other side of the river when your raft starts to sink.  Thinking fast, you manage to jump out and manage to reach the other side, though you no longer have your raft.",
-                    "choices": {
-                        "Continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.1
-                        }
-                    ]
-                }
-            ],
-            "craft": [
-                {
-                    "description": "You made a raft of your own with the resources you carried. Your \"masterpiece\" managed to help you cross over this river. Too bad it broke apart right after you landed on the other side",
-                    "choices": {
-                        "Continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.1
-                        }
-                    ]
-                }
+        {
+          "description": "You walk through the gate, expecting to see a wyvern, or perhaps a lich lord, but are instead greeted by an absolutely majestic being. It's beautiful form takes your breath away, and the gracefulness of its legs as they scuttle across the ground are like that of a skilled dancer. But you DO get pretty good loot for killing it, though it would be a shame to end the life of such a perfect being.",
+          "encounters": {
+            "Spider Fish": [
+              0
             ]
-        },
-        "dark cave": {
-            "start": [
-                {
-                    "description": "You find yourself in front of a dark cave on your journey. Chilling winds come from deep inside. There could be treasures hidden inside, but enemies may also be lurking within.  You should probably use a torch to be safe.",
-                    "choices": {
-                        "Explore inside - 1 torch": {
-                            "section": "dark cave",
-                            "subsec": "explore",
-                            "reqs": [
-                                {
-                                    "name": "Torch",
-                                    "amt": 1,
-                                    "taken": true
-                                }
-                            ]
-                        },
-                        "Continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                }
-            ],
-            "explore": [
-                {
-                    "description": "You kept walking. Nothing surprising has happened so far.",
-                    "choices": {
-                        "Keep exploring": {
-                            "section": "dark cave",
-                            "subsec": "explore"
-                        },
-                        "Turn back and leave the cave": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.4
-                        }
-                    ]
-                },
-                {
-                    "description": "You reached a dead end. Guess there wasn't anything in this cave...",
-                    "choices": {
-                        "Turn back and leave the cave": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "While walking through the cave, you noticed some mushrooms beneath you!",
-                    "choices": {
-                        "Pick up up the mushrooms": {
-                            "section": "dark cave",
-                            "subsec": "explore",
-                            "action": "item"
-                        },
-                        "Ignore and keep exploring": {
-                            "section": "dark cave",
-                            "subsec": "explore"
-                        },
-                        "Turn back and leave the cave": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.2
-                        }
-                    ],
-                    "item": [
-                        "weird mushroom",
-                        [
-                            1,
-                            2
-                        ]
-                    ]
-                }
-            ]
-        },
-        "shrine of life": {
-            "start": [
-                {
-                    "description": "BE HOLD! The mythical Shrine of Life. The rumors had it this is the heart of this Enchanted Forest, full of unknowns and dangers. No one has come back alive to tell the tale.",
-                    "choices": {
-                        "Step into the Shrine of Life": {
-                            "section": "shrine of life",
-                            "subsec": "explore"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "explore": [
-                {
-                    "description": "You kept walking... The shrine is a long, dark, and ancient hallway. The only light source is the shimmering green lanterns hanging under the ceiling.",
-                    "choices": {
-                        "Keep exploring": {
-                            "section": "shrine of life",
-                            "subsec": "explore"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.4
-                        }
-                    ]
-                },
-                {
-                    "description": "The end of this long hall way brings you to a large room with filled with a pool of blue liquid with a ginormous tree rooted in the center. Those are no blue water, as you take a closer at them, what should be your face's reflection is now replaced by videos of other entities. Its almost as if the liquid has taken the souls of past creatures who came near and caged them inside. Suddenly the room shook as the holy tree in the center morphing into a humanoid form. ",
-                    "encounters": {
-                        "Shiniminsus": [
-                            1
-                        ],
-                        "Temple Guardian": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the God of the Nature": {
-                            "section": "main",
-                            "subsec": "end",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.2
-                        }
-                    ]
-                },
-                {
-                    "description": "Just as you thought you walked into a dead end, the rocky boulders infront of you reanimated themselves and start attacking you by surprise!",
-                    "encounters": {
-                        "Crystal Golem": [
-                            1,
-                            0.55
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Crystal Golems": {
-                            "section": "shrine of life",
-                            "subsec": "explore",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.2
-                        }
-                    ]
-                }
-            ]
+          },
+          "choices": {
+            "Fight the Spider Fish": {
+              "section": "main",
+              "subsec": "end",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.0
+            }
+          ]
         }
-    },
-    "cemetery": {
-        "main": {
-            "start": [
-                {
-                    "description": "What to do next?",
-                    "choices": {
-                        "Adventure Forward": {
-                            "section": "main",
-                            "subsec": "adventure"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "adventure": [
-                {
-                    "description": "Boss!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "boss"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 900,
-                            "ub": 1100,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 1900,
-                            "ub": 2100,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 2900,
-                            "ub": 3100,
-                            "weight": 0.4
-                        }
-                    ]
-                },
-                {
-                    "description": "Monsters!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "monster"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.4
-                        }
-                    ]
-                },
-                {
-                    "description": "Items!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "item"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.15
-                        }
-                    ]
-                },
-                {
-                    "description": "Traders!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "trader"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                },
-                {
-                    "description": "Thieves!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "thief"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "Traps!",
-                    "choices": {
-                        "Continue": {
-                            "section": "main",
-                            "subsec": "trap"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.15
-                        }
-                    ]
-                },
-                {
-                    "description": "Tombstone!",
-                    "choices": {
-                        "Continue": {
-                            "section": "tombstone",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 500,
-                            "ub": 10000,
-                            "weight": 0.05
-                        }
-                    ]
-                }
-            ],
-            "monster": [
-                {
-                    "description": "Arghh!! Bony hands clawing their way out of a grave were followed by a skeleton's body, threatening your life!",
-                    "encounters": {
-                        "Skeleton": [
-                            1,
-                            1,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Skeleton!": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Escape!": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1000,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 3000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "\"Rauuughhh!\" . You hear something moving behind a tree. Peeking around, you see the undead eyes of zombies!",
-                    "encounters": {
-                        "Zombie": [
-                            1,
-                            1,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Zombie": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Quickly escape away from its sight": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1500,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 1501,
-                            "ub": 4000,
-                            "weight": 0.2
-                        }
-                    ]
-                },
-                {
-                    "description": "A ghost wielding a shimmering battle axe glides towards you. Despite whoever this person was in their previous life, they now only want one thing: human flesh! ",
-                    "encounters": {
-                        "Phantom": [
-                            1,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Phantom": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 1000,
-                            "ub": 3000,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 3001,
-                            "ub": 7000,
-                            "weight": 0.2
-                        }
-                    ]
-                },
-                {
-                    "description": "As a strong wave of heat surrounds you, a swirling pillar of flame suddenly appears. When the fire dies, you realize a demon had appeared right before your eyes!",
-                    "encounters": {
-                        "Demon": [
-                            1,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Demon": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 2000,
-                            "ub": 4000,
-                            "weight": 0.3
-                        },
-                        {
-                            "lb": 4001,
-                            "ub": 7000,
-                            "weight": 0.4
-                        }
-                    ]
-                }
-            ],
-            "item": [
-                {
-                    "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
-                    "choices": {
-                        "Pick up the mushroom": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore it and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.2
-                        }
-                    ],
-                    "item": [
-                        "weird mushroom",
-                        [
-                            1,
-                            1
-                        ]
-                    ]
-                },
-                {
-                    "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
-                    "choices": {
-                        "Cut down a few trees for wood": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 1000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.1
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 3000,
-                            "weight": 0.05
-                        }
-                    ],
-                    "item": [
-                        "wood",
-                        [
-                            3,
-                            4
-                        ]
-                    ]
-                },
-                {
-                    "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
-                    "choices": {
-                        "Mine some stones": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 3000,
-                            "weight": 0.1
-                        }
-                    ],
-                    "item": [
-                        "stone",
-                        [
-                            2,
-                            3
-                        ]
-                    ]
-                },
-                {
-                    "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
-                    "choices": {
-                        "Mine some iron ores": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "item"
-                        },
-                        "Ignore them and walk away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 2001,
-                            "ub": 3000,
-                            "weight": 0.15
-                        },
-                        {
-                            "lb": 3001,
-                            "ub": 10000,
-                            "weight": 0.1
-                        }
-                    ],
-                    "item": [
-                        "iron ore",
-                        [
-                            1,
-                            2
-                        ]
-                    ]
-                }
-            ],
-            "arrow trap": [
-                {
-                    "description": "A lone elf jumped out of the bushes and ambushed you!",
-                    "encounters": {
-                        "Archer Elf": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Elf": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "trap": [
-                {
-                    "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
-                    "damage": [
-                        5,
-                        10
-                    ],
-                    "time": [
-                        3,
-                        5
-                    ],
-                    "instant": {
-                        "trap": "reaction"
-                    },
-                    "to": {
-                        "section": "main",
-                        "subsec": "arrow trap"
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 2000,
-                            "weight": 0.3
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 7000,
-                            "weight": 0.1
-                        }
-                    ]
-                },
-                {
-                    "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
-                    "damage": [
-                        10,
-                        15
-                    ],
-                    "length": [
-                        6,
-                        8
-                    ],
-                    "time": [
-                        3,
-                        4
-                    ],
-                    "instant": {
-                        "trap": "memorize"
-                    },
-                    "to": {
-                        "section": "main",
-                        "subsec": "start"
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 2000,
-                            "weight": 0.2
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 7000,
-                            "weight": 0.15
-                        }
-                    ]
-                }
-            ],
-            "trader": [
-                {
-                    "description": "You meet a skilled brewer. They may have some helpful supplies you can use on your journeys.",
-                    "encounters": {
-                        "Brewer": [
-                            1
-                        ]
-                    },
-                    "name": "brewer",
-                    "choices": {
-                        "Ask what this person has to offer": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "trade"
-                        },
-                        "Kill them and take their loot": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Leave this person alone": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 250,
-                            "ub": 1000,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 10000,
-                            "weight": 0.6
-                        }
-                    ]
-                },
-                {
-                    "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
-                    "encounters": {
-                        "Craftsman": [
-                            1
-                        ]
-                    },
-                    "name": "craftsman",
-                    "choices": {
-                        "Ask what this person can craft": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "trade"
-                        },
-                        "Kill them and take their loot": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Leave this person alone": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 500,
-                            "ub": 1000,
-                            "weight": 0.5
-                        },
-                        {
-                            "lb": 1001,
-                            "ub": 2000,
-                            "weight": 0.4
-                        },
-                        {
-                            "lb": 2001,
-                            "ub": 10000,
-                            "weight": 0.3
-                        }
-                    ]
-                }
-            ],
-            "thief": [
-                {
-                    "description": "You suddenly feel a pang of paranoia. Looking back, you realize that a vicious ghost is looming over your head!",
-                    "encounters": {
-                        "Ghost": [
-                            1,
-                            1,
-                            0.2
-                        ]
-                    },
-                    "choices": {
-                        "Fight the thief": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Give away some loot and flee": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "boss": [
-                {
-                    "description": "In the distance, you see a knight galloping towards you. However, as it gets closer, you realize that where a shiny helmet should be, there is now only a bright blue flame!",
-                    "encounters": {
-                        "Headless Knight": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight on!": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 7000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "end": [
-                {
-                    "description": "You have conquered the Cemetery! You can always come back for resources another time.",
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ]
-        },
-        "tombstone": {
-            "start": [
-                {
-                    "description": "You stumble upon a particularly well-decorated tombstone that might contain some good stuff. What's a little grave robbery now and then?",
-                    "choices": {
-                        "Excavate the Tombstone": {
-                            "section": "tombstone",
-                            "subsec": "tombstone"
-                        },
-                        "Continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 1
-                        }
-                    ]
-                }
-            ],
-            "tombstone": [
-                {
-                    "description": "A glimmer in the tombstone catches your eye. Digging around it, you found some shiny treasure!",
-                    "choices": {
-                        "Continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.25
-                        }
-                    ]
-                },
-                {
-                    "description": "Unfortunately, you only hit dirt. Guess it's just a regular tombstone after all.",
-                    "choices": {
-                        "Keep digging": {
-                            "section": "tombstone",
-                            "subsec": "tombstone"
-                        },
-                        "Give up and continue your adventure": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.25
-                        }
-                    ]
-                },
-                {
-                    "description": "SURPRISE! A zombie suddenly popped up from the tombstone!",
-                    "encounters": {
-                        "Zombie": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Zombie": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Stop digging the tombstone and run away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.25
-                        }
-                    ]
-                },
-                {
-                    "description": "SURPRISE! A skeleton suddenly popped up from the tombstone!",
-                    "encounters": {
-                        "Skeleton": [
-                            1
-                        ]
-                    },
-                    "choices": {
-                        "Fight the Skeleton": {
-                            "section": "main",
-                            "subsec": "start",
-                            "action": "fight"
-                        },
-                        "Run away": {
-                            "section": "main",
-                            "subsec": "start"
-                        }
-                    },
-                    "spawns": [
-                        {
-                            "lb": 0,
-                            "ub": 10000,
-                            "weight": 0.25
-                        }
-                    ]
-                }
-            ]
+      ],
+      "end": [
+        {
+          "description": "Congratulations on defeating such a powerful enemy! The amount of bragging rights you now have is nigh-endless.",
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
         }
+      ]
     }
+  },
+  "enchanted forest": {
+    "main": {
+      "start": [
+        {
+          "description": "What do you want to do?",
+          "choices": {
+            "Adventure Forward": {
+              "section": "main",
+              "subsec": "adventure"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "adventure": [
+        {
+          "description": "Shrine of Life!",
+          "choices": {
+            "Continue": {
+              "section": "shrine of life",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 5000,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "description": "Boss!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "boss"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 900,
+              "ub": 1100,
+              "weight": 0.4
+            },
+            {
+              "lb": 1900,
+              "ub": 2100,
+              "weight": 0.4
+            },
+            {
+              "lb": 2900,
+              "ub": 3100,
+              "weight": 0.4
+            }
+          ]
+        },
+        {
+          "description": "Monsters!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "monster"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.4
+            }
+          ]
+        },
+        {
+          "description": "Items!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "item"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.15
+            }
+          ]
+        },
+        {
+          "description": "Traders!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "trader"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        },
+        {
+          "description": "Thieves!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "thief"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "Traps!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "trap"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.15
+            }
+          ]
+        },
+        {
+          "description": "River!",
+          "choices": {
+            "Continue": {
+              "section": "river crossing",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 500,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        },
+        {
+          "description": "Cave!",
+          "choices": {
+            "Continue": {
+              "section": "dark cave",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        }
+      ],
+      "monster": [
+        {
+          "description": "A tribe of goblins leap out of the undergrowth, weapons at the ready.",
+          "encounters": {
+            "Goblin": [
+              1,
+              1,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the goblins": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Order the goblins to stay away - 1 Goblin Staff": {
+              "section": "main",
+              "subsec": "start",
+              "reqs": [
+                {
+                  "name": "Goblin Staff",
+                  "amt": 1,
+                  "taken": false
+                }
+              ]
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 500,
+              "weight": 0.5
+            },
+            {
+              "lb": 501,
+              "ub": 1000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "A pack of goblins spots you from their campfire. You feel you're going to become dinner if you don't fight.",
+          "encounters": {
+            "Goblin": [
+              1
+            ],
+            "Goblin Soldier": [
+              1
+            ],
+            "Goblin Bomber": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the goblins": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Order the goblins to stay away - 1 Goblin Staff": {
+              "section": "main",
+              "subsec": "start",
+              "reqs": [
+                {
+                  "name": "Goblin Staff",
+                  "amt": 1,
+                  "taken": false
+                }
+              ]
+            }
+          },
+          "spawns": [
+            {
+              "lb": 501,
+              "ub": 1500,
+              "weight": 0.4
+            },
+            {
+              "lb": 1501,
+              "ub": 2500,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "You notice the trees around you are speaking goblinese. Suddenly, a group of goblin soldiers drops down and surrounds you completely!",
+          "encounters": {
+            "Goblin Chief": [
+              1
+            ],
+            "Goblin Soldier": [
+              1,
+              1
+            ]
+          },
+          "choices": {
+            "Fight the goblins": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 1501,
+              "ub": 3000,
+              "weight": 0.3
+            },
+            {
+              "lb": 3001,
+              "ub": 7000,
+              "weight": 0.25
+            }
+          ]
+        },
+        {
+          "description": "Slimes ooze out of a nearby puddle!",
+          "encounters": {
+            "Slime": [
+              1,
+              0.5,
+              0.3
+            ]
+          },
+          "choices": {
+            "Fight the slimes": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 250,
+              "ub": 1000,
+              "weight": 0.2
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "The ground trembles as the trees in front of you turn into giants, awakened from their long slumber. It is said that those who disturb the tree giants never return.",
+          "encounters": {
+            "Tree Giant": [
+              1,
+              1,
+              0.25
+            ]
+          },
+          "choices": {
+            "Fight the tree giants": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Torch them - 1 Torch": {
+              "section": "main",
+              "subsec": "start",
+              "reqs": [
+                {
+                  "name": "Torch",
+                  "amt": 1,
+                  "taken": true
+                }
+              ]
+            }
+          },
+          "spawns": [
+            {
+              "lb": 501,
+              "ub": 1500,
+              "weight": 0.1
+            },
+            {
+              "lb": 1501,
+              "ub": 2500,
+              "weight": 0.25
+            }
+          ]
+        },
+        {
+          "description": "Oh no! You realize you've crossed into an ogre's territory...",
+          "encounters": {
+            "Ogre Gladiator": [
+              1,
+              0.2,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the ogre gladiators": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.15
+            },
+            {
+              "lb": 2001,
+              "ub": 4000,
+              "weight": 0.3
+            },
+            {
+              "lb": 4001,
+              "ub": 7000,
+              "weight": 0.15
+            }
+          ]
+        }
+      ],
+      "item": [
+        {
+          "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
+          "choices": {
+            "Pick up the mushroom": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore it and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 7000,
+              "weight": 0.2
+            }
+          ],
+          "item": [
+            "weird mushroom",
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "description": "You see some strange leaves. Upon closer inspection, you realize that it's a powerful medicinal herb, able to cure negative effects!",
+          "choices": {
+            "Pick up the herb": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore it and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 250,
+              "ub": 7000,
+              "weight": 0.05
+            }
+          ],
+          "item": [
+            "herb",
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "description": "You see some red fruits hanging on a tree. These useful fruits can replenish your energy when you're running low on health.",
+          "choices": {
+            "Collect some forest fruits": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1000,
+              "weight": 0.1
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.05
+            }
+          ],
+          "item": [
+            "forest fruit",
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
+          "choices": {
+            "Do a little deforestation": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1000,
+              "weight": 0.15
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.1
+            },
+            {
+              "lb": 2001,
+              "ub": 3000,
+              "weight": 0.05
+            }
+          ],
+          "item": [
+            "wood",
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "description": "You found some durable rocks. Though more durable than wood, they're also a bit heavier.",
+          "choices": {
+            "Mine some stones": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.15
+            },
+            {
+              "lb": 2001,
+              "ub": 3000,
+              "weight": 0.1
+            }
+          ],
+          "item": [
+            "stone",
+            [
+              2,
+              3
+            ]
+          ]
+        },
+        {
+          "description": "Out of the corner of your eye, you see some iron ore deep in ravine. Iron is much better than either wood or stone- that is, if you manage to smelt it.",
+          "choices": {
+            "Mine some ore": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 2001,
+              "ub": 3000,
+              "weight": 0.15
+            },
+            {
+              "lb": 3001,
+              "ub": 7000,
+              "weight": 0.1
+            }
+          ],
+          "item": [
+            "iron ore",
+            [
+              1,
+              2
+            ]
+          ]
+        }
+      ],
+      "arrow trap": [
+        {
+          "description": "A lone elf jumped out of the bushes and ambushed you!",
+          "encounters": {
+            "Archer Elf": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the Elf": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 7000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "trap": [
+        {
+          "description": "You hear the pluck of a bowstring from behind. As you turn around, you see an arrow flying at you!",
+          "damage": [
+            5,
+            10
+          ],
+          "time": [
+            3,
+            5
+          ],
+          "instant": {
+            "trap": "reaction"
+          },
+          "to": {
+            "section": "main",
+            "subsec": "arrow trap"
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 2000,
+              "weight": 0.3
+            },
+            {
+              "lb": 2001,
+              "ub": 7000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "As you walk, you notice traps hidden in the dirt. Can you avoid stepping on them?",
+          "damage": [
+            10,
+            15
+          ],
+          "length": [
+            6,
+            8
+          ],
+          "time": [
+            3,
+            4
+          ],
+          "instant": {
+            "trap": "memorize"
+          },
+          "to": {
+            "section": "main",
+            "subsec": "start"
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 2000,
+              "weight": 0.2
+            },
+            {
+              "lb": 2001,
+              "ub": 7000,
+              "weight": 0.15
+            }
+          ]
+        }
+      ],
+      "trader": [
+        {
+          "description": "You meet a skilled brewer. They may have some helpful supplies you can use on your journeys.",
+          "encounters": {
+            "Brewer": [
+              1
+            ]
+          },
+          "name": "brewer",
+          "choices": {
+            "Ask what this person has to offer": {
+              "section": "main",
+              "subsec": "start",
+              "action": "trade"
+            },
+            "Kill them and take their loot": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Leave this person alone": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1000,
+              "weight": 0.4
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.5
+            },
+            {
+              "lb": 2001,
+              "ub": 7000,
+              "weight": 0.6
+            }
+          ]
+        },
+        {
+          "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
+          "encounters": {
+            "Craftsman": [
+              1
+            ]
+          },
+          "name": "craftsman",
+          "choices": {
+            "Ask what this person can craft": {
+              "section": "main",
+              "subsec": "start",
+              "action": "trade"
+            },
+            "Kill them and take their loot": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Leave this person alone": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1000,
+              "weight": 0.5
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.4
+            },
+            {
+              "lb": 2001,
+              "ub": 7000,
+              "weight": 0.3
+            }
+          ]
+        }
+      ],
+      "thief": [
+        {
+          "description": "A horde of goblin thieves leaps out of the bushes. The leader points at your backpack and then draws a line across his neck. He seems to be demanding your posessions in exchange for your life!",
+          "encounters": {
+            "Goblin Thief": [
+              1,
+              0.2
+            ],
+            "Goblin Bomber": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the thieves": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Give away some loot and flee": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 7000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "boss": [
+        {
+          "description": "You see a huge lumbering ogre that's much larger than the others. Wearing animal pelts, and covering its face with black and white war paint, it carries two huge metal blades covered with blood stains. You're nearly paralyzed with fear!",
+          "encounters": {
+            "Ogre Berserker": [
+              1
+            ],
+            "Ogre Gladiator": [
+              1,
+              1
+            ]
+          },
+          "choices": {
+            "Fight on!": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1999,
+              "weight": 1
+            }
+          ]
+        },
+        {
+          "description": "The earth *TREMBLES* as the all mighty Golem awakens from its shell. The guardian of the Holy Shrine, the ultimate barrier between adventurers and treasures. You can either try to get past it or mark your last step upon this forbidden part of the forest and leave.",
+          "encounters": {
+            "Temple Guardian": [
+              1
+            ],
+            "Crystal Golem": [
+              1,
+              1
+            ]
+          },
+          "choices": {
+            "Fight on!": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 2000,
+              "ub": 7000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "end": [
+        {
+          "description": "You have conquered the Enchanted Forest! You can always come back for resources another time.",
+          "choices": {
+            "Return to the Hometown and tell your tale": {
+              "section": "main",
+              "subsec": "end",
+              "action": "exit"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    "river crossing": {
+      "start": [
+        {
+          "description": "A river blocks your path. The water flows quickly, and the river is very wide. You could try to wade across, or use/craft a temporary raft to sail over.",
+          "choices": {
+            "Wading across the river": {
+              "section": "river crossing",
+              "subsec": "legs"
+            },
+            "Sail over by raft - 1 Raft": {
+              "section": "river crossing",
+              "subsec": "raft",
+              "reqs": [
+                {
+                  "name": "Raft",
+                  "amt": 1,
+                  "taken": true
+                }
+              ]
+            },
+            "Craft a raft and sail over - 8 Wood": {
+              "section": "river crossing",
+              "subsec": "craft",
+              "reqs": [
+                {
+                  "name": "Wood",
+                  "amt": 8,
+                  "taken": true
+                }
+              ]
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.3
+            }
+          ]
+        }
+      ],
+      "legs": [
+        {
+          "description": "You to cross the river, but you may have lost some items in the process. Check your backpack just to be sure.",
+          "item lose": [
+            10000,
+            5
+          ],
+          "choices": {
+            "Continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        }
+      ],
+      "raft": [
+        {
+          "description": "You nearly make it to the other side of the river when your raft starts to sink.  Thinking fast, you manage to jump out and manage to reach the other side, though you no longer have your raft.",
+          "choices": {
+            "Continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.1
+            }
+          ]
+        }
+      ],
+      "craft": [
+        {
+          "description": "You made a raft of your own with the resources you carried. Your \"masterpiece\" managed to help you cross over this river. Too bad it broke apart right after you landed on the other side",
+          "choices": {
+            "Continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.1
+            }
+          ]
+        }
+      ]
+    },
+    "dark cave": {
+      "start": [
+        {
+          "description": "You find yourself in front of a dark cave on your journey. Chilling winds come from deep inside. There could be treasures hidden inside, but enemies may also be lurking within.  You should probably use a torch to be safe.",
+          "choices": {
+            "Explore inside - 1 torch": {
+              "section": "dark cave",
+              "subsec": "explore",
+              "reqs": [
+                {
+                  "name": "Torch",
+                  "amt": 1,
+                  "taken": true
+                }
+              ]
+            },
+            "Continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        }
+      ],
+      "explore": [
+        {
+          "description": "You kept walking. Nothing surprising has happened so far.",
+          "choices": {
+            "Keep exploring": {
+              "section": "dark cave",
+              "subsec": "explore"
+            },
+            "Turn back and leave the cave": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.4
+            }
+          ]
+        },
+        {
+          "description": "You reached a dead end. Guess there wasn't anything in this cave...",
+          "choices": {
+            "Turn back and leave the cave": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "While walking through the cave, you noticed some mushrooms beneath you!",
+          "choices": {
+            "Pick up up the mushrooms": {
+              "section": "dark cave",
+              "subsec": "explore",
+              "action": "item"
+            },
+            "Ignore and keep exploring": {
+              "section": "dark cave",
+              "subsec": "explore"
+            },
+            "Turn back and leave the cave": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.2
+            }
+          ],
+          "item": [
+            "weird mushroom",
+            [
+              1,
+              2
+            ]
+          ]
+        }
+      ]
+    },
+    "shrine of life": {
+      "start": [
+        {
+          "description": "BE HOLD! The mythical Shrine of Life. The rumors had it this is the heart of this Enchanted Forest, full of unknowns and dangers. No one has come back alive to tell the tale.",
+          "choices": {
+            "Step into the Shrine of Life": {
+              "section": "shrine of life",
+              "subsec": "explore"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "explore": [
+        {
+          "description": "You kept walking... The shrine is a long, dark, and ancient hallway. The only light source is the shimmering green lanterns hanging under the ceiling.",
+          "choices": {
+            "Keep exploring": {
+              "section": "shrine of life",
+              "subsec": "explore"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.4
+            }
+          ]
+        },
+        {
+          "description": "The end of this long hall way brings you to a large room with filled with a pool of blue liquid with a ginormous tree rooted in the center. Those are no blue water, as you take a closer at them, what should be your face's reflection is now replaced by videos of other entities. Its almost as if the liquid has taken the souls of past creatures who came near and caged them inside. Suddenly the room shook as the holy tree in the center morphing into a humanoid form. ",
+          "encounters": {
+            "Shiniminsus": [
+              1
+            ],
+            "Temple Guardian": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the God of the Nature": {
+              "section": "main",
+              "subsec": "end",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "description": "Just as you thought you walked into a dead end, the rocky boulders infront of you reanimated themselves and start attacking you by surprise!",
+          "encounters": {
+            "Crystal Golem": [
+              1,
+              0.55
+            ]
+          },
+          "choices": {
+            "Fight the Crystal Golems": {
+              "section": "shrine of life",
+              "subsec": "explore",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.2
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "cemetery": {
+    "main": {
+      "start": [
+        {
+          "description": "What to do next?",
+          "choices": {
+            "Adventure Forward": {
+              "section": "main",
+              "subsec": "adventure"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "adventure": [
+        {
+          "description": "Boss!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "boss"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 900,
+              "ub": 1100,
+              "weight": 0.4
+            },
+            {
+              "lb": 1900,
+              "ub": 2100,
+              "weight": 0.4
+            },
+            {
+              "lb": 2900,
+              "ub": 3100,
+              "weight": 0.4
+            }
+          ]
+        },
+        {
+          "description": "Monsters!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "monster"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.4
+            }
+          ]
+        },
+        {
+          "description": "Items!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "item"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.15
+            }
+          ]
+        },
+        {
+          "description": "Traders!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "trader"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        },
+        {
+          "description": "Thieves!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "thief"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "Traps!",
+          "choices": {
+            "Continue": {
+              "section": "main",
+              "subsec": "trap"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.15
+            }
+          ]
+        },
+        {
+          "description": "Tombstone!",
+          "choices": {
+            "Continue": {
+              "section": "tombstone",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 500,
+              "ub": 10000,
+              "weight": 0.05
+            }
+          ]
+        }
+      ],
+      "monster": [
+        {
+          "description": "Arghh!! Bony hands clawing their way out of a grave were followed by a skeleton's body, threatening your life!",
+          "encounters": {
+            "Skeleton": [
+              1,
+              1,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the Skeleton!": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Escape!": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1000,
+              "weight": 0.5
+            },
+            {
+              "lb": 1001,
+              "ub": 3000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "\"Rauuughhh!\" . You hear something moving behind a tree. Peeking around, you see the undead eyes of zombies!",
+          "encounters": {
+            "Zombie": [
+              1,
+              1,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the Zombie": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Quickly escape away from its sight": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1500,
+              "weight": 0.5
+            },
+            {
+              "lb": 1501,
+              "ub": 4000,
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "description": "A ghost wielding a shimmering battle axe glides towards you. Despite whoever this person was in their previous life, they now only want one thing: human flesh! ",
+          "encounters": {
+            "Phantom": [
+              1,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the Phantom": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 1000,
+              "ub": 3000,
+              "weight": 0.5
+            },
+            {
+              "lb": 3001,
+              "ub": 7000,
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "description": "As a strong wave of heat surrounds you, a swirling pillar of flame suddenly appears. When the fire dies, you realize a demon had appeared right before your eyes!",
+          "encounters": {
+            "Demon": [
+              1,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the Demon": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 2000,
+              "ub": 4000,
+              "weight": 0.3
+            },
+            {
+              "lb": 4001,
+              "ub": 7000,
+              "weight": 0.4
+            }
+          ]
+        }
+      ],
+      "item": [
+        {
+          "description": "A weird mushroom grows on the ground. You remember reading about these somewhere, but you forget if it was harmless or deadly. Perhaps you should stay on the safe side if you have much to lose.",
+          "choices": {
+            "Pick up the mushroom": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore it and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.2
+            }
+          ],
+          "item": [
+            "weird mushroom",
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "description": "You happen upon an especially fine grove of trees with wood that would be great for making weapons.",
+          "choices": {
+            "Cut down a few trees for wood": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 1000,
+              "weight": 0.15
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.1
+            },
+            {
+              "lb": 2001,
+              "ub": 3000,
+              "weight": 0.05
+            }
+          ],
+          "item": [
+            "wood",
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "description": "You found some durable rocks. They are tougher than wood, but heavier as well.",
+          "choices": {
+            "Mine some stones": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.15
+            },
+            {
+              "lb": 2001,
+              "ub": 3000,
+              "weight": 0.1
+            }
+          ],
+          "item": [
+            "stone",
+            [
+              2,
+              3
+            ]
+          ]
+        },
+        {
+          "description": "Out of the corner of your eye, you see some iron ore deep in a ravine. Iron is tougher than both woods and stones. It can be of great use to anyone who can smelt them.",
+          "choices": {
+            "Mine some iron ores": {
+              "section": "main",
+              "subsec": "start",
+              "action": "item"
+            },
+            "Ignore them and walk away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 2001,
+              "ub": 3000,
+              "weight": 0.15
+            },
+            {
+              "lb": 3001,
+              "ub": 10000,
+              "weight": 0.1
+            }
+          ],
+          "item": [
+            "iron ore",
+            [
+              1,
+              2
+            ]
+          ]
+        }
+      ],
+      "arrow trap": [
+        {
+          "description": "A lone elf jumped out of the bushes and ambushed you!",
+          "encounters": {
+            "Archer Elf": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the Elf": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "trap": [
+        {
+          "description": "\"WHOOSSH\", you hear a sound coming from behind you. As you turn to investigate, you see an arrow flying at you!",
+          "damage": [
+            5,
+            10
+          ],
+          "time": [
+            3,
+            5
+          ],
+          "instant": {
+            "trap": "reaction"
+          },
+          "to": {
+            "section": "main",
+            "subsec": "arrow trap"
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 2000,
+              "weight": 0.3
+            },
+            {
+              "lb": 2001,
+              "ub": 7000,
+              "weight": 0.1
+            }
+          ]
+        },
+        {
+          "description": "As you walk, you suddenly notice traps hidden in the dirt. You narrowly avoid stepped on them... or will you?",
+          "damage": [
+            10,
+            15
+          ],
+          "length": [
+            6,
+            8
+          ],
+          "time": [
+            3,
+            4
+          ],
+          "instant": {
+            "trap": "memorize"
+          },
+          "to": {
+            "section": "main",
+            "subsec": "start"
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 2000,
+              "weight": 0.2
+            },
+            {
+              "lb": 2001,
+              "ub": 7000,
+              "weight": 0.15
+            }
+          ]
+        }
+      ],
+      "trader": [
+        {
+          "description": "You meet a skilled brewer. They may have some helpful supplies you can use on your journeys.",
+          "encounters": {
+            "Brewer": [
+              1
+            ]
+          },
+          "name": "brewer",
+          "choices": {
+            "Ask what this person has to offer": {
+              "section": "main",
+              "subsec": "start",
+              "action": "trade"
+            },
+            "Kill them and take their loot": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Leave this person alone": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 250,
+              "ub": 1000,
+              "weight": 0.4
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.5
+            },
+            {
+              "lb": 2001,
+              "ub": 10000,
+              "weight": 0.6
+            }
+          ]
+        },
+        {
+          "description": "A skilled craftsman is resting underneath a tree, with a pack full of different types of tools for crafts sitting next to him. Perhaps he can make something for you?",
+          "encounters": {
+            "Craftsman": [
+              1
+            ]
+          },
+          "name": "craftsman",
+          "choices": {
+            "Ask what this person can craft": {
+              "section": "main",
+              "subsec": "start",
+              "action": "trade"
+            },
+            "Kill them and take their loot": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Leave this person alone": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 500,
+              "ub": 1000,
+              "weight": 0.5
+            },
+            {
+              "lb": 1001,
+              "ub": 2000,
+              "weight": 0.4
+            },
+            {
+              "lb": 2001,
+              "ub": 10000,
+              "weight": 0.3
+            }
+          ]
+        }
+      ],
+      "thief": [
+        {
+          "description": "You suddenly feel a pang of paranoia. Looking back, you realize that a vicious ghost is looming over your head!",
+          "encounters": {
+            "Ghost": [
+              1,
+              1,
+              0.2
+            ]
+          },
+          "choices": {
+            "Fight the thief": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Give away some loot and flee": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "boss": [
+        {
+          "description": "In the distance, you see a knight galloping towards you. However, as it gets closer, you realize that where a shiny helmet should be, there is now only a bright blue flame!",
+          "encounters": {
+            "Headless Knight": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight on!": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 7000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "end": [
+        {
+          "description": "You have conquered the Cemetery! You can always come back for resources another time.",
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ]
+    },
+    "tombstone": {
+      "start": [
+        {
+          "description": "You stumble upon a particularly well-decorated tombstone that might contain some good stuff. What's a little grave robbery now and then?",
+          "choices": {
+            "Excavate the Tombstone": {
+              "section": "tombstone",
+              "subsec": "tombstone"
+            },
+            "Continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 1
+            }
+          ]
+        }
+      ],
+      "tombstone": [
+        {
+          "description": "A glimmer in the tombstone catches your eye. Digging around it, you found some shiny treasure!",
+          "choices": {
+            "Continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.25
+            }
+          ]
+        },
+        {
+          "description": "Unfortunately, you only hit dirt. Guess it's just a regular tombstone after all.",
+          "choices": {
+            "Keep digging": {
+              "section": "tombstone",
+              "subsec": "tombstone"
+            },
+            "Give up and continue your adventure": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.25
+            }
+          ]
+        },
+        {
+          "description": "SURPRISE! A zombie suddenly popped up from the tombstone!",
+          "encounters": {
+            "Zombie": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the Zombie": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Stop digging the tombstone and run away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.25
+            }
+          ]
+        },
+        {
+          "description": "SURPRISE! A skeleton suddenly popped up from the tombstone!",
+          "encounters": {
+            "Skeleton": [
+              1
+            ]
+          },
+          "choices": {
+            "Fight the Skeleton": {
+              "section": "main",
+              "subsec": "start",
+              "action": "fight"
+            },
+            "Run away": {
+              "section": "main",
+              "subsec": "start"
+            }
+          },
+          "spawns": [
+            {
+              "lb": 0,
+              "ub": 10000,
+              "weight": 0.25
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
