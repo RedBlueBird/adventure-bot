@@ -29,31 +29,6 @@ class General(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
-        name="serverinfo",
-        description="Get some info about the server.",
-    )
-    async def serverinfo(self, ctx: Context) -> None:
-        """Get some info about the server."""
-        roles = [role.name for role in ctx.guild.roles]
-        role_lim = 50
-        if len(roles) > role_lim:
-            roles = roles[:role_lim]
-            roles.append(f">>>> Displaying[{role_lim}/{len(roles)}] Roles")
-        roles = ", ".join(roles)
-
-        embed = discord.Embed(
-            title="**Server Name:**", description=f"{ctx.guild}", color=0x9C84EF
-        )
-        if ctx.guild.icon is not None:
-            embed.set_thumbnail(url=ctx.guild.icon.url)
-        embed.add_field(name="Server ID", value=ctx.guild.id)
-        embed.add_field(name="Member Count", value=ctx.guild.member_count)
-        embed.add_field(name="Text/Voice Channels", value=f"{len(ctx.guild.channels)}")
-        embed.add_field(name=f"Roles ({len(ctx.guild.roles)})", value=roles)
-        embed.set_footer(text=f"Created at: {ctx.guild.created_at}")
-        await ctx.send(embed=embed)
-
-    @commands.hybrid_command(
         name="links",
         description="Displays an embed containing some official bot info.",
         aliases=["invite", "support", "guild", "supports", "link", "join"],
