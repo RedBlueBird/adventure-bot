@@ -86,10 +86,11 @@ class Owner(commands.Cog):
         """
         try:
             await self.bot.load_extension(f"cogs.{cog}")
-        except:
+        except Exception as e:
             embed = discord.Embed(
                 title="Error!",
-                description=f"Could not load the `{cog}` cog.",
+                description=f"Couldn't load the `{cog}` cog.\n"
+                            f"{type(e).__name__}: {e}",
                 color=0xE02B2B,
             )
             await ctx.send(embed=embed)
@@ -111,10 +112,11 @@ class Owner(commands.Cog):
         """The bot will unload the given cog."""
         try:
             await self.bot.unload_extension(f"cogs.{cog}")
-        except Exception:
+        except Exception as e:
             embed = discord.Embed(
                 title="Error!",
-                description=f"Could not unload the `{cog}` cog.",
+                description=f"Couldn't unload the `{cog}` cog.\n"
+                            f"{type(e).__name__}: {e}",
                 color=0xE02B2B,
             )
             await ctx.send(embed=embed)
@@ -140,7 +142,7 @@ class Owner(commands.Cog):
             embed = discord.Embed(
                 title="Error!",
                 description=f"Couldn't reload the `{cog}` cog.\n"
-                f"{type(e).__name__}: {e}",
+                            f"{type(e).__name__}: {e}",
                 color=0xE02B2B,
             )
             await ctx.send(embed=embed)
@@ -151,17 +153,6 @@ class Owner(commands.Cog):
             color=0x9C84EF,
         )
         await ctx.send(embed=embed)
-
-    @commands.hybrid_command(
-        name="shutdown",
-        description="Make the bot shutdown.",
-    )
-    @checks.is_admin()
-    async def shutdown(self, ctx: Context) -> None:
-        """Shuts down the bot."""
-        embed = discord.Embed(description="Shutting down. Bye! :wave:", color=0x9C84EF)
-        await ctx.send(embed=embed)
-        await self.bot.close()
 
 
 async def setup(bot):
