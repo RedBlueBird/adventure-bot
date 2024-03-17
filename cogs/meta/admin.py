@@ -27,7 +27,7 @@ class Admin(commands.Cog):
     async def redeem(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = (
-                discord.Embed(title="Here's the things you can redeem:")
+                discord.Embed(title="Here's what you can redeem:")
                 .add_field(
                     name="Cards",
                     value=f"`{r.PREF}redeem card (card name) (card level) (recipient)`",

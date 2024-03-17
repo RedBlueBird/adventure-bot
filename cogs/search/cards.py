@@ -12,8 +12,8 @@ class CardSearch(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(aliases=["cs", "search"], description="Search your cards.")
-    async def card_search(
+    @commands.hybrid_command(aliases=["cs", "search"], description="View your cards.")
+    async def cards(
         self,
         ctx: Context,
         name: str | None = None,

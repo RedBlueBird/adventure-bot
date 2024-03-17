@@ -21,7 +21,7 @@ class Actions(commands.Cog):
         last_d = dm.get_user_daily(a.id)
         if last_d.date() == dt.date.today():
             dts = u.time_til_midnight()
-            await ctx.send(f"{a.mention}, your next daily is in {dts}!")
+            await ctx.reply(f"Your next daily is in {dts}!")
             return
 
         streak = dm.get_user_streak(a.id) + 1
@@ -75,10 +75,10 @@ class Actions(commands.Cog):
             medals += (medal_amt := medal_base)
 
         await ctx.reply(
-            f"{'***JACKPOT!!!***' if jackpot else ''}\n"
-            f"**+{coin_amt} {r.ICONS['coin']} +{xp_amt} {r.ICONS['exp']}"
-            f" +{medal_amt}{r.ICONS['medal']} {tick_msg}\n"
-            f"Daily streak {streak}/{max_streak} {r.ICONS['streak']}** \n{card_msg}"
+            ("***JACKPOT!!!***\n" if jackpot else "") +
+            f"**+{coin_amt} {r.ICONS['coin'].emoji()} +{xp_amt} {r.ICONS['exp'].emoji()}"
+            f" +{medal_amt}{r.ICONS['medal'].emoji()} {tick_msg}\n"
+            f"Daily streak {streak}/{max_streak} {r.ICONS['streak']}**\n{card_msg}"
         )
 
         dm.set_user_coin(a.id, coins)
@@ -96,52 +96,46 @@ class Actions(commands.Cog):
         """Trade with other players!"""
 
         if not dm.is_registered(target.id):
-            await ctx.send(
-                f"{ctx.author.mention}, that user isn't registered in the bot yet!"
-            )
+            await ctx.reply("That user isn't registered in the bot yet!")
             return
         target_level = dm.get_user_level(target.id)
         if target_level < 7:
-            await ctx.send("The target user needs to be at least level 7 to trade!")
+            await ctx.reply("The target user needs to be at least level 7 to trade!")
             return
         if target.id == ctx.author.id:
-            await ctx.send(
-                "Trading just with yourself? You sure got more friends that that!"
-            )
+            await ctx.reply("Are you *really* trying to trade with yourself?")
+            return
+        if target.id in dm.queues:
+            await ctx.reply(f"{target.mention} is currently {dm.queues[target.id]}!")
             return
 
         deal_msg = await ctx.send(
-            f"{target.mention}. Accept a trade with {ctx.author.mention}?"
+            f"Hey {target.mention}! Wanna do a trade with {ctx.author.mention}?"
         )
         await deal_msg.add_reaction("✅")
-        await deal_msg.add_reaction("❎")
+        await deal_msg.add_reaction("❌")
         try:
             reaction, user = await self.bot.wait_for(
                 "reaction_add",
                 timeout=60.0,
                 check=checks.valid_reaction(
-                    ["❎", "✅"], [target, ctx.author], deal_msg
+                    ["✅", "❌"], [target, ctx.author], deal_msg
                 ),
             )
         except asyncio.TimeoutError:
             await deal_msg.edit(
-                content=f"{ctx.author.mention}, trade canceled due to afk {r.ICONS['dead']}"
+                content=f"{ctx.author.mention}, your trade partner didn't respond in time..."
             )
             await deal_msg.clear_reactions()
             return
-        if reaction.emoji == "❎":
+    
+        if reaction.emoji == "❌":
             await deal_msg.edit(
-                content=f"{ctx.author.mention}, trade canceled! :weary:"
+                content=f"{ctx.author.mention}, your trade partner declined the trade! :weary:"
             )
             await deal_msg.clear_reactions()
             return
-        if target.id in dm.queues:
-            await deal_msg.edit(
-                content=f"{ctx.author.mention}, trade canceled! The {target.mention} is currently {dm.queues[target.id]}!"
-            )
-            await deal_msg.clear_reactions()
-            return
-
+        
         trade_end = False
         confirmed = [False, False]
         author_deck_ids = dm.get_user_deck_ids(ctx.author.id)
@@ -162,9 +156,9 @@ class Actions(commands.Cog):
         def offer():
             embed = discord.Embed(
                 title=f"Trade ongoing!",
-                description=f"`{r.PREF}(put/drop) (coin/card) (amount/card_id)` \n"
-                f"`{r.PREF}(confirm/exit/refresh)` \n"
-                f"16 cards at max per side per trade",
+                description=f"`{r.PREF}(put/drop) (coin/card) (amount/card_id)`\n"
+                            f"`{r.PREF}(confirm/exit/refresh)`\n"
+                            f"16 cards at max per side per trade",
                 color=discord.Color.gold(),
             )
             author_offer = []
@@ -183,33 +177,33 @@ class Actions(commands.Cog):
             if confirmed[0]:
                 embed.add_field(
                     name=f"{ctx.author}: :white_check_mark:",
-                    value=f"```Golden Coins: {author_coins_put} \n"
-                    + "\n".join(author_offer)
-                    + "```",
+                    value=f"```Golden Coins: {author_coins_put}\n"
+                          + "\n".join(author_offer)
+                          + "```",
                     inline=False,
                 )
             else:
                 embed.add_field(
                     name=f"{ctx.author}:",
-                    value=f"```Golden Coins: {author_coins_put} \n"
-                    + "\n".join(author_offer)
-                    + "```",
+                    value=f"```Golden Coins: {author_coins_put}\n"
+                          + "\n".join(author_offer)
+                          + "```",
                     inline=False,
                 )
             if confirmed[1]:
                 embed.add_field(
                     name=f"{target}: :white_check_mark:",
-                    value=f"```Golden Coins: {target_coins_put} \n"
-                    + "\n".join(target_offer)
-                    + "```",
+                    value=f"```Golden Coins: {target_coins_put}\n"
+                          + "\n".join(target_offer)
+                          + "```",
                     inline=False,
                 )
             else:
                 embed.add_field(
                     name=f"{target}:",
-                    value=f"```Golden Coins: {target_coins_put} \n"
-                    + "\n".join(target_offer)
-                    + "```",
+                    value=f"```Golden Coins: {target_coins_put}\n"
+                          + "\n".join(target_offer)
+                          + "```",
                     inline=False,
                 )
 
@@ -236,10 +230,10 @@ class Actions(commands.Cog):
                 return
 
             reply_author = reply_msg.author
-            reply_msg = [s.lower() for s in reply_msg.content[len(r.PREF) :].split(" ")]
+            reply_msg = [s.lower() for s in reply_msg.content[len(r.PREF):].split(" ")]
             if len(reply_msg) < 1:
                 continue
-            if reply_msg[0] in ["refresh", "re", "ref", "r"]:
+            if "refresh".startswith(reply_msg[0]):
                 trade_msg = await ctx.send(embed=offer())
                 continue
             elif reply_msg[0] == "exit":
@@ -337,7 +331,7 @@ class Actions(commands.Cog):
                     except:
                         continue
 
-            elif reply_msg[0].lower() in ["drop", "dr", "dp"]:
+            elif "drop".startswith(reply_msg[0].lower()):
                 confirmed = [False, False]
                 if reply_msg[1].lower() in ["coin", "co", "coins"]:
                     try:
@@ -403,7 +397,7 @@ class Actions(commands.Cog):
                 trade_end = True
                 del dm.queues[target.id]
                 await ctx.send(
-                    f"Trade between {ctx.author.mention} and {target.mention} is now finished!"
+                    f"The trade between {ctx.author.mention} and {target.mention} is now finished!"
                 )
 
 
