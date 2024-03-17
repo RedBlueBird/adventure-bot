@@ -8,5 +8,5 @@ from .effects import EFFX
 from .perks import PERKS
 from .fish import FISH
 from .icons import ICONS
-from .misc_json import ADMINS, LEVELS, TUTORIAL
+from .misc_json import ADMINS, LEVELS, TUTORIAL, CARDS, CARDS_TEMP, CARD_LIST
 from .constants import *

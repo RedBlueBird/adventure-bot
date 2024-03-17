@@ -62,20 +62,7 @@ def cards_dict(lvl: str | int, name: str):
 
 def cards_dict_temp(lvl: int, name: str):
     if name.lower() not in CARDS_TEMP:
-        return {
-            "name": "Glitched",
-            "cost": 0,
-            "rarity": "NA",
-            "self_damage": 4500,
-            "eff_acc": 100,
-            "attacks": 10,
-            "acc": 100,
-            "crit": 100,
-            "mod": {},
-            "description": "None",
-            "requirement": "None",
-            "brief": "Created from this bot's glitches.",
-        }
+        return None
 
     card = copy.deepcopy(CARDS_TEMP[name.lower()])
     attributes = ["dmg", "cdmg"]
