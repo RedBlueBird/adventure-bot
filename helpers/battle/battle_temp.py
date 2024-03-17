@@ -20,10 +20,7 @@ class BattleData2:
         self.team_orders = list(range(1, 7))
         random.shuffle(self.team_orders)
 
-        icons = [
-            r.ICONS[i]
-            for i in ["pred", "porange", "ppurple", "pgreen", "pblue", "pgray"]
-        ]
+        icons = [r.ICONS[i] for i in ["pred", "porange", "ppurple", "pgreen", "pblue", "pgray"]]
         pps = dict(zip(self.team_orders, icons))
         for player in players:
             player.icon = pps[player.id]
@@ -74,9 +71,7 @@ class BattleData2:
             curr_dialogue = 1
             player_dialogue = "\n".join(player.dialogue[:curr_dialogue])
             while curr_dialogue < len(player.dialogue):
-                while (
-                    len(player_dialogue + "\n" + player.dialogue[curr_dialogue]) <= 1000
-                ):
+                while len(player_dialogue + "\n" + player.dialogue[curr_dialogue]) <= 1000:
                     player_dialogue += "\n" + player.dialogue[curr_dialogue]
                     curr_dialogue += 1
                     if curr_dialogue == len(player.dialogue):
@@ -101,10 +96,7 @@ class BattleData2:
                 description="Only living users that are fighting can interact with this message!"
             )
 
-        hand = [
-            f"{v + 1}. {i.display_name}"
-            for v, i in enumerate(player.deck[: player.hand_size])
-        ]
+        hand = [f"{v + 1}. {i.display_name}" for v, i in enumerate(player.deck[: player.hand_size])]
         hand.append(f"Next: {player.deck[player.hand_size].display_name}")
 
         embed = discord.Embed(
@@ -121,7 +113,9 @@ class BattleData2:
     def show_finish(self, uid: int) -> str | None:
         p = self.player_selector(uid)
         if p.id != self.turn:
-            return f"{p.user.mention} It's {self.players[self.turn - 1].user.name}'s turn right now!"
+            return (
+                f"{p.user.mention} It's {self.players[self.turn - 1].user.name}'s turn right now!"
+            )
 
         del p.dialogue[2:]
         error_msg = ""

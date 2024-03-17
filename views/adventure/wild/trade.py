@@ -9,8 +9,7 @@ from ...confirm import Confirm
 class TradeSelect(ui.Select["Trade"]):
     def __init__(self, trades: dict[str, list[tuple[str, int]]]):
         self.trades = {
-            c.lower(): [(r_[0].lower(), r_[1]) for r_ in req]
-            for c, req in trades.items()
+            c.lower(): [(r_[0].lower(), r_[1]) for r_ in req] for c, req in trades.items()
         }
 
         choices = []
@@ -41,8 +40,7 @@ class TradeSelect(ui.Select["Trade"]):
         inv = dm.get_user_inventory(i.user.id)
         if u.bp_weight(inv) + r.item(product).weight > r.BP_CAP:
             await msg.edit(
-                content="Hey, your pack's too full. "
-                "I couldn't fit it in if I tried.",
+                content="Hey, your pack's too full. I couldn't fit it in if I tried.",
                 view=None,
             )
             await msg.delete(delay=5)
@@ -51,8 +49,10 @@ class TradeSelect(ui.Select["Trade"]):
         for item, amt in reqs:
             if inv.get(item, 0) < amt:
                 await msg.edit(
-                    content="Sorry pal, I can't give credits. "
-                    "Come back when you're a little, mmmmmm, RICHER.",
+                    content=(
+                        "Sorry pal, I can't give credits. "
+                        "Come back when you're a little, mmmmmm, RICHER."
+                    ),
                     embed=None,
                     view=None,
                 )

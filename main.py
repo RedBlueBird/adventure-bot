@@ -72,8 +72,7 @@ class AdventurerBot(commands.Bot):
             )
         else:
             print(
-                f"Executed {executed_command} command by {ctx.author} "
-                f"(ID: {ctx.author.id}) in DMs"
+                f"Executed {executed_command} command by {ctx.author} (ID: {ctx.author.id}) in DMs"
             )
         dm.queues.pop(ctx.author.id, None)
 
@@ -86,10 +85,12 @@ class AdventurerBot(commands.Bot):
             hours = hours % 24
             embed = discord.Embed(
                 title="Hey, please slow down!",
-                description=f"You can use this command again in "
-                f"{f'{round(hours)} hours' if round(hours) > 0 else ''} "
-                f"{f'{round(minutes)} minutes' if round(minutes) > 0 else ''} "
-                f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
+                description=(
+                    "You can use this command again in "
+                    f"{f'{round(hours)} hours' if round(hours) > 0 else ''} "
+                    f"{f'{round(minutes)} minutes' if round(minutes) > 0 else ''} "
+                    f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
+                ),
                 color=0xE02B2B,
             )
         elif isinstance(error, exceptions.UserNotAdmin):

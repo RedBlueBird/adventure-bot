@@ -52,9 +52,7 @@ def fill_args(card: dict, level: int, type: str):
                     for attr in card["eff_app"][side][effect]:
                         curr_dir.append(attr)
                         if attr in param:
-                            args["_".join(curr_dir)] = card["eff_app"][side][effect][
-                                attr
-                            ]
+                            args["_".join(curr_dir)] = card["eff_app"][side][effect][attr]
                         del curr_dir[-1]
                     del curr_dir[-1]
                 del curr_dir[-1]
@@ -66,9 +64,7 @@ class EntitySearch(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_group(
-        aliases=["in", "check"], description="Looks up info on entities."
-    )
+    @commands.hybrid_group(aliases=["in", "check"], description="Looks up info on entities.")
     async def info(self, ctx: Context):
         if ctx.invoked_subcommand is None:
             embed = (
@@ -104,18 +100,12 @@ class EntitySearch(commands.Cog):
         if card["rarity"] == "M":
             info_str.insert(len(info_str), "**[Monster Card]** - Unobtainable")
         if card["rarity"] == "EX":
-            info_str.insert(
-                len(info_str), "**[Exclusive Card]** - Obtainable in events"
-            )
+            info_str.insert(len(info_str), "**[Exclusive Card]** - Obtainable in events")
 
         embed = discord.Embed(title="Card's info:", color=discord.Color.green())
         embed.add_field(name="Description:", value="\n".join(info_str), inline=False)
-        embed.add_field(
-            name="Uses:", value=fill_args(card, level, "desc"), inline=False
-        )
-        embed.add_field(
-            name="On Crit:", value=fill_args(card, level, "cdesc"), inline=False
-        )
+        embed.add_field(name="Uses:", value=fill_args(card, level, "desc"), inline=False)
+        embed.add_field(name="On Crit:", value=fill_args(card, level, "cdesc"), inline=False)
         embed.add_field(name="Brief:", value=card["brief"], inline=False)
 
         await ctx.send(embed=embed)
@@ -158,9 +148,7 @@ class EntitySearch(commands.Cog):
             f"**Abbreviation:** {item_info.abb}",
         ]
 
-        embed = discord.Embed(
-            title=f"{name}:", description=None, color=discord.Color.green()
-        )
+        embed = discord.Embed(title=f"{name}:", description=None, color=discord.Color.green())
         embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
         embed.add_field(name="Uses: ", value=item_info.description, inline=False)
         embed.add_field(name="Brief: ", value=f"*{item_info.brief}*", inline=False)
@@ -183,16 +171,10 @@ class EntitySearch(commands.Cog):
             await ctx.reply("The requested effect was not found!")
 
         fx_info = r.EFFX[name]
-        embed = discord.Embed(
-            title="Effect's info:", description=None, color=discord.Color.green()
-        )
-        embed.add_field(
-            name="Description: ", value=f"**Name:** {fx_info.name}", inline=False
-        )
+        embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
+        embed.add_field(name="Description: ", value=f"**Name:** {fx_info.name}", inline=False)
         embed.add_field(name="Uses: ", value=fx_info.description, inline=False)
-        embed.set_image(
-            url=f"https://cdn.discordapp.com/emojis/" f"{r.ICONS[fx_info.name].id}.png"
-        )
+        embed.set_image(url=f"https://cdn.discordapp.com/emojis/{r.ICONS[fx_info.name].id}.png")
         await ctx.send(embed=embed)
 
 

@@ -86,10 +86,7 @@ class Sys(commands.Cog):
             level_msg = []
             if (lvl + 1) % 2 == 0:
                 add_hp = round(
-                    (
-                        r.SCALE[1] ** math.floor((lvl + 1) / 2)
-                        - r.SCALE[1] ** math.floor(lvl / 2)
-                    )
+                    (r.SCALE[1] ** math.floor((lvl + 1) / 2) - r.SCALE[1] ** math.floor(lvl / 2))
                     * 100
                     * r.SCALE[0]
                 )
@@ -97,9 +94,7 @@ class Sys(commands.Cog):
 
             # At levels 17 and 27, the user gets a week of free premium.
             if lvl + 1 in [17, 27]:
-                dm.set_user_premium(
-                    a.id, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=7)
-                )
+                dm.set_user_premium(a.id, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=7))
 
             if r.LEVELS[lvl - 1]:
                 level_msg.extend(r.LEVELS[lvl - 1].format(r.PREF).split("\n"))
@@ -114,9 +109,9 @@ class Sys(commands.Cog):
             gem_gain = math.ceil((lvl + 1) / 5) + 1
             embed.add_field(
                 name=f"You're now level {lvl + 1}!",
-                value=f"+{coin_gain} {r.ICONS['coin']} \n"
-                f"+{gem_gain} {r.ICONS['gem']} \n"
-                "```» " + "\n\n» ".join(level_msg) + "```",
+                value=f"+{coin_gain} {r.ICONS['coin']} \n+{gem_gain} {r.ICONS['gem']} \n```» "
+                + "\n\n» ".join(level_msg)
+                + "```",
             )
             embed.set_thumbnail(url=a.avatar.url)
             await ctx.reply(embed=embed)
@@ -143,8 +138,10 @@ class Sys(commands.Cog):
             await ctx.channel.send(
                 embed=discord.Embed(
                     title=f"A bag of gold showed up out of nowhere!",
-                    description=f"Quick! Type `{r.PREF}collect {amt} coins` to collect them!\n"
-                    f"They'll be gone in 10 minutes!",
+                    description=(
+                        f"Quick! Type `{r.PREF}collect {amt} coins` to collect them!\n"
+                        "They'll be gone in 10 minutes!"
+                    ),
                     color=discord.Color.green(),
                 )
             )

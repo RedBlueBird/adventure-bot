@@ -9,9 +9,7 @@ class General(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(
-        name="help", description="List all commands the bot has loaded."
-    )
+    @commands.hybrid_command(name="help", description="List all commands the bot has loaded.")
     async def help(self, ctx: Context) -> None:
         embed = discord.Embed(
             title="Help", description="List of available commands:", color=0x9C84EF
@@ -23,9 +21,7 @@ class General(commands.Cog):
                 description = cmd.description.partition("\n")[0]
                 data.append(f"{PREF}{cmd.name} - {description}")
             help_text = "\n".join(data)
-            embed.add_field(
-                name=i.capitalize(), value=f"```{help_text}```", inline=False
-            )
+            embed.add_field(name=i.capitalize(), value=f"```{help_text}```", inline=False)
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
@@ -35,16 +31,12 @@ class General(commands.Cog):
     )
     async def links(self, ctx: Context) -> None:
         """Displays an embed containing some official bot info."""
-        embed = discord.Embed(
-            title="Official Links", description=None, color=discord.Color.green()
-        )
+        embed = discord.Embed(title="Official Links", description=None, color=discord.Color.green())
         embed.add_field(
             name="Bot Invite",
             value=f"[Link](https://discordapp.com/oauth2/authorize?&client_id={self.bot.config['application_id']}&scope=bot+applications.commands&permissions={self.bot.config['permissions']})",
         )
-        embed.add_field(
-            name="Official Server", value="[Link](https://discord.gg/w2CkRtkj57)"
-        )
+        embed.add_field(name="Official Server", value="[Link](https://discord.gg/w2CkRtkj57)")
         embed.add_field(
             name="Official Wiki",
             value="[Link](https://discord-adventurers-bot.fandom.com)",

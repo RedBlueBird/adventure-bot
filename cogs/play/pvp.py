@@ -125,9 +125,7 @@ class Pvp(commands.Cog):
         for u_ in set(dd.p_ids.info.values()):
             if u_ in dm.queues:
                 dm.queues[u_] = "in a friendly battle"
-        loading_embed_message = discord.Embed(
-            title="Loading...", description=r.ICONS["load"]
-        )
+        loading_embed_message = discord.Embed(title="Loading...", description=r.ICONS["load"])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hands_msg = await ctx.send(embed=loading_embed_message)
 
@@ -183,9 +181,7 @@ class Pvp(commands.Cog):
                         and m.author.id in players
                         and m.channel == ctx.channel
                     )
-                    replied_message = await self.bot.wait_for(
-                        "message", timeout=120.0, check=check
-                    )
+                    replied_message = await self.bot.wait_for("message", timeout=120.0, check=check)
                 except asyncio.TimeoutError:
                     for p in players:
                         index = list(dd.p_ids.info.values()).index(p) + 1
@@ -195,10 +191,7 @@ class Pvp(commands.Cog):
                     players = []
 
                 else:
-                    index = (
-                        list(dd.p_ids.info.values()).index(replied_message.author.id)
-                        + 1
-                    )
+                    index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
                     the_message = dd.interpret_message(
                         replied_message.content[len(r.PREF) :],
                         str(dd.players.info[index]),
@@ -223,8 +216,7 @@ class Pvp(commands.Cog):
 
                         for id_ in range(dd.hand_sizes.info[index]):
                             if not dd.decks.info[index][id_] in [
-                                ".".join(x.split(".")[0:2])
-                                for x in dd.used_cards.info[index]
+                                ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[index]
                             ]:
                                 card = dd.decks.info[index][id_].split(".")
 
@@ -236,23 +228,17 @@ class Pvp(commands.Cog):
                         if not dd.hand_sizes.info[index] == 6:
                             dd.hand_sizes.info[index] += 1
 
-                        dd.descriptions.info[index].append(
-                            f"{r.ICONS['ski']}{r.ICONS['kip']}\n"
-                        )
+                        dd.descriptions.info[index].append(f"{r.ICONS['ski']}{r.ICONS['kip']}\n")
 
                     elif the_message == "flee":
                         players.remove(replied_message.author.id)
                         dd.hps.info[index][0] = 0
                         dd.staminas.info[index] = 0
-                        dd.descriptions.info[index].append(
-                            f"{r.ICONS['fle']}{r.ICONS['lee']}\n"
-                        )
+                        dd.descriptions.info[index].append(f"{r.ICONS['fle']}{r.ICONS['lee']}\n")
 
                     elif the_message == "backpack":
                         await ctx.send(
-                            embed=u.container_embed(
-                                dd.backpacks.info[index], "Backpack"
-                            )
+                            embed=u.container_embed(dd.backpacks.info[index], "Backpack")
                         )
 
                     else:
@@ -263,28 +249,19 @@ class Pvp(commands.Cog):
                             dd.decks.info[index][int(str(x)[0]) - 1] + "." + str(x)[1:]
                             for x in dd.move_numbers.info[index]
                         ]
-                        dd.stored_energies.info[index] -= sum(
-                            [
-                                u.cards_dict(
-                                    int(
-                                        dd.decks.info[index][int(str(x)[0]) - 1].split(
-                                            "."
-                                        )[0]
-                                    ),
-                                    dd.decks.info[index][int(str(x)[0]) - 1].split(".")[
-                                        1
-                                    ],
-                                )["cost"]
-                                for x in dd.move_numbers.info[index]
-                            ]
-                        )
+                        dd.stored_energies.info[index] -= sum([
+                            u.cards_dict(
+                                int(dd.decks.info[index][int(str(x)[0]) - 1].split(".")[0]),
+                                dd.decks.info[index][int(str(x)[0]) - 1].split(".")[1],
+                            )["cost"]
+                            for x in dd.move_numbers.info[index]
+                        ])
                         dd.move_numbers.info[index].sort()
                         z = 0
 
                         for id_ in range(dd.hand_sizes.info[index]):
                             if not dd.decks.info[index][id_] in [
-                                ".".join(x.split(".")[0:2])
-                                for x in dd.used_cards.info[index]
+                                ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[index]
                             ]:
                                 card = dd.decks.info[index][id_].split(".")
 
@@ -302,7 +279,10 @@ class Pvp(commands.Cog):
                                 if "rewrite" in card_info:
                                     re_name = u.cards_dict(1, card[1])["rewrite"]
                                     dd.descriptions.info[index].append(
-                                        f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* rewritten as *[{u.rarity_cost(re_name)}] {re_name} lv:{card[0]}*"
+                                        f"*[{u.rarity_cost(card[1])}]"
+                                        f" {card[1]} lv:{card[0]}* rewritten as"
+                                        f" *[{u.rarity_cost(re_name)}]"
+                                        f" {re_name} lv:{card[0]}*"
                                     )
                                     dd.decks.info[index][t - 1] = (
                                         dd.decks.info[index][t - 1].split(".")[0]
@@ -314,7 +294,9 @@ class Pvp(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[index].append(
-                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(card[1])}]"
+                                            f" {card[1]} lv:{card[0]}* stayed in your"
+                                            " hand!"
                                         )
                                     else:
                                         dd.decks.info[index].insert(
@@ -331,16 +313,16 @@ class Pvp(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[index].append(
-                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(card[1])}]"
+                                            f" {card[1]} lv:{card[0]}* stayed in your"
+                                            " hand!"
                                         )
                                     else:
                                         dd.decks.info[index].pop(t - 1)
                                 else:
                                     dd.decks.info[index].pop(t - 1)
 
-                        dd.hand_sizes.info[index] -= (
-                            len(dd.move_numbers.info[index]) - z - 1
-                        )
+                        dd.hand_sizes.info[index] -= len(dd.move_numbers.info[index]) - z - 1
                     await replied_message.delete()
 
             if dd.afk == 0:
@@ -429,9 +411,7 @@ class Pvp(commands.Cog):
             await stats_msg.edit(embed=dd.show_stats())
             await hands_msg.edit(embed=dd.show_hand())
 
-            medal_amt = (
-                gamble_medals * (len(dd.players.info) - len(winner)) // len(winner)
-            )
+            medal_amt = gamble_medals * (len(dd.players.info) - len(winner)) // len(winner)
             xp_amt = dd.turns * 2
             for p in dd.p_ids.info:
                 id_ = dd.p_ids.info[p]
@@ -450,17 +430,21 @@ class Pvp(commands.Cog):
             if gamble_medals != 0:
                 embed = discord.Embed(
                     title="Battle Ended!",
-                    description=f"**Team {dd.pps[dd.afk]} won!**\n\n"
-                    f"Each winner gained {medal_amt} medals\n"
-                    f"Everyone else lost {gamble_medals} medals\n"
-                    f"Everyone gained {dd.turns * 2} XP",
+                    description=(
+                        f"**Team {dd.pps[dd.afk]} won!**\n\n"
+                        f"Each winner gained {medal_amt} medals\n"
+                        f"Everyone else lost {gamble_medals} medals\n"
+                        f"Everyone gained {dd.turns * 2} XP"
+                    ),
                     color=discord.Color.green(),
                 )
             else:
                 embed = discord.Embed(
                     title="Battle Ended!",
-                    description=f"**Team {dd.pps[dd.afk]} won the friendly battle!**\n\n"
-                    f"Everyone gained {dd.turns * 2} XP",
+                    description=(
+                        f"**Team {dd.pps[dd.afk]} won the friendly battle!**\n\n"
+                        f"Everyone gained {dd.turns * 2} XP"
+                    ),
                     color=discord.Color.green(),
                 )
 
@@ -478,9 +462,11 @@ class Pvp(commands.Cog):
 
             embed = discord.Embed(
                 title="Battle Ended!",
-                description=f"**It's a Tie!**\n\n"
-                f"No one gained or lost any medals!\n"
-                f"Everyone gained {dd.turns * 2} experience points",
+                description=(
+                    "**It's a Tie!**\n\n"
+                    "No one gained or lost any medals!\n"
+                    f"Everyone gained {dd.turns * 2} experience points"
+                ),
                 color=discord.Color.green(),
             )
             embed.set_footer(text=f"This battle took {dd.turns} turns")

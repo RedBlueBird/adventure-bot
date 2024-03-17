@@ -206,9 +206,7 @@ def get_user_cards_count(uid: int) -> int:
 def get_user_deck_count(uid: int, slot: int = 0) -> int:
     slot = get_user_deck_slot(uid) if slot == 0 else slot
     db_deck = f"deck{slot}"
-    cur.execute(
-        f"SELECT COUNT(*) FROM cards WHERE owned_user = {uid} AND {db_deck} = 1"
-    )
+    cur.execute(f"SELECT COUNT(*) FROM cards WHERE owned_user = {uid} AND {db_deck} = 1")
     return cur.fetchall()[0][0]
 
 
@@ -216,8 +214,7 @@ def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
     slot = slot if 1 <= slot <= 6 else get_user_deck_slot(uid)
     db_deck = f"deck{slot}"
     cur.execute(
-        f"SELECT id, card_name, card_level FROM cards WHERE "
-        f"owned_user = {uid} AND {db_deck} = 1"
+        f"SELECT id, card_name, card_level FROM cards WHERE owned_user = {uid} AND {db_deck} = 1"
     )
     result = cur.fetchall()
     u.sort_cards(result, get_user_order(uid))
@@ -227,8 +224,8 @@ def get_user_deck(uid: int, slot: int = 0) -> list[tuple[int, str, int]]:
 
 def get_user_deck_ids(uid: int) -> list[int]:
     cur.execute(
-        f"SELECT id FROM cards WHERE owned_user = {uid} "
-        "AND (deck1 = 1 or deck2 = 1 or deck3 = 1 or deck4 = 1 or deck5 = 1 or deck6 = 1)"
+        f"SELECT id FROM cards WHERE owned_user = {uid} AND (deck1 = 1 or deck2 = 1 or"
+        " deck3 = 1 or deck4 = 1 or deck5 = 1 or deck6 = 1)"
     )
     result = cur.fetchall()
     return [i[0] for i in result]
@@ -249,15 +246,13 @@ def get_user_cards(
         conditions.append(f"AND card_level = {level}")
 
     cur.execute(
-        f"SELECT id, card_name, card_level FROM cards WHERE "
+        "SELECT id, card_name, card_level FROM cards WHERE "
         f"owned_user = {uid} {' '.join(conditions)}"
     )
     result = cur.fetchall()
 
     if energy is not None:
-        result = [
-            card for card in result if energy == u.cards_dict(card[2], card[1])["cost"]
-        ]
+        result = [card for card in result if energy == u.cards_dict(card[2], card[1])["cost"]]
     if rarity is not None:
         rarity_terms = {
             "L": "legendary",
@@ -320,9 +315,7 @@ def set_card_owner(uid: int, cid: int):
 
 
 def get_card_decks(cid: int) -> list[int] | None:
-    cur.execute(
-        f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM cards WHERE id = {cid}"
-    )
+    cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM cards WHERE id = {cid}")
     result = cur.fetchall()
     return None if not result else result[0]
 
@@ -334,9 +327,7 @@ def add_user(uid: int):
 
 def set_user_card_deck(uid: int, slot: int, value: int, cid: int):
     db_deck = f"deck{slot}"
-    cur.execute(
-        f"UPDATE cards SET {db_deck} = {value} WHERE id = {cid} AND owned_user = {uid}"
-    )
+    cur.execute(f"UPDATE cards SET {db_deck} = {value} WHERE id = {cid} AND owned_user = {uid}")
     db.commit()
 
 
@@ -439,19 +430,12 @@ def get_leaderboard(
         select = ["id", "uid", "event_token"]
         order = ["event_token DESC"]
 
-    cur.execute(
-        f"SELECT {','.join(select)} FROM players "
-        f"ORDER BY {','.join(order)} LIMIT {limit}"
-    )
+    cur.execute(f"SELECT {','.join(select)} FROM players ORDER BY {','.join(order)} LIMIT {limit}")
     return cur.fetchall()
 
 
-def get_user_quests(
-    uid: int, quest_type: int = -1
-) -> list[tuple[int, int, int, int, int]]:
-    operation = (
-        "SELECT id, quest_type, reward_type, rarity, progress FROM quest WHERE uid = %s"
-    )
+def get_user_quests(uid: int, quest_type: int = -1) -> list[tuple[int, int, int, int, int]]:
+    operation = "SELECT id, quest_type, reward_type, rarity, progress FROM quest WHERE uid = %s"
     params = (uid,)
     if quest_type != -1:
         operation += " AND quest_type = %s"

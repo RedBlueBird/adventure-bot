@@ -38,9 +38,7 @@ class SelectMenu(UserSelect["Select"]):
 
 
 class Select(discord.ui.View):
-    def __init__(
-        self, host: discord.Member, min_players: int = 1, max_players: int = 5
-    ):
+    def __init__(self, host: discord.Member, min_players: int = 1, max_players: int = 5):
         super().__init__()
         self.host = host
         self.add_item(SelectMenu(min_players, max_players))

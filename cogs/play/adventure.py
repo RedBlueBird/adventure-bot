@@ -25,9 +25,7 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
     return out
 
 
-def setup_minigame(
-    game_name: str, show_map: bool
-) -> tuple[discord.Embed, discord.File | None]:
+def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, discord.File | None]:
     embed = discord.Embed(title=f"Minigame - {game_name}!", color=discord.Color.gold())
 
     logs = [f"• {rule}" for rule in r.MINIGAMES[game_name].rules]
@@ -147,12 +145,9 @@ class Adventure(commands.Cog):
                 case "selling":
                     view = ht.Sell(a)
                     embed.set_footer(
-                        text="You can use `a.info item (name)` "
-                        "to check the sell price of an item!"
+                        text="You can use `a.info item (name)` to check the sell price of an item!"
                     )
-                    await adv_msg.edit(
-                        content=None, embed=u.container_embed(inv), view=view
-                    )
+                    await adv_msg.edit(content=None, embed=u.container_embed(inv), view=view)
                     await view.wait()
                     inv = dm.get_user_inventory(a.id)
 
@@ -172,14 +167,13 @@ class Adventure(commands.Cog):
                     ]
                     offer_str = []
                     for o in map(r.item, offers):
-                        offer_str.append(
-                            f"[{o.rarity}/{o.weight}] {o.name} - {o.buy} gc"
-                        )
+                        offer_str.append(f"[{o.rarity}/{o.weight}] {o.name} - {o.buy} gc")
 
                     embed = discord.Embed(
                         title="Jessie's Shop:",
-                        description="I have everything adventurers need!\n"
-                        "```" + "\n".join(offer_str) + "```",
+                        description="I have everything adventurers need!\n```"
+                        + "\n".join(offer_str)
+                        + "```",
                         color=discord.Color.gold(),
                     )
                     view = ht.Shop(a, offers)
@@ -190,9 +184,9 @@ class Adventure(commands.Cog):
 
                 case "chest":
                     inv_str = u.container_str(inv)
-                    embed = u.container_embed(
-                        dm.get_user_storage(a.id), "Chest", lvl
-                    ).add_field(name="Your Backpack", value=f"```{inv_str}```")
+                    embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl).add_field(
+                        name="Your Backpack", value=f"```{inv_str}```"
+                    )
                     view = ht.Chest(a)
                     await adv_msg.edit(content=None, embed=embed, view=view)
                     await view.wait()
@@ -208,9 +202,7 @@ class Adventure(commands.Cog):
                     elif state.pos == "blackjack":
                         view = g.Blackjack(a)
 
-                    embed, img = setup_minigame(
-                        r.HTOWN[pos].choices[choice].pos, show_map
-                    )
+                    embed, img = setup_minigame(r.HTOWN[pos].choices[choice].pos, show_map)
                     await adv_msg.edit(
                         embed=embed, attachments=[] if img is None else [img], view=view
                     )
@@ -226,15 +218,12 @@ class Adventure(commands.Cog):
                         lvl_req = 9
                         if lvl < lvl_req:
                             await ctx.reply(
-                                f"You need to be at least "
-                                f"level {lvl_req} to fight a boss!",
+                                f"You need to be at least level {lvl_req} to fight a boss!",
                                 ephemeral=True,
                             )
                             continue
                         if dm.get_user_ticket(a.id) < 1:
-                            await ctx.reply(
-                                "You need a raid ticket first!", ephemeral=True
-                            )
+                            await ctx.reply("You need a raid ticket first!", ephemeral=True)
                             continue
 
                         embed = discord.Embed(
@@ -309,9 +298,7 @@ class Adventure(commands.Cog):
                     diff = time.time() - start
                     if diff > 2:
                         hp_loss = 300
-                        embed.description = (
-                            f"**Oh no!**\n" f"You were too slow and lost {hp_loss} HP!"
-                        )
+                        embed.description = f"**Oh no!**\nYou were too slow and lost {hp_loss} HP!"
                         hp -= hp_loss
                     else:
                         embed.description = "**Awesome!**\nYou dodged just fast enough!"
@@ -327,8 +314,7 @@ class Adventure(commands.Cog):
                     reaction_embed.set_field_at(
                         0,
                         name="Alright...",
-                        value="What were those letters?\n"
-                        f"Type `{r.PREF}[what you remember]`!",
+                        value=f"What were those letters?\nType `{r.PREF}[what you remember]`!",
                     )
                     reaction_embed.set_image(url=None)
                     await adv_msg.edit(embed=reaction_embed, attachments=[])
@@ -347,7 +333,7 @@ class Adventure(commands.Cog):
                     if reply != chars:
                         hp_loss = 200
                         embed.description = (
-                            f"**Oh no!**\n"
+                            "**Oh no!**\n"
                             f"You misremembered (the letters were {chars}) "
                             f"and lost {hp_loss} HP!"
                         )
@@ -418,9 +404,7 @@ class Adventure(commands.Cog):
                             to_include[item] = trade.reqs
 
                     # maybe vary the description based on a random list?
-                    embed = discord.Embed(
-                        title=trader.name.title(), description=trader.dialogue
-                    )
+                    embed = discord.Embed(title=trader.name.title(), description=trader.dialogue)
                     decision_view = w.Trade(a, to_include)
                     await adv_msg.edit(embed=embed, view=decision_view)
                     await decision_view.wait()

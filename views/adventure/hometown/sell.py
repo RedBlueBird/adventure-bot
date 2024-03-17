@@ -17,9 +17,7 @@ class SellForm(ui.Modal, title="Sell something!"):
     async def on_submit(self, i: discord.Interaction):
         amt = self.amt.value
         if not amt.isdigit() or int(amt) <= 0:
-            await i.response.send_message(
-                "That's an invalid amount to sell!", ephemeral=True
-            )
+            await i.response.send_message("That's an invalid amount to sell!", ephemeral=True)
             return
         amt = int(amt)
 

@@ -40,9 +40,7 @@ async def bet(
 ):
     coins = dm.get_user_coin(user.id)
     if coins < bet_amt:
-        await i.response.send_message(
-            "You don't have enough coins to place a bet!", ephemeral=True
-        )
+        await i.response.send_message("You don't have enough coins to place a bet!", ephemeral=True)
 
     flip = Bet.flip(edge_factor)
     if flip == outcome:
@@ -54,9 +52,7 @@ async def bet(
         if outcome == Bet.EDGE:
             descr = descr.upper()
 
-        embed = discord.Embed(
-            title="You won!", description=descr, color=discord.Color.green()
-        )
+        embed = discord.Embed(title="You won!", description=descr, color=discord.Color.green())
     else:
         inc = -bet_amt
         embed = discord.Embed(
@@ -76,9 +72,7 @@ async def bet(
 
 
 class CoinFlip(ui.View, InteractionCheckMixin):
-    def __init__(
-        self, user: discord.Member, bet_amt: int = 50, edge_factor: int = 1000
-    ):
+    def __init__(self, user: discord.Member, bet_amt: int = 50, edge_factor: int = 1000):
         super().__init__()
         self.user = user
         self.bet_amt = bet_amt

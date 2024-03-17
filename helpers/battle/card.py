@@ -26,10 +26,7 @@ def use_basics(side_target: Player, attr: str, amt: int):
             multiplier += 0.25
 
         side_target.hp += min(amt, side_target.absorb)
-        dmg = round(
-            (amt - (max(0, side_target.block) + max(0, side_target.absorb)))
-            * multiplier
-        )
+        dmg = round((amt - (max(0, side_target.block) + max(0, side_target.absorb))) * multiplier)
         side_target.hp -= max(0, dmg)
 
         side_target.hp = min(side_target.hp, side_target.max_hp)
@@ -83,9 +80,7 @@ class Card:
             f"» #{target.id}{target.icon}"
         )
 
-    def get_basics_written(
-        self, target: Player, crit: bool = False, card_dir: str = None
-    ):
+    def get_basics_written(self, target: Player, crit: bool = False, card_dir: str = None):
         used_any = False
         is_dotted = False
         card_dir = self.card if card_dir is None else self.card[card_dir]
@@ -131,9 +126,7 @@ class Card:
                 is_dotted=is_dotted,
             )
 
-    def get_basics_used(
-        self, target: Player, crit: bool = False, card_dir: str | None = None
-    ):
+    def get_basics_used(self, target: Player, crit: bool = False, card_dir: str | None = None):
         worked = False
         used_any = False
         card_dir = self.card if card_dir is None else self.card[card_dir]
@@ -167,9 +160,7 @@ class Card:
             worked = use_basics(side_target, attr, amt)
         return worked or (worked == used_any)
 
-    def get_effects_written(
-        self, target: Player, crit: bool = False, card_dir: str = None
-    ):
+    def get_effects_written(self, target: Player, crit: bool = False, card_dir: str = None):
         card_dir = self.card if card_dir is None else self.card[card_dir]
         for attr in EFF_ATTRS:
             curr_attr = f"{'c' if crit else ''}{attr}"
@@ -201,13 +192,9 @@ class Card:
 
                     if attr == "spawn":
                         card = Card(self.lvl, effect, side_target)
-                        self.write_attr(
-                            effect_dir, card.display_name, side_target, crit, False
-                        )
+                        self.write_attr(effect_dir, card.display_name, side_target, crit, False)
 
-    def get_effects_used(
-        self, target: Player, crit: bool = False, card_dir: str = None
-    ):
+    def get_effects_used(self, target: Player, crit: bool = False, card_dir: str = None):
         card_dir = self.card if card_dir is None else self.card[card_dir]
         for attr in EFF_ATTRS:
             curr_attr = f"{'c' if crit else ''}{attr}"
@@ -235,21 +222,15 @@ class Card:
                     if attr == "eff_app":
                         if effect not in target.effects:
                             continue
-                        effect_count = max(
-                            0, min(target.effects[effect], effect_dir["cap"])
-                        )
-                        use_basics(
-                            side_target, "damage", effect_dir["damage"] * effect_count
-                        )
+                        effect_count = max(0, min(target.effects[effect], effect_dir["cap"]))
+                        use_basics(side_target, "damage", effect_dir["damage"] * effect_count)
                         if effect_dir["clear"]:
                             side_target.effects[effect] -= effect_count
 
                     if attr == "spawn":
                         for spawn_card in range(effect_dir):
                             side_target.deck.insert(
-                                random.randint(
-                                    side_target.hand_size, len(side_target.deck)
-                                ),
+                                random.randint(side_target.hand_size, len(side_target.deck)),
                                 Card(self.lvl, effect, side_target),
                             )
 
@@ -299,7 +280,5 @@ class Card:
     def crit_use(self, target: Player, crit: bool = True, card_dir: str = None):
         self.use(target, crit, card_dir)
 
-    def use_on_hand(
-        self, target: Player, crit: bool = False, card_dir: str = "on_hand"
-    ):
+    def use_on_hand(self, target: Player, crit: bool = False, card_dir: str = "on_hand"):
         self.use(target, crit, card_dir)

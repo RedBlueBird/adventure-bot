@@ -69,7 +69,9 @@ class Decks(discord.ui.View):
         cards = []
         total_energy = 0
         for card in deck:
-            card_str = f"[{u.rarity_cost(card[1])}] **{card[1]}**, lv: **{card[2]}**, id: `{card[0]}` "
+            card_str = (
+                f"[{u.rarity_cost(card[1])}] **{card[1]}**, lv: **{card[2]}**, id: `{card[0]}` "
+            )
             cards.append(card_str)
             total_energy += u.cards_dict(card[2], card[1])["cost"]
 

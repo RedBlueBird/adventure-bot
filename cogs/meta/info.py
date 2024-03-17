@@ -29,9 +29,7 @@ class Info(commands.Cog):
         now = dt.datetime.now(dt.timezone.utc)
         if user_premium > now:
             days_left = (user_premium - now).days
-            description_msg = (
-                f"14\n{r.ICONS['timer']}**ᴘʀᴇᴍɪᴜᴍ**: " f"{days_left} days remaining\n"
-            )
+            description_msg = f"14\n{r.ICONS['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {days_left} days remaining\n"
             tickets = 10
         else:
             description_msg = "7\n"
@@ -40,7 +38,9 @@ class Info(commands.Cog):
         tick_msg = ""
         lvl = dm.get_user_level(user.id)
         if lvl >= 4:
-            tick_msg = f"{r.ICONS['ticket']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
+            tick_msg = (
+                f"{r.ICONS['ticket']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
+            )
 
         descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
         embed = discord.Embed(
@@ -55,30 +55,27 @@ class Info(commands.Cog):
         if lvl < 30:
             embed.add_field(
                 name=f"Current Level: {lvl}",
-                value=f"{r.ICONS['exp']} {xp}/{u.level_xp(lvl)}\n"
-                f"{r.ICONS['hp']} {hp}",
+                value=f"{r.ICONS['exp']} {xp}/{u.level_xp(lvl)}\n{r.ICONS['hp']} {hp}",
                 inline=False,
             )
         else:
             embed.add_field(
                 name=f"Max Level: {lvl}",
-                value=f"{r.ICONS['exp']} {xp}\n" f"{r.ICONS['hp']} {hp}",
+                value=f"{r.ICONS['exp']} {xp}\n{r.ICONS['hp']} {hp}",
                 inline=False,
             )
 
         user_daily = dm.get_user_daily(user.id)
-        dts = (
-            "Right now!"
-            if user_daily.date() != dt.date.today()
-            else u.time_til_midnight()
-        )
+        dts = "Right now!" if user_daily.date() != dt.date.today() else u.time_til_midnight()
         embed.add_field(
             name="Currency",
-            value=f"{r.ICONS['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
-            f"{r.ICONS['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
-            f"{r.ICONS['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
-            f"{r.ICONS['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
-            f"{tick_msg}",
+            value=(
+                f"{r.ICONS['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
+                f"{r.ICONS['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
+                f"{r.ICONS['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
+                f"{r.ICONS['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
+                f"{tick_msg}"
+            ),
             inline=False,
         )
 
@@ -88,8 +85,7 @@ class Info(commands.Cog):
             name="Tasks",
             value=f"{r.ICONS['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/"
             + description_msg
-            + f"{r.ICONS['timer']}**Next daily: **{dts}\n"
-            f"{r.ICONS['timer']}**Next quest: **{nq}",
+            + f"{r.ICONS['timer']}**Next daily: **{dts}\n{r.ICONS['timer']}**Next quest: **{nq}",
             inline=False,
         )
 
@@ -103,8 +99,10 @@ class Info(commands.Cog):
             embed.add_field(name="Badges: ", value=" ".join(owned_badges))
 
         embed.set_footer(
-            text=f"Player ID: {dm.get_id(user.id)}; "
-            f"Register Date: {dm.get_user_register_date(user.id)}"
+            text=(
+                f"Player ID: {dm.get_id(user.id)}; "
+                f"Register Date: {dm.get_user_register_date(user.id)}"
+            )
         )
         await ctx.send(embed=embed)
 
@@ -137,9 +135,11 @@ class Info(commands.Cog):
                 quest_info = u.quest_info(quest[1], quest[2], quest[3])
                 embed.add_field(
                     name=f"**{quest_info['rarity']} {quest_info['description']}**",
-                    value=f"Finished {quest[4]}/{quest_info['requirement']}\n"
-                    f"Reward: **{quest_info['reward']['exp']} {r.ICONS['exp']}"
-                    f" {quest_info['reward']['other']} {r.ICONS[quest_info['reward']['type']]}**",
+                    value=(
+                        f"Finished {quest[4]}/{quest_info['requirement']}\n"
+                        f"Reward: **{quest_info['reward']['exp']} {r.ICONS['exp']}"
+                        f" {quest_info['reward']['other']} {r.ICONS[quest_info['reward']['type']]}**"
+                    ),
                     inline=False,
                 )
 
@@ -158,13 +158,10 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
-        name="inventory",
-        description="Displays all the cards in a member's inventory.",
-        aliases=["card", "cards", "i", "inv"],
+        description="Displays a user's cards.",
+        aliases=["card", "i", "inv"],
     )
-    async def inventory(
-        self, ctx: Context, page: int = 1, user: discord.Member = commands.Author
-    ):
+    async def cards(self, ctx: Context, page: int = 1, user: discord.Member = commands.Author):
         if not dm.is_registered(user.id):
             await ctx.reply("That user isn't registered yet!")
             return
@@ -209,9 +206,7 @@ class Info(commands.Cog):
         view = Decks(user, slot)
         await ctx.send(embed=view.deck_embed(), view=view)
 
-    @commands.hybrid_command(
-        name="decks", description="Displays an overview of a user's decks."
-    )
+    @commands.hybrid_command(name="decks", description="Displays an overview of a user's decks.")
     async def decks(self, ctx: Context, user: discord.Member = commands.Author):
         if not dm.is_registered(user.id):
             await ctx.reply(f"That user isn't registered!")

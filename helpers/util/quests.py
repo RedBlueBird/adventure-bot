@@ -35,9 +35,7 @@ def quest_info(quest_type: int, reward_type: int, rarity: int):
     other_rewards = [[200, 500, 1000, 2500], [0, 1, 2, 4]]
     reward_types = ["coin", "gem"]
     return {
-        "description": descriptions[quest_type].format(
-            amount=requirements[quest_type][rarity]
-        ),
+        "description": descriptions[quest_type].format(amount=requirements[quest_type][rarity]),
         "rarity": rarities[rarity],
         "requirement": requirements[quest_type][rarity],
         "reward": {
@@ -64,8 +62,10 @@ async def update_quest(ctx: Context, uid: int, quest_type: int, change: int):
         )
         embed.add_field(
             name=f"**{qi['rarity']} {qi['description']}**",
-            value=f"**+{qi['reward']['exp']} {ICONS['exp'].emoji()}"
-            f" +{qi['reward']['other']} {ICONS[qi['reward']['type']]}**",
+            value=(
+                f"**+{qi['reward']['exp']} {ICONS['exp'].emoji()}"
+                f" +{qi['reward']['other']} {ICONS[qi['reward']['type']]}**"
+            ),
             # " +1{ICON['token']}**",
             inline=False,
         )

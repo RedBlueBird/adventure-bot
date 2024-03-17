@@ -5,39 +5,51 @@ from helpers import db_manager as dm, util as u, resources as r
 PACKS = [
     {
         "name": "**Basic Pack**",
-        "value": f"Cost: **3** {r.ICONS['gem'].emoji()}\n"
-        "• contains 3 (lv 4-10) cards\n"
-        f"`{r.PREF}buy basic`",
+        "value": (
+            f"Cost: **3** {r.ICONS['gem'].emoji()}\n"
+            "• contains 3 (lv 4-10) cards\n"
+            f"`{r.PREF}buy basic`"
+        ),
     },
     {
         "name": "**Fire Pack**",
-        "value": f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
-        "• contains 4 (lv 4-10) cards with a\nhigher chance of fire cards\n"
-        f"`{r.PREF}buy fire`",
+        "value": (
+            f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
+            "• contains 4 (lv 4-10) cards with a\nhigher chance of fire cards\n"
+            f"`{r.PREF}buy fire`"
+        ),
     },
     {
         "name": "**Evil Pack**",
-        "value": f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
-        "• contains 4 (lv 4-10) cards with a\nhigher chance of curse cards\n"
-        f"`{r.PREF}buy evil`",
+        "value": (
+            f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
+            "• contains 4 (lv 4-10) cards with a\nhigher chance of curse cards\n"
+            f"`{r.PREF}buy evil`"
+        ),
     },
     {
         "name": "**Electric Pack**",
-        "value": f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
-        "• contains 4 (lv 4-10) cards with a\nhigher chance of electric cards\n"
-        f"`{r.PREF}buy electric`",
+        "value": (
+            f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
+            "• contains 4 (lv 4-10) cards with a\nhigher chance of electric cards\n"
+            f"`{r.PREF}buy electric`"
+        ),
     },
     {
         "name": "**Defensive Pack**",
-        "value": f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
-        "• contains 4 (lv 4-10) cards with a\nhigher chance of defense cards\n"
-        f"`{r.PREF}buy defensive`",
+        "value": (
+            f"Cost: **5** {r.ICONS['gem'].emoji()}\n"
+            "• contains 4 (lv 4-10) cards with a\nhigher chance of defense cards\n"
+            f"`{r.PREF}buy defensive`"
+        ),
     },
     {
         "name": "**Pro Pack**",
-        "value": f"Cost: **24** {r.ICONS['gem'].emoji()}\n"
-        "• contains 6 (lv 7-10) cards\n"
-        f"`{r.PREF}buy pro`",
+        "value": (
+            f"Cost: **24** {r.ICONS['gem'].emoji()}\n"
+            "• contains 6 (lv 7-10) cards\n"
+            f"`{r.PREF}buy pro`"
+        ),
     },
     # {
     #     "name": "**Anniversary Pack**",
@@ -88,8 +100,10 @@ class Shop(discord.ui.View):
         user_deals = dm.get_user_deals(self.uid).split(",")
         embed = discord.Embed(
             title="Shop - Daily Deals:",
-            description=f"{r.ICONS['coin'].emoji()} **{self.coins}** "
-            f"{r.ICONS['gem'].emoji()} **{self.gems}**",
+            description=(
+                f"{r.ICONS['coin'].emoji()} **{self.coins}** "
+                f"{r.ICONS['gem'].emoji()} **{self.gems}**"
+            ),
             color=discord.Color.gold(),
         )
 
@@ -100,8 +114,7 @@ class Shop(discord.ui.View):
                 cost = round(1.6 ** int(card[0]) * 50 * u.price_factor(card[1]))
                 embed.add_field(
                     name=f"**[{rarity}] {card[1]} lv: {card[0]}**",
-                    value=f"Cost: **{cost}** {r.ICONS['coin'].emoji()}\n"
-                    f"`{r.PREF}buy card {v + 1}`",
+                    value=f"Cost: **{cost}** {r.ICONS['coin'].emoji()}\n`{r.PREF}buy card {v + 1}`",
                 )
             else:
                 embed.add_field(
@@ -118,8 +131,10 @@ class Shop(discord.ui.View):
     async def card_packs(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Card Packs:",
-            description=f"{r.ICONS['coin'].emoji()} **{self.coins}** {r.ICONS['gem'].emoji()} "
-            f"**{self.gems}** {r.ICONS['token'].emoji()} **{self.tokens}**",
+            description=(
+                f"{r.ICONS['coin'].emoji()} **{self.coins}** {r.ICONS['gem'].emoji()} "
+                f"**{self.gems}** {r.ICONS['token'].emoji()} **{self.tokens}**"
+            ),
             color=discord.Color.green(),
         )
 
@@ -133,7 +148,10 @@ class Shop(discord.ui.View):
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Currencies:",
-            description=f"{r.ICONS['coin'].emoji()} **{self.coins}** {r.ICONS['gem'].emoji()} **{self.gems}**",
+            description=(
+                f"{r.ICONS['coin'].emoji()} **{self.coins}**"
+                f" {r.ICONS['gem'].emoji()} **{self.gems}**"
+            ),
             color=discord.Color.green(),
         )
         for field in CURRENCY:

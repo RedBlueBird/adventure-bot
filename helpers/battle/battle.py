@@ -83,10 +83,7 @@ class BattleData:
         self.pps = dict(
             zip(
                 player_orders,
-                [
-                    r.ICONS[i]
-                    for i in ["pred", "porange", "ppurple", "pgreen", "pblue", "pgray"]
-                ],
+                [r.ICONS[i] for i in ["pred", "porange", "ppurple", "pgreen", "pblue", "pgray"]],
             )
         )
 
@@ -137,11 +134,11 @@ class BattleData:
 
         def fire_ice_cancel(user):
             if "chill" in self.effects.info[user] and "burn" in self.effects.info[user]:
-                if abs(self.effects.info[user]["chill"]) > abs(
-                    self.effects.info[user]["burn"]
-                ):
+                if abs(self.effects.info[user]["chill"]) > abs(self.effects.info[user]["burn"]):
                     self.descriptions.info[user].append(
-                        f"{abs(self.effects.info[user]['burn'])}{r.ICONS['burn']} {abs(self.effects.info[user]['chill'])}{r.ICONS['chil']} canceled out! \n{int(abs(self.effects.info[user]['chill'] - abs(self.effects.info[user]['burn']) * self.effects.info[user]['chill'] / abs(self.effects.info[user]['chill'])))}{r.ICONS['chil']} remain"
+                        f"{abs(self.effects.info[user]['burn'])}{r.ICONS['burn']} {abs(self.effects.info[user]['chill'])}{r.ICONS['chil']} canceled"
+                        " out!"
+                        f" \n{int(abs(self.effects.info[user]['chill'] - abs(self.effects.info[user]['burn']) * self.effects.info[user]['chill'] / abs(self.effects.info[user]['chill'])))}{r.ICONS['chil']} remain"
                     )
                     self.effects.info[user]["chill"] -= int(
                         abs(self.effects.info[user]["burn"])
@@ -150,11 +147,11 @@ class BattleData:
                     )
                     del self.effects.info[user]["burn"]
 
-                elif abs(self.effects.info[user]["chill"]) < abs(
-                    self.effects.info[user]["burn"]
-                ):
+                elif abs(self.effects.info[user]["chill"]) < abs(self.effects.info[user]["burn"]):
                     self.descriptions.info[user].append(
-                        f"{abs(self.effects.info[user]['burn'])}{r.ICONS['burn']} {abs(self.effects.info[user]['chill'])}{r.ICONS['chil']} canceled out! \n{int(abs(self.effects.info[user]['burn'] - abs(self.effects.info[user]['chill']) * self.effects.info[user]['burn'] / abs(self.effects.info[user]['burn'])))}{r.ICONS['burn']} remain"
+                        f"{abs(self.effects.info[user]['burn'])}{r.ICONS['burn']} {abs(self.effects.info[user]['chill'])}{r.ICONS['chil']} canceled"
+                        " out!"
+                        f" \n{int(abs(self.effects.info[user]['burn'] - abs(self.effects.info[user]['chill']) * self.effects.info[user]['burn'] / abs(self.effects.info[user]['burn'])))}{r.ICONS['burn']} remain"
                     )
                     self.effects.info[user]["burn"] -= int(
                         abs(self.effects.info[user]["chill"])
@@ -165,8 +162,8 @@ class BattleData:
 
                 else:
                     self.descriptions.info[user].append(
-                        f"{abs(self.effects.info[user]['burn'])}{r.ICONS['burn']} "
-                        f"{abs(self.effects.info[user]['chill'])}{r.ICONS['chil']} canceled out!"
+                        f"{abs(self.effects.info[user]['burn'])}{r.ICONS['burn']} {abs(self.effects.info[user]['chill'])}{r.ICONS['chil']} canceled"
+                        " out!"
                     )
                     del self.effects.info[user]["chill"]
                     del self.effects.info[user]["burn"]
@@ -184,9 +181,7 @@ class BattleData:
         for effect in self.effects.info[target]:
             if effect == "burn":
                 if not str(self.effects.info[target]["burn"])[0] == "-":
-                    self.hps.info[target][0] -= math.ceil(
-                        self.hps.info[target][2] / 100 * 4
-                    )
+                    self.hps.info[target][0] -= math.ceil(self.hps.info[target][2] / 100 * 4)
                     self.descriptions.info[target].append(
                         f"{self.effects.info[target][effect]} "
                         f"{r.ICONS['burn']}» -"
@@ -195,9 +190,7 @@ class BattleData:
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "poison":
                 if str(self.effects.info[target]["poison"])[0] != "-":
@@ -208,23 +201,18 @@ class BattleData:
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "feeble":
                 if str(self.effects.info[target]["feeble"])[0] != "-":
                     self.descriptions.info[target].append(
-                        f"{self.effects.info[target][effect]} "
-                        f"{r.ICONS['feeb']}» "
-                        f"{round(1.1 ** (self.effects.info[target][effect] * -1) * 100)}% "
-                        f"{r.ICONS['dmg']}"
+                        f"{self.effects.info[target][effect]} {r.ICONS['feeb']}»"
+                        f" {round(1.1 ** (self.effects.info[target][effect] * -1) * 100)}%"
+                        f" {r.ICONS['dmg']}"
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif (
                 effect == "recover"
@@ -233,15 +221,13 @@ class BattleData:
             ):
                 if str(self.effects.info[target]["recover"])[0] != "-":
                     if (
-                        self.hps.info[target][0]
-                        + math.ceil(self.hps.info[target][2] / 100 * 4)
+                        self.hps.info[target][0] + math.ceil(self.hps.info[target][2] / 100 * 4)
                         <= self.hps.info[target][2]
                     ):
-                        self.hps.info[target][0] += math.ceil(
-                            self.hps.info[target][2] / 100 * 4
-                        )
+                        self.hps.info[target][0] += math.ceil(self.hps.info[target][2] / 100 * 4)
                         self.descriptions.info[target].append(
-                            f"{self.effects.info[target][effect]} {r.ICONS['rec']}» {math.ceil(self.hps.info[target][2] / 100 * 4)} {r.ICONS['hp']}"
+                            f"{self.effects.info[target][effect]} {r.ICONS['rec']}»"
+                            f" {math.ceil(self.hps.info[target][2] / 100 * 4)} {r.ICONS['hp']}"
                         )
                     else:
                         self.descriptions.info[target].insert(
@@ -254,9 +240,7 @@ class BattleData:
                         self.hps.info[target][0] = self.hps.info[target][2]
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "restore":
                 if str(self.effects.info[target]["restore"])[0] != "-":
@@ -268,19 +252,15 @@ class BattleData:
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "curse":
                 if str(self.effects.info[target]["curse"])[0] != "-":
                     self.descriptions.info[target].append(
-                        f"{self.effects.info[target][effect]} " f"{r.ICONS['curs']}»"
+                        f"{self.effects.info[target][effect]} {r.ICONS['curs']}»"
                     )
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "stun":
                 if str(self.effects.info[target]["stun"])[0] != "-":
@@ -289,21 +269,16 @@ class BattleData:
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "bullseye":
                 if str(self.effects.info[target]["bullseye"])[0] != "-":
                     self.descriptions.info[target].append(
-                        f"{self.effects.info[target][effect]} "
-                        f"{r.ICONS['eye']}» 30% acc"
+                        f"{self.effects.info[target][effect]} {r.ICONS['eye']}» 30% acc"
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "berserk":
                 if str(self.effects.info[target]["berserk"])[0] != "-":
@@ -315,25 +290,20 @@ class BattleData:
                     )
                     deletion_check(effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "seriate":
                 if str(self.effects.info[target]["seriate"])[0] != "-":
                     self.descriptions.info[target].append(
-                        f"{self.effects.info[target][effect]} {r.ICONS['seri']}» {self.effects.info[target][effect] * 2}% {r.ICONS['dmg']}"
+                        f"{self.effects.info[target][effect]} {r.ICONS['seri']}»"
+                        f" {self.effects.info[target][effect] * 2}% {r.ICONS['dmg']}"
                     )
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
             elif effect == "freeze":
                 if str(self.effects.info[target]["freeze"])[0] == "-":
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
                 if self.effects.info[target]["freeze"] != 0:
                     self.descriptions.info[target].append(
                         f"{self.effects.info[target][effect]} {r.ICONS['frez']}» Frozen"
@@ -355,9 +325,7 @@ class BattleData:
                             target,
                             f"{math.floor(self.effects.info[target][effect] / 7) * 7} {r.ICONS['chil']}» ",
                         )
-                        self.effects.info[target][effect] = (
-                            self.effects.info[target][effect] % 7
-                        )
+                        self.effects.info[target][effect] = self.effects.info[target][effect] % 7
                     # self.new_line(effect_user)
                     if self.effects.info[target][effect] != 0:
                         self.descriptions.info[target].append(
@@ -370,9 +338,7 @@ class BattleData:
                     else:
                         ready_to_del.insert(len(ready_to_del), effect)
                 else:
-                    self.effects.info[target][effect] = abs(
-                        self.effects.info[target][effect]
-                    )
+                    self.effects.info[target][effect] = abs(self.effects.info[target][effect])
 
         for x in ready_to_del:
             del self.effects.info[target][x]
@@ -382,31 +348,26 @@ class BattleData:
         Applies the effects to the users from the cards that are still in their hand.
         """
         if (
-            random.randint(1, 100)
-            <= round(result["eff_acc"]) + self.multipliers.info[caster][4]
+            random.randint(1, 100) <= round(result["eff_acc"]) + self.multipliers.info[caster][4]
         ):  # / accuracy_factor):
             to_apply = ["curse", "seriate"]  # these effects will always be applied
             if not blocked:
-                to_apply.extend(
-                    [
-                        "burn",
-                        "recover",
-                        "stun",
-                        "bullseye",
-                        "poison",
-                        "poison",
-                        "berserk",
-                        "chill",
-                        "restore",
-                        "feeble",
-                    ]
-                )
+                to_apply.extend([
+                    "burn",
+                    "recover",
+                    "stun",
+                    "bullseye",
+                    "poison",
+                    "poison",
+                    "berserk",
+                    "chill",
+                    "restore",
+                    "feeble",
+                ])
             for e in to_apply:
                 self.apply_effects(e, result, caster, target)
 
-    def execute_card_defense(
-        self, c_level: int, c_name: str, caster, target, activation=None
-    ):
+    def execute_card_defense(self, c_level: int, c_name: str, caster, target, activation=None):
         """
         Sets up the defensive parts of the card.
         :param c_level: The level of the card for number crunching
@@ -440,10 +401,7 @@ class BattleData:
             if self.effects.info[caster]["bullseye"] > 0:
                 accuracy_factor += 30
 
-        if (
-            "seriate" in self.effects.info[caster]
-            and result["name"] in self.neutral_cards
-        ):
+        if "seriate" in self.effects.info[caster] and result["name"] in self.neutral_cards:
             stats_factor += 0.02 * self.effects.info[caster]["seriate"]
             result["seriate"] = [1, "self"]
             self.apply_effects("seriate", result, caster, caster)
@@ -481,14 +439,11 @@ class BattleData:
                         result["block"] * crit_multiplier * stats_factor * def_factor
                     )
                     self.descriptions.info[caster].append(
-                        f"• {round(result['block'] * crit_multiplier * stats_factor * def_factor)} "
-                        f"{r.ICONS['block']}{r.ICONS['crit']}» #{target}"
-                        f"{self.pps[self.inv_teams[target]]}"
+                        f"• {round(result['block'] * crit_multiplier * stats_factor * def_factor)} {r.ICONS['block']}{r.ICONS['crit']}»"
+                        f" #{target}{self.pps[self.inv_teams[target]]}"
                     )
                 else:
-                    self.hps.info[target][3] += round(
-                        result["block"] * stats_factor * def_factor
-                    )
+                    self.hps.info[target][3] += round(result["block"] * stats_factor * def_factor)
                     self.descriptions.info[caster].append(
                         f"• {round(result['block'] * stats_factor * def_factor)} "
                         f"{r.ICONS['block']}» #{target}"
@@ -496,9 +451,7 @@ class BattleData:
                     )
                 self.effects_applier(result, caster, False, target)
             else:
-                self.descriptions.info[caster].append(
-                    f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                )
+                self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
         # self.new_line(caster)
         if "absorb" in result:
             if random.randint(1, 100) <= round(result["acc"] + accuracy_factor):
@@ -509,14 +462,11 @@ class BattleData:
                         result["absorb"] * crit_multiplier * stats_factor * def_factor
                     )
                     self.descriptions.info[caster].append(
-                        f"• {round(result['absorb'] * crit_multiplier * stats_factor * def_factor)} "
-                        f"{r.ICONS['absorb']}{r.ICONS['crit']}» #{target}"
-                        f"{self.pps[self.inv_teams[target]]}"
+                        f"• {round(result['absorb'] * crit_multiplier * stats_factor * def_factor)} {r.ICONS['absorb']}{r.ICONS['crit']}»"
+                        f" #{target}{self.pps[self.inv_teams[target]]}"
                     )
                 else:
-                    self.hps.info[target][4] += round(
-                        result["absorb"] * stats_factor * def_factor
-                    )
+                    self.hps.info[target][4] += round(result["absorb"] * stats_factor * def_factor)
                     self.descriptions.info[caster].append(
                         f"• {round(result['absorb'] * stats_factor * def_factor)} "
                         f"{r.ICONS['absorb']}» #{target}"
@@ -524,9 +474,7 @@ class BattleData:
                     )
                 self.effects_applier(result, caster, False, target)
             else:
-                self.descriptions.info[caster].append(
-                    f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                )
+                self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
         # self.new_line(caster)
         if "heal" in result:
             for y in range(result["attacks"]):
@@ -534,39 +482,27 @@ class BattleData:
                     if random.randint(1, 100) <= round(
                         result["crit"] + crit_factor
                     ):  # / accuracy_factor):
-                        if (
-                            self.hps.info[target][0] > 0
-                            and self.staminas.info[target] > 0
-                        ):
+                        if self.hps.info[target][0] > 0 and self.staminas.info[target] > 0:
                             self.total_damages.info[target] -= round(
                                 result["heal"] * crit_multiplier * stats_factor
                             )
                         self.descriptions.info[caster].append(
-                            f"• {round(result['heal'] * crit_multiplier * stats_factor)} "
-                            f"{r.ICONS['heal']}{r.ICONS['crit']}» "
-                            f"#{target}{self.pps[self.inv_teams[target]]}"
+                            f"• {round(result['heal'] * crit_multiplier * stats_factor)} {r.ICONS['heal']}{r.ICONS['crit']}»"
+                            f" #{target}{self.pps[self.inv_teams[target]]}"
                         )
                     else:
-                        if (
-                            self.hps.info[target][0] > 0
-                            and self.staminas.info[target] > 0
-                        ):
-                            self.total_damages.info[target] -= round(
-                                result["heal"] * stats_factor
-                            )
+                        if self.hps.info[target][0] > 0 and self.staminas.info[target] > 0:
+                            self.total_damages.info[target] -= round(result["heal"] * stats_factor)
                         self.descriptions.info[caster].append(
-                            f"• {round(result['heal'] * stats_factor)} {r.ICONS['heal']}» #{target}{self.pps[self.inv_teams[target]]}"
+                            f"• {round(result['heal'] * stats_factor)} {r.ICONS['heal']}»"
+                            f" #{target}{self.pps[self.inv_teams[target]]}"
                         )
                     self.effects_applier(result, caster, False, target)
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
             # self.new_line(caster)
 
-    def execute_card_offense(
-        self, c_level: int, c_name: str, caster, target, activation=None
-    ):
+    def execute_card_offense(self, c_level: int, c_name: str, caster, target, activation=None):
         """
         Sets up the offensive parts of a card.
         :param c_level: The level of the card for number crunching
@@ -601,10 +537,7 @@ class BattleData:
             if self.effects.info[caster]["berserk"] > 0:
                 damage_factor += 0.15 * self.effects.info[caster]["berserk"]
 
-        if (
-            "seriate" in self.effects.info[caster]
-            and result["name"] in self.neutral_cards
-        ):
+        if "seriate" in self.effects.info[caster] and result["name"] in self.neutral_cards:
             damage_factor += 0.02 * self.effects.info[caster]["seriate"]
 
         if "feeble" in self.effects.info[caster]:
@@ -626,23 +559,17 @@ class BattleData:
                 if random.randint(1, 100) <= round(result["acc"] + accuracy_factor):
                     blocked = False
                     if random.randint(1, 100) <= round(result["crit"] + crit_factor):
-                        if self.hps.info[target][3] > round(
-                            result["tramp"] * crit_multiplier
-                        ):
-                            self.hps.info[target][3] -= round(
-                                result["tramp"] * crit_multiplier
-                            )
+                        if self.hps.info[target][3] > round(result["tramp"] * crit_multiplier):
+                            self.hps.info[target][3] -= round(result["tramp"] * crit_multiplier)
                             self.descriptions.info[caster].append(
-                                f"• -{round(result['tramp'] * crit_multiplier)} {r.ICONS['block']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• -{round(result['tramp'] * crit_multiplier)} {r.ICONS['block']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
-                        elif self.hps.info[target][4] > round(
-                            result["tramp"] * crit_multiplier
-                        ):
-                            self.hps.info[target][4] -= round(
-                                result["tramp"] * crit_multiplier
-                            )
+                        elif self.hps.info[target][4] > round(result["tramp"] * crit_multiplier):
+                            self.hps.info[target][4] -= round(result["tramp"] * crit_multiplier)
                             self.descriptions.info[caster].append(
-                                f"• -{round(result['tramp'] * crit_multiplier)} {r.ICONS['absorb']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• -{round(result['tramp'] * crit_multiplier)} {r.ICONS['absorb']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         else:
                             if (
@@ -668,29 +595,31 @@ class BattleData:
                         if self.hps.info[target][3] > round(result["tramp"]):
                             self.hps.info[target][3] -= round(result["tramp"])
                             self.descriptions.info[caster].append(
-                                f"• -{round(result['tramp'])} {r.ICONS['block']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• -{round(result['tramp'])} {r.ICONS['block']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         elif self.hps.info[target][4] > round(result["tramp"]):
                             self.hps.info[target][4] -= round(result["tramp"])
                             self.descriptions.info[caster].append(
-                                f"• -{round(result['tramp'])} {r.ICONS['absorb']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• -{round(result['tramp'])} {r.ICONS['absorb']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         else:
                             if 0 < self.hps.info[target][3] < round(result["tramp"]):
                                 self.descriptions.info[caster].append(
-                                    f"• -{self.hps.info[target][3]} {r.ICONS['block']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• -{self.hps.info[target][3]} {r.ICONS['block']}»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                                 self.hps.info[target][3] = 0
                             elif 0 < self.hps.info[target][4] < round(result["tramp"]):
                                 self.descriptions.info[caster].append(
-                                    f"• -{self.hps.info[target][4]} {r.ICONS['absorb']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• -{self.hps.info[target][4]} {r.ICONS['absorb']}»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                                 self.hps.info[target][4] = 0
                     self.effects_applier(result, caster, blocked, target)
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
             # self.new_line(caster)
         if "damage" in result:
             extras = result["damage"] == 0
@@ -707,23 +636,15 @@ class BattleData:
                             and self.hps.info[target][4]
                             < round(result["damage"] * crit_multiplier * damage_factor)
                         ) or "crit_prc" in result["mod"]:
-                            if (
-                                self.hps.info[target][3] > 0
-                                and not "crit_prc" in result["mod"]
-                            ):
+                            if self.hps.info[target][3] > 0 and not "crit_prc" in result["mod"]:
                                 self.total_damages.info[target] += round(
                                     result["damage"] * crit_multiplier * damage_factor
                                     - self.hps.info[target][3]
                                 )
-                            elif (
-                                self.hps.info[target][4] > 0
-                                and not "crit_prc" in result["mod"]
-                            ):
+                            elif self.hps.info[target][4] > 0 and not "crit_prc" in result["mod"]:
                                 self.total_damages.info[target] += (
                                     round(
-                                        result["damage"]
-                                        * crit_multiplier
-                                        * damage_factor
+                                        result["damage"] * crit_multiplier * damage_factor
                                         - self.hps.info[target][4]
                                     )
                                     - self.hps.info[target][4]
@@ -736,33 +657,37 @@ class BattleData:
                                 )
                             if (
                                 not (
-                                    self.hps.info[target][3] == 0
-                                    and self.hps.info[target][4] == 0
+                                    self.hps.info[target][3] == 0 and self.hps.info[target][4] == 0
                                 )
                                 and "crit_prc" not in result["mod"]
                             ):
                                 if self.hps.info[target][3] > 0:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * crit_multiplier * damage_factor - self.hps.info[target][3])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * crit_multiplier * damage_factor - self.hps.info[target][3])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                                 elif self.hps.info[target][4] > 0:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * crit_multiplier * damage_factor - self.hps.info[target][4])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][4]} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * crit_multiplier * damage_factor - self.hps.info[target][4])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][4]} {r.ICONS['absorb']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                             else:
                                 if "crit_prc" in result["mod"]:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * crit_multiplier * damage_factor)} {r.ICONS['pdmg']}{r.ICONS['crit']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * crit_multiplier * damage_factor)} {r.ICONS['pdmg']}{r.ICONS['crit']}»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                                 else:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * crit_multiplier * damage_factor)} {r.ICONS['dmg']}{r.ICONS['crit']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * crit_multiplier * damage_factor)} {r.ICONS['dmg']}{r.ICONS['crit']}»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                         else:
                             if self.hps.info[target][3] > 0:
                                 blocked = True
                                 self.descriptions.info[caster].append(
-                                    f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                             elif self.hps.info[target][4] > 0:
                                 self.total_damages.info[target] -= round(
@@ -771,39 +696,31 @@ class BattleData:
                                 if self.hps.info[target][2] < self.hps.info[target][0]:
                                     self.hps.info[target][0] = self.hps.info[target][2]
                                 self.descriptions.info[caster].append(
-                                    f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({round(result['damage'] * crit_multiplier * damage_factor)} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({round(result['damage'] * crit_multiplier * damage_factor)} {r.ICONS['absorb']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                         if "self_damage" in result:
                             self.total_damages.info[caster] += (
                                 result["self_damage"] * crit_multiplier
                             )
                             self.descriptions.info[caster].append(
-                                f" {int(result['self_damage'] * crit_multiplier)} {r.ICONS['dmg']}{r.ICONS['crit']}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                                f" {int(result['self_damage'] * crit_multiplier)} {r.ICONS['dmg']}{r.ICONS['crit']}»"
+                                f" #{caster}{self.pps[self.inv_teams[caster]]}"
                             )
 
                     elif result["damage"] != 0:
                         if (
-                            self.hps.info[target][3]
-                            < round(result["damage"] * damage_factor)
-                            and self.hps.info[target][4]
-                            < round(result["damage"] * damage_factor)
+                            self.hps.info[target][3] < round(result["damage"] * damage_factor)
+                            and self.hps.info[target][4] < round(result["damage"] * damage_factor)
                         ) or "norm_prc" in result["mod"]:
-                            if (
-                                self.hps.info[target][3] > 0
-                                and not "norm_prc" in result["mod"]
-                            ):
+                            if self.hps.info[target][3] > 0 and not "norm_prc" in result["mod"]:
                                 self.total_damages.info[target] += round(
-                                    result["damage"] * damage_factor
-                                    - self.hps.info[target][3]
+                                    result["damage"] * damage_factor - self.hps.info[target][3]
                                 )
-                            elif (
-                                self.hps.info[target][4] > 0
-                                and not "norm_prc" in result["mod"]
-                            ):
+                            elif self.hps.info[target][4] > 0 and not "norm_prc" in result["mod"]:
                                 self.total_damages.info[target] += (
                                     round(
-                                        result["damage"] * damage_factor
-                                        - self.hps.info[target][4]
+                                        result["damage"] * damage_factor - self.hps.info[target][4]
                                     )
                                     - self.hps.info[target][4]
                                 )
@@ -816,34 +733,38 @@ class BattleData:
 
                             if (
                                 not (
-                                    self.hps.info[target][3] == 0
-                                    and self.hps.info[target][4] == 0
+                                    self.hps.info[target][3] == 0 and self.hps.info[target][4] == 0
                                 )
                                 and "norm_prc" not in result["mod"]
                             ):
                                 if self.hps.info[target][3] > 0:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * damage_factor - self.hps.info[target][3])} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * damage_factor - self.hps.info[target][3])} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                                 elif self.hps.info[target][4] > 0:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * damage_factor - self.hps.info[target][4])} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * damage_factor - self.hps.info[target][4])} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                             else:
                                 if "norm_prc" in result["mod"]:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * damage_factor)} {r.ICONS['pdmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * damage_factor)} {r.ICONS['pdmg']}»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                                 else:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['damage'] * damage_factor)} {r.ICONS['dmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['damage'] * damage_factor)} {r.ICONS['dmg']}»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
 
                         else:
                             if self.hps.info[target][3] > 0:
                                 blocked = True
                                 self.descriptions.info[caster].append(
-                                    f"• 0 {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• 0 {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                             elif self.hps.info[target][4] > 0:
                                 self.total_damages.info[target] -= round(
@@ -852,18 +773,18 @@ class BattleData:
                                 if self.hps.info[target][2] < self.hps.info[target][0]:
                                     self.hps.info[target][0] = self.hps.info[target][2]
                                 self.descriptions.info[caster].append(
-                                    f"• 0 {r.ICONS['dmg']} ({round(result['damage'] * damage_factor)} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• 0 {r.ICONS['dmg']} ({round(result['damage'] * damage_factor)} {r.ICONS['absorb']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                         if "self_damage" in result:
                             self.total_damages.info[caster] += result["self_damage"]
                             self.descriptions.info[caster].append(
-                                f" {int(result['self_damage'])} {r.ICONS['dmg']}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                                f" {int(result['self_damage'])} {r.ICONS['dmg']}»"
+                                f" #{caster}{self.pps[self.inv_teams[caster]]}"
                             )
                     self.effects_applier(result, caster, blocked, target)
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
 
         if "crush" in result:
             extras = False
@@ -891,26 +812,27 @@ class BattleData:
                         if self.hps.info[target][3] + self.hps.info[target][4] == 0:
                             if self.hps.info[target][3] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {round(result['crush'] * crit_multiplier * damage_factor + self.hps.info[target][3] * crit_multiplier)}{r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3] * crit_multiplier} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {round(result['crush'] * crit_multiplier * damage_factor + self.hps.info[target][3] * crit_multiplier)}{r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3] * crit_multiplier} {r.ICONS['block']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                             elif self.hps.info[target][4] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {round(result['crush'] * crit_multiplier * damage_factor + self.hps.info[target][4] * crit_multiplier)}{r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][4] * crit_multiplier} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {round(result['crush'] * crit_multiplier * damage_factor + self.hps.info[target][4] * crit_multiplier)}{r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][4] * crit_multiplier} {r.ICONS['absorb']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                         else:
                             self.descriptions.info[caster].append(
-                                f"• {result['crush'] * crit_multiplier * damage_factor}{r.ICONS['dmg']}{r.ICONS['crit']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• {result['crush'] * crit_multiplier * damage_factor}{r.ICONS['dmg']}{r.ICONS['crit']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                     else:
                         if self.hps.info[target][3] > 0:
                             self.total_damages.info[target] += round(
-                                result["crush"] * damage_factor
-                                + self.hps.info[target][3]
+                                result["crush"] * damage_factor + self.hps.info[target][3]
                             )
                         elif self.hps.info[target][4] > 0:
                             self.total_damages.info[target] += round(
-                                result["crush"] * damage_factor
-                                + self.hps.info[target][4]
+                                result["crush"] * damage_factor + self.hps.info[target][4]
                             )
                         else:
                             self.total_damages.info[target] += round(
@@ -919,21 +841,22 @@ class BattleData:
                         if self.hps.info[target][3] + self.hps.info[target][4] != 0:
                             if self.hps.info[target][3] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {round(result['crush'] * damage_factor + self.hps.info[target][3])}{r.ICONS['dmg']} ({round(self.hps.info[target][3] * crit_multiplier)} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {round(result['crush'] * damage_factor + self.hps.info[target][3])}{r.ICONS['dmg']} ({round(self.hps.info[target][3] * crit_multiplier)} {r.ICONS['block']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                             elif self.hps.info[target][4] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {round(result['crush'] * damage_factor + self.hps.info[target][4])}{r.ICONS['dmg']} ({round(self.hps.info[target][4] * crit_multiplier)} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {round(result['crush'] * damage_factor + self.hps.info[target][4])}{r.ICONS['dmg']} ({round(self.hps.info[target][4] * crit_multiplier)} {r.ICONS['absorb']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                         else:
                             self.descriptions.info[caster].append(
-                                f"• {round(result['crush'] * damage_factor)}{r.ICONS['dmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• {round(result['crush'] * damage_factor)}{r.ICONS['dmg']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                     self.effects_applier(result, caster, blocked, target)
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
 
         if "revenge" in result:
             extras = False
@@ -946,8 +869,7 @@ class BattleData:
                         else 0
                     )
                     revenge_damage = round(
-                        ((1 - round_hp / self.hps.info[caster][2]) ** 2)
-                        * result["revenge"]
+                        ((1 - round_hp / self.hps.info[caster][2]) ** 2) * result["revenge"]
                     )
                     if (
                         self.hps.info[target][3] < revenge_damage
@@ -966,40 +888,40 @@ class BattleData:
                         else:
                             self.total_damages.info[target] += revenge_damage
 
-                        if not (
-                            self.hps.info[target][3] == 0
-                            and self.hps.info[target][4] == 0
-                        ):
+                        if not (self.hps.info[target][3] == 0 and self.hps.info[target][4] == 0):
                             if self.hps.info[target][3] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {revenge_damage - self.hps.info[target][3]} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {revenge_damage - self.hps.info[target][3]} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                             elif self.hps.info[target][4] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {revenge_damage - self.hps.info[target][4]} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {revenge_damage - self.hps.info[target][4]} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                         else:
                             self.descriptions.info[caster].append(
-                                f"• {revenge_damage} {r.ICONS['dmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• {revenge_damage} {r.ICONS['dmg']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
 
                     else:
                         if self.hps.info[target][3] > 0:
                             blocked = True
                             self.descriptions.info[caster].append(
-                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         elif self.hps.info[target][4] > 0:
                             self.total_damages.info[target] -= revenge_damage
                             if self.hps.info[target][2] < self.hps.info[target][0]:
                                 self.hps.info[target][0] = self.hps.info[target][2]
                             self.descriptions.info[caster].append(
-                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
             # self.new_line(caster)
         if "lich_revenge" in result:
             extras = False
@@ -1012,8 +934,7 @@ class BattleData:
                         else 0
                     )
                     revenge_damage = round(
-                        (round_hp / self.hps.info[caster][2]) ** 50
-                        * result["lich_revenge"]
+                        (round_hp / self.hps.info[caster][2]) ** 50 * result["lich_revenge"]
                     )
                     if (
                         self.hps.info[target][3] < revenge_damage
@@ -1031,40 +952,40 @@ class BattleData:
                                 self.hps.info[target][0] = self.hps.info[target][2]
                         else:
                             self.total_damages.info[target] += revenge_damage
-                        if not (
-                            self.hps.info[target][3] == 0
-                            and self.hps.info[target][4] == 0
-                        ):
+                        if not (self.hps.info[target][3] == 0 and self.hps.info[target][4] == 0):
                             if self.hps.info[target][3] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {revenge_damage - self.hps.info[target][3]} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {revenge_damage - self.hps.info[target][3]} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                             elif self.hps.info[target][4] > 0:
                                 self.descriptions.info[caster].append(
-                                    f"• {revenge_damage - self.hps.info[target][4]} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                    f"• {revenge_damage - self.hps.info[target][4]} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})»"
+                                    f" #{target}{self.pps[self.inv_teams[target]]}"
                                 )
                         else:
                             self.descriptions.info[caster].append(
-                                f"• {revenge_damage} {r.ICONS['dmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• {revenge_damage} {r.ICONS['dmg']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         self.effects_applier(result, caster, blocked, target)
                     else:
                         if self.hps.info[target][3] > 0:
                             blocked = True
                             self.descriptions.info[caster].append(
-                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         elif self.hps.info[target][4] > 0:
                             self.total_damages.info[target] -= revenge_damage
                             if self.hps.info[target][2] < self.hps.info[target][0]:
                                 self.hps.info[target][0] = self.hps.info[target][2]
                             self.descriptions.info[caster].append(
-                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• 0 {r.ICONS['dmg']} ({revenge_damage} {r.ICONS['block']})»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
             # self.new_line(caster)
         if "eff_app" in result:
             extras = False
@@ -1078,22 +999,13 @@ class BattleData:
                         if result["eff_app"][1] in self.effects.info[caster]:
                             n_effects = self.effects.info[caster][result["eff_app"][1]]
                     n_effects = (
-                        n_effects
-                        if n_effects <= result["eff_app"][6]
-                        else result["eff_app"][6]
+                        n_effects if n_effects <= result["eff_app"][6] else result["eff_app"][6]
                     )
-                    if random.randint(1, 100) <= round(
-                        result["crit"]
-                    ):  # accuracy_factor):
-                        if (
-                            result["eff_app"][3] == "regular"
-                            and result["eff_app"][5] == "damage"
-                        ):
+                    if random.randint(1, 100) <= round(result["crit"]):  # accuracy_factor):
+                        if result["eff_app"][3] == "regular" and result["eff_app"][5] == "damage":
                             if self.hps.info[target][3] < result["eff_app"][
                                 0
-                            ] * crit_multiplier * abs(n_effects) and self.hps.info[
-                                target
-                            ][
+                            ] * crit_multiplier * abs(n_effects) and self.hps.info[target][
                                 4
                             ] < result[
                                 "eff_app"
@@ -1104,110 +1016,86 @@ class BattleData:
                             ):
                                 if self.hps.info[target][3] > 0:
                                     self.total_damages.info[target] += (
-                                        result["eff_app"][0]
-                                        * crit_multiplier
-                                        * abs(n_effects)
+                                        result["eff_app"][0] * crit_multiplier * abs(n_effects)
                                         - self.hps.info[target][3]
                                     )
                                 elif self.hps.info[target][4] > 0:
                                     self.total_damages.info[target] += (
-                                        result["eff_app"][0]
-                                        * crit_multiplier
-                                        * abs(n_effects)
+                                        result["eff_app"][0] * crit_multiplier * abs(n_effects)
                                         - self.hps.info[target][4]
                                     ) - self.hps.info[target][4]
-                                    if (
-                                        self.hps.info[target][2]
-                                        < self.hps.info[target][0]
-                                    ):
-                                        self.hps.info[target][0] = self.hps.info[
-                                            target
-                                        ][2]
+                                    if self.hps.info[target][2] < self.hps.info[target][0]:
+                                        self.hps.info[target][0] = self.hps.info[target][2]
                                 else:
                                     self.total_damages.info[target] += (
-                                        result["eff_app"][0]
-                                        * crit_multiplier
-                                        * abs(n_effects)
+                                        result["eff_app"][0] * crit_multiplier * abs(n_effects)
                                     )
                                 if not (
-                                    self.hps.info[target][3] == 0
-                                    and self.hps.info[target][4] == 0
+                                    self.hps.info[target][3] == 0 and self.hps.info[target][4] == 0
                                 ):
                                     if self.hps.info[target][3] > 0:
                                         self.descriptions.info[caster].append(
-                                            f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects) - self.hps.info[target][3])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                            f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects) - self.hps.info[target][3])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                            f" #{target}{self.pps[self.inv_teams[target]]}"
                                         )
                                     elif self.hps.info[target][4] > 0:
                                         self.descriptions.info[caster].append(
-                                            f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects) - self.hps.info[target][4])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][4]} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                            f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects) - self.hps.info[target][4])} {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][4]} {r.ICONS['absorb']})»"
+                                            f" #{target}{self.pps[self.inv_teams[target]]}"
                                         )
                                 else:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects))} {r.ICONS['dmg']}{r.ICONS['crit']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects))} {r.ICONS['dmg']}{r.ICONS['crit']}»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                             else:
                                 if self.hps.info[target][3] > 0:
                                     self.descriptions.info[caster].append(
-                                        f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                                 elif self.hps.info[target][4] > 0:
                                     self.total_damages.info[target] -= (
-                                        result["eff_app"][0]
-                                        * crit_multiplier
-                                        * abs(n_effects)
+                                        result["eff_app"][0] * crit_multiplier * abs(n_effects)
                                     )
-                                    if (
-                                        self.hps.info[target][2]
-                                        < self.hps.info[target][0]
-                                    ):
-                                        self.hps.info[target][0] = self.hps.info[
-                                            target
-                                        ][2]
+                                    if self.hps.info[target][2] < self.hps.info[target][0]:
+                                        self.hps.info[target][0] = self.hps.info[target][2]
                                     self.descriptions.info[caster].append(
-                                        f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({result['eff_app'][0] * crit_multiplier * abs(n_effects)} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• 0 {r.ICONS['dmg']}{r.ICONS['crit']} ({result['eff_app'][0] * crit_multiplier * abs(n_effects)} {r.ICONS['absorb']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
-                        elif (
-                            result["eff_app"][3] == "pierce"
-                            and result["eff_app"][5] == "damage"
-                        ):
+                        elif result["eff_app"][3] == "pierce" and result["eff_app"][5] == "damage":
                             self.total_damages.info[target] += (
                                 result["eff_app"][0] * crit_multiplier * abs(n_effects)
                             )
                             self.descriptions.info[caster].append(
-                                f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects))} {r.ICONS['pdmg']}{r.ICONS['crit']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                f"• {round(result['eff_app'][0] * crit_multiplier * abs(n_effects))} {r.ICONS['pdmg']}{r.ICONS['crit']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         elif result["eff_app"][5] == "heal":
                             self.total_damages.info[caster] -= round(
-                                result["eff_app"][0]
-                                * crit_multiplier
-                                * damage_factor
-                                * n_effects
+                                result["eff_app"][0] * crit_multiplier * damage_factor * n_effects
                             )
                             self.descriptions.info[caster].append(
-                                f"• {round(result['eff_app'][0] * crit_multiplier * damage_factor * n_effects)} {r.ICONS['heal']}{r.ICONS['crit']}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                                f"• {round(result['eff_app'][0] * crit_multiplier * damage_factor * n_effects)} {r.ICONS['heal']}{r.ICONS['crit']}»"
+                                f" #{caster}{self.pps[self.inv_teams[caster]]}"
                             )
                         if "self_damage" in result:
                             self.total_damages.info[caster] += (
                                 result["self_damage"] * crit_multiplier
                             )
                             self.descriptions.info[caster].append(
-                                f"• {int(result['self_damage'] * crit_multiplier)} {r.ICONS['dmg']}{r.ICONS['crit']}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                                f"• {int(result['self_damage'] * crit_multiplier)} {r.ICONS['dmg']}{r.ICONS['crit']}»"
+                                f" #{caster}{self.pps[self.inv_teams[caster]]}"
                             )
 
                     else:
-                        if (
-                            result["eff_app"][3] == "regular"
-                            and result["eff_app"][5] == "damage"
-                        ):
+                        if result["eff_app"][3] == "regular" and result["eff_app"][5] == "damage":
                             if self.hps.info[target][3] < result["eff_app"][0] * abs(
                                 n_effects
-                            ) and self.hps.info[target][4] < result["eff_app"][0] * abs(
-                                n_effects
-                            ):
+                            ) and self.hps.info[target][4] < result["eff_app"][0] * abs(n_effects):
                                 if self.hps.info[target][3] > 0:
-                                    self.hps.info[target][0] = self.hps.info[target][
-                                        0
-                                    ] - (
+                                    self.hps.info[target][0] = self.hps.info[target][0] - (
                                         result["eff_app"][0] * abs(n_effects)
                                         - self.hps.info[target][3]
                                     )
@@ -1220,80 +1108,71 @@ class BattleData:
                                         )
                                         + self.hps.info[target][4]
                                     )
-                                    if (
-                                        self.hps.info[target][2]
-                                        < self.hps.info[target][0]
-                                    ):
-                                        self.hps.info[target][0] = self.hps.info[
-                                            target
-                                        ][2]
+                                    if self.hps.info[target][2] < self.hps.info[target][0]:
+                                        self.hps.info[target][0] = self.hps.info[target][2]
                                 else:
-                                    self.hps.info[target][0] = self.hps.info[target][
-                                        0
-                                    ] - result["eff_app"][0] * abs(n_effects)
-                                    if (
-                                        self.hps.info[target][2]
-                                        < self.hps.info[target][0]
-                                    ):
-                                        self.hps.info[target][0] = self.hps.info[
-                                            target
-                                        ][2]
+                                    self.hps.info[target][0] = self.hps.info[target][0] - result[
+                                        "eff_app"
+                                    ][0] * abs(n_effects)
+                                    if self.hps.info[target][2] < self.hps.info[target][0]:
+                                        self.hps.info[target][0] = self.hps.info[target][2]
                                 if not (
-                                    self.hps.info[target][3] == 0
-                                    and self.hps.info[target][4] == 0
+                                    self.hps.info[target][3] == 0 and self.hps.info[target][4] == 0
                                 ):
                                     if self.hps.info[target][3] > 0:
                                         self.descriptions.info[caster].append(
-                                            f"• {round(result['eff_app'][0] * abs(n_effects) - self.hps.info[target][3])} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                            f"• {round(result['eff_app'][0] * abs(n_effects) - self.hps.info[target][3])} {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                            f" #{target}{self.pps[self.inv_teams[target]]}"
                                         )
                                     elif self.hps.info[target][4] > 0:
                                         self.descriptions.info[caster].append(
-                                            f"• {round(result['eff_app'][0] * abs(n_effects) - self.hps.info[target][4])} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                            f"• {round(result['eff_app'][0] * abs(n_effects) - self.hps.info[target][4])} {r.ICONS['dmg']} ({self.hps.info[target][4]} {r.ICONS['absorb']})»"
+                                            f" #{target}{self.pps[self.inv_teams[target]]}"
                                         )
                                 else:
                                     self.descriptions.info[caster].append(
-                                        f"• {round(result['eff_app'][0] * abs(n_effects))} {r.ICONS['dmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• {round(result['eff_app'][0] * abs(n_effects))} {r.ICONS['dmg']}»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                             else:
                                 if self.hps.info[target][3] > 0:
                                     self.descriptions.info[caster].append(
-                                        f"• 0 {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• 0 {r.ICONS['dmg']} ({self.hps.info[target][3]} {r.ICONS['block']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
                                 elif self.hps.info[target][4] > 0:
-                                    self.hps.info[target][0] = self.hps.info[target][
-                                        0
-                                    ] + result["eff_app"][0] * abs(n_effects)
-                                    if (
-                                        self.hps.info[target][2]
-                                        < self.hps.info[target][0]
-                                    ):
-                                        self.hps.info[target][0] = self.hps.info[
-                                            target
-                                        ][2]
+                                    self.hps.info[target][0] = self.hps.info[target][0] + result[
+                                        "eff_app"
+                                    ][0] * abs(n_effects)
+                                    if self.hps.info[target][2] < self.hps.info[target][0]:
+                                        self.hps.info[target][0] = self.hps.info[target][2]
                                     self.descriptions.info[caster].append(
-                                        f"• 0 {r.ICONS['dmg']} ({result['eff_app'][0] * abs(n_effects)} {r.ICONS['absorb']})» #{target}{self.pps[self.inv_teams[target]]}"
+                                        f"• 0 {r.ICONS['dmg']} ({result['eff_app'][0] * abs(n_effects)} {r.ICONS['absorb']})»"
+                                        f" #{target}{self.pps[self.inv_teams[target]]}"
                                     )
-                        elif (
-                            result["eff_app"][3] == "pierce"
-                            and result["eff_app"][5] == "damage"
-                        ):
-                            self.hps.info[target][0] = self.hps.info[target][
+                        elif result["eff_app"][3] == "pierce" and result["eff_app"][5] == "damage":
+                            self.hps.info[target][0] = self.hps.info[target][0] - result["eff_app"][
                                 0
-                            ] - result["eff_app"][0] * abs(n_effects)
+                            ] * abs(n_effects)
                             self.descriptions.info[caster].append(
-                                f"• Dealt {round(result['eff_app'][0] * abs(n_effects))} {r.ICONS['pdmg']}» #{target}{self.pps[self.inv_teams[target]]}"
+                                "• Dealt"
+                                f" {round(result['eff_app'][0] * abs(n_effects))} {r.ICONS['pdmg']}»"
+                                f" #{target}{self.pps[self.inv_teams[target]]}"
                             )
                         elif result["eff_app"][5] == "heal":
                             self.total_damages.info[caster] -= round(
                                 result["eff_app"][0] * damage_factor * n_effects
                             )
                             self.descriptions.info[caster].append(
-                                f"• {round(result['eff_app'][0] * damage_factor * n_effects)} {r.ICONS['heal']}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                                f"• {round(result['eff_app'][0] * damage_factor * n_effects)} {r.ICONS['heal']}»"
+                                f" #{caster}{self.pps[self.inv_teams[caster]]}"
                             )
                         if "self_damage" in result:
                             self.hps[0] -= result["self_damage"]
                             self.descriptions.info[caster].append(
-                                f"• Dealt {int(result['self_damage'])} {r.ICONS['dmg']}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                                "• Dealt"
+                                f" {int(result['self_damage'])} {r.ICONS['dmg']}»"
+                                f" #{caster}{self.pps[self.inv_teams[caster]]}"
                             )
                     self.effects_applier(result, caster, False, target)
 
@@ -1304,30 +1183,24 @@ class BattleData:
                                     self.effects.info[target][result["eff_app"][1]]
                                     > result["eff_app"][6]
                                 ):
-                                    self.effects.info[target][
-                                        result["eff_app"][1]
-                                    ] -= result["eff_app"][6]
+                                    self.effects.info[target][result["eff_app"][1]] -= result[
+                                        "eff_app"
+                                    ][6]
                                 else:
-                                    del self.effects.info[target][
-                                        str(result["eff_app"][1])
-                                    ]
+                                    del self.effects.info[target][str(result["eff_app"][1])]
                         else:
                             if str(result["eff_app"][1]) in self.effects.info[caster]:
                                 if (
                                     self.effects.info[caster][result["eff_app"][1]]
                                     > result["eff_app"][6]
                                 ):
-                                    self.effects.info[caster][
-                                        result["eff_app"][1]
-                                    ] -= result["eff_app"][6]
+                                    self.effects.info[caster][result["eff_app"][1]] -= result[
+                                        "eff_app"
+                                    ][6]
                                 else:
-                                    del self.effects.info[caster][
-                                        str(result["eff_app"][1])
-                                    ]
+                                    del self.effects.info[caster][str(result["eff_app"][1])]
                 else:
-                    self.descriptions.info[caster].append(
-                        f"• {r.ICONS['mi']}{r.ICONS['ss']}"
-                    )
+                    self.descriptions.info[caster].append(f"• {r.ICONS['mi']}{r.ICONS['ss']}")
             # self.new_line(caster)
 
         if extras:
@@ -1372,7 +1245,9 @@ class BattleData:
                             str(c_level) + "." + result["spawn"][0],
                         )
                 self.descriptions.info[caster].append(
-                    f"• {added_cards} [{rarity_cost(result['spawn'][0])}] {result['spawn'][0]} lv: {c_level}» #{target}{self.pps[self.inv_teams[target]]}"
+                    f"• {added_cards} [{rarity_cost(result['spawn'][0])}]"
+                    f" {result['spawn'][0]} lv: {c_level}»"
+                    f" #{target}{self.pps[self.inv_teams[target]]}"
                 )
                 if result["spawn"][2] == "all":
                     self.descriptions.info[caster].append("")
@@ -1389,7 +1264,9 @@ class BattleData:
                             str(c_level) + "." + result["spawn"][0],
                         )
                 self.descriptions.info[caster].append(
-                    f"• {added_cards} [{rarity_cost(result['spawn'][0])}] {result['spawn'][0]} lv: {c_level}» #{caster}{self.pps[self.inv_teams[caster]]}"
+                    f"• {added_cards} [{rarity_cost(result['spawn'][0])}]"
+                    f" {result['spawn'][0]} lv: {c_level}»"
+                    f" #{caster}{self.pps[self.inv_teams[caster]]}"
                 )
         # self.new_line(caster)
         if "clear_eff" in result:
@@ -1398,9 +1275,7 @@ class BattleData:
                 for x in result["clear_eff"][0]:
                     if x.lower() in self.effects.info[target]:
                         eff_clear_msg.append(
-                            str(self.effects.info[target][x])
-                            + " "
-                            + self.eff_to_icon(x)
+                            str(self.effects.info[target][x]) + " " + self.eff_to_icon(x)
                         )
                         del self.effects.info[target][x]
                 if "all" in result["clear_eff"][0]:
@@ -1418,9 +1293,7 @@ class BattleData:
                 for x in result["clear_eff"][0]:
                     if x.lower() in self.effects.info[caster]:
                         eff_clear_msg.append(
-                            str(self.effects.info[caster][x])
-                            + " "
-                            + self.eff_to_icon(x)
+                            str(self.effects.info[caster][x]) + " " + self.eff_to_icon(x)
                         )
                         del self.effects.info[caster][x]
                 if "all" in result["clear_eff"][0]:
@@ -1437,11 +1310,10 @@ class BattleData:
         # self.new_line(caster)
         if "set_max_hp" in result:
             self.descriptions.info[caster].append(
-                f"Max health {self.hps.info[caster][2]} » {self.hps.info[caster][2] * result['set_max_hp'] / 100}"
+                f"Max health {self.hps.info[caster][2]} »"
+                f" {self.hps.info[caster][2] * result['set_max_hp'] / 100}"
             )
-            self.hps.info[caster][2] = round(
-                self.hps.info[caster][2] * result["set_max_hp"] / 100
-            )
+            self.hps.info[caster][2] = round(self.hps.info[caster][2] * result["set_max_hp"] / 100)
             self.hps.info[caster][0] = (
                 self.hps.info[caster][2]
                 if self.hps.info[caster][0] > self.hps.info[caster][2]
@@ -1500,19 +1372,20 @@ class BattleData:
                     inline=True,
                 )
             else:
-                for ii in range(
-                    0, math.ceil(len(self.descriptions.info[i + 1]) / 11) * 11, 11
-                ):
+                for ii in range(0, math.ceil(len(self.descriptions.info[i + 1]) / 11) * 11, 11):
                     if len(self.descriptions.info[i + 1]) > ii + 11:
                         embed.add_field(
-                            name=f"#{i + 1}{self.pps[self.inv_teams[i + 1]]}{self.players.info[i + 1]}:",
-                            value="»"
-                            + "\n".join(self.descriptions.info[i + 1][ii : ii + 11]),
+                            name=(
+                                f"#{i + 1}{self.pps[self.inv_teams[i + 1]]}{self.players.info[i + 1]}:"
+                            ),
+                            value="»" + "\n".join(self.descriptions.info[i + 1][ii : ii + 11]),
                             inline=True,
                         )
                     else:
                         embed.add_field(
-                            name=f"#{i + 1}{self.pps[self.inv_teams[i + 1]]}{self.players.info[i + 1]}:",
+                            name=(
+                                f"#{i + 1}{self.pps[self.inv_teams[i + 1]]}{self.players.info[i + 1]}:"
+                            ),
                             value="»" + "\n".join(self.descriptions.info[i + 1][ii:]),
                             inline=True,
                         )
@@ -1533,10 +1406,7 @@ class BattleData:
             if self.hps.info[index][0] > 0 and self.staminas.info[index] > 0:
                 for x in range(self.hand_sizes.info[index]):
                     y = self.decks.info[index][x].split(".")
-                    if (
-                        cards_dict(int(y[0]), y[1])["cost"]
-                        > self.stored_energies.info[index]
-                    ):
+                    if cards_dict(int(y[0]), y[1])["cost"] > self.stored_energies.info[index]:
                         expensive_card[0] += 1
                     current_hand.insert(
                         len(current_hand),
@@ -1552,13 +1422,7 @@ class BattleData:
                 y = self.decks.info[index][self.hand_sizes.info[index]].split(".")
                 current_hand.insert(
                     len(current_hand),
-                    "Next: ["
-                    + rarity_cost(y[1])
-                    + "] "
-                    + str(y[1])
-                    + " lv: "
-                    + str(y[0])
-                    + "\n",
+                    "Next: [" + rarity_cost(y[1]) + "] " + str(y[1]) + " lv: " + str(y[0]) + "\n",
                 )
                 if self.hand_sizes.info[index] == 6:
                     current_hand.insert(len(current_hand), "Reached Max Hand")
@@ -1575,17 +1439,25 @@ class BattleData:
         else:
             embed = discord.Embed(
                 title=None,
-                description=f"• Type `{r.PREF}(card number1)(target number1)` to use card(s)\n***+{math.ceil(self.turns / 4)}   {r.ICONS['engy']} gain per turn!***",
+                description=(
+                    f"• Type `{r.PREF}(card number1)(target number1)` to use"
+                    f" card(s)\n***+{math.ceil(self.turns / 4)}  "
+                    f" {r.ICONS['engy']} gain per turn!***"
+                ),
             )
         for i in range(len(self.players.info)):
             embed.add_field(
-                name=f"__**#{i + 1}**__{self.pps[self.inv_teams[i + 1]]}{self.players.info[i + 1]}'s hand:",
-                value=f"**{r.ICONS['hp']} {self.hps.info[i + 1][0]}/{self.hps.info[i + 1][2]}** \n**{r.ICONS['sta']} {self.staminas.info[i + 1]} {r.ICONS['engy']} {self.stored_energies.info[i + 1]}**\n"
+                name=(
+                    f"__**#{i + 1}**__{self.pps[self.inv_teams[i + 1]]}{self.players.info[i + 1]}'s"
+                    " hand:"
+                ),
+                value=(
+                    f"**{r.ICONS['hp']} {self.hps.info[i + 1][0]}/{self.hps.info[i + 1][2]}**"
+                    f" \n**{r.ICONS['sta']} {self.staminas.info[i + 1]} {r.ICONS['engy']} {self.stored_energies.info[i + 1]}**\n"
+                )
                 + "".join(display_hand(i + 1)),
             )
-        embed.set_footer(
-            text=f"Turn {self.turns} - (+{math.ceil(self.turns / 4)} energy/turn)"
-        )
+        embed.set_footer(text=f"Turn {self.turns} - (+{math.ceil(self.turns / 4)} energy/turn)")
         # if expensive_card[0] < self.hand_size[0] and expensive_card[1] < self.hand_size[1] and not "freeze" in self.effect1 and not "freeze" in self.effect2:
         # embed.set_footer(text=f"{self.players.infos[1]} go first")
         # self.afk = 0
@@ -1605,18 +1477,14 @@ class BattleData:
                 ):
                     if items_dict(" ".join(i[:-1].lower().split("_")[:]))["in_battle"]:
                         self.item_used.info[user] = [
-                            items_dict(" ".join(i[:-1].lower().split("_")[:]))[
-                                "name"
-                            ].lower(),
+                            items_dict(" ".join(i[:-1].lower().split("_")[:]))["name"].lower(),
                             int(i[-1]),
                         ]
                         msg.remove(i)
                         break
             move_numbers = reduce(
                 lambda r, x: (
-                    r + [x]
-                    if math.floor(x / 10) not in [math.floor(i / 10) for i in r]
-                    else r
+                    r + [x] if math.floor(x / 10) not in [math.floor(i / 10) for i in r] else r
                 ),
                 [math.floor(abs(int(x)) + 1 - 1) for x in msg],
                 [],
@@ -1649,48 +1517,40 @@ class BattleData:
                 return f"{reply_author}, what you put is invalid!"
 
         def valid_play(numbers):
-            return all(
-                [
-                    0 < int(str(x)[0]) <= self.hand_sizes.info[user]
-                    and len(str(x)) == 2
-                    and 1 <= int(str(x)[1]) <= len(self.hand_sizes.info)
-                    for x in numbers
-                ]
-            )
+            return all([
+                0 < int(str(x)[0]) <= self.hand_sizes.info[user]
+                and len(str(x)) == 2
+                and 1 <= int(str(x)[1]) <= len(self.hand_sizes.info)
+                for x in numbers
+            ])
 
         if not valid_play(move_numbers):
             return (
-                f"{reply_author} that's an invalid play! "
-                f"Type your play in the format `{r.PREF}card#target#`, "
-                f"eg. `{r.PREF}23` where 2 is your card number and 3 is your target number."
+                f"{reply_author} that's an invalid play! Type your play in the format"
+                f" `{r.PREF}card#target#`, eg. `{r.PREF}23` where 2 is your card number"
+                " and 3 is your target number."
             )
 
         elif len(move_numbers) > 4:
             return f"{reply_author}, you can't play more than 4 cards a turn!"
         else:
-            selected_card_energy_cost = sum(
-                [
-                    cards_dict(
-                        int(self.decks.info[user][int(str(x)[0]) - 1].split(".")[0]),
-                        self.decks.info[user][int(str(x)[0]) - 1].split(".")[1],
-                    )["cost"]
-                    for x in move_numbers
-                ]
-            )
-            soul_self = sum(
-                [
-                    (
-                        1
-                        if self.decks.info[user][int(str(x)[0]) - 1]
-                        .split(".")[1]
-                        .lower()
-                        == "soul drain"
-                        and int(str(x)[1]) in self.teams[self.inv_teams[user]]
-                        else 0
-                    )
-                    for x in move_numbers
-                ]
-            )
+            selected_card_energy_cost = sum([
+                cards_dict(
+                    int(self.decks.info[user][int(str(x)[0]) - 1].split(".")[0]),
+                    self.decks.info[user][int(str(x)[0]) - 1].split(".")[1],
+                )["cost"]
+                for x in move_numbers
+            ])
+            soul_self = sum([
+                (
+                    1
+                    if self.decks.info[user][int(str(x)[0]) - 1].split(".")[1].lower()
+                    == "soul drain"
+                    and int(str(x)[1]) in self.teams[self.inv_teams[user]]
+                    else 0
+                )
+                for x in move_numbers
+            ])
 
             if soul_self:
                 return f"{reply_author}, you can't soul drain yourself!"

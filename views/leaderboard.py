@@ -68,9 +68,7 @@ class Leaderboard(discord.ui.View):
             discord.SelectOption(label="Tokens", emoji=r.ICONS["token"].emoji()),
         ]
     )
-    async def select_leaderboard(
-        self, i: discord.Interaction, select: discord.ui.Select
-    ):
+    async def select_leaderboard(self, i: discord.Interaction, select: discord.ui.Select):
         self.name = select.values[0].lower()
         self.change_select_default()
         await i.response.edit_message(embed=await self.leaderboard_embed(), view=self)

@@ -42,9 +42,7 @@ class Admin(commands.Cog):
     @redeem.command()
     @checks.is_admin()
     @checks.is_registered()
-    async def card(
-        self, ctx: Context, card: str, level: int, recipient: discord.Member
-    ):
+    async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
         card = card.replace("_", " ").title()
 
         dm.add_user_cards([(recipient.id, card, math.floor(int(level)))])
@@ -101,7 +99,7 @@ class Admin(commands.Cog):
             new_medals = (medals - cap) // 2 + cap if medals > cap else medals
 
             msg = (
-                f"The season ended!"
+                "The season ended!"
                 f"You now have {new_medals} {r.ICONS['medal']} (from {medals}) "
                 f"\n+{earned_coins} {r.ICONS['coin']}!"
             )

@@ -44,9 +44,7 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
 
 
 class PvpInvite(discord.ui.View):
-    def __init__(
-        self, host: discord.Member, invited: list[discord.Member], team_num: int
-    ):
+    def __init__(self, host: discord.Member, invited: list[discord.Member], team_num: int):
         super().__init__()
         self.host = host
         self.invited = set(invited)
@@ -63,15 +61,11 @@ class PvpInvite(discord.ui.View):
     @discord.ui.button(label="Start!", style=discord.ButtonStyle.green)
     async def start_pvp(self, i: discord.Interaction, button: discord.ui.Button):
         if i.user != self.host:
-            await i.response.send_message(
-                "Only the host can start the battle!", ephemeral=True
-            )
+            await i.response.send_message("Only the host can start the battle!", ephemeral=True)
             return
 
         if self.host not in self.user_team:
-            await i.response.send_message(
-                "The host has to join a team first!", ephemeral=True
-            )
+            await i.response.send_message("The host has to join a team first!", ephemeral=True)
 
         if len(self.user_team) < 2:
             await i.response.send_message(
@@ -97,9 +91,7 @@ class PvpInvite(discord.ui.View):
             return
 
         if i.user == self.host:
-            await i.response.edit_message(
-                content="The host cancelled the battle.", view=None
-            )
+            await i.response.edit_message(content="The host cancelled the battle.", view=None)
             self.stop()
             return
 
@@ -107,16 +99,12 @@ class PvpInvite(discord.ui.View):
             team = self.user_team.pop(i.user)
             self.teams[team].remove(i.user)
             self.rejected.add(i.user)
-            await i.response.send_message(
-                f"{i.user.mention} joined, but then left team {team}..."
-            )
+            await i.response.send_message(f"{i.user.mention} joined, but then left team {team}...")
         else:
             self.rejected.add(i.user)
             await i.response.send_message(f"{i.user} rejected the battle...")
             if len(self.rejected) == len(self.invited) - 1:
-                await i.response.edit_message(
-                    content="Everyone rejected the battle...", view=None
-                )
+                await i.response.edit_message(content="Everyone rejected the battle...", view=None)
                 self.stop()
 
     async def interaction_check(self, i: discord.Interaction) -> bool:

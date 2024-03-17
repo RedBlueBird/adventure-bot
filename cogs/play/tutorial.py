@@ -39,19 +39,13 @@ class Tutorial(commands.Cog):
             await start_msg.edit(content="oh well. :frowning:", view=None)
             return
 
-        await start_msg.edit(
-            content="Alright, let's get started then! :smile:", view=None
-        )
-        loading_embed_message = discord.Embed(
-            title="Loading...", description=r.ICONS["load"]
-        )
+        await start_msg.edit(content="Alright, let's get started then! :smile:", view=None)
+        loading_embed_message = discord.Embed(title="Loading...", description=r.ICONS["load"])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hand_msg = await ctx.send(embed=loading_embed_message)
 
         tutorial = deepcopy(r.TUTORIAL)
-        tutorial["procedure"] = [
-            msg.format(prefix=r.PREF) for msg in tutorial["procedure"]
-        ]
+        tutorial["procedure"] = [msg.format(prefix=r.PREF) for msg in tutorial["procedure"]]
         tutorial["triggered_message"] = {
             step: [msg.format(prefix=r.PREF) for msg in msgs]
             for step, msgs in tutorial["triggered_message"].items()
@@ -87,9 +81,7 @@ class Tutorial(commands.Cog):
         while step < 4:
             await view.wait()
             if view.value is None:
-                await msg.edit(
-                    content="how DAre you sLeEp dUring my lEcTuRe! :triumph:", view=None
-                )
+                await msg.edit(content="how DAre you sLeEp dUring my lEcTuRe! :triumph:", view=None)
                 return
             if not view.value:
                 await msg.edit(content="You exited the tutorial! :cry:", view=None)
@@ -151,17 +143,12 @@ class Tutorial(commands.Cog):
                     step < 21
                     and action != "refresh"
                     and (
-                        (
-                            expected_message[step] != "None"
-                            and action != expected_message[step]
-                        )
+                        (expected_message[step] != "None" and action != expected_message[step])
                         or expected_item[step] != dd.item_used.info[1]
                     )
                 ):
                     if triggered < len(triggered_message[step]):
-                        await ctx.send(
-                            f"{mention}\n" + triggered_message[step][triggered]
-                        )
+                        await ctx.send(f"{mention}\n" + triggered_message[step][triggered])
                     else:
                         await ctx.send(f"{mention}\n" + triggered_message[step][-1])
                     triggered += 1
@@ -177,7 +164,10 @@ class Tutorial(commands.Cog):
                     embed = u.container_embed(dd.backpacks.info[1], "Backpack")
                     embed.add_field(
                         name="Your Stats:",
-                        value=f"Health - {str(dd.hps.info[1][0])}\nStamina - {str(dd.staminas.info[1])}",
+                        value=(
+                            f"Health - {str(dd.hps.info[1][0])}\nStamina -"
+                            f" {str(dd.staminas.info[1])}"
+                        ),
                     )
                     await ctx.send(embed=embed)
                     if step == 11 or step == 16:
@@ -204,9 +194,7 @@ class Tutorial(commands.Cog):
                                 )
                     if dd.hand_sizes.info[1] != 6:
                         dd.hand_sizes.info[1] += 1
-                    dd.descriptions.info[1].append(
-                        f"{r.ICONS['ski']}{r.ICONS['kip']}\n"
-                    )
+                    dd.descriptions.info[1].append(f"{r.ICONS['ski']}{r.ICONS['kip']}\n")
                     is_turn_over = True
                 elif action == "flee":
                     for y in range(dd.hand_sizes.info[1]):
@@ -231,15 +219,11 @@ class Tutorial(commands.Cog):
                             f"{r.ICONS['fle']}{r.ICONS['lee']} {r.ICONS['mi']}{r.ICONS['ss']}\n"
                         )
                     else:
-                        dd.descriptions.info[1].append(
-                            f"{r.ICONS['fle']}{r.ICONS['lee']}\n"
-                        )
+                        dd.descriptions.info[1].append(f"{r.ICONS['fle']}{r.ICONS['lee']}\n")
                         dd.afk = 8
                     if step == 20:
                         try:
-                            dd.decks.info[3][
-                                dd.decks.info[3].index("20.Terminate")
-                            ] = "4.Terminate"
+                            dd.decks.info[3][dd.decks.info[3].index("20.Terminate")] = "4.Terminate"
                         except:
                             pass
                     is_turn_over = True
@@ -249,15 +233,13 @@ class Tutorial(commands.Cog):
                         dd.decks.info[1][int(str(x)[0]) - 1] + "." + str(x)[1:]
                         for x in dd.move_numbers.info[1]
                     ]
-                    dd.stored_energies.info[1] -= sum(
-                        [
-                            u.cards_dict(
-                                int(dd.decks.info[1][int(str(x)[0]) - 1].split(".")[0]),
-                                dd.decks.info[1][int(str(x)[0]) - 1].split(".")[1],
-                            )["cost"]
-                            for x in dd.move_numbers.info[1]
-                        ]
-                    )
+                    dd.stored_energies.info[1] -= sum([
+                        u.cards_dict(
+                            int(dd.decks.info[1][int(str(x)[0]) - 1].split(".")[0]),
+                            dd.decks.info[1][int(str(x)[0]) - 1].split(".")[1],
+                        )["cost"]
+                        for x in dd.move_numbers.info[1]
+                    ])
                     dd.move_numbers.info[1].sort()
                     z = 0
                     for y in range(dd.hand_sizes.info[1]):
@@ -281,16 +263,14 @@ class Tutorial(commands.Cog):
                             dd.decks.info[1][x - 1].split(".")[0],
                             dd.decks.info[1][x - 1].split(".")[1],
                         )
-                        if (
-                            dd.decks.info[1][x - 1].split(".")[1]
-                            not in dd.temporary_cards
-                        ):
+                        if dd.decks.info[1][x - 1].split(".")[1] not in dd.temporary_cards:
                             if "rewrite" in card_info:
-                                re_name = u.cards_dict(
-                                    1, dd.decks.info[1][x - 1].split(".")[1]
-                                )["rewrite"]
+                                re_name = u.cards_dict(1, dd.decks.info[1][x - 1].split(".")[1])[
+                                    "rewrite"
+                                ]
                                 dd.descriptions.info[1].append(
-                                    f"*{dd.decks.info[1][x - 1].split('.')[1]}* rewritten as *{re_name}*"
+                                    f"*{dd.decks.info[1][x - 1].split('.')[1]}*"
+                                    f" rewritten as *{re_name}*"
                                 )
                                 dd.decks.info[1][x - 1] = (
                                     dd.decks.info[1][x - 1].split(".")[0]
@@ -301,9 +281,9 @@ class Tutorial(commands.Cog):
                                 if random.randint(1, 100) <= card_info["stay"]:
                                     z += 1
                                     dd.descriptions.info[1].append(
-                                        f"*[{u.rarity_cost(dd.decks.info[1][x - 1].split('.')[1])}] "
-                                        f"{dd.decks.info[1][x - 1].split('.')[1]} "
-                                        f"lv:{dd.decks.info[1][x - 1].split('.')[0]}* stayed in your hand!"
+                                        f"*[{u.rarity_cost(dd.decks.info[1][x - 1].split('.')[1])}]"
+                                        f" {dd.decks.info[1][x - 1].split('.')[1]} lv:{dd.decks.info[1][x - 1].split('.')[0]}*"
+                                        " stayed in your hand!"
                                     )
                                 # dd.new_line(1)
                                 else:
@@ -320,9 +300,9 @@ class Tutorial(commands.Cog):
                                 if random.randint(1, 100) <= card_info["stay"]:
                                     z += 1
                                     dd.descriptions.info[1].append(
-                                        f"*[{u.rarity_cost(dd.decks.info[1][x - 1].split('.')[1])}] "
-                                        f"{dd.decks.info[1][x - 1].split('.')[1]} "
-                                        f"lv:{dd.decks.info[1][x - 1].split('.')[0]}* stayed in your hand!"
+                                        f"*[{u.rarity_cost(dd.decks.info[1][x - 1].split('.')[1])}]"
+                                        f" {dd.decks.info[1][x - 1].split('.')[1]} lv:{dd.decks.info[1][x - 1].split('.')[0]}*"
+                                        " stayed in your hand!"
                                     )
                                 # dd.new_line(1)
                                 else:
@@ -357,30 +337,16 @@ class Tutorial(commands.Cog):
                             for x in range(3):
                                 rng_move = random.randint(1, dd.hand_sizes.info[enemy])
                                 if dd.stored_energies.info[enemy] >= (
-                                    sum(
-                                        [
-                                            u.cards_dict(
-                                                int(
-                                                    dd.decks.info[enemy][x - 1].split(
-                                                        "."
-                                                    )[0]
-                                                ),
-                                                dd.decks.info[enemy][x - 1].split(".")[
-                                                    1
-                                                ],
-                                            )["cost"]
-                                            for x in enemy_action
-                                        ]
-                                    )
+                                    sum([
+                                        u.cards_dict(
+                                            int(dd.decks.info[enemy][x - 1].split(".")[0]),
+                                            dd.decks.info[enemy][x - 1].split(".")[1],
+                                        )["cost"]
+                                        for x in enemy_action
+                                    ])
                                     + u.cards_dict(
-                                        int(
-                                            dd.decks.info[enemy][rng_move - 1].split(
-                                                "."
-                                            )[0]
-                                        ),
-                                        dd.decks.info[enemy][rng_move - 1].split(".")[
-                                            1
-                                        ],
+                                        int(dd.decks.info[enemy][rng_move - 1].split(".")[0]),
+                                        dd.decks.info[enemy][rng_move - 1].split(".")[1],
                                     )["cost"]
                                 ):
                                     enemy_action.append(rng_move)
@@ -450,15 +416,13 @@ class Tutorial(commands.Cog):
                             )
                             for x in dd.move_numbers.info[enemy]
                         ]
-                        dd.stored_energies.info[enemy] -= sum(
-                            [
-                                u.cards_dict(
-                                    int(dd.decks.info[enemy][x - 1].split(".")[0]),
-                                    dd.decks.info[enemy][x - 1].split(".")[1],
-                                )["cost"]
-                                for x in dd.move_numbers.info[enemy]
-                            ]
-                        )
+                        dd.stored_energies.info[enemy] -= sum([
+                            u.cards_dict(
+                                int(dd.decks.info[enemy][x - 1].split(".")[0]),
+                                dd.decks.info[enemy][x - 1].split(".")[1],
+                            )["cost"]
+                            for x in dd.move_numbers.info[enemy]
+                        ])
                         dd.move_numbers.info[enemy].sort()
                         z = 0
                         for y in range(dd.hand_sizes.info[enemy]):
@@ -480,16 +444,14 @@ class Tutorial(commands.Cog):
                                 dd.decks.info[enemy][x - 1].split(".")[0],
                                 dd.decks.info[enemy][x - 1].split(".")[1],
                             )
-                            if (
-                                dd.decks.info[enemy][x - 1].split(".")[1]
-                                not in dd.temporary_cards
-                            ):
+                            if dd.decks.info[enemy][x - 1].split(".")[1] not in dd.temporary_cards:
                                 if "rewrite" in card_info:
                                     re_name = u.cards_dict(
                                         1, dd.decks.info[enemy][x - 1].split(".")[1]
                                     )["rewrite"]
                                     dd.descriptions.info[enemy].append(
-                                        f"*{dd.decks.info[enemy][x - 1].split('.')[1]}* rewritten as *{re_name}*"
+                                        f"*{dd.decks.info[enemy][x - 1].split('.')[1]}*"
+                                        f" rewritten as *{re_name}*"
                                     )
                                     dd.decks.info[enemy][x - 1] = (
                                         dd.decks.info[enemy][x - 1].split(".")[0]
@@ -500,9 +462,9 @@ class Tutorial(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[enemy].append(
-                                            f"*[{u.rarity_cost(dd.decks.info[enemy][x - 1].split('.')[1])}] "
-                                            f"{dd.decks.info[enemy][x - 1].split('.')[1]} "
-                                            f"lv:{dd.decks.info[enemy][x - 1].split('.')[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(dd.decks.info[enemy][x - 1].split('.')[1])}]"
+                                            f" {dd.decks.info[enemy][x - 1].split('.')[1]} lv:{dd.decks.info[enemy][x - 1].split('.')[0]}*"
+                                            " stayed in your hand!"
                                         )
                                     # dd.new_line(e_index)
                                     else:
@@ -520,18 +482,16 @@ class Tutorial(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[enemy].append(
-                                            f"*[{u.rarity_cost(dd.decks.info[enemy][x - 1].split('.')[1])}] "
-                                            f"{dd.decks.info[enemy][x - 1].split('.')[1]} "
-                                            f"lv:{dd.decks.info[enemy][x - 1].split('.')[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(dd.decks.info[enemy][x - 1].split('.')[1])}]"
+                                            f" {dd.decks.info[enemy][x - 1].split('.')[1]} lv:{dd.decks.info[enemy][x - 1].split('.')[0]}*"
+                                            " stayed in your hand!"
                                         )
                                     # dd.new_line(e_index)
                                     else:
                                         dd.decks.info[enemy].pop(x - 1)
                                 else:
                                     dd.decks.info[enemy].pop(x - 1)
-                        dd.hand_sizes.info[enemy] -= (
-                            len(dd.move_numbers.info[enemy]) - z - 1
-                        )
+                        dd.hand_sizes.info[enemy] -= len(dd.move_numbers.info[enemy]) - z - 1
                 # dd.decke_index.insert(dd.move_numbere_index - 1, dd.decke_index.pop(dd.hand_size[1]-1))
                 elif dd.hps.info[enemy][0] <= 0 or dd.staminas.info[enemy] <= 0:
                     dd.descriptions.info[enemy].append(f"•{r.ICONS['dead']}")
@@ -664,9 +624,7 @@ class Tutorial(commands.Cog):
         while step < final_step:
             await view.wait()
             if view.value is None:
-                await msg.edit(
-                    content="You went afk and the tutorial ended.", view=None
-                )
+                await msg.edit(content="You went afk and the tutorial ended.", view=None)
             elif not view.value:
                 await msg.edit(content="You exited the tutorial!", view=None)
 

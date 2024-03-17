@@ -12,9 +12,7 @@ class Actions(discord.ui.View):
 
     @discord.ui.button(label="Deck", style=discord.ButtonStyle.blurple, row=0)
     async def deck_button(self, i: discord.Interaction, button: discord.ui.Button):
-        await i.response.send_message(
-            embed=self.battledata.show_deck(i.user.id), ephemeral=True
-        )
+        await i.response.send_message(embed=self.battledata.show_deck(i.user.id), ephemeral=True)
 
     @discord.ui.button(label="Backpack", style=discord.ButtonStyle.blurple, row=0)
     async def backpack_button(self, i: discord.Interaction, button: discord.ui.Button):

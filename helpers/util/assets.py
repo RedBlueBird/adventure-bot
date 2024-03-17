@@ -37,9 +37,7 @@ def cards_dict(lvl: str | int, name: str):
                 for effect in card[i][side]:
                     for attr in card[i][side][effect]:
                         if attr in param:
-                            card[i][side][effect][attr] = round(
-                                card[i][side][effect][attr] * lvl
-                            )
+                            card[i][side][effect][attr] = round(card[i][side][effect][attr] * lvl)
         elif i == "inverse_damage":
             card[i] = round(card[i] * inverse_level)
         elif i == "on_hand":

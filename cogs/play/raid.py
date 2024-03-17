@@ -52,7 +52,9 @@ class Raid(commands.Cog):
 
         people = [ctx.author] + people
         req_msg = (
-            "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
+            "Hey "
+            + "\n".join(c.mention for c in people[1:])
+            + "!\n"
             f"Wanna raid a level {difficulty} boss with {a.mention}?\n"
             f"Keep in mind that you'll need one {r.ICONS['tick']}."
         )
@@ -100,9 +102,7 @@ class Raid(commands.Cog):
             )
             for e in enemies
         ]
-        ad_hps = [
-            [r.mob(e, levels).health, 0, r.mob(e, levels).health, 0, 0] for e in enemies
-        ]
+        ad_hps = [[r.mob(e, levels).health, 0, r.mob(e, levels).health, 0, 0] for e in enemies]
 
         # Initialize the battlefield
         teams = {
@@ -116,8 +116,7 @@ class Raid(commands.Cog):
             decks=decks + ad_decks,
             backpacks=bps + [{} for _ in range(len(enemies))],
             hps=hps + ad_hps,
-            stamina=[35 for _ in range(members)]
-            + [r.mob(i, levels).stamina for i in enemies],
+            stamina=[35 for _ in range(members)] + [r.mob(i, levels).stamina for i in enemies],
             counts=len(enemies) + members,
         )
 
@@ -191,10 +190,7 @@ class Raid(commands.Cog):
                     players = []
 
                 else:
-                    index = (
-                        list(dd.p_ids.info.values()).index(replied_message.author.id)
-                        + 1
-                    )
+                    index = list(dd.p_ids.info.values()).index(replied_message.author.id) + 1
                     msg = dd.interpret_message(
                         replied_message.content[len(r.PREF) :],
                         str(dd.players.info[index]),
@@ -219,8 +215,7 @@ class Raid(commands.Cog):
 
                         for y in range(dd.hand_sizes.info[index]):
                             if dd.decks.info[index][y] not in [
-                                ".".join(x.split(".")[0:2])
-                                for x in dd.used_cards.info[index]
+                                ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[index]
                             ]:
                                 card = dd.decks.info[index][y].split(".")
 
@@ -232,23 +227,17 @@ class Raid(commands.Cog):
                         if not dd.hand_sizes.info[index] == 6:
                             dd.hand_sizes.info[index] += 1
 
-                        dd.descriptions.info[index].append(
-                            f"{r.ICONS['ski']}{r.ICONS['kip']}\n"
-                        )
+                        dd.descriptions.info[index].append(f"{r.ICONS['ski']}{r.ICONS['kip']}\n")
 
                     elif msg == "flee":
                         players.remove(replied_message.author.id)
                         dd.hps.info[index][0] = 0
                         dd.staminas.info[index] = 0
-                        dd.descriptions.info[index].append(
-                            f"{r.ICONS['fle']}{r.ICONS['lee']}\n"
-                        )
+                        dd.descriptions.info[index].append(f"{r.ICONS['fle']}{r.ICONS['lee']}\n")
 
                     elif msg == "backpack":
                         await ctx.send(
-                            embed=u.container_embed(
-                                dd.backpacks.info[index], "Backpack"
-                            )
+                            embed=u.container_embed(dd.backpacks.info[index], "Backpack")
                         )
                     else:
                         players.remove(replied_message.author.id)
@@ -258,28 +247,19 @@ class Raid(commands.Cog):
                             dd.decks.info[index][int(str(x)[0]) - 1] + "." + str(x)[1:]
                             for x in dd.move_numbers.info[index]
                         ]
-                        dd.stored_energies.info[index] -= sum(
-                            [
-                                u.cards_dict(
-                                    int(
-                                        dd.decks.info[index][int(str(x)[0]) - 1].split(
-                                            "."
-                                        )[0]
-                                    ),
-                                    dd.decks.info[index][int(str(x)[0]) - 1].split(".")[
-                                        1
-                                    ],
-                                )["cost"]
-                                for x in dd.move_numbers.info[index]
-                            ]
-                        )
+                        dd.stored_energies.info[index] -= sum([
+                            u.cards_dict(
+                                int(dd.decks.info[index][int(str(x)[0]) - 1].split(".")[0]),
+                                dd.decks.info[index][int(str(x)[0]) - 1].split(".")[1],
+                            )["cost"]
+                            for x in dd.move_numbers.info[index]
+                        ])
                         dd.move_numbers.info[index].sort()
                         z = 0
 
                         for y in range(dd.hand_sizes.info[index]):
                             if not dd.decks.info[index][y] in [
-                                ".".join(x.split(".")[0:2])
-                                for x in dd.used_cards.info[index]
+                                ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[index]
                             ]:
                                 card = dd.decks.info[index][y].split(".")
 
@@ -297,7 +277,10 @@ class Raid(commands.Cog):
                                 if "rewrite" in card_info:
                                     re_name = u.cards_dict(1, card[1])["rewrite"]
                                     dd.descriptions.info[index].append(
-                                        f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* rewritten as *[{u.rarity_cost(re_name)}] {re_name} lv:{card[0]}*"
+                                        f"*[{u.rarity_cost(card[1])}]"
+                                        f" {card[1]} lv:{card[0]}* rewritten as"
+                                        f" *[{u.rarity_cost(re_name)}]"
+                                        f" {re_name} lv:{card[0]}*"
                                     )
                                     dd.decks.info[index][x - 1] = (
                                         dd.decks.info[index][x - 1].split(".")[0]
@@ -309,7 +292,9 @@ class Raid(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[index].append(
-                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(card[1])}]"
+                                            f" {card[1]} lv:{card[0]}* stayed in your"
+                                            " hand!"
                                         )
                                     else:
                                         dd.decks.info[index].insert(
@@ -326,25 +311,21 @@ class Raid(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[index].append(
-                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(card[1])}]"
+                                            f" {card[1]} lv:{card[0]}* stayed in your"
+                                            " hand!"
                                         )
                                     else:
                                         dd.decks.info[index].pop(x - 1)
                                 else:
                                     dd.decks.info[index].pop(x - 1)
 
-                        dd.hand_sizes.info[index] -= (
-                            len(dd.move_numbers.info[index]) - z - 1
-                        )
+                        dd.hand_sizes.info[index] -= len(dd.move_numbers.info[index]) - z - 1
                     await replied_message.delete()
 
             alive_players = []
             for ind in range(1, members + 1):
-                if (
-                    dd.afk == 0
-                    and dd.hps.info[ind][0] > 0
-                    and dd.staminas.info[ind] > 0
-                ):
+                if dd.afk == 0 and dd.hps.info[ind][0] > 0 and dd.staminas.info[ind] > 0:
                     alive_players.append(ind)
 
             for e_index in range(members + 1, len(enemies) + members + 1):
@@ -367,25 +348,15 @@ class Raid(commands.Cog):
                             rng_move = random.randint(1, dd.hand_sizes.info[e_index])
                             if (
                                 dd.stored_energies.info[e_index]
-                                >= sum(
-                                    [
-                                        u.cards_dict(
-                                            int(
-                                                dd.decks.info[e_index][x - 1].split(
-                                                    "."
-                                                )[0]
-                                            ),
-                                            dd.decks.info[e_index][x - 1].split(".")[1],
-                                        )["cost"]
-                                        for x in msg
-                                    ]
-                                )
+                                >= sum([
+                                    u.cards_dict(
+                                        int(dd.decks.info[e_index][x - 1].split(".")[0]),
+                                        dd.decks.info[e_index][x - 1].split(".")[1],
+                                    )["cost"]
+                                    for x in msg
+                                ])
                                 + u.cards_dict(
-                                    int(
-                                        dd.decks.info[e_index][rng_move - 1].split(".")[
-                                            0
-                                        ]
-                                    ),
+                                    int(dd.decks.info[e_index][rng_move - 1].split(".")[0]),
                                     dd.decks.info[e_index][rng_move - 1].split(".")[1],
                                 )["cost"]
                             ):
@@ -395,10 +366,7 @@ class Raid(commands.Cog):
                     if msg == "skip":
                         # dd.stamina[1] += 1
                         for y in range(dd.hand_sizes.info[e_index]):
-                            if (
-                                not dd.decks.info[e_index][y]
-                                in dd.used_cards.info[e_index]
-                            ):
+                            if not dd.decks.info[e_index][y] in dd.used_cards.info[e_index]:
                                 if "on_hand" in u.cards_dict(
                                     dd.decks.info[e_index][y].split(".")[0],
                                     dd.decks.info[e_index][y].split(".")[1],
@@ -456,26 +424,23 @@ class Raid(commands.Cog):
                                 f"{dd.decks.info[e_index][x - 1]}.{e_index}"
                                 if dd.decks.info[e_index][x - 1].lower().split(".")[1]
                                 in defense_cards
-                                else f"{dd.decks.info[e_index][x - 1]}.{random.choice(dd.decks.info[e_index][x - 1])}"
+                                else (
+                                    f"{dd.decks.info[e_index][x - 1]}.{random.choice(dd.decks.info[e_index][x - 1])}"
+                                )
                             )
                             for x in dd.move_numbers.info[e_index]
                         ]
-                        dd.stored_energies.info[e_index] -= sum(
-                            [
-                                u.cards_dict(
-                                    int(dd.decks.info[e_index][x - 1].split(".")[0]),
-                                    dd.decks.info[e_index][x - 1].split(".")[1],
-                                )["cost"]
-                                for x in dd.move_numbers.info[e_index]
-                            ]
-                        )
+                        dd.stored_energies.info[e_index] -= sum([
+                            u.cards_dict(
+                                int(dd.decks.info[e_index][x - 1].split(".")[0]),
+                                dd.decks.info[e_index][x - 1].split(".")[1],
+                            )["cost"]
+                            for x in dd.move_numbers.info[e_index]
+                        ])
                         dd.move_numbers.info[e_index].sort()
                         z = 0
                         for y in range(dd.hand_sizes.info[e_index]):
-                            if (
-                                not dd.decks.info[e_index][y]
-                                in dd.used_cards.info[e_index]
-                            ):
+                            if not dd.decks.info[e_index][y] in dd.used_cards.info[e_index]:
                                 if "on_hand" in u.cards_dict(
                                     dd.decks.info[e_index][y].split(".")[0],
                                     dd.decks.info[e_index][y].split(".")[1],
@@ -505,7 +470,9 @@ class Raid(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[e_index].append(
-                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(card[1])}]"
+                                            f" {card[1]} lv:{card[0]}* stayed in your"
+                                            " hand!"
                                         )
                                     # dd.new_line(e_index)
                                     else:
@@ -523,16 +490,16 @@ class Raid(commands.Cog):
                                     if random.randint(1, 100) <= card_info["stay"]:
                                         z += 1
                                         dd.descriptions.info[e_index].append(
-                                            f"*[{u.rarity_cost(card[1])}] {card[1]} lv:{card[0]}* stayed in your hand!"
+                                            f"*[{u.rarity_cost(card[1])}]"
+                                            f" {card[1]} lv:{card[0]}* stayed in your"
+                                            " hand!"
                                         )
                                     # dd.new_line(e_index)
                                     else:
                                         dd.decks.info[e_index].pop(x - 1)
                                 else:
                                     dd.decks.info[e_index].pop(x - 1)
-                        dd.hand_sizes.info[e_index] -= (
-                            len(dd.move_numbers.info[e_index]) - z - 1
-                        )
+                        dd.hand_sizes.info[e_index] -= len(dd.move_numbers.info[e_index]) - z - 1
                 # dd.deck_index.insert(dd.move_numbere_index - 1, dd.deck_index.pop(dd.hand_size[1]-1))
                 elif dd.hps.info[e_index][0] <= 0 or dd.staminas.info[e_index] <= 0:
                     dd.descriptions.info[e_index].append(f"•{r.ICONS['dead']}")
@@ -581,13 +548,8 @@ class Raid(commands.Cog):
                 for i in range(1, len(dd.used_cards.info) + 1):
                     dd.used_cards.info[i] = []
                 for i in range(1, len(dd.players.info) + 1):
-                    energy_lags = (
-                        r.mob(dd.players.info[i], 1).energy_lag if i > members else 4
-                    )
-                    if (
-                        dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags)
-                        > 12
-                    ):
+                    energy_lags = r.mob(dd.players.info[i], 1).energy_lag if i > members else 4
+                    if dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags) > 12:
                         dd.stored_energies.info[i] = 12
                     else:
                         dd.stored_energies.info[i] += math.ceil(dd.turns / energy_lags)
@@ -622,12 +584,7 @@ class Raid(commands.Cog):
                 )
                 gem_loot = (
                     loot_factor
-                    * sum(
-                        [
-                            random.randint(*r.mob(e, levels).death_rwd.gems)
-                            for e in enemies
-                        ]
-                    )
+                    * sum([random.randint(*r.mob(e, levels).death_rwd.gems) for e in enemies])
                     // 100
                 )
 
@@ -645,8 +602,12 @@ class Raid(commands.Cog):
 
                 embed = discord.Embed(
                     title="Battle Ended!",
-                    description=f"**You defeated {','.join(list(dict.fromkeys(enemies)))}!**\n\n"
-                    f"Everyone gained: " + "\n".join(death_award_msg),
+                    description=(
+                        "**You defeated"
+                        f" {','.join(list(dict.fromkeys(enemies)))}!**\n\nEveryone"
+                        " gained: "
+                    )
+                    + "\n".join(death_award_msg),
                     color=discord.Color.green(),
                 )
             else:
@@ -660,8 +621,7 @@ class Raid(commands.Cog):
 
                 embed = discord.Embed(
                     title="Battle Ended!",
-                    description=f"**You failed to beat the boss!**\n"
-                    f"Everyone gained {exp_loot} XP",
+                    description=f"**You failed to beat the boss!**\nEveryone gained {exp_loot} XP",
                     color=discord.Color.gold(),
                 )
         else:
@@ -675,7 +635,7 @@ class Raid(commands.Cog):
 
             embed = discord.Embed(
                 title="Battle Ended!",
-                description=f"**It's a Tie!**\n" f"Everyone gained {exp_loot} XP",
+                description=f"**It's a Tie!**\nEveryone gained {exp_loot} XP",
                 color=discord.Color.gold(),
             )
 

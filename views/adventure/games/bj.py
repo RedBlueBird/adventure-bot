@@ -141,9 +141,7 @@ class Blackjack(ui.View, InteractionCheckMixin):
     async def play(self, i: discord.Interaction, button: ui.Button):
         coins = dm.get_user_coin(self.user.id)
         if coins < BET:
-            await i.response.send_message(
-                f"You need at least {BET} to buy bait!", ephemeral=True
-            )
+            await i.response.send_message(f"You need at least {BET} to buy bait!", ephemeral=True)
             return
 
         view = BlackjackBoard(self.user)

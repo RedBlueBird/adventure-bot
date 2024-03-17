@@ -73,8 +73,7 @@ class Deck(commands.Cog):
             return
 
         await ctx.reply(
-            f"All the card IDs in deck #{slot}:\n"
-            f"```{' '.join([str(c[0]) for c in cards])}```"
+            f"All the card IDs in deck #{slot}:\n```{' '.join([str(c[0]) for c in cards])}```"
         )
 
     @commands.hybrid_command(
@@ -160,14 +159,10 @@ class Deck(commands.Cog):
 
         msg = "\n".join(error_msg) + "\n"
         if add_ids:
-            msg += f"These cards have been added to deck #{slot}:\n" + f"\n".join(
-                add_msg
-            )
+            msg += f"These cards have been added to deck #{slot}:\n" + f"\n".join(add_msg)
         await ctx.reply(msg)
 
-    @commands.hybrid_command(
-        aliases=["rem"], description="Remove a card from your deck."
-    )
+    @commands.hybrid_command(aliases=["rem"], description="Remove a card from your deck.")
     @checks.not_preoccupied()
     @checks.is_registered()
     async def remove(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -195,23 +190,17 @@ class Deck(commands.Cog):
                 error_msg.append(f"Card #`{c}` isn't in your current deck!")
             elif c not in remove_ids:
                 remove_ids.append(c)
-                remove_msg.append(
-                    f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`"
-                )
+                remove_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
 
         for i in remove_ids:
             dm.set_user_card_deck(a.id, slot, 0, i)
 
         msg = "\n".join(error_msg) + "\n"
         if remove_ids:
-            msg += f"These cards have been removed from deck #{slot}:\n" + f"\n".join(
-                remove_msg
-            )
+            msg += f"These cards have been removed from deck #{slot}:\n" + f"\n".join(remove_msg)
         await ctx.reply(msg)
 
-    @commands.hybrid_command(
-        aliases=["cleardeck"], description="Clear your current deck."
-    )
+    @commands.hybrid_command(aliases=["cleardeck"], description="Clear your current deck.")
     @checks.is_registered()
     @checks.not_preoccupied("clearing a deck slot")
     async def clear(self, ctx: commands.Context):
@@ -239,8 +228,10 @@ class Deck(commands.Cog):
         for i in deck:
             dm.set_user_card_deck(a.id, slot, 0, i[0])
         await msg.edit(
-            content=f"Deck #{slot} has been cleared! \n"
-            f"Do `{r.PREF}add [cards]` to add new cards to your deck!"
+            content=(
+                f"Deck #{slot} has been cleared! \n"
+                f"Do `{r.PREF}add [cards]` to add new cards to your deck!"
+            )
         )
 
 

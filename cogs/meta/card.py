@@ -38,9 +38,7 @@ class Card(commands.Cog):
                 error_msg.append(f"Card #`{c}` is in one of your decks!")
             else:
                 to_discard.append((c, a.id))
-                discard_msg.append(
-                    f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`"
-                )
+                discard_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
 
         msg = "\n".join(error_msg) + "\n"
         if not to_discard:
@@ -81,14 +79,10 @@ class Card(commands.Cog):
 
         a = ctx.author
         card = dm.get_card_name(a.id, card_id), dm.get_card_level(a.id, card_id)
-        other_card = dm.get_card_name(a.id, other_card_id), dm.get_card_level(
-            a.id, other_card_id
-        )
+        other_card = dm.get_card_name(a.id, other_card_id), dm.get_card_level(a.id, other_card_id)
 
         if card[0] is None and other_card[0] is None:
-            await ctx.reply(
-                f"You have neither card `#{card_id}` nor `#{other_card_id}`!"
-            )
+            await ctx.reply(f"You have neither card `#{card_id}` nor `#{other_card_id}`!")
             return
 
         if card[0] is None or other_card[0] is None:
@@ -100,10 +94,7 @@ class Card(commands.Cog):
             await ctx.reply("Both cards need to be the same level!")
             return
 
-        if (
-            u.cards_dict(1, card[0])["rarity"]
-            != u.cards_dict(1, other_card[0])["rarity"]
-        ):
+        if u.cards_dict(1, card[0])["rarity"] != u.cards_dict(1, other_card[0])["rarity"]:
             await ctx.reply("Both cards need to be the same rarity!")
             return
 
@@ -122,16 +113,14 @@ class Card(commands.Cog):
         upgrade_cost = math.floor(((card[1] + 1) ** 2) * 10)
         coins = dm.get_user_coin(a.id)
         if coins < upgrade_cost:
-            await ctx.reply(
-                f"You don't have enough coins to upgrade! ({upgrade_cost} coins)"
-            )
+            await ctx.reply(f"You don't have enough coins to upgrade! ({upgrade_cost} coins)")
             return
 
         view = Confirm()
         msg = await ctx.reply(
-            f"**[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}**\n"
-            f"**[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}**\n"
-            f"Upgrading cost {upgrade_cost} {r.ICONS['coin']}.",
+            f"**[{u.rarity_cost(card[0])}] {card[0]} lv:"
+            f" {card[1]}**\n**[{u.rarity_cost(other_card[0])}] {other_card[0]} lv:"
+            f" {other_card[1]}**\nUpgrading cost {upgrade_cost} {r.ICONS['coin'].emoji()}.",
             view=view,
         )
         await view.wait()
@@ -150,14 +139,18 @@ class Card(commands.Cog):
 
         embed = discord.Embed(
             title="Card upgraded successfully!",
-            description=f"-{upgrade_cost} {r.ICONS['coin']} "
-            f"+{(card[1] + 1) * 10} {r.ICONS['exp']}",
+            description=(
+                f"-{upgrade_cost} {r.ICONS['coin'].emoji()} "
+                f"+{(card[1] + 1) * 10} {r.ICONS['exp'].emoji()}"
+            ),
             color=discord.Color.green(),
         )
         embed.add_field(
             name=f"You got a [{u.rarity_cost(card[0])}] {card[0]} lv: {card[1] + 1} from:",
-            value=f"[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}\n"
-            f"[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}",
+            value=(
+                f"[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}\n"
+                f"[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}"
+            ),
         )
         embed.set_thumbnail(url=ctx.author.avatar.url)
         await msg.edit(content=None, embed=embed, view=None)

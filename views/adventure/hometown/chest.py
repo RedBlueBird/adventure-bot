@@ -43,9 +43,7 @@ async def submit_chest_form(
     i: discord.Interaction, action: t.Literal["take", "deposit"], item: str, amt: str
 ):
     if not amt.isdigit():
-        await i.response.send_message(
-            "That's an invalid amount to take!", ephemeral=True
-        )
+        await i.response.send_message("That's an invalid amount to take!", ephemeral=True)
         return
     amt = int(amt)
 

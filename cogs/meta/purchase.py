@@ -9,9 +9,7 @@ from helpers import db_manager as dm, util as u, resources as r, checks
 from views import Confirm
 
 
-async def confirm_purchase(
-    ctx: commands.Context, msg: str
-) -> tuple[discord.Message, bool]:
+async def confirm_purchase(ctx: commands.Context, msg: str) -> tuple[discord.Message, bool]:
     view = Confirm()
     msg = await ctx.reply(content=msg, view=view)
     await view.wait()
@@ -36,9 +34,7 @@ class Purchase(commands.Cog):
                 discord.Embed(title="Here's the things you can buy:")
                 .add_field(name="Card Packs", value=f"`{r.PREF}buy (card pack name)`")
                 .add_field(name="Coins", value=f"`{r.PREF}buy coins (coin deal name)`")
-                .add_field(
-                    name="Tickets", value=f"`{r.PREF}buy tickets (ticket deal name)`"
-                )
+                .add_field(name="Tickets", value=f"`{r.PREF}buy tickets (ticket deal name)`")
                 .add_field(name="Shop Refresh", value=f"`{r.PREF}buy r`")
                 .add_field(name="Single Card", value=f"`{r.PREF}buy (card #)`")
                 .add_field(name="All Cards", value=f"`{r.PREF}buy all`")
@@ -81,9 +77,7 @@ class Purchase(commands.Cog):
         if gems < gem_cost or tokens < token_cost:
             cost = "Nothing"  # should never happen
             if gem_cost > 0 and token_cost > 0:
-                cost = (
-                    f"{gem_cost} {r.ICONS['gem']} and {token_cost} {r.ICONS['token']}"
-                )
+                cost = f"{gem_cost} {r.ICONS['gem']} and {token_cost} {r.ICONS['token']}"
             elif gem_cost > 0:
                 cost = f"{gem_cost} {r.ICONS['gem']}"
             elif token_cost > 0:
@@ -228,8 +222,7 @@ class Purchase(commands.Cog):
 
         # 200 coins isn't that big of a cost, idt we need a confirm view here ~ sans
         gained_cards = [
-            u.deal_card(dm.get_user_level(a.id))
-            for _ in range(9 if dm.has_premium(a.id) else 6)
+            u.deal_card(dm.get_user_level(a.id)) for _ in range(9 if dm.has_premium(a.id) else 6)
         ]
         dm.set_user_coin(a.id, coins - cost)
         dm.set_user_deals(a.id, ",".join(gained_cards))
@@ -247,10 +240,7 @@ class Purchase(commands.Cog):
         deals = [i.split(".") for i in dm.get_user_deals(a.id).split(",")]
 
         cost = sum(
-            [
-                u.card_coin_cost(card, int(lvl)) if lvl[0] != "-" else 0
-                for lvl, card in deals
-            ]
+            [u.card_coin_cost(card, int(lvl)) if lvl[0] != "-" else 0 for lvl, card in deals]
         )
 
         count = sum([lvl[0] != "-" for lvl, _ in deals])
@@ -267,7 +257,7 @@ class Purchase(commands.Cog):
         cards = f"all {count} cards" if count > 1 else "the one remaining card"
         msg, confirm = await confirm_purchase(
             ctx,
-            f"Do you want to buy {cards} " f"in the shop for {cost} {r.ICONS['coin']}?",
+            f"Do you want to buy {cards} in the shop for {cost} {r.ICONS['coin']}?",
         )
         if not confirm:
             return
@@ -327,17 +317,18 @@ class Purchase(commands.Cog):
 
         msg, confirm = await confirm_purchase(
             ctx,
-            f"Are you sure you want to purchase "
-            f"**[{u.rarity_cost(name)}] {name} lv: {lvl}**?",
+            f"Are you sure you want to purchase **[{u.rarity_cost(name)}] {name} lv: {lvl}**?",
         )
         if not confirm:
             return
 
         await msg.edit(
-            content="You successfully bought a "
-            f"**[{u.rarity_cost(name)}] {name} "
-            f"lv: {lvl}** with "
-            f"{card_cost} {r.ICONS['coin']}!",
+            content=(
+                "You successfully bought a "
+                f"**[{u.rarity_cost(name)}] {name} "
+                f"lv: {lvl}** with "
+                f"{card_cost} {r.ICONS['coin']}!"
+            ),
             view=None,
         )
 

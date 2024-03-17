@@ -31,9 +31,7 @@ def time_til_midnight() -> str:
     dts = dt.datetime.now()
     # https://stackoverflow.com/a/45986036/12128483
     return time_converter(
-        ((24 - dts.hour - 1) * 60 * 60)
-        + ((60 - dts.minute - 1) * 60)
-        + (60 - dts.second)
+        ((24 - dts.hour - 1) * 60 * 60) + ((60 - dts.minute - 1) * 60) + (60 - dts.second)
     )
 
 

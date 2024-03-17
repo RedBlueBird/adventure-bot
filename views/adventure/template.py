@@ -20,9 +20,7 @@ class Backpack(ui.Button):
 
     async def callback(self, i: discord.Interaction):
         inv = dm.get_user_inventory(self.view.user.id)
-        await i.response.send_message(
-            embed=u.container_embed(inv, "Backpack"), ephemeral=True
-        )
+        await i.response.send_message(embed=u.container_embed(inv, "Backpack"), ephemeral=True)
 
 
 class InteractionCheckMixin:
@@ -30,8 +28,6 @@ class InteractionCheckMixin:
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
         if i.user != self.user:
-            await i.response.send_message(
-                "You aren't the explorer here!", ephemeral=True
-            )
+            await i.response.send_message("You aren't the explorer here!", ephemeral=True)
             return False
         return True

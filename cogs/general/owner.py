@@ -36,9 +36,7 @@ class Owner(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
-        embed = discord.Embed(
-            description="The scope must be `global` or `guild`.", color=0xE02B2B
-        )
+        embed = discord.Embed(description="The scope must be `global` or `guild`.", color=0xE02B2B)
         await ctx.send(embed=embed)
 
     @commands.command(
@@ -68,9 +66,7 @@ class Owner(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
-        embed = discord.Embed(
-            description="The scope must be `global` or `guild`.", color=0xE02B2B
-        )
+        embed = discord.Embed(description="The scope must be `global` or `guild`.", color=0xE02B2B)
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
@@ -89,8 +85,7 @@ class Owner(commands.Cog):
         except Exception as e:
             embed = discord.Embed(
                 title="Error!",
-                description=f"Couldn't load the `{cog}` cog.\n"
-                            f"{type(e).__name__}: {e}",
+                description=f"Couldn't load the `{cog}` cog.\n{type(e).__name__}: {e}",
                 color=0xE02B2B,
             )
             await ctx.send(embed=embed)
@@ -115,8 +110,7 @@ class Owner(commands.Cog):
         except Exception as e:
             embed = discord.Embed(
                 title="Error!",
-                description=f"Couldn't unload the `{cog}` cog.\n"
-                            f"{type(e).__name__}: {e}",
+                description=f"Couldn't unload the `{cog}` cog.\n{type(e).__name__}: {e}",
                 color=0xE02B2B,
             )
             await ctx.send(embed=embed)
@@ -141,8 +135,7 @@ class Owner(commands.Cog):
         except Exception as e:
             embed = discord.Embed(
                 title="Error!",
-                description=f"Couldn't reload the `{cog}` cog.\n"
-                            f"{type(e).__name__}: {e}",
+                description=f"Couldn't reload the `{cog}` cog.\n{type(e).__name__}: {e}",
                 color=0xE02B2B,
             )
             await ctx.send(embed=embed)

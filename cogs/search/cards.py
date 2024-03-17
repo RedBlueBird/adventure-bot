@@ -13,15 +13,14 @@ class CardSearch(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command(aliases=["cs", "search"], description="View your cards.")
-    async def cards(
+    async def card_search(
         self,
         ctx: Context,
         name: str | None = None,
         level: int | None = None,
         energy: int | None = None,
         rarity: (
-            t.Literal["legendary", "exclusive", "epic", "rare", "common", "monster"]
-            | None
+            t.Literal["legendary", "exclusive", "epic", "rare", "common", "monster"] | None
         ) = None,
     ):
         cards = dm.get_user_cards(
@@ -31,9 +30,7 @@ class CardSearch(commands.Cog):
             view = CardPages(ctx.author, ctx.author, cards=cards)
             await ctx.send(embed=view.page_embed(), view=view)
         else:
-            embed = discord.Embed(
-                title="Nothing came up! :(", color=discord.Color.red()
-            )
+            embed = discord.Embed(title="Nothing came up! :(", color=discord.Color.red())
             await ctx.send(embed=embed)
 
 

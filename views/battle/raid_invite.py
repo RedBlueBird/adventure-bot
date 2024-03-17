@@ -16,9 +16,7 @@ class RaidInvite(discord.ui.View):
     @discord.ui.button(label="Start!", style=discord.ButtonStyle.green)
     async def start_raid(self, i: discord.Interaction, button: discord.ui.Button):
         if i.user != self.host:
-            await i.response.send_message(
-                "Only the host can start the raid!", ephemeral=True
-            )
+            await i.response.send_message("Only the host can start the raid!", ephemeral=True)
             return
 
         if len(self.joined) != len(self.invited):
@@ -61,9 +59,7 @@ class RaidInvite(discord.ui.View):
             return
 
         if i.user == self.host:
-            await i.response.edit_message(
-                content="The host canceled the raid.", view=None
-            )
+            await i.response.edit_message(content="The host canceled the raid.", view=None)
             self.start = False
             self.stop()
             return
@@ -77,9 +73,7 @@ class RaidInvite(discord.ui.View):
         await i.response.send_message(msg)
 
         if len(self.rejected) == len(self.invited) - 1:
-            await i.edit_original_response(
-                content="Everyone rejected the battle...", view=None
-            )
+            await i.edit_original_response(content="Everyone rejected the battle...", view=None)
             self.start = False
             self.stop()
 

@@ -19,18 +19,14 @@ class BuyForm(ui.Modal, title="Buy something!"):
     async def on_submit(self, i: discord.Interaction):
         amt = self.amt.value
         if not amt.isdigit() or int(amt) <= 0:
-            await i.response.send_message(
-                "That's an invalid amount to buy!", ephemeral=True
-            )
+            await i.response.send_message("That's an invalid amount to buy!", ephemeral=True)
             return
         amt = int(amt)
 
         item = r.item(self.item.value.lower())
         name = item.name.lower()
         if name not in self.offers:
-            await i.response.send_message(
-                "Sorry, I don't have that item!", ephemeral=True
-            )
+            await i.response.send_message("Sorry, I don't have that item!", ephemeral=True)
             return
 
         inv = dm.get_user_inventory(self.user.id)
@@ -43,9 +39,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
 
         coins = dm.get_user_coin(self.user.id)
         if item.buy * amt > coins:
-            await i.response.send_message(
-                "You can't afford that much stuff!", ephemeral=True
-            )
+            await i.response.send_message("You can't afford that much stuff!", ephemeral=True)
             return
 
         coins -= item.buy * amt
@@ -58,7 +52,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
         dm.set_user_coin(self.user.id, coins)
 
         await i.response.send_message(
-            f"You just bought "
+            "You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
             f"for {item.buy * amt} {r.ICONS['coin']}!",
             ephemeral=True,
@@ -79,6 +73,4 @@ class Shop(ui.View, InteractionCheckMixin):
     @ui.button(label="Backpack", style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):
         inv = dm.get_user_inventory(self.user.id)
-        await i.response.send_message(
-            embed=u.container_embed(inv, "Backpack"), ephemeral=True
-        )
+        await i.response.send_message(embed=u.container_embed(inv, "Backpack"), ephemeral=True)
