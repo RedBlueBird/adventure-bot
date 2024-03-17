@@ -15,13 +15,10 @@ def chest_storage(level: int):
 
 
 def container_embed(
-        store: dict,
-        container: str = "Backpack",
-        lvl: int = 1
+    store: dict, container: str = "Backpack", lvl: int = 1
 ) -> discord.Embed | str:
     inv = container_str(store, container, lvl)
-    return discord.Embed() \
-        .add_field(name=f"Your {container}:", value=f"```{inv}```")
+    return discord.Embed().add_field(name=f"Your {container}:", value=f"```{inv}```")
 
 
 def container_str(store: dict, container: str = "Backpack", lvl: int = 1):

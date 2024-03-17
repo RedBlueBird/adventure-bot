@@ -18,8 +18,7 @@ class SellForm(ui.Modal, title="Sell something!"):
         amt = self.amt.value
         if not amt.isdigit() or int(amt) <= 0:
             await i.response.send_message(
-                "That's an invalid amount to sell!",
-                ephemeral=True
+                "That's an invalid amount to sell!", ephemeral=True
             )
             return
         amt = int(amt)
@@ -31,15 +30,11 @@ class SellForm(ui.Modal, title="Sell something!"):
 
         if inv.get(name, 0) < amt:
             await i.response.send_message(
-                "You don't have enough of those items in your backpack!",
-                ephemeral=True
+                "You don't have enough of those items in your backpack!", ephemeral=True
             )
             return
 
-        dm.set_user_coin(
-            self.user.id,
-            dm.get_user_coin(self.user.id) + item.sell * amt
-        )
+        dm.set_user_coin(self.user.id, dm.get_user_coin(self.user.id) + item.sell * amt)
         inv[name] -= amt
         if inv[name] == 0:
             del inv[name]
@@ -47,8 +42,8 @@ class SellForm(ui.Modal, title="Sell something!"):
         descr = f"[{item.rarity}/{item.weight}]"
         await i.response.send_message(
             f"You just sold **{descr} {name.title()} x{amt}** "
-            f"for {item.sell * amt} {r.ICON['coin']}!",
-            ephemeral=True
+            f"for {item.sell * amt} {r.ICONS['coin']}!",
+            ephemeral=True,
         )
         dm.set_user_inventory(self.user.id, inv)
         await self.sell_msg.edit(embed=u.container_embed(inv))

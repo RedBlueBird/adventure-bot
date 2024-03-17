@@ -32,16 +32,16 @@ class Bet(Enum):
 
 
 async def bet(
-        i: discord.Interaction,
-        user: discord.Member,
-        outcome: Bet, bet_amt: int,
-        edge_factor: int = 1000
+    i: discord.Interaction,
+    user: discord.Member,
+    outcome: Bet,
+    bet_amt: int,
+    edge_factor: int = 1000,
 ):
     coins = dm.get_user_coin(user.id)
     if coins < bet_amt:
         await i.response.send_message(
-            "You don't have enough coins to place a bet!",
-            ephemeral=True
+            "You don't have enough coins to place a bet!", ephemeral=True
         )
 
     flip = Bet.flip(edge_factor)
@@ -55,16 +55,14 @@ async def bet(
             descr = descr.upper()
 
         embed = discord.Embed(
-            title="You won!",
-            description=descr,
-            color=discord.Color.green()
+            title="You won!", description=descr, color=discord.Color.green()
         )
     else:
         inc = -bet_amt
         embed = discord.Embed(
             title="You lost...",
             description=f"The coin landed on {flip} and you lost {bet_amt} coins...",
-            color=discord.Color.red()
+            color=discord.Color.red(),
         )
 
     embeds = i.message.embeds
@@ -79,8 +77,7 @@ async def bet(
 
 class CoinFlip(ui.View, InteractionCheckMixin):
     def __init__(
-            self, user: discord.Member,
-            bet_amt: int = 50, edge_factor: int = 1000
+        self, user: discord.Member, bet_amt: int = 50, edge_factor: int = 1000
     ):
         super().__init__()
         self.user = user

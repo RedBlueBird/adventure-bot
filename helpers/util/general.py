@@ -31,7 +31,9 @@ def time_til_midnight() -> str:
     dts = dt.datetime.now()
     # https://stackoverflow.com/a/45986036/12128483
     return time_converter(
-        ((24 - dts.hour - 1) * 60 * 60) + ((60 - dts.minute - 1) * 60) + (60 - dts.second)
+        ((24 - dts.hour - 1) * 60 * 60)
+        + ((60 - dts.minute - 1) * 60)
+        + (60 - dts.second)
     )
 
 
@@ -53,7 +55,7 @@ def level_xp(lvl: int) -> int:
     :return: The amount of XP required to advance to the
     next level, given the current one.
     """
-    return math.floor(int((lvl ** 2) * 40 + 60))
+    return math.floor(int((lvl**2) * 40 + 60))
 
 
 def level_hp(lvl: int) -> int:

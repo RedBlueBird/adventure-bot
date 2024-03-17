@@ -26,15 +26,25 @@ class Admin(commands.Cog):
     @checks.is_registered()
     async def redeem(self, ctx: Context):
         if ctx.invoked_subcommand is None:
-            embed = discord.Embed(title="Here's the things you can redeem:") \
-                .add_field(name="Cards", value=f"`{r.PREF}redeem card (card name) (card level) (recipient)`") \
-                .add_field(name="Items", value=f"`{r.PREF}redeem item (item name) (item amt) (recipient)`")
+            embed = (
+                discord.Embed(title="Here's the things you can redeem:")
+                .add_field(
+                    name="Cards",
+                    value=f"`{r.PREF}redeem card (card name) (card level) (recipient)`",
+                )
+                .add_field(
+                    name="Items",
+                    value=f"`{r.PREF}redeem item (item name) (item amt) (recipient)`",
+                )
+            )
             await ctx.reply(embed=embed)
 
     @redeem.command()
     @checks.is_admin()
     @checks.is_registered()
-    async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
+    async def card(
+        self, ctx: Context, card: str, level: int, recipient: discord.Member
+    ):
         card = card.replace("_", " ").title()
 
         dm.add_user_cards([(recipient.id, card, math.floor(int(level)))])
@@ -73,7 +83,7 @@ class Admin(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["endseason"],
-        description="Resets the PVP season and gives each player their medals."
+        description="Resets the PVP season and gives each player their medals.",
     )
     @commands.is_owner()
     async def end_season(self, ctx: Context):
@@ -90,11 +100,13 @@ class Admin(commands.Cog):
             cap = 500  # "tax" medals above this limit at 50%
             new_medals = (medals - cap) // 2 + cap if medals > cap else medals
 
-            msg = f"The season ended!" \
-                  f"You now have {new_medals} {r.ICON['medal']} (from {medals}) "\
-                  f"\n+{earned_coins} {r.ICON['coin']}!"
+            msg = (
+                f"The season ended!"
+                f"You now have {new_medals} {r.ICONS['medal']} (from {medals}) "
+                f"\n+{earned_coins} {r.ICONS['coin']}!"
+            )
             if earned_gems > 0:
-                msg += f"\n + {earned_gems} {r.ICON['gem']}"
+                msg += f"\n + {earned_gems} {r.ICONS['gem']}"
 
             user = await self.bot.fetch_user(d)
             await user.send(msg)
@@ -108,7 +120,7 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def test(self, ctx: Context):
         """Prints some debugging info for the devs."""
-        loading = await ctx.reply(r.ICON["load"])
+        loading = await ctx.reply(r.ICONS["load"])
 
         def print_all(table: str) -> None:
             dm.cur.execute(f"SELECT * FROM {table}")

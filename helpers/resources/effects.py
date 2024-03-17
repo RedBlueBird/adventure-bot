@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 from helpers.json_loader import load_json
 
 
 class Effect(BaseModel):
-    name: str
+    name: constr(to_lower=True)
     description: str
 
 

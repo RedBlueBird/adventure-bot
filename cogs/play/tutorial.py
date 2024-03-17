@@ -16,8 +16,7 @@ class Tutorial(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command(
-        aliases=["tutorials", "tutor"],
-        description="New to the bot? Here's a tutorial!"
+        aliases=["tutorials", "tutor"], description="New to the bot? Here's a tutorial!"
     )
     @checks.is_registered()
     @checks.not_preoccupied("learning how to play the bot")
@@ -29,7 +28,7 @@ class Tutorial(commands.Cog):
         view = Confirm("Yeah!", "No thanks.")
         start_msg = await ctx.reply(
             "Hello!\nYou want to learn the basics of fighting in this bot? :smiley:",
-            view=view
+            view=view,
         )
         await view.wait()
 
@@ -40,13 +39,19 @@ class Tutorial(commands.Cog):
             await start_msg.edit(content="oh well. :frowning:", view=None)
             return
 
-        await start_msg.edit(content="Alright, let's get started then! :smile:", view=None)
-        loading_embed_message = discord.Embed(title="Loading...", description=r.ICON["load"])
+        await start_msg.edit(
+            content="Alright, let's get started then! :smile:", view=None
+        )
+        loading_embed_message = discord.Embed(
+            title="Loading...", description=r.ICONS["load"]
+        )
         stats_msg = await ctx.send(embed=loading_embed_message)
         hand_msg = await ctx.send(embed=loading_embed_message)
 
         tutorial = deepcopy(r.TUTORIAL)
-        tutorial["procedure"] = [msg.format(prefix=r.PREF) for msg in tutorial["procedure"]]
+        tutorial["procedure"] = [
+            msg.format(prefix=r.PREF) for msg in tutorial["procedure"]
+        ]
         tutorial["triggered_message"] = {
             step: [msg.format(prefix=r.PREF) for msg in msgs]
             for step, msgs in tutorial["triggered_message"].items()
@@ -82,7 +87,9 @@ class Tutorial(commands.Cog):
         while step < 4:
             await view.wait()
             if view.value is None:
-                await msg.edit(content="how DAre you sLeEp dUring my lEcTuRe! :triumph:", view=None)
+                await msg.edit(
+                    content="how DAre you sLeEp dUring my lEcTuRe! :triumph:", view=None
+                )
                 return
             if not view.value:
                 await msg.edit(content="You exited the tutorial! :cry:", view=None)
@@ -117,8 +124,9 @@ class Tutorial(commands.Cog):
             ):
                 try:
                     reply = await self.bot.wait_for(
-                        "message", timeout=120.0,
-                        check=checks.valid_reply("", author, ctx.channel)
+                        "message",
+                        timeout=120.0,
+                        check=checks.valid_reply("", author, ctx.channel),
                     )
                     await reply.delete()
                 except asyncio.TimeoutError:
@@ -128,8 +136,10 @@ class Tutorial(commands.Cog):
                     await ctx.reply("did you go afk? :weary:")
                     return
 
-                action = dd.interpret_message(reply.content[len(r.PREF):], str(dd.players.info[1]), 1)
-                content = reply.content[len(r.PREF):].lower()
+                action = dd.interpret_message(
+                    reply.content[len(r.PREF) :], str(dd.players.info[1]), 1
+                )
+                content = reply.content[len(r.PREF) :].lower()
                 if content == "exit":
                     action = "exit"
 
@@ -141,12 +151,17 @@ class Tutorial(commands.Cog):
                     step < 21
                     and action != "refresh"
                     and (
-                        (expected_message[step] != "None" and action != expected_message[step])
+                        (
+                            expected_message[step] != "None"
+                            and action != expected_message[step]
+                        )
                         or expected_item[step] != dd.item_used.info[1]
                     )
                 ):
                     if triggered < len(triggered_message[step]):
-                        await ctx.send(f"{mention}\n" + triggered_message[step][triggered])
+                        await ctx.send(
+                            f"{mention}\n" + triggered_message[step][triggered]
+                        )
                     else:
                         await ctx.send(f"{mention}\n" + triggered_message[step][-1])
                     triggered += 1
@@ -173,9 +188,12 @@ class Tutorial(commands.Cog):
                 elif action == "skip":
                     # dd.stamina[0] += 1
                     for y in range(dd.hand_sizes.info[1]):
-                        if dd.decks.info[1][y] not in [".".join(x.split(".")[0:2]) for x in dd.used_cards.info[1]]:
+                        if dd.decks.info[1][y] not in [
+                            ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[1]
+                        ]:
                             if "on_hand" in u.cards_dict(
-                                    dd.decks.info[1][y].split(".")[0], dd.decks.info[1][y].split(".")[1]
+                                dd.decks.info[1][y].split(".")[0],
+                                dd.decks.info[1][y].split(".")[1],
                             ):
                                 dd.execute_card_offense(
                                     int(dd.decks.info[1][y].split(".")[0]),
@@ -186,13 +204,18 @@ class Tutorial(commands.Cog):
                                 )
                     if dd.hand_sizes.info[1] != 6:
                         dd.hand_sizes.info[1] += 1
-                    dd.descriptions.info[1].append(f"{r.ICON['ski']}{r.ICON['kip']}\n")
+                    dd.descriptions.info[1].append(
+                        f"{r.ICONS['ski']}{r.ICONS['kip']}\n"
+                    )
                     is_turn_over = True
                 elif action == "flee":
                     for y in range(dd.hand_sizes.info[1]):
-                        if dd.decks.info[1][y] not in [".".join(x.split(".")[0:2]) for x in dd.used_cards.info[1]]:
+                        if dd.decks.info[1][y] not in [
+                            ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[1]
+                        ]:
                             if "on_hand" in u.cards_dict(
-                                    dd.decks.info[1][y].split(".")[0], dd.decks.info[1][y].split(".")[1]
+                                dd.decks.info[1][y].split(".")[0],
+                                dd.decks.info[1][y].split(".")[1],
                             ):
                                 dd.execute_card_offense(
                                     int(dd.decks.info[1][y].split(".")[0]),
@@ -205,21 +228,26 @@ class Tutorial(commands.Cog):
                         dd.hand_sizes.info[1] += 1
                     if random.randint(1, 100) > 0:
                         dd.descriptions.info[1].append(
-                            f"{r.ICON['fle']}{r.ICON['lee']} {r.ICON['mi']}{r.ICON['ss']}\n"
+                            f"{r.ICONS['fle']}{r.ICONS['lee']} {r.ICONS['mi']}{r.ICONS['ss']}\n"
                         )
                     else:
-                        dd.descriptions.info[1].append(f"{r.ICON['fle']}{r.ICON['lee']}\n")
+                        dd.descriptions.info[1].append(
+                            f"{r.ICONS['fle']}{r.ICONS['lee']}\n"
+                        )
                         dd.afk = 8
                     if step == 20:
                         try:
-                            dd.decks.info[3][dd.decks.info[3].index("20.Terminate")] = "4.Terminate"
+                            dd.decks.info[3][
+                                dd.decks.info[3].index("20.Terminate")
+                            ] = "4.Terminate"
                         except:
                             pass
                     is_turn_over = True
                 elif type(action) is list:
                     dd.move_numbers.info[1] = action
                     dd.used_cards.info[1] = [
-                        dd.decks.info[1][int(str(x)[0]) - 1] + "." + str(x)[1:] for x in dd.move_numbers.info[1]
+                        dd.decks.info[1][int(str(x)[0]) - 1] + "." + str(x)[1:]
+                        for x in dd.move_numbers.info[1]
                     ]
                     dd.stored_energies.info[1] -= sum(
                         [
@@ -233,9 +261,12 @@ class Tutorial(commands.Cog):
                     dd.move_numbers.info[1].sort()
                     z = 0
                     for y in range(dd.hand_sizes.info[1]):
-                        if dd.decks.info[1][y] not in [".".join(x.split(".")[0:2]) for x in dd.used_cards.info[1]]:
+                        if dd.decks.info[1][y] not in [
+                            ".".join(x.split(".")[0:2]) for x in dd.used_cards.info[1]
+                        ]:
                             if "on_hand" in u.cards_dict(
-                                    dd.decks.info[1][y].split(".")[0], dd.decks.info[1][y].split(".")[1]
+                                dd.decks.info[1][y].split(".")[0],
+                                dd.decks.info[1][y].split(".")[1],
                             ):
                                 dd.execute_card_offense(
                                     int(dd.decks.info[1][y].split(".")[0]),
@@ -247,16 +278,24 @@ class Tutorial(commands.Cog):
                     for y in range(len(dd.move_numbers.info[1])):
                         x = int(str(dd.move_numbers.info[1][y])[0]) - y + z
                         card_info = u.cards_dict(
-                            dd.decks.info[1][x - 1].split(".")[0], dd.decks.info[1][x - 1].split(".")[1]
+                            dd.decks.info[1][x - 1].split(".")[0],
+                            dd.decks.info[1][x - 1].split(".")[1],
                         )
-                        if dd.decks.info[1][x - 1].split(".")[1] not in dd.temporary_cards:
+                        if (
+                            dd.decks.info[1][x - 1].split(".")[1]
+                            not in dd.temporary_cards
+                        ):
                             if "rewrite" in card_info:
-                                re_name = u.cards_dict(1, dd.decks.info[1][x - 1].split(".")[1])["rewrite"]
+                                re_name = u.cards_dict(
+                                    1, dd.decks.info[1][x - 1].split(".")[1]
+                                )["rewrite"]
                                 dd.descriptions.info[1].append(
                                     f"*{dd.decks.info[1][x - 1].split('.')[1]}* rewritten as *{re_name}*"
                                 )
                                 dd.decks.info[1][x - 1] = (
-                                        dd.decks.info[1][x - 1].split(".")[0] + "." + card_info["rewrite"]
+                                    dd.decks.info[1][x - 1].split(".")[0]
+                                    + "."
+                                    + card_info["rewrite"]
                                 )
                             if "stay" in card_info:
                                 if random.randint(1, 100) <= card_info["stay"]:
@@ -268,9 +307,14 @@ class Tutorial(commands.Cog):
                                     )
                                 # dd.new_line(1)
                                 else:
-                                    dd.decks.info[1].insert(len(dd.decks.info[1]), dd.decks.info[1].pop(x - 1))
+                                    dd.decks.info[1].insert(
+                                        len(dd.decks.info[1]),
+                                        dd.decks.info[1].pop(x - 1),
+                                    )
                             else:
-                                dd.decks.info[1].insert(len(dd.decks.info[1]), dd.decks.info[1].pop(x - 1))
+                                dd.decks.info[1].insert(
+                                    len(dd.decks.info[1]), dd.decks.info[1].pop(x - 1)
+                                )
                         else:
                             if "stay" in card_info:
                                 if random.randint(1, 100) <= card_info["stay"]:
@@ -316,15 +360,27 @@ class Tutorial(commands.Cog):
                                     sum(
                                         [
                                             u.cards_dict(
-                                                int(dd.decks.info[enemy][x - 1].split(".")[0]),
-                                                dd.decks.info[enemy][x - 1].split(".")[1],
+                                                int(
+                                                    dd.decks.info[enemy][x - 1].split(
+                                                        "."
+                                                    )[0]
+                                                ),
+                                                dd.decks.info[enemy][x - 1].split(".")[
+                                                    1
+                                                ],
                                             )["cost"]
                                             for x in enemy_action
                                         ]
                                     )
                                     + u.cards_dict(
-                                        int(dd.decks.info[enemy][rng_move - 1].split(".")[0]),
-                                        dd.decks.info[enemy][rng_move - 1].split(".")[1],
+                                        int(
+                                            dd.decks.info[enemy][rng_move - 1].split(
+                                                "."
+                                            )[0]
+                                        ),
+                                        dd.decks.info[enemy][rng_move - 1].split(".")[
+                                            1
+                                        ],
                                     )["cost"]
                                 ):
                                     enemy_action.append(rng_move)
@@ -336,7 +392,8 @@ class Tutorial(commands.Cog):
                         for y in range(dd.hand_sizes.info[enemy]):
                             if dd.decks.info[enemy][y] not in dd.used_cards.info[enemy]:
                                 if "on_hand" in u.cards_dict(
-                                        dd.decks.info[enemy][y].split(".")[0], dd.decks.info[enemy][y].split(".")[1]
+                                    dd.decks.info[enemy][y].split(".")[0],
+                                    dd.decks.info[enemy][y].split(".")[1],
                                 ):
                                     dd.execute_card_offense(
                                         int(dd.decks.info[enemy][y].split(".")[0]),
@@ -348,7 +405,8 @@ class Tutorial(commands.Cog):
                         if not dd.hand_sizes.info[enemy] != 6:
                             dd.hand_sizes.info[enemy] += 1
                         dd.descriptions.info[enemy].insert(
-                            len(dd.descriptions.info[enemy]), f"{r.ICON['ski']}{r.ICON['kip']}\n"
+                            len(dd.descriptions.info[enemy]),
+                            f"{r.ICONS['ski']}{r.ICONS['kip']}\n",
                         )
                     elif enemy_action == "flee":
                         dd.afk = len(dd.players.info) + enemy
@@ -384,9 +442,12 @@ class Tutorial(commands.Cog):
                         ]
                         # a = [print(dd.decks.info[e_index][x - 1].lower().split(".")[1]) for x in dd.move_numbers.info[e_index]]
                         dd.used_cards.info[enemy] = [
-                            dd.decks.info[enemy][x - 1] + f".{enemy}"
-                            if dd.decks.info[enemy][x - 1].lower().split(".")[1] in defense_cards
-                            else dd.decks.info[enemy][x - 1] + ".1"
+                            (
+                                dd.decks.info[enemy][x - 1] + f".{enemy}"
+                                if dd.decks.info[enemy][x - 1].lower().split(".")[1]
+                                in defense_cards
+                                else dd.decks.info[enemy][x - 1] + ".1"
+                            )
                             for x in dd.move_numbers.info[enemy]
                         ]
                         dd.stored_energies.info[enemy] -= sum(
@@ -403,7 +464,8 @@ class Tutorial(commands.Cog):
                         for y in range(dd.hand_sizes.info[enemy]):
                             if dd.decks.info[enemy][y] not in dd.used_cards.info[enemy]:
                                 if "on_hand" in u.cards_dict(
-                                        dd.decks.info[enemy][y].split(".")[0], dd.decks.info[enemy][y].split(".")[1]
+                                    dd.decks.info[enemy][y].split(".")[0],
+                                    dd.decks.info[enemy][y].split(".")[1],
                                 ):
                                     dd.execute_card_offense(
                                         int(dd.decks.info[enemy][y].split(".")[0]),
@@ -415,16 +477,24 @@ class Tutorial(commands.Cog):
                         for y in range(len(dd.move_numbers.info[enemy])):
                             x = dd.move_numbers.info[enemy][y] - y + z
                             card_info = u.cards_dict(
-                                dd.decks.info[enemy][x - 1].split(".")[0], dd.decks.info[enemy][x - 1].split(".")[1]
+                                dd.decks.info[enemy][x - 1].split(".")[0],
+                                dd.decks.info[enemy][x - 1].split(".")[1],
                             )
-                            if dd.decks.info[enemy][x - 1].split(".")[1] not in dd.temporary_cards:
+                            if (
+                                dd.decks.info[enemy][x - 1].split(".")[1]
+                                not in dd.temporary_cards
+                            ):
                                 if "rewrite" in card_info:
-                                    re_name = u.cards_dict(1, dd.decks.info[enemy][x - 1].split(".")[1])["rewrite"]
+                                    re_name = u.cards_dict(
+                                        1, dd.decks.info[enemy][x - 1].split(".")[1]
+                                    )["rewrite"]
                                     dd.descriptions.info[enemy].append(
                                         f"*{dd.decks.info[enemy][x - 1].split('.')[1]}* rewritten as *{re_name}*"
                                     )
                                     dd.decks.info[enemy][x - 1] = (
-                                            dd.decks.info[enemy][x - 1].split(".")[0] + "." + card_info["rewrite"]
+                                        dd.decks.info[enemy][x - 1].split(".")[0]
+                                        + "."
+                                        + card_info["rewrite"]
                                     )
                                 if "stay" in card_info:
                                     if random.randint(1, 100) <= card_info["stay"]:
@@ -437,11 +507,13 @@ class Tutorial(commands.Cog):
                                     # dd.new_line(e_index)
                                     else:
                                         dd.decks.info[enemy].insert(
-                                            len(dd.decks.info[enemy]), dd.decks.info[enemy].pop(x - 1)
+                                            len(dd.decks.info[enemy]),
+                                            dd.decks.info[enemy].pop(x - 1),
                                         )
                                 else:
                                     dd.decks.info[enemy].insert(
-                                        len(dd.decks.info[enemy]), dd.decks.info[enemy].pop(x - 1)
+                                        len(dd.decks.info[enemy]),
+                                        dd.decks.info[enemy].pop(x - 1),
                                     )
                             else:
                                 if "stay" in card_info:
@@ -457,10 +529,12 @@ class Tutorial(commands.Cog):
                                         dd.decks.info[enemy].pop(x - 1)
                                 else:
                                     dd.decks.info[enemy].pop(x - 1)
-                        dd.hand_sizes.info[enemy] -= len(dd.move_numbers.info[enemy]) - z - 1
+                        dd.hand_sizes.info[enemy] -= (
+                            len(dd.move_numbers.info[enemy]) - z - 1
+                        )
                 # dd.decke_index.insert(dd.move_numbere_index - 1, dd.decke_index.pop(dd.hand_size[1]-1))
                 elif dd.hps.info[enemy][0] <= 0 or dd.staminas.info[enemy] <= 0:
-                    dd.descriptions.info[enemy].append(f"•{r.ICON['dead']}")
+                    dd.descriptions.info[enemy].append(f"•{r.ICONS['dead']}")
                     dd.effects.info[enemy] = {}
 
             if dd.afk == 0:
@@ -471,9 +545,24 @@ class Tutorial(commands.Cog):
                         dd.multipliers.info[x] = buffs[step][x - 1]
                 for x in dd.item_used.info:
                     if dd.item_used.info[x][0].title() != "None":
-                        dd.execute_card_defense(-1, dd.item_used.info[x][0].title(), x, dd.item_used.info[x][1])
-                        dd.execute_card_offense(-1, dd.item_used.info[x][0].title(), x, dd.item_used.info[x][1])
-                        dd.execute_card_special(-1, dd.item_used.info[x][0].title(), x, dd.item_used.info[x][1])
+                        dd.execute_card_defense(
+                            -1,
+                            dd.item_used.info[x][0].title(),
+                            x,
+                            dd.item_used.info[x][1],
+                        )
+                        dd.execute_card_offense(
+                            -1,
+                            dd.item_used.info[x][0].title(),
+                            x,
+                            dd.item_used.info[x][1],
+                        )
+                        dd.execute_card_special(
+                            -1,
+                            dd.item_used.info[x][0].title(),
+                            x,
+                            dd.item_used.info[x][1],
+                        )
                 for x in range(cards_length[-1]):
                     for y in range(1, len(dd.used_cards.info) + 1):
                         if len(dd.used_cards.info[y]) > x:
@@ -575,7 +664,9 @@ class Tutorial(commands.Cog):
         while step < final_step:
             await view.wait()
             if view.value is None:
-                await msg.edit(content="You went afk and the tutorial ended.", view=None)
+                await msg.edit(
+                    content="You went afk and the tutorial ended.", view=None
+                )
             elif not view.value:
                 await msg.edit(content="You exited the tutorial!", view=None)
 

@@ -6,17 +6,17 @@ from helpers import db_manager as dm, util as u
 def chunks(lst: list, n: int):
     """https://stackoverflow.com/questions/312443"""
     for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+        yield lst[i : i + n]
 
 
 class CardPages(discord.ui.View):
     def __init__(
-            self,
-            author: discord.Member,
-            user: discord.Member,
-            cards: list | None = None,
-            per_page: int = 15,
-            page: int = 0
+        self,
+        author: discord.Member,
+        user: discord.Member,
+        cards: list | None = None,
+        per_page: int = 15,
+        page: int = 0,
     ):
         super().__init__()
 
@@ -40,7 +40,7 @@ class CardPages(discord.ui.View):
             prev_button.disabled = True
         else:
             prev_button.disabled = False
-        
+
         if self.page == len(self.pages) - 1:
             next_button.disabled = True
         else:
@@ -49,15 +49,17 @@ class CardPages(discord.ui.View):
     def page_embed(self) -> discord.Embed:
         all_cards = []
         for card in self.pages[self.page]:
-            c_str = f"{'**>**' if card[0] in self.deck_ids else ''}" \
-                    f"[{u.rarity_cost(card[1])}] **{card[1]}**, " \
-                    f"lv: **{card[2]}**, id: `{card[0]}`"
+            c_str = (
+                f"{'**>**' if card[0] in self.deck_ids else ''}"
+                f"[{u.rarity_cost(card[1])}] **{card[1]}**, "
+                f"lv: **{card[2]}**, id: `{card[0]}`"
+            )
             all_cards.append(c_str)
 
         embed = discord.Embed(
             title=f"{self.user.display_name}'s cards:",
             description="\n".join(all_cards),
-            color=discord.Color.gold()
+            color=discord.Color.gold(),
         )
         show_start = self.page * self.per_page + 1
         show_end = min(show_start + self.per_page - 1, self.num_cards)
@@ -70,7 +72,7 @@ class CardPages(discord.ui.View):
         if i.user != self.author:
             await i.response.send_message(
                 "You must be the command sender to interact with this message.",
-                ephemeral=True
+                ephemeral=True,
             )
             return False
         return True
@@ -80,7 +82,7 @@ class CardPages(discord.ui.View):
         self.page -= 1
         self.update_buttons()
         await i.response.edit_message(embed=self.page_embed(), view=self)
-        
+
     @discord.ui.button(label="Next", style=discord.ButtonStyle.blurple)
     async def next_page(self, i: discord.Interaction, button: discord.ui.Button):
         self.page += 1

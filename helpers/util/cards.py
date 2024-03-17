@@ -8,10 +8,9 @@ from .general import log_level_gen
 
 def deal_card(lvl: int):
     """Generates a random card for the shop based on the player level."""
-    cost = log_level_gen(random.randint(
-        2 ** (max(0, 5 - (lvl // 4))),
-        2 ** (10 - math.floor(lvl / 10))
-    ))
+    cost = log_level_gen(
+        random.randint(2 ** (max(0, 5 - (lvl // 4))), 2 ** (10 - math.floor(lvl / 10)))
+    )
     return f"{cost}.{random_card(cost, 'normal')}"
 
 
@@ -26,7 +25,7 @@ def random_card(energy: int, type_: str) -> str:
     if type_ == "monster":
         cards = CARD_LIST["monster"]
         return random.choice(cards[1])
-    
+
     if type_ in ["fire", "evil", "electric", "defensive"]:
         cards = CARD_LIST[type_]
         for cost in cards:
@@ -34,7 +33,7 @@ def random_card(energy: int, type_: str) -> str:
                 continue
             if random.randint(1, 2) == 1:
                 return random.choice(cards[cost])
-    
+
     cards = CARD_LIST["cards"]
     for cost in cards:
         if cost > energy:
@@ -51,13 +50,13 @@ def rarity_cost(name: str):
 
 
 def price_factor(name: str) -> int:
-    return {
-        r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])
-    }.get(cards_dict(1, name)["rarity"], 1)
+    return {r: v + 2 for v, r in enumerate(["R", "E", "L", "EX"])}.get(
+        cards_dict(1, name)["rarity"], 1
+    )
 
 
 def card_coin_cost(name: str, lvl: int) -> int:
-    return int(1.6 ** lvl * 50 * price_factor(name))
+    return int(1.6**lvl * 50 * price_factor(name))
 
 
 def sort_cards(cards: list[tuple[int, str, int]], order: int):

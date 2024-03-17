@@ -142,16 +142,12 @@ class Blackjack(ui.View, InteractionCheckMixin):
         coins = dm.get_user_coin(self.user.id)
         if coins < BET:
             await i.response.send_message(
-                f"You need at least {BET} to buy bait!",
-                ephemeral=True
+                f"You need at least {BET} to buy bait!", ephemeral=True
             )
             return
 
         view = BlackjackBoard(self.user)
-        await i.response.send_message(
-            embed=view.board_embed(),
-            view=view
-        )
+        await i.response.send_message(embed=view.board_embed(), view=view)
 
         button.disabled = True
         await i.message.edit(view=self)

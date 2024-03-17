@@ -20,20 +20,23 @@ class BattleData2:
         self.team_orders = list(range(1, 7))
         random.shuffle(self.team_orders)
 
-        icons = [r.ICON[i] for i in ["ppr", "ppp", "ppw", "ppb", "ppo", "ppg"]]
+        icons = [
+            r.ICONS[i]
+            for i in ["pred", "porange", "ppurple", "pgreen", "pblue", "pgray"]
+        ]
         pps = dict(zip(self.team_orders, icons))
         for player in players:
             player.icon = pps[player.id]
-            player.dialogue.append(f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**")
+            player.dialogue.append(f"**{r.ICONS['hp']} {player.hp}/{player.max_hp}**")
             player.dialogue.append(
-                f"**{r.ICON['sta']} {player.stamina} {r.ICON['engy']} {player.stored_energy}**"
+                f"**{r.ICONS['stamina']} {player.stamina} {r.ICONS['energy']} {player.stored_energy}**"
             )
 
     def set_up(self) -> discord.Embed:
         for player in self.players:
             dm.set_user_battle_command(player.user.id, "")
 
-        embed = discord.Embed(title="Loading...", description=r.ICON["load"])
+        embed = discord.Embed(title="Loading...", description=r.ICONS["load"])
         return embed
 
     def player_selector(self, uid: int) -> Player:
@@ -63,44 +66,51 @@ class BattleData2:
             print("---0-0-0-")
             print(player.dialogue)
             if not player.dead:
-                player.dialogue[0] = f"**{r.ICON['hp']} {player.hp}/{player.max_hp}**"
-                player.dialogue[1] = f"**{r.ICON['sta']} {player.stamina} {r.ICON['engy']} {player.stored_energy}**"
+                player.dialogue[0] = f"**{r.ICONS['hp']} {player.hp}/{player.max_hp}**"
+                player.dialogue[1] = (
+                    f"**{r.ICONS['sta']} {player.stamina} {r.ICONS['engy']} {player.stored_energy}**"
+                )
 
             curr_dialogue = 1
             player_dialogue = "\n".join(player.dialogue[:curr_dialogue])
             while curr_dialogue < len(player.dialogue):
-                while len(player_dialogue + "\n" + player.dialogue[curr_dialogue]) <= 1000:
+                while (
+                    len(player_dialogue + "\n" + player.dialogue[curr_dialogue]) <= 1000
+                ):
                     player_dialogue += "\n" + player.dialogue[curr_dialogue]
                     curr_dialogue += 1
                     if curr_dialogue == len(player.dialogue):
                         break
                 embed.add_field(
                     name=f"__**#{player.id}**__{player.icon}{player.user.name}:",
-                    value=f"{player_dialogue}"
+                    value=f"{player_dialogue}",
                 )
                 if curr_dialogue < len(player.dialogue):
                     player_dialogue = ""
 
-        embed.set_footer(text=f"Round {self.round} (+{min(math.ceil(self.round / 2), 12)} energy/round)")
+        embed.set_footer(
+            text=f"Round {self.round} (+{min(math.ceil(self.round / 2), 12)} energy/round)"
+        )
 
         return embed
 
     def show_deck(self, uid: int) -> discord.Embed:
         player = self.player_selector(uid)
         if player == Player():
-            return discord.Embed(description="Only living users that are fighting can interact with this message!")
+            return discord.Embed(
+                description="Only living users that are fighting can interact with this message!"
+            )
 
         hand = [
-            f"{v + 1}. {i.display_name}" for v, i in
-            enumerate(player.deck[:player.hand_size])
+            f"{v + 1}. {i.display_name}"
+            for v, i in enumerate(player.deck[: player.hand_size])
         ]
         hand.append(f"Next: {player.deck[player.hand_size].display_name}")
 
-        embed = discord.Embed(description=f"• `{r.PREF}move (card number1)(target number1)` to use card(s)")
-        embed.add_field(
-            name=f"{player.user.name}'s deck",
-            value="\n".join(hand)
+        embed = discord.Embed(
+            description=f"• `{r.PREF}move (card number1)(target number1)` to use card(s)"
         )
+        embed.add_field(name=f"{player.user.name}'s deck", value="\n".join(hand))
         if player.hand_size < 6:
             embed.set_footer(text=f"{player.hand_size}/6 cards in hand")
         else:
@@ -123,12 +133,12 @@ class BattleData2:
         if moves == [""]:
             moves = []
             p.skip = True
-            p.dialogue.append(f"{r.ICON['ski']}{r.ICON['kip']}")
+            p.dialogue.append(f"{r.ICONS['ski']}{r.ICONS['kip']}")
 
         for move in moves:
             if move == "flee":
                 p.flee = True
-                p.dialogue.append(f"{r.ICON['fle']}{r.ICON['lee']}")
+                p.dialogue.append(f"{r.ICONS['fle']}{r.ICONS['lee']}")
                 break
             if len(move) != 2:
                 error_msg = "Make sure your input is correct!"
@@ -157,7 +167,7 @@ class BattleData2:
         for effect in p.effects:
             if p.effects[effect] <= 0:
                 continue
-            p.dialogue.append(f"• {p.effects[effect]}{r.I_CONVERT[effect]}")
+            p.dialogue.append(f"• {p.effects[effect]}{r.ICONS[effect]}")
         if "stun" in p.effects and p.effects["stun"] > 0:
             p.crit -= 50
         if "bullseye" in p.effects and p.effects["bullseye"] > 0:
@@ -204,7 +214,7 @@ class BattleData2:
         if p.hp <= 0:
             p.hp = 0
             p.dead = True
-            p.dialogue = [r.ICON['dead']]
+            p.dialogue = [r.ICONS["dead"]]
 
         for effect in p.effects:
             if effect != "curse" and p.effects[effect] > 0:
@@ -224,9 +234,11 @@ class BattleData2:
         p.crit = 0
 
         # remove dead players from the board
-        while (not self.game_end and (self.turn >= len(self.players)
-                                      or self.players[self.turn].dead
-                                      or self.players[self.turn].flee)):
+        while not self.game_end and (
+            self.turn >= len(self.players)
+            or self.players[self.turn].dead
+            or self.players[self.turn].flee
+        ):
             if self.turn >= len(self.players):
                 if self.game_end:
                     break

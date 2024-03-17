@@ -426,8 +426,8 @@
     "cdesc": "Increase crit by 100%",
     "brief": "Call an ambulance, but not for you!"
   },
-  "bees swarm": {
-    "name": "Bees Swarm",
+  "bees": {
+    "name": "Bees",
     "cost": 4,
     "rarity": "R",
     "attacks": 4,

@@ -4,9 +4,10 @@ from datetime import datetime, timedelta, timezone
 import discord
 from discord.ext.commands import Context
 
-from ..resources import ICON
+from ..resources import ICONS
 from ..util import randint_log
 from helpers import db_manager as dm
+
 
 def quest_info(quest_type: int, reward_type: int, rarity: int):
     descriptions = [
@@ -17,9 +18,9 @@ def quest_info(quest_type: int, reward_type: int, rarity: int):
         "Earn {amount} golden coins while adventuring",
         "Earn {amount} medals in PvP battles",
         "Merge {amount} pairs of cards",
-        "Catch {amount} fish in the public boat"
+        "Catch {amount} fish in the public boat",
     ]
-    rarities = ['C', 'R', 'E', 'L', 'EX']
+    rarities = ["C", "R", "E", "L", "EX"]
     requirements = [
         [5, 10, 20, 50],  # Kill mobs
         [10, 20, 40, 60],  # Collect items
@@ -28,20 +29,22 @@ def quest_info(quest_type: int, reward_type: int, rarity: int):
         [100, 200, 500, 1000],  # Collect coins
         [5, 10, 25, 50],  # Collect medals
         [1, 2, 5, 10],  # Merge cards
-        [3, 5, 10, 20]  # Catch fish
+        [3, 5, 10, 20],  # Catch fish
     ]
     exp_rewards = [25, 50, 100, 200, 250]
     other_rewards = [[200, 500, 1000, 2500], [0, 1, 2, 4]]
-    reward_types = ['coin', 'gem']
+    reward_types = ["coin", "gem"]
     return {
-        'description': descriptions[quest_type].format(amount=requirements[quest_type][rarity]),
-        'rarity': rarities[rarity],
-        'requirement': requirements[quest_type][rarity],
-        'reward': {
-            'exp': exp_rewards[rarity],
-            'other': other_rewards[reward_type][rarity],
-            'type': reward_types[reward_type],
-        }
+        "description": descriptions[quest_type].format(
+            amount=requirements[quest_type][rarity]
+        ),
+        "rarity": rarities[rarity],
+        "requirement": requirements[quest_type][rarity],
+        "reward": {
+            "exp": exp_rewards[rarity],
+            "other": other_rewards[reward_type][rarity],
+            "type": reward_types[reward_type],
+        },
     }
 
 
@@ -53,30 +56,30 @@ async def update_quest(ctx: Context, uid: int, quest_type: int, change: int):
     quest[4] += change
 
     qi = quest_info(quest[1], quest[2], quest[3])
-    if quest[4] >= qi['requirement']:
+    if quest[4] >= qi["requirement"]:
         embed = discord.Embed(
             title=f"QUEST COMPLETE {ctx.author.name}!",
             description=None,
-            color=discord.Color.green()
+            color=discord.Color.green(),
         )
         embed.add_field(
             name=f"**{qi['rarity']} {qi['description']}**",
-            value=f"**+{qi['reward']['exp']} {ICON['exp']}"
-                f" +{qi['reward']['other']} {ICON[qi['reward']['type']]}**",
+            value=f"**+{qi['reward']['exp']} {ICONS['exp'].emoji()}"
+            f" +{qi['reward']['other']} {ICONS[qi['reward']['type']]}**",
             # " +1{ICON['token']}**",
-            inline=False
+            inline=False,
         )
         embed.set_thumbnail(url=ctx.author.avatar.url)
         await ctx.channel.send(embed=embed)
 
         dm.delete_user_quest(quest[0])
 
-        dm.set_user_exp(uid, dm.get_user_exp(uid) + qi['reward']['exp'])
+        dm.set_user_exp(uid, dm.get_user_exp(uid) + qi["reward"]["exp"])
         dm.set_user_token(uid, dm.get_user_token(uid) + 1)
-        if qi['reward']['type'] == 'coin':
-            dm.set_user_coin(uid, dm.get_user_coin(uid) + qi['reward']['coin'])
-        elif qi['reward']['type'] == 'gem':
-            dm.set_user_gem(uid, dm.get_user_gem(uid) + qi['reward']['gem'])
+        if qi["reward"]["type"] == "coin":
+            dm.set_user_coin(uid, dm.get_user_coin(uid) + qi["reward"]["coin"])
+        elif qi["reward"]["type"] == "gem":
+            dm.set_user_gem(uid, dm.get_user_gem(uid) + qi["reward"]["gem"])
 
         next_quest = dm.get_user_next_quest(uid)
         now = datetime.now(timezone.utc)
@@ -88,8 +91,7 @@ async def update_quest(ctx: Context, uid: int, quest_type: int, change: int):
         dm.set_user_quest_progress(quest[0], quest[5])
 
 
-def add_quest(uid: int, quests: list[tuple[int, int, int, int, int]]
-                          ) -> tuple[int, int, int, int, int]:
+def add_quest(uid: int, quests: list[tuple[int, int, int, int, int]]):
     rarity = randint_log(0, 3)
     reward_type = 0
     if random.randint(1, 100) > 75:
@@ -120,4 +122,4 @@ def add_quests(uid: int, quests: list[tuple[int, int, int, int, int]]):
         if len(quests) == 4 + is_premium:
             next_quest = None
         dm.add_user_quests(quests[-added:])
-        dm.set_user_next_quest(next_quest)
+        dm.set_user_next_quest(uid, next_quest)

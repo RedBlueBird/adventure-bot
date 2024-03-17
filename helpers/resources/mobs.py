@@ -44,9 +44,13 @@ class Mob(BaseModel):
     dialogue: str = ""  # default arguments have to follow so
 
 
-def mob(name: str, lvl: int = 1) -> Mob:
+def mob(name: str, lvl: int = 1) -> Mob | None:
+    name = name.lower()
+    if name not in MOBS:
+        return None
+
     lvl = SCALE[1] ** (lvl - 1) * SCALE[0]
-    ret = deepcopy(MOBS[name.lower()])
+    ret = deepcopy(MOBS[name])
     ret.health = round(ret.health * lvl)
     return ret
 

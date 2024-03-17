@@ -7,5 +7,6 @@ from .card import CARDS
 from .effects import EFFX
 from .perks import PERKS
 from .fish import FISH
-from .misc_json import ADMINS, ICON, I_CONVERT, LEVELS, TUTORIAL
+from .icons import ICONS
+from .misc_json import ADMINS, LEVELS, TUTORIAL
 from .constants import *

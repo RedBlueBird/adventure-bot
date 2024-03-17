@@ -8,10 +8,7 @@ from views.adventure.template import InteractionCheckMixin, Backpack
 
 class DecisionSelect(ui.Select["Decision"]):
     def __init__(self, choices: t.Iterable[str]):
-        choices = [
-            discord.SelectOption(label=c, value=c)
-            for c in choices
-        ]
+        choices = [discord.SelectOption(label=c, value=c) for c in choices]
         super().__init__(options=choices, placeholder="What do you want to do?")
 
     async def callback(self, i: discord.Interaction):
@@ -23,15 +20,15 @@ class DecisionSelect(ui.Select["Decision"]):
 
 class Decision(ui.View, InteractionCheckMixin):
     def __init__(
-            self,
-            user: discord.Member,
-            choices: t.Iterable[str],
-            loc_file: discord.File | None = None
+        self,
+        user: discord.Member,
+        choices: t.Iterable[str],
+        loc_file: discord.File | None = None,
     ):
         super().__init__()
 
         self.user = user
-        
+
         self.decision = None
         self.show_map = None
         self.loc_img = loc_file

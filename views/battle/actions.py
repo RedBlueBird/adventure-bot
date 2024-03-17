@@ -11,19 +11,14 @@ class Actions(discord.ui.View):
         self.stats_msg = stats_msg
 
     @discord.ui.button(label="Deck", style=discord.ButtonStyle.blurple, row=0)
-    async def deck_button(
-            self, i: discord.Interaction, button: discord.ui.Button
-    ):
-        await i.response.send_message(embed=self.battledata.show_deck(i.user.id), ephemeral=True)
+    async def deck_button(self, i: discord.Interaction, button: discord.ui.Button):
+        await i.response.send_message(
+            embed=self.battledata.show_deck(i.user.id), ephemeral=True
+        )
 
     @discord.ui.button(label="Backpack", style=discord.ButtonStyle.blurple, row=0)
-    async def backpack_button(
-            self, i: discord.Interaction, button: discord.ui.Button
-    ):
-        embed = discord.Embed(
-            title="Test - Backpack",
-            color=discord.Color.gold()
-        )
+    async def backpack_button(self, i: discord.Interaction, button: discord.ui.Button):
+        embed = discord.Embed(title="Test - Backpack", color=discord.Color.gold())
         await i.response.send_message(embed=embed, ephemeral=True)
 
     @discord.ui.button(label="Finish", style=discord.ButtonStyle.secondary, row=1)
@@ -47,13 +42,10 @@ class Actions(discord.ui.View):
             if sum(alive_teams) == 1:
                 embed.add_field(
                     name=f"Team {team_colors[self.battledata.team_orders.index(team_number)]} Won!",
-                    value=" ".join(alive_names)
+                    value=" ".join(alive_names),
                 )
             else:
-                embed.add_field(
-                    name="Draw!",
-                    value="No one won the match"
-                )
+                embed.add_field(name="Draw!", value="No one won the match")
 
             await self.stats_msg.edit(embed=self.battledata.show_stats(), view=None)
             await i.response.send_message(embed=embed)

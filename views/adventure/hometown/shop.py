@@ -20,8 +20,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
         amt = self.amt.value
         if not amt.isdigit() or int(amt) <= 0:
             await i.response.send_message(
-                "That's an invalid amount to buy!",
-                ephemeral=True
+                "That's an invalid amount to buy!", ephemeral=True
             )
             return
         amt = int(amt)
@@ -30,8 +29,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
         name = item.name.lower()
         if name not in self.offers:
             await i.response.send_message(
-                "Sorry, I don't have that item!",
-                ephemeral=True
+                "Sorry, I don't have that item!", ephemeral=True
             )
             return
 
@@ -39,15 +37,14 @@ class BuyForm(ui.Modal, title="Buy something!"):
         if item.weight * amt > r.BP_CAP - u.bp_weight(inv):
             await i.response.send_message(
                 "You don't have enough space in your backpack for these items!",
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
         coins = dm.get_user_coin(self.user.id)
         if item.buy * amt > coins:
             await i.response.send_message(
-                "You can't afford that much stuff!",
-                ephemeral=True
+                "You can't afford that much stuff!", ephemeral=True
             )
             return
 
@@ -63,8 +60,8 @@ class BuyForm(ui.Modal, title="Buy something!"):
         await i.response.send_message(
             f"You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
-            f"for {item.buy * amt} {r.ICON['coin']}!",
-            ephemeral=True
+            f"for {item.buy * amt} {r.ICONS['coin']}!",
+            ephemeral=True,
         )
 
 
@@ -83,6 +80,5 @@ class Shop(ui.View, InteractionCheckMixin):
     async def backpack(self, i: discord.Interaction, button: ui.Button):
         inv = dm.get_user_inventory(self.user.id)
         await i.response.send_message(
-            embed=u.container_embed(inv, "Backpack"),
-            ephemeral=True
+            embed=u.container_embed(inv, "Backpack"), ephemeral=True
         )

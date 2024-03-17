@@ -12,14 +12,11 @@ class TradeSelect(ui.Select["Trade"]):
             c.lower(): [(r_[0].lower(), r_[1]) for r_ in req]
             for c, req in trades.items()
         }
-        
+
         choices = []
         for c in self.trades:
             choices.append(discord.SelectOption(label=c.title(), value=c))
-        super().__init__(
-            options=choices,
-            placeholder="What do you want to trade for?"
-        )
+        super().__init__(options=choices, placeholder="What do you want to trade for?")
 
     async def callback(self, i: discord.Interaction):
         assert self.view is not None
@@ -45,8 +42,8 @@ class TradeSelect(ui.Select["Trade"]):
         if u.bp_weight(inv) + r.item(product).weight > r.BP_CAP:
             await msg.edit(
                 content="Hey, your pack's too full. "
-                        "I couldn't fit it in if I tried.",
-                view=None
+                "I couldn't fit it in if I tried.",
+                view=None,
             )
             await msg.delete(delay=5)
             return
@@ -55,8 +52,9 @@ class TradeSelect(ui.Select["Trade"]):
             if inv.get(item, 0) < amt:
                 await msg.edit(
                     content="Sorry pal, I can't give credits. "
-                            "Come back when you're a little, mmmmmm, RICHER.",
-                    embed=None, view=None
+                    "Come back when you're a little, mmmmmm, RICHER.",
+                    embed=None,
+                    view=None,
                 )
                 break
         else:
@@ -68,16 +66,14 @@ class TradeSelect(ui.Select["Trade"]):
 
             await msg.edit(
                 content=f"Alright man. Here's your {product.title()}.",
-                embed=None, view=None
+                embed=None,
+                view=None,
             )
         await msg.delete(delay=5)
 
 
 class Trade(ui.View, InteractionCheckMixin):
-    def __init__(
-            self, user: discord.Member,
-            trades: dict[str, list[tuple[str, int]]]
-    ):
+    def __init__(self, user: discord.Member, trades: dict[str, list[tuple[str, int]]]):
         super().__init__()
         self.user = user
         self.trades = trades

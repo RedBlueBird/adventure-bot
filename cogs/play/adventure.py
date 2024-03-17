@@ -26,12 +26,9 @@ def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:
 
 
 def setup_minigame(
-        game_name: str, show_map: bool
+    game_name: str, show_map: bool
 ) -> tuple[discord.Embed, discord.File | None]:
-    embed = discord.Embed(
-        title=f"Minigame - {game_name}!",
-        color=discord.Color.gold()
-    )
+    embed = discord.Embed(title=f"Minigame - {game_name}!", color=discord.Color.gold())
 
     logs = [f"• {rule}" for rule in r.MINIGAMES[game_name].rules]
     embed.add_field(name="Rules", value="\n".join(logs))
@@ -61,9 +58,11 @@ def txt_on_img(txt: str) -> io.BytesIO:
 
 
 async def embed_addon(
-        msg: discord.Message, embed: discord.Embed,
-        addon: str, title: str = "Quick!",
-        img: discord.File | None = None
+    msg: discord.Message,
+    embed: discord.Embed,
+    addon: str,
+    title: str = "Quick!",
+    img: discord.File | None = None,
 ) -> discord.Message:
     new = embed.copy()
     new.add_field(name=title, value=addon)
@@ -79,10 +78,7 @@ class Adventure(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.hybrid_command(
-        aliases=["ad", "adv"],
-        description="Go on an adventure!"
-    )
+    @commands.hybrid_command(aliases=["ad", "adv"], description="Go on an adventure!")
     @checks.not_preoccupied("on an adventure")
     @checks.is_registered()
     async def adventure(self, ctx: commands.Context):
@@ -96,18 +92,18 @@ class Adventure(commands.Cog):
         adventure = False
         raid_lvl = None
         # region hometown exploration
-        loading = discord.Embed(title="Loading...", description=r.ICON["load"])
+        loading = discord.Embed(title="Loading...", description=r.ICONS["load"])
         adv_msg = await ctx.reply(embed=loading, mention_author=False)
         while True:
             embed = discord.Embed(
                 title=f"{a.display_name}'s Adventure",
                 description=f"{r.HTOWN[pos].description}",
-                color=discord.Color.gold()
+                color=discord.Color.gold(),
             )
 
             file = discord.File(
                 mark_location("hometown_map", *r.HTOWN[pos].coordinate),
-                filename="hometown_map.png"
+                filename="hometown_map.png",
             )
 
             view = Decision(a, r.HTOWN[pos].choices, file)
@@ -125,14 +121,18 @@ class Adventure(commands.Cog):
             if choice is None:
                 await adv_msg.edit(
                     content="You spaced out and the adventure was ended.",
-                    embed=None, view=None, attachments=[]
+                    embed=None,
+                    view=None,
+                    attachments=[],
                 )
                 break
 
             if choice == "exit":
                 await adv_msg.edit(
                     content="You quit this adventure.",
-                    embed=None, view=None, attachments=[]
+                    embed=None,
+                    view=None,
+                    attachments=[],
                 )
                 break
 
@@ -148,22 +148,27 @@ class Adventure(commands.Cog):
                     view = ht.Sell(a)
                     embed.set_footer(
                         text="You can use `a.info item (name)` "
-                             "to check the sell price of an item!"
+                        "to check the sell price of an item!"
                     )
                     await adv_msg.edit(
-                        content=None,
-                        embed=u.container_embed(inv),
-                        view=view
+                        content=None, embed=u.container_embed(inv), view=view
                     )
                     await view.wait()
                     inv = dm.get_user_inventory(a.id)
 
                 case "buying":
                     offers = [
-                        "forest fruit", "fruit salad", "raft", "torch", "herb",
-                        "health potion", "large health potion",
-                        "power potion", "large power potion",
-                        "resurrection amulet", "teleportation stone"
+                        "forest fruit",
+                        "fruit salad",
+                        "raft",
+                        "torch",
+                        "herb",
+                        "health potion",
+                        "large health potion",
+                        "power potion",
+                        "large power potion",
+                        "resurrection amulet",
+                        "teleportation stone",
                     ]
                     offer_str = []
                     for o in map(r.item, offers):
@@ -174,8 +179,8 @@ class Adventure(commands.Cog):
                     embed = discord.Embed(
                         title="Jessie's Shop:",
                         description="I have everything adventurers need!\n"
-                                    "```" + "\n".join(offer_str) + "```",
-                        color=discord.Color.gold()
+                        "```" + "\n".join(offer_str) + "```",
+                        color=discord.Color.gold(),
                     )
                     view = ht.Shop(a, offers)
                     await adv_msg.edit(embed=embed, view=view)
@@ -185,14 +190,11 @@ class Adventure(commands.Cog):
 
                 case "chest":
                     inv_str = u.container_str(inv)
-                    embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl) \
-                        .add_field(name="Your Backpack", value=f"```{inv_str}```")
+                    embed = u.container_embed(
+                        dm.get_user_storage(a.id), "Chest", lvl
+                    ).add_field(name="Your Backpack", value=f"```{inv_str}```")
                     view = ht.Chest(a)
-                    await adv_msg.edit(
-                        content=None,
-                        embed=embed,
-                        view=view
-                    )
+                    await adv_msg.edit(content=None, embed=embed, view=view)
                     await view.wait()
 
                     inv = dm.get_user_inventory(a.id)
@@ -207,13 +209,10 @@ class Adventure(commands.Cog):
                         view = g.Blackjack(a)
 
                     embed, img = setup_minigame(
-                        r.HTOWN[pos].choices[choice].pos,
-                        show_map
+                        r.HTOWN[pos].choices[choice].pos, show_map
                     )
                     await adv_msg.edit(
-                        embed=embed,
-                        attachments=[] if img is None else [img],
-                        view=view
+                        embed=embed, attachments=[] if img is None else [img], view=view
                     )
                     await view.wait()
                     dm.queues[a.id] = "wandering around town"
@@ -229,20 +228,19 @@ class Adventure(commands.Cog):
                             await ctx.reply(
                                 f"You need to be at least "
                                 f"level {lvl_req} to fight a boss!",
-                                ephemeral=True
+                                ephemeral=True,
                             )
                             continue
                         if dm.get_user_ticket(a.id) < 1:
                             await ctx.reply(
-                                "You need a raid ticket first!",
-                                ephemeral=True
+                                "You need a raid ticket first!", ephemeral=True
                             )
                             continue
 
                         embed = discord.Embed(
                             title="Raid Preparation",
                             description="How hard do you want the raid to be?",
-                            color=discord.Color.yellow()
+                            color=discord.Color.yellow(),
                         )
                         view = ht.LevelSelect(a)
                         await adv_msg.edit(embed=embed, view=view)
@@ -267,9 +265,11 @@ class Adventure(commands.Cog):
             await self.explore(ctx, adv_msg, pos, raid_lvl)
 
     async def explore(
-            self, ctx: commands.Context,
-            adv_msg: discord.Message,
-            journey: str, raid_lvl: int | None
+        self,
+        ctx: commands.Context,
+        adv_msg: discord.Message,
+        journey: str,
+        raid_lvl: int | None,
     ):
         a = ctx.author
 
@@ -291,7 +291,7 @@ class Adventure(commands.Cog):
             embed = discord.Embed(
                 title=f"{a.display_name}'s {journey.title()} Adventure",
                 description=curr_op.description,
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
             decision_view = Decision(a, curr_op.choices or ["Continue"])
             if curr_op.instant is not None:
@@ -309,8 +309,9 @@ class Adventure(commands.Cog):
                     diff = time.time() - start
                     if diff > 2:
                         hp_loss = 300
-                        embed.description = f"**Oh no!**\n" \
-                                            f"You were too slow and lost {hp_loss} HP!"
+                        embed.description = (
+                            f"**Oh no!**\n" f"You were too slow and lost {hp_loss} HP!"
+                        )
                         hp -= hp_loss
                     else:
                         embed.description = "**Awesome!**\nYou dodged just fast enough!"
@@ -324,17 +325,19 @@ class Adventure(commands.Cog):
 
                     reaction_embed = adv_msg.embeds[0]
                     reaction_embed.set_field_at(
-                        0, name="Alright...",
+                        0,
+                        name="Alright...",
                         value="What were those letters?\n"
-                              f"Type `{r.PREF}[what you remember]`!"
+                        f"Type `{r.PREF}[what you remember]`!",
                     )
                     reaction_embed.set_image(url=None)
                     await adv_msg.edit(embed=reaction_embed, attachments=[])
 
                     try:
                         msg = await self.bot.wait_for(
-                            "message", timeout=5,
-                            check=checks.valid_reply("", a, ctx.message.channel)
+                            "message",
+                            timeout=5,
+                            check=checks.valid_reply("", a, ctx.message.channel),
                         )
                         reply = msg.content[2:]
                         await msg.delete()
@@ -343,9 +346,11 @@ class Adventure(commands.Cog):
 
                     if reply != chars:
                         hp_loss = 200
-                        embed.description = f"**Oh no!**\n" \
-                                            f"You misremembered (the letters were {chars}) " \
-                                            f"and lost {hp_loss} HP!"
+                        embed.description = (
+                            f"**Oh no!**\n"
+                            f"You misremembered (the letters were {chars}) "
+                            f"and lost {hp_loss} HP!"
+                        )
                         hp -= hp_loss
                         if hp <= 0:
                             end_cause = "death"
@@ -391,7 +396,7 @@ class Adventure(commands.Cog):
                         msg = await ctx.reply(
                             "Your backpack was too full: "
                             "you have no choice but to ignore the items.",
-                            mention_author=False
+                            mention_author=False,
                         )
                     else:
                         name, (lb, ub) = curr_op.item
@@ -399,8 +404,7 @@ class Adventure(commands.Cog):
                         inv[name] = inv.get(name, 0) + to_add
 
                         msg = await ctx.reply(
-                            f"You got {to_add} {name.title()}!",
-                            mention_author=False
+                            f"You got {to_add} {name.title()}!", mention_author=False
                         )
                     await msg.delete(delay=5)
 
@@ -415,8 +419,7 @@ class Adventure(commands.Cog):
 
                     # maybe vary the description based on a random list?
                     embed = discord.Embed(
-                        title=trader.name.title(),
-                        description=trader.dialogue
+                        title=trader.name.title(), description=trader.dialogue
                     )
                     decision_view = w.Trade(a, to_include)
                     await adv_msg.edit(embed=embed, view=decision_view)
@@ -452,8 +455,7 @@ class Adventure(commands.Cog):
 
         dm.set_user_inventory(a.id, inv)
         await adv_msg.edit(
-            content=f"adventure finished. end cause: {end_cause}",
-            embed=None, view=None
+            content=f"adventure finished. end cause: {end_cause}", embed=None, view=None
         )
 
 

@@ -8,7 +8,7 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
         super().__init__(
             label=f"Team {team}",
             style=discord.ButtonStyle.blurple,
-            row=1 + (team - 1) // 3
+            row=1 + (team - 1) // 3,
         )
         self.team = team
 
@@ -20,7 +20,7 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
         if not_host and id_ in dm.queues and i.user not in self.view.rejected:
             await i.response.send_message(
                 f"You can't accept the request- you're still {dm.queues[id_]}!",
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
@@ -45,10 +45,7 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
 
 class PvpInvite(discord.ui.View):
     def __init__(
-            self,
-            host: discord.Member,
-            invited: list[discord.Member],
-            team_num: int
+        self, host: discord.Member, invited: list[discord.Member], team_num: int
     ):
         super().__init__()
         self.host = host
@@ -67,28 +64,25 @@ class PvpInvite(discord.ui.View):
     async def start_pvp(self, i: discord.Interaction, button: discord.ui.Button):
         if i.user != self.host:
             await i.response.send_message(
-                "Only the host can start the battle!",
-                ephemeral=True
+                "Only the host can start the battle!", ephemeral=True
             )
             return
 
         if self.host not in self.user_team:
             await i.response.send_message(
-                "The host has to join a team first!",
-                ephemeral=True
+                "The host has to join a team first!", ephemeral=True
             )
 
         if len(self.user_team) < 2:
             await i.response.send_message(
-                "At least two people have to join the battle!",
-                ephemeral=True
+                "At least two people have to join the battle!", ephemeral=True
             )
             return
 
         if sum(bool(t) for t in self.teams.values()) < 2:
             await i.response.send_message(
                 "There have to be at least two teams for the battle to start!",
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
@@ -121,16 +115,14 @@ class PvpInvite(discord.ui.View):
             await i.response.send_message(f"{i.user} rejected the battle...")
             if len(self.rejected) == len(self.invited) - 1:
                 await i.response.edit_message(
-                    content="Everyone rejected the battle...",
-                    view=None
+                    content="Everyone rejected the battle...", view=None
                 )
                 self.stop()
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
         if i.user not in self.invited:
             await i.response.send_message(
-                "You must be invited to interact with this message.",
-                ephemeral=True
+                "You must be invited to interact with this message.", ephemeral=True
             )
             return False
         return True

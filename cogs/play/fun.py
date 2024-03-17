@@ -20,11 +20,14 @@ class Fun(commands.Cog):
         if wait_time <= 0:
             wait_time = random.randint(6, 30)
 
-        t = await ctx.reply(f"Reply `{r.PREF}` as close as you can to {wait_time} seconds!")
+        t = await ctx.reply(
+            f"Reply `{r.PREF}` as close as you can to {wait_time} seconds!"
+        )
         try:
             msg = await self.bot.wait_for(
-                "message", timeout=70,
-                check=checks.valid_reply("", ctx.author, ctx.message.channel)
+                "message",
+                timeout=70,
+                check=checks.valid_reply("", ctx.author, ctx.message.channel),
             )
         except asyncio.TimeoutError:
             await ctx.reply(f"Time's up!")
@@ -37,7 +40,9 @@ class Fun(commands.Cog):
             )
 
     @commands.hybrid_command(description="Have Crispy agree with anything!")
-    async def agree(self, ctx: commands.Context, statement: str = "but u said u are stupid"):
+    async def agree(
+        self, ctx: commands.Context, statement: str = "but u said u are stupid"
+    ):
         """Have Crispy agree with anything!"""
         img = Image.open("resources/img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
@@ -74,8 +79,10 @@ class Fun(commands.Cog):
 
     @commands.hybrid_command(description="An Adventure Bot themed meme template.")
     async def kick_meme(
-            self, ctx: commands.Context,
-            kickee: str = "Me dueling someone", kicker: str = "RNG"
+        self,
+        ctx: commands.Context,
+        kickee: str = "Me dueling someone",
+        kicker: str = "RNG",
     ):
         """A adventurers themed meme generator."""
         img = Image.open("resources/img/meme_template.png")

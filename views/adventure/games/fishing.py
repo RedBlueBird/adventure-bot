@@ -51,21 +51,27 @@ class Bait(ui.View):
         elif diff < 1:
             success_rate = 10
 
-        descr = f"You reeled the rod in in {round(time, 2)} seconds," \
-                f"which is {round(diff, 2)} seconds off from {self.wait_time} seconds.\n"
+        descr = (
+            f"You reeled the rod in in {round(time, 2)} seconds,"
+            f"which is {round(diff, 2)} seconds off from {self.wait_time} seconds.\n"
+        )
         if random.randint(1, 100) <= success_rate:
             coin_rwd = 100 * FISH[self.rarity]["rwd_bonus"] - BAIT_COST
             xp_rwd = 5
             title = "Hooray!"
-            descr += f"You caught a {random.choice(FISH[self.rarity]['fish'])}, " \
-                     f"getting {coin_rwd} coins and {xp_rwd} XP!"
+            descr += (
+                f"You caught a {random.choice(FISH[self.rarity]['fish'])}, "
+                f"getting {coin_rwd} coins and {xp_rwd} XP!"
+            )
             color = discord.Color.green()
         else:
             coin_rwd = -BAIT_COST
             xp_rwd = 2
             title = "Aww..."
-            descr += f"The fish got away and you wasted {BAIT_COST} coins on the bait...\n" \
-                     f"Well, at least you gained {xp_rwd} XP!"
+            descr += (
+                f"The fish got away and you wasted {BAIT_COST} coins on the bait...\n"
+                f"Well, at least you gained {xp_rwd} XP!"
+            )
             color = discord.Color.red()
 
         uid = self.user.id
@@ -91,8 +97,7 @@ class Fishing(ui.View, InteractionCheckMixin):
         coins = dm.get_user_coin(self.user.id)
         if coins < BAIT_COST:
             await i.response.send_message(
-                f"You need at least {BAIT_COST} to buy bait!",
-                ephemeral=True
+                f"You need at least {BAIT_COST} to buy bait!", ephemeral=True
             )
             return
 
@@ -102,14 +107,11 @@ class Fishing(ui.View, InteractionCheckMixin):
         embed = discord.Embed(
             title=f"You saw a {rarity} fish!",
             description=f"Try to click the button in exactly {wait} seconds!",
-            color=discord.Color.blurple()
+            color=discord.Color.blurple(),
         )
 
         view = Bait(self.user, rarity, wait)
-        await i.response.send_message(
-            embed=embed,
-            view=view
-        )
+        await i.response.send_message(embed=embed, view=view)
 
         button.disabled = True
         await i.message.edit(view=self)

@@ -50,9 +50,9 @@ def level_check(lvl: int):
 
 
 def valid_reply(
-        replies: list[str] | str,
-        authors: list[discord.Member] | discord.Member,
-        channels: list[discord.TextChannel] | discord.TextChannel
+    replies: list[str] | str,
+    authors: list[discord.Member] | discord.Member,
+    channels: list[discord.TextChannel] | discord.TextChannel,
 ):
     if not isinstance(replies, list):
         replies = [replies]
@@ -72,9 +72,9 @@ def valid_reply(
 
 
 def valid_reaction(
-        reactions: list[str] | str,
-        reactors: list[discord.Member] | discord.Member,
-        msg: list[discord.Message] | discord.Message
+    reactions: list[str] | str,
+    reactors: list[discord.Member] | discord.Member,
+    msg: list[discord.Message] | discord.Message,
 ):
     if not isinstance(reactions, list):
         reactions = [reactions]

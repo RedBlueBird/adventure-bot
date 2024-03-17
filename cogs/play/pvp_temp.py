@@ -13,16 +13,14 @@ class Pvp2(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(
-        aliases=["pvp2"],
-        description="Battle with other players!"
-    )
+    @commands.hybrid_command(aliases=["pvp2"], description="Battle with other players!")
     @checks.level_check(5)
     @checks.not_preoccupied("in a friendly battle")
     @checks.is_registered()
     async def battle2(
-            self, ctx: commands.Context,
-            gamble_medals: int = 0,
+        self,
+        ctx: commands.Context,
+        gamble_medals: int = 0,
     ):
         a = ctx.author
         if not 0 <= gamble_medals <= 10:
@@ -60,7 +58,7 @@ class Pvp2(commands.Cog):
 
         req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
         if gamble_medals > 0:
-            req_msg += f"{a.mention} wants to battle with {gamble_medals} {r.ICON['medal']}!\n"
+            req_msg += f"{a.mention} wants to battle with {gamble_medals} {r.ICONS['medal']}!\n"
         else:
             req_msg += f"{a.mention} wants to have a friendly battle!\n"
 
@@ -91,7 +89,7 @@ class Pvp2(commands.Cog):
                     user=p,
                     team=t_id,
                     id=counter,
-                    deck=player_deck
+                    deck=player_deck,
                 )
                 for card in player.deck:
                     card.owner = player
@@ -106,19 +104,12 @@ class Pvp2(commands.Cog):
             title = "A Friendly Battle Just Started!"
 
         desc = " vs ".join([str(x.user.name) for x in players])
-        embed = discord.Embed(
-            title=title,
-            description=desc,
-            color=discord.Color.gold()
-        )
+        embed = discord.Embed(title=title, description=desc, color=discord.Color.gold())
         await ctx.send(embed=embed)
 
         dd = BattleData2(players=players)
         stats_msg = await ctx.send(embed=dd.set_up())
-        battle_buttons = Actions(
-            battledata=dd,
-            stats_msg=stats_msg
-        )
+        battle_buttons = Actions(battledata=dd, stats_msg=stats_msg)
         # endregion
 
         await stats_msg.edit(embed=dd.show_stats(), view=battle_buttons)
@@ -127,15 +118,9 @@ class Pvp2(commands.Cog):
             if int(player.user.id) in dm.queues:
                 del dm.queues[int(player.user.id)]
 
-    @commands.hybrid_command(
-        aliases=["m"],
-        description="Make a move."
-    )
+    @commands.hybrid_command(aliases=["m"], description="Make a move.")
     @checks.is_registered()
-    async def move(
-            self, ctx: commands.Context,
-            moves: commands.Greedy[int]
-    ):
+    async def move(self, ctx: commands.Context, moves: commands.Greedy[int]):
         dm.set_user_battle_command(ctx.author.id, " ".join([str(i) for i in moves]))
         try:
             await ctx.message.delete()

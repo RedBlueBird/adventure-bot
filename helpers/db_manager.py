@@ -30,7 +30,7 @@ def init():
             host=config["db_host"],
             user=config["db_user"],
             passwd=config["db_pw"],
-            database=config["db_db"]
+            database=config["db_db"],
         )
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -206,7 +206,9 @@ def get_user_cards_count(uid: int) -> int:
 def get_user_deck_count(uid: int, slot: int = 0) -> int:
     slot = get_user_deck_slot(uid) if slot == 0 else slot
     db_deck = f"deck{slot}"
-    cur.execute(f"SELECT COUNT(*) FROM cards WHERE owned_user = {uid} AND {db_deck} = 1")
+    cur.execute(
+        f"SELECT COUNT(*) FROM cards WHERE owned_user = {uid} AND {db_deck} = 1"
+    )
     return cur.fetchall()[0][0]
 
 
@@ -233,12 +235,12 @@ def get_user_deck_ids(uid: int) -> list[int]:
 
 
 def get_user_cards(
-        uid: int,
-        order: int | None = None,
-        name: str | None = None,
-        level: int | None = None,
-        energy: int | None = None,
-        rarity: str | None = None,
+    uid: int,
+    order: int | None = None,
+    name: str | None = None,
+    level: int | None = None,
+    energy: int | None = None,
+    rarity: str | None = None,
 ) -> list[tuple[int, str, int]]:
     conditions = []
     if name is not None:
@@ -253,7 +255,9 @@ def get_user_cards(
     result = cur.fetchall()
 
     if energy is not None:
-        result = [card for card in result if energy == u.cards_dict(card[2], card[1])["cost"]]
+        result = [
+            card for card in result if energy == u.cards_dict(card[2], card[1])["cost"]
+        ]
     if rarity is not None:
         rarity_terms = {
             "L": "legendary",
@@ -261,10 +265,11 @@ def get_user_cards(
             "E": "epic",
             "R": "rare",
             "C": "common",
-            "M": "monster"
+            "M": "monster",
         }
         result = [
-            card for card in result
+            card
+            for card in result
             if rarity == rarity_terms.get(u.cards_dict(card[2], card[1])["rarity"])
         ]
 
@@ -315,7 +320,9 @@ def set_card_owner(uid: int, cid: int):
 
 
 def get_card_decks(cid: int) -> list[int] | None:
-    cur.execute(f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM cards WHERE id = {cid}")
+    cur.execute(
+        f"SELECT deck1, deck2, deck3, deck4, deck5, deck6 FROM cards WHERE id = {cid}"
+    )
     result = cur.fetchall()
     return None if not result else result[0]
 
@@ -327,7 +334,9 @@ def add_user(uid: int):
 
 def set_user_card_deck(uid: int, slot: int, value: int, cid: int):
     db_deck = f"deck{slot}"
-    cur.execute(f"UPDATE cards SET {db_deck} = {value} WHERE id = {cid} AND owned_user = {uid}")
+    cur.execute(
+        f"UPDATE cards SET {db_deck} = {value} WHERE id = {cid} AND owned_user = {uid}"
+    )
     db.commit()
 
 
@@ -410,7 +419,7 @@ def set_user_premium(uid: int, value: dt.datetime):
 
 
 def get_leaderboard(
-        order_by: str, limit: int
+    order_by: str, limit: int
 ) -> list[tuple[int, str, int] | tuple[int, str, int, int]]:
     select = []
     order = []
@@ -437,8 +446,12 @@ def get_leaderboard(
     return cur.fetchall()
 
 
-def get_user_quests(uid: int, quest_type: int = -1) -> list[tuple[int, int, int, int, int]]:
-    operation = "SELECT id, quest_type, reward_type, rarity, progress FROM quest WHERE uid = %s"
+def get_user_quests(
+    uid: int, quest_type: int = -1
+) -> list[tuple[int, int, int, int, int]]:
+    operation = (
+        "SELECT id, quest_type, reward_type, rarity, progress FROM quest WHERE uid = %s"
+    )
     params = (uid,)
     if quest_type != -1:
         operation += " AND quest_type = %s"
@@ -454,9 +467,11 @@ def get_user_quests_count(uid: int) -> int:
 
 
 def add_user_quests(quests: list[tuple[int, int, int, int, int]]):
-    operation = "INSERT INTO quest " \
-                "(uid, quest_type, reward_type, rarity, progress) " \
-                "VALUES (%s, %s, %s, %s, %s)"
+    operation = (
+        "INSERT INTO quest "
+        "(uid, quest_type, reward_type, rarity, progress) "
+        "VALUES (%s, %s, %s, %s, %s)"
+    )
     cur.executemany(operation, quests)
     db.commit()
 

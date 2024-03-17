@@ -87,29 +87,37 @@ class AdventurerBot(commands.Bot):
             embed = discord.Embed(
                 title="Hey, please slow down!",
                 description=f"You can use this command again in "
-                            f"{f'{round(hours)} hours' if round(hours) > 0 else ''} "
-                            f"{f'{round(minutes)} minutes' if round(minutes) > 0 else ''} "
-                            f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
-                color=0xE02B2B
+                f"{f'{round(hours)} hours' if round(hours) > 0 else ''} "
+                f"{f'{round(minutes)} minutes' if round(minutes) > 0 else ''} "
+                f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
+                color=0xE02B2B,
             )
         elif isinstance(error, exceptions.UserNotAdmin):
             # UserNotOwner happens with @checks.is_admin() (or you can manually raise it)
             embed.description = "You're not an admin of the bot!"
         elif isinstance(error, exceptions.UserPreoccupied):
             embed.title = "Hold on!"
-            embed.description = f"You're still {error.action}! " \
-                                "If you think this is a bug, please report it " \
-                                "[here](https://discord.gg/w2CkRtkj57)!"
+            embed.description = (
+                f"You're still {error.action}! "
+                "If you think this is a bug, please report it "
+                "[here](https://discord.gg/w2CkRtkj57)!"
+            )
         elif isinstance(error, exceptions.UserSkillIssue):
-            embed.description = f"You need to be at least level {error.req_lvl} to unlock this command!"
+            embed.description = (
+                f"You need to be at least level {error.req_lvl} to unlock this command!"
+            )
         elif isinstance(error, commands.MissingPermissions):
-            embed.description = "You're missing the permission(s) `" + \
-                                ", ".join(error.missing_permissions) + \
-                                "` to execute this command!"
+            embed.description = (
+                "You're missing the permission(s) `"
+                + ", ".join(error.missing_permissions)
+                + "` to execute this command!"
+            )
         elif isinstance(error, commands.BotMissingPermissions):
-            embed.description = "I'm missing the permission(s) `" + \
-                                ", ".join(error.missing_permissions) + \
-                                "` to fully perform this command!"
+            embed.description = (
+                "I'm missing the permission(s) `"
+                + ", ".join(error.missing_permissions)
+                + "` to fully perform this command!"
+            )
         elif isinstance(error, commands.MissingRequiredArgument):
             embed.description = str(error).capitalize()
         elif isinstance(error, commands.CommandNotFound):
@@ -139,7 +147,7 @@ bot = AdventurerBot(
     command_prefix=commands.when_mentioned_or(PREF),
     intents=intents,
     help_command=None,
-    case_insensitive=True
+    case_insensitive=True,
 )
 bot.config = config
 

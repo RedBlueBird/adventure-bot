@@ -4,11 +4,7 @@ from helpers import db_manager as dm
 
 
 class RaidInvite(discord.ui.View):
-    def __init__(
-            self,
-            host: discord.Member,
-            invited: list[discord.Member]
-    ):
+    def __init__(self, host: discord.Member, invited: list[discord.Member]):
         super().__init__()
         self.host = host
         self.invited = set(invited)
@@ -21,15 +17,13 @@ class RaidInvite(discord.ui.View):
     async def start_raid(self, i: discord.Interaction, button: discord.ui.Button):
         if i.user != self.host:
             await i.response.send_message(
-                "Only the host can start the raid!",
-                ephemeral=True
+                "Only the host can start the raid!", ephemeral=True
             )
             return
 
         if len(self.joined) != len(self.invited):
             await i.response.send_message(
-                "All invitees have to join the raid first!",
-                ephemeral=True
+                "All invitees have to join the raid first!", ephemeral=True
             )
             return
 
@@ -48,7 +42,7 @@ class RaidInvite(discord.ui.View):
         if not_host and id_ in dm.queues and i.user not in self.rejected:
             await i.response.send_message(
                 f"You can't accept the request- you're still {dm.queues[id_]}!",
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
@@ -84,8 +78,7 @@ class RaidInvite(discord.ui.View):
 
         if len(self.rejected) == len(self.invited) - 1:
             await i.edit_original_response(
-                content="Everyone rejected the battle...",
-                view=None
+                content="Everyone rejected the battle...", view=None
             )
             self.start = False
             self.stop()
@@ -93,8 +86,7 @@ class RaidInvite(discord.ui.View):
     async def interaction_check(self, i: discord.Interaction) -> bool:
         if i.user in self.invited:
             await i.response.send_message(
-                "You must be invited to interact with this message.",
-                ephemeral=True
+                "You must be invited to interact with this message.", ephemeral=True
             )
             return False
         return True

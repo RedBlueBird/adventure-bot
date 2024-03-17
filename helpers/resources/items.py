@@ -40,13 +40,22 @@ class Item(BaseModel):
         return self
 
 
-def item(name: str, max_stat=100 * SCALE[0]) -> Item:
+def item(name: str, max_stat=100 * SCALE[0]) -> Item | None:
     name = ITEM_ABB.get(name.lower(), name.lower())
-    
+    if name not in ITEMS:
+        return None
+
     # these stats vary according to max_stat
     variable = {
-        "block", "absorb", "heal", "tramp", "damage",
-        "self_damage", "crush", "revenge", "lich_revenge"
+        "block",
+        "absorb",
+        "heal",
+        "tramp",
+        "damage",
+        "self_damage",
+        "crush",
+        "revenge",
+        "lich_revenge",
     }
     ret = deepcopy(ITEMS[name])
     for attr in ret.model_extra:

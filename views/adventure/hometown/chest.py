@@ -8,9 +8,13 @@ from views.adventure.template import Exit, InteractionCheckMixin
 
 
 def transfer(
-        item: str, amt: int,
-        from_: dict, from_name: str,
-        to: dict, to_name: str, to_storage: int = float("inf")
+    item: str,
+    amt: int,
+    from_: dict,
+    from_name: str,
+    to: dict,
+    to_name: str,
+    to_storage: int = float("inf"),
 ):
     if amt <= 0:
         raise ValueError("That's an invalid amount to take!")
@@ -36,14 +40,11 @@ def transfer(
 
 
 async def submit_chest_form(
-        i: discord.Interaction,
-        action:  t.Literal["take", "deposit"],
-        item: str, amt: str
+    i: discord.Interaction, action: t.Literal["take", "deposit"], item: str, amt: str
 ):
     if not amt.isdigit():
         await i.response.send_message(
-            "That's an invalid amount to take!",
-            ephemeral=True
+            "That's an invalid amount to take!", ephemeral=True
         )
         return
     amt = int(amt)
@@ -54,22 +55,15 @@ async def submit_chest_form(
     lvl = dm.get_user_level(uid)
     try:
         if action == "take":
-            transfer(
-                item, amt,
-                chest, "chest",
-                inv, "backpack", r.BP_CAP
-            )
+            transfer(item, amt, chest, "chest", inv, "backpack", r.BP_CAP)
         else:
-            transfer(
-                item, amt,
-                inv, "backpack",
-                chest, "chest", u.chest_storage(lvl)
-            )
+            transfer(item, amt, inv, "backpack", chest, "chest", u.chest_storage(lvl))
     except ValueError as e:
         await i.response.send_message(e, ephemeral=True)
 
-    embed = u.container_embed(chest, "Chest", lvl) \
-        .add_field(name="Your Backpack", value=f"```{u.container_str(inv)}```")
+    embed = u.container_embed(chest, "Chest", lvl).add_field(
+        name="Your Backpack", value=f"```{u.container_str(inv)}```"
+    )
     await i.response.edit_message(embed=embed)
 
     dm.set_user_inventory(uid, inv)

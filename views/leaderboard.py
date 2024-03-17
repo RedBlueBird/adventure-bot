@@ -55,20 +55,22 @@ class Leaderboard(discord.ui.View):
         embed = discord.Embed(
             title=f"Leaderboard - most {order_by}",
             description="".join(top_players),
-            color=discord.Color.gold()
+            color=discord.Color.gold(),
         )
         return embed
 
     @discord.ui.select(
         options=[
-            discord.SelectOption(label="Level", emoji=r.ICON["exp"]),
-            discord.SelectOption(label="Coins", emoji=r.ICON["coin"]),
-            discord.SelectOption(label="Gems", emoji=r.ICON["gem"]),
-            discord.SelectOption(label="Medals", emoji=r.ICON["medal"]),
-            discord.SelectOption(label="Tokens", emoji=r.ICON["token"]),
+            discord.SelectOption(label="Level", emoji=r.ICONS["exp"].emoji()),
+            discord.SelectOption(label="Coins", emoji=r.ICONS["coin"].emoji()),
+            discord.SelectOption(label="Gems", emoji=r.ICONS["gem"].emoji()),
+            discord.SelectOption(label="Medals", emoji=r.ICONS["medal"].emoji()),
+            discord.SelectOption(label="Tokens", emoji=r.ICONS["token"].emoji()),
         ]
     )
-    async def select_leaderboard(self, i: discord.Interaction, select: discord.ui.Select):
+    async def select_leaderboard(
+        self, i: discord.Interaction, select: discord.ui.Select
+    ):
         self.name = select.values[0].lower()
         self.change_select_default()
         await i.response.edit_message(embed=await self.leaderboard_embed(), view=self)

@@ -329,8 +329,8 @@
     "description": "Deals ${revenge} * (health / max_health) ^ 2 to your target. Costs 2 stamina.",
     "brief": "The perfect counter play when you are running low on health."
   },
-  "bee swarm": {
-    "name": "Bee Swarm",
+  "bees": {
+    "name": "Bees",
     "cost": 4,
     "rarity": "R",
     "eff_acc": 100,

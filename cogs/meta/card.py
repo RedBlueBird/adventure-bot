@@ -20,7 +20,7 @@ class Card(commands.Cog):
         if not cards:
             await ctx.reply("You haven't provided any cards to discard!")
             return
-        
+
         a = ctx.author
         to_discard = []
         discard_msg = []
@@ -46,9 +46,11 @@ class Card(commands.Cog):
         if not to_discard:
             await ctx.reply(msg)
             return
-        msg += "You sure you want to discard:\n" + \
-                "\n".join(discard_msg) + \
-                f"\n{r.ICON['bers']} *(Discarded cards can't be retrieved!)*"
+        msg += (
+            "You sure you want to discard:\n"
+            + "\n".join(discard_msg)
+            + f"\n{r.ICONS['berserk']} *(Discarded cards can't be retrieved!)*"
+        )
 
         view = Confirm()
         msg = await ctx.reply(msg, view=view)
@@ -62,12 +64,11 @@ class Card(commands.Cog):
             return
 
         dm.delete_user_cards(to_discard)
-        s = 's' if len(to_discard) > 1 else ''
+        s = "s" if len(to_discard) > 1 else ""
         await msg.edit(content=f"{len(to_discard)} card{s} discarded.", view=None)
 
     @commands.hybrid_command(
-        aliases=["upg"],
-        description="Upgrade a card by merging it with another."
+        aliases=["upg"], description="Upgrade a card by merging it with another."
     )
     @checks.not_preoccupied("upgrading card")
     @checks.is_registered()
@@ -80,12 +81,16 @@ class Card(commands.Cog):
 
         a = ctx.author
         card = dm.get_card_name(a.id, card_id), dm.get_card_level(a.id, card_id)
-        other_card = dm.get_card_name(a.id, other_card_id), dm.get_card_level(a.id, other_card_id)
+        other_card = dm.get_card_name(a.id, other_card_id), dm.get_card_level(
+            a.id, other_card_id
+        )
 
         if card[0] is None and other_card[0] is None:
-            await ctx.reply(f"You have neither card `#{card_id}` nor `#{other_card_id}`!")
+            await ctx.reply(
+                f"You have neither card `#{card_id}` nor `#{other_card_id}`!"
+            )
             return
-        
+
         if card[0] is None or other_card[0] is None:
             missing = card_id if card[0] is None else other_card_id
             await ctx.reply(f"You don't have card `#{missing}`!")
@@ -95,7 +100,10 @@ class Card(commands.Cog):
             await ctx.reply("Both cards need to be the same level!")
             return
 
-        if u.cards_dict(1, card[0])["rarity"] != u.cards_dict(1, other_card[0])["rarity"]:
+        if (
+            u.cards_dict(1, card[0])["rarity"]
+            != u.cards_dict(1, other_card[0])["rarity"]
+        ):
             await ctx.reply("Both cards need to be the same rarity!")
             return
 
@@ -114,15 +122,17 @@ class Card(commands.Cog):
         upgrade_cost = math.floor(((card[1] + 1) ** 2) * 10)
         coins = dm.get_user_coin(a.id)
         if coins < upgrade_cost:
-            await ctx.reply(f"You don't have enough coins to upgrade! ({upgrade_cost} coins)")
+            await ctx.reply(
+                f"You don't have enough coins to upgrade! ({upgrade_cost} coins)"
+            )
             return
 
         view = Confirm()
         msg = await ctx.reply(
             f"**[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}**\n"
             f"**[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}**\n"
-            f"Upgrading cost {upgrade_cost} {r.ICON['coin']}.",
-            view=view
+            f"Upgrading cost {upgrade_cost} {r.ICONS['coin']}.",
+            view=view,
         )
         await view.wait()
 
@@ -140,17 +150,18 @@ class Card(commands.Cog):
 
         embed = discord.Embed(
             title="Card upgraded successfully!",
-            description=f"-{upgrade_cost} {r.ICON['coin']} "
-                        f"+{(card[1] + 1) * 10} {r.ICON['exp']}",
-            color=discord.Color.green()
+            description=f"-{upgrade_cost} {r.ICONS['coin']} "
+            f"+{(card[1] + 1) * 10} {r.ICONS['exp']}",
+            color=discord.Color.green(),
         )
         embed.add_field(
             name=f"You got a [{u.rarity_cost(card[0])}] {card[0]} lv: {card[1] + 1} from:",
             value=f"[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}\n"
-                  f"[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}"
+            f"[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}",
         )
         embed.set_thumbnail(url=ctx.author.avatar.url)
         await msg.edit(content=None, embed=embed, view=None)
+
 
 async def setup(bot):
     await bot.add_cog(Card(bot))

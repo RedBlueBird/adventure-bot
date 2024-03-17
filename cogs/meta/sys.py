@@ -29,8 +29,18 @@ class Sys(commands.Cog):
         await ctx.send(f"*registering {ctx.author.mention}...*")
 
         card_names = [
-            "Stab", "Stab", "Shield", "Shield", "Strike", "Strike",
-            "Punch", "Punch", "Heal", "Slash", "Explode", "Aim"
+            "Stab",
+            "Stab",
+            "Shield",
+            "Shield",
+            "Strike",
+            "Strike",
+            "Punch",
+            "Punch",
+            "Heal",
+            "Slash",
+            "Explode",
+            "Aim",
         ]
         owned_user = [a.id for _ in range(len(card_names))]
         card_levels = [4 for _ in range(len(card_names))]
@@ -39,7 +49,7 @@ class Sys(commands.Cog):
         dm.add_user(a.id)
         dm.set_user_coin(a.id, 250)
         dm.set_user_gem(a.id, 5)
-        now = dt.datetime.now(dt.datetime.utc)
+        now = dt.datetime.now(dt.UTC)
         dm.set_user_premium(a.id, now + dt.timedelta(days=7))
         dm.set_user_register_date(a.id, now)
         dm.set_user_position(a.id, "home")
@@ -76,14 +86,20 @@ class Sys(commands.Cog):
             level_msg = []
             if (lvl + 1) % 2 == 0:
                 add_hp = round(
-                    (r.SCALE[1] ** math.floor((lvl + 1) / 2) -
-                     r.SCALE[1] ** math.floor(lvl / 2)) * 100 * r.SCALE[0]
+                    (
+                        r.SCALE[1] ** math.floor((lvl + 1) / 2)
+                        - r.SCALE[1] ** math.floor(lvl / 2)
+                    )
+                    * 100
+                    * r.SCALE[0]
                 )
                 level_msg.append(f"Max health +{add_hp}!")
 
             # At levels 17 and 27, the user gets a week of free premium.
             if lvl + 1 in [17, 27]:
-                dm.set_user_premium(a.id, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=7))
+                dm.set_user_premium(
+                    a.id, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=7)
+                )
 
             if r.LEVELS[lvl - 1]:
                 level_msg.extend(r.LEVELS[lvl - 1].format(r.PREF).split("\n"))
@@ -91,16 +107,16 @@ class Sys(commands.Cog):
             embed = discord.Embed(
                 title=f"Congratulations {a.name}!",
                 description=None,
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
 
             coin_gain = lvl * 50
             gem_gain = math.ceil((lvl + 1) / 5) + 1
             embed.add_field(
                 name=f"You're now level {lvl + 1}!",
-                value=f"+{coin_gain} {r.ICON['coin']} \n"
-                      f"+{gem_gain} {r.ICON['gem']} \n"
-                      "```» " + "\n\n» ".join(level_msg) + "```"
+                value=f"+{coin_gain} {r.ICONS['coin']} \n"
+                f"+{gem_gain} {r.ICONS['gem']} \n"
+                "```» " + "\n\n» ".join(level_msg) + "```",
             )
             embed.set_thumbnail(url=a.avatar.url)
             await ctx.reply(embed=embed)
@@ -124,25 +140,28 @@ class Sys(commands.Cog):
             else:
                 amt = random.randint(50, 100)
 
-            await ctx.channel.send(embed=discord.Embed(
-                title=f"A bag of gold showed up out of nowhere!",
-                description=f"Quick! Type `{r.PREF}collect {amt} coins` to collect them!\n"
-                            f"They'll be gone in 10 minutes!",
-                color=discord.Color.green()
-            ))
+            await ctx.channel.send(
+                embed=discord.Embed(
+                    title=f"A bag of gold showed up out of nowhere!",
+                    description=f"Quick! Type `{r.PREF}collect {amt} coins` to collect them!\n"
+                    f"They'll be gone in 10 minutes!",
+                    color=discord.Color.green(),
+                )
+            )
             try:
                 rep: discord.Message = await self.bot.wait_for(
-                    "message", timeout=600.0,
-                    check=lambda m: m.content.lower() == f"{r.PREF}collect {amt} coins"
+                    "message",
+                    timeout=600.0,
+                    check=lambda m: m.content.lower() == f"{r.PREF}collect {amt} coins",
                 )
                 user_coin = dm.get_user_coin(a.id)
                 if user_coin:
                     dm.set_user_coin(a.id, user_coin + amt)
                     if random.randint(1, 100) == 1:
                         dm.set_user_gem(a.id, dm.get_user_gem(a.id) + 1)
-                        msg = f"You got {amt} {r.ICON['coin']} and a bonus {r.ICON['gem']}!"
+                        msg = f"You got {amt} {r.ICONS['coin']} and a bonus {r.ICONS['gem']}!"
                     else:
-                        msg = f"You got {amt} {r.ICON['coin']}!"
+                        msg = f"You got {amt} {r.ICONS['coin']}!"
                 else:
                     msg = f"You have to register in this bot first with `{r.PREF}register`!"
 

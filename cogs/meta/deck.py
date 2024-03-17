@@ -13,9 +13,10 @@ class Deck(commands.Cog):
     @commands.hybrid_command(description="Set the card display order.")
     @checks.is_registered()
     async def order(
-            self, ctx: commands.Context,
-            card_property: t.Literal["level", "id", "name", "energy", "rarity"],
-            order: t.Literal["ascending", "descending"]
+        self,
+        ctx: commands.Context,
+        card_property: t.Literal["level", "id", "name", "energy", "rarity"],
+        order: t.Literal["ascending", "descending"],
     ):
         """Set the card display order."""
         o_num = None
@@ -38,7 +39,7 @@ class Deck(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["selectdeck", "sel", "se"],
-        description="Get a deck from your deck slots."
+        description="Get a deck from your deck slots.",
     )
     @checks.is_registered()
     async def select(self, ctx: commands.Context, slot: int = 0):
@@ -78,7 +79,7 @@ class Deck(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["replace", "switch", "change", "alter"],
-        description="Swap a card from your deck with another."
+        description="Swap a card from your deck with another.",
     )
     @checks.not_preoccupied()
     @checks.is_registered()
@@ -117,9 +118,7 @@ class Deck(commands.Cog):
 
         dm.set_user_card_deck(a.id, slot, 1, new)
         dm.set_user_card_deck(a.id, slot, 0, old)
-        await ctx.reply(
-            f"You swapped\n{swap[0]} with\n{swap[1]}\nin deck #{slot}!"
-        )
+        await ctx.reply(f"You swapped\n{swap[0]} with\n{swap[1]}\nin deck #{slot}!")
 
     @commands.hybrid_command(aliases=["use"], description="Add a card to your deck.")
     @checks.not_preoccupied()
@@ -130,7 +129,7 @@ class Deck(commands.Cog):
         if not cards:
             await ctx.reply("You haven't provided any cards to add!")
             return
-        
+
         a = ctx.author
 
         add_ids = []
@@ -161,11 +160,14 @@ class Deck(commands.Cog):
 
         msg = "\n".join(error_msg) + "\n"
         if add_ids:
-            msg += f"These cards have been added to deck #{slot}:\n" + \
-                   f"\n".join(add_msg)
+            msg += f"These cards have been added to deck #{slot}:\n" + f"\n".join(
+                add_msg
+            )
         await ctx.reply(msg)
 
-    @commands.hybrid_command(aliases=["rem"], description="Remove a card from your deck.")
+    @commands.hybrid_command(
+        aliases=["rem"], description="Remove a card from your deck."
+    )
     @checks.not_preoccupied()
     @checks.is_registered()
     async def remove(self, ctx: commands.Context, cards: commands.Greedy[int]):
@@ -193,18 +195,23 @@ class Deck(commands.Cog):
                 error_msg.append(f"Card #`{c}` isn't in your current deck!")
             elif c not in remove_ids:
                 remove_ids.append(c)
-                remove_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
+                remove_msg.append(
+                    f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`"
+                )
 
         for i in remove_ids:
             dm.set_user_card_deck(a.id, slot, 0, i)
 
         msg = "\n".join(error_msg) + "\n"
         if remove_ids:
-            msg += f"These cards have been removed from deck #{slot}:\n" + \
-                   f"\n".join(remove_msg)
+            msg += f"These cards have been removed from deck #{slot}:\n" + f"\n".join(
+                remove_msg
+            )
         await ctx.reply(msg)
 
-    @commands.hybrid_command(aliases=["cleardeck"], description="Clear your current deck.")
+    @commands.hybrid_command(
+        aliases=["cleardeck"], description="Clear your current deck."
+    )
     @checks.is_registered()
     @checks.not_preoccupied("clearing a deck slot")
     async def clear(self, ctx: commands.Context):
@@ -233,8 +240,9 @@ class Deck(commands.Cog):
             dm.set_user_card_deck(a.id, slot, 0, i[0])
         await msg.edit(
             content=f"Deck #{slot} has been cleared! \n"
-                    f"Do `{r.PREF}add [cards]` to add new cards to your deck!"
+            f"Do `{r.PREF}add [cards]` to add new cards to your deck!"
         )
+
 
 async def setup(bot):
     await bot.add_cog(Deck(bot))

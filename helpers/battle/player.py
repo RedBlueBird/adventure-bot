@@ -14,7 +14,7 @@ class Player:
 
     team: int = 0
     id: int = 0
-    
+
     level: int = 1
     hp: int = 100
     max_hp: int = hp
