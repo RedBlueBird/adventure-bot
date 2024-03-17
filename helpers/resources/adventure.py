@@ -1,49 +1,45 @@
 from dataclasses import field
 
-from pydantic import validator, root_validator, PositiveInt
-from pydantic.dataclasses import dataclass
+from pydantic import field_validator, model_validator, PositiveInt, BaseModel
 
 from helpers.json_loader import load_json
 
 
-@dataclass
-class ItemReq:
+class ItemReq(BaseModel):
     name: str
     amt: PositiveInt
     taken: bool  # After use, will this item disappear?
 
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def lower_name(cls, name: str):
         return name.lower()
 
 
-@dataclass
-class AdventureChoice:
+class AdventureChoice(BaseModel):
     section: str
     subsec: str
     action: str | None = None
     reqs: list[ItemReq] = field(default_factory=list)
 
 
-@dataclass
-class SpawnRange:
+class SpawnRange(BaseModel):
     lb: int
     ub: int
     weight: float
 
 
-@dataclass
-class Instant:
+class Instant(BaseModel):
     trap: str | None = None
 
-    @root_validator
+    @model_validator(mode="before")
+    @classmethod
     def only_one(cls, vals):
         assert sum(i is not None for i in vals.values()) == 1
         return vals
 
 
-@dataclass
-class AdventureNode:
+class AdventureNode(BaseModel):
     description: str
     spawns: list[SpawnRange]
 
@@ -54,17 +50,19 @@ class AdventureNode:
     encounters: dict[str, list[float]] = field(default_factory=dict)
     item: tuple[str, tuple[int, int]] | None = None
 
-    @root_validator
-    def choices_or_to_not_both(cls, vals):
-        assert vals["choices"] is None or vals["to"] is None
-        return vals
+    @model_validator(mode="after")
+    def choices_or_to_not_both(self):
+        assert self.choices is None or self.to is None
+        return self
 
-    @validator("encounters")
+    @field_validator("encounters")
+    @classmethod
     def valid_encounter_probs(cls, e: dict[str, list[float]]):
         assert all(all(0 <= float(p) <= 1 for p in e) for e in e.values())
         return e
 
-    @validator("item")
+    @field_validator("item")
+    @classmethod
     def valid_item_ranges(cls, item: tuple[str, tuple[int, int]] | None):
         if item is None:
             return item

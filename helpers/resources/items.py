@@ -1,17 +1,17 @@
 import typing as t
-from dataclasses import field
 from copy import deepcopy
 
-from pydantic import validator, root_validator, ConfigDict, Extra
-from pydantic.dataclasses import dataclass
+from pydantic import field_validator, model_validator, ConfigDict, Extra, BaseModel
 
 from helpers.json_loader import load_json
 from .constants import SCALE
 
 
-@dataclass(config=ConfigDict(extra=Extra.allow))
-class Item:
+class Item(BaseModel):
+    model_config = ConfigDict(extra=Extra.allow)
+
     name: str
+    abb: str
     description: str
     brief: str
     rarity: t.Literal["NA", "C", "R", "E", "L"]
@@ -22,37 +22,22 @@ class Item:
     eff_acc: int
     one_use: bool
     in_battle: bool
-    abb: str
+
     sta_gain: int
 
     weight: int
     sell: int
     buy: int | None = None
 
-    extra: dict[str, t.Any] = field(default_factory=dict)
-
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def name_lower(cls, v: str):
         return v.lower()
 
-    @root_validator
-    def abb_matches(cls, v):
-        assert ITEM_ABB.get(v["abb"], v["name"]) == v["name"]
-        return v
-
-    @root_validator(pre=True)
-    def build_extra(cls, values: dict[str, t.Any]) -> dict[str, t.Any]:
-        """https://stackoverflow.com/a/69618110/12128483"""
-        req_fields = {
-            field.alias for field in cls.__pydantic_model__.__fields__.values()
-        }  # to support alias
-
-        extra = {}
-        for field_name in list(values):
-            if field_name not in req_fields:
-                extra[field_name] = values.pop(field_name)
-        values["extra"] = extra
-        return values
+    @model_validator(mode="after")
+    def abb_matches(self):
+        assert ITEM_ABB.get(self.abb, self.name) == self.name
+        return self
 
 
 def item(name: str, max_stat=100 * SCALE[0]) -> Item:
@@ -64,9 +49,9 @@ def item(name: str, max_stat=100 * SCALE[0]) -> Item:
         "self_damage", "crush", "revenge", "lich_revenge"
     }
     ret = deepcopy(ITEMS[name])
-    for attr in ret.extra:
+    for attr in ret.model_extra:
         if attr in variable:
-            ret.extra[attr] = round(ret.extra[attr] * max_stat / 100)
+            ret.model_extra[attr] = round(ret.model_extra[attr] * max_stat / 100)
     return ret
 
 

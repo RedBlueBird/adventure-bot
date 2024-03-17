@@ -7,16 +7,17 @@ LEVELS: list[str] = load_json("levels")
 TUTORIAL = load_json("tutorial", True)
 
 I_CONVERT = {
-    "burn": ICON["burn"],
-    "poison": ICON["pois"],
-    "recover": ICON["rec"],
-    "curse": ICON["curs"],
-    "stun": ICON["stun"],
-    "bullseye": ICON["eye"],
-    "berserk": ICON["bers"],
-    "freeze": ICON["frez"],
-    "chill": ICON["chil"],
-    "restore": ICON["rest"],
-    "seriate": ICON["seri"],
-    "feeble": ICON["feeb"]
+    i: ICON[i[:4]] for i in [
+        "poison",
+        "recover",
+        "curse",
+        "stun",
+        "bullseye",
+        "berserk",
+        "freeze",
+        "chill",
+        "restore",
+        "seriate",
+        "feeble"
+    ]
 }

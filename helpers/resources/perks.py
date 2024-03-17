@@ -1,13 +1,12 @@
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 from helpers.json_loader import load_json
 
 
-@dataclass
-class Perk:
+class Perk(BaseModel):
     name: str
     description: str
-    multiplier: tuple[int, int, int, int, int]
+    multiplier: tuple[float, float, float, float, float]
 
 
 raw_perks = load_json("perks")

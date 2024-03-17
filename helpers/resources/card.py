@@ -1,12 +1,11 @@
 import typing as t
 
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 from helpers.json_loader import load_json
 
 
-@dataclass
-class Card:
+class Card(BaseModel):
     name: str
     cost: int
     rarity: t.Literal["NA", "M", "EX", "C", "R", "E", "L"]

@@ -1,16 +1,21 @@
-from pydantic.dataclasses import dataclass
+from pydantic import model_validator, BaseModel
 
 from helpers.json_loader import load_json
 
 
-@dataclass
-class HometownChoice:
+class HometownChoice(BaseModel):
     pos: str
     action: str
 
+    @model_validator(mode="before")
+    @classmethod
+    def parse_list(cls, vals):
+        if isinstance(vals, list):
+            return {k: v for k, v in zip(["pos", "action"], vals)}
+        return vals
 
-@dataclass
-class HometownNode:
+
+class HometownNode(BaseModel):
     description: str
     coordinate: tuple[int, int]
     choices: dict[str, HometownChoice]

@@ -6,8 +6,8 @@ from ..resources import SCALE, CARDS, CARDS_TEMP
 
 def cards_dict(lvl: str | int, name: str):
     level = int(lvl)
-    # lvl = SCALE[1] ** (level - 1) * SCALE[0]
-    # inverse_level = 1.01 ** (level * -1 + 1) * SCALE[0]
+    lvl = SCALE[1] ** (level - 1) * SCALE[0]
+    inverse_level = 1.01 ** (level * -1 + 1) * SCALE[0]
 
     if name.lower() not in CARDS:
         return {
@@ -19,18 +19,21 @@ def cards_dict(lvl: str | int, name: str):
         }
 
     card = copy.deepcopy(CARDS[name.lower()])
-    param = ["block", "absorb", "heal", "tramp", "damage", "self_damage", "pierce_damage", "crush", "revenge", "lich_revenge"]
+    param = [
+        "block", "absorb", "heal", "tramp", "damage", "self_damage",
+        "pierce_damage", "crush", "revenge", "lich_revenge"
+    ]
     for i in card:
         if i in param:
             card[i] = round(card[i] * lvl)
-        elif i in ["c"+j for j in param]:
+        elif i in ["c" + j for j in param]:
             card[i] = round(card[i] * lvl)
         elif i.startswith("eff_app"):
             for side in card[i]:
                 for effect in card[i][side]:
                     for attr in card[i][side][effect]:
                         if attr in param:
-                            card[i][side][effect][attr] = round( card[i][side][effect][attr] * lvl)
+                            card[i][side][effect][attr] = round(card[i][side][effect][attr] * lvl)
         elif i == "inverse_damage":
             card[i] = round(card[i] * inverse_level)
         elif i == "on_hand":

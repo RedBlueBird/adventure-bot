@@ -1,16 +1,11 @@
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 from helpers.json_loader import load_json
 
 
-@dataclass
-class Effect:
+class Effect(BaseModel):
     name: str
     description: str
-
-
-def effect(name: str) -> Effect:
-    return EFFX[name]
 
 
 raw_effx = load_json("effects")

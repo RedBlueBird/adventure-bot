@@ -1,10 +1,9 @@
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 from helpers.json_loader import load_json
 
 
-@dataclass
-class Fish:
+class Fish(BaseModel):
     fish: list[str]
     base_wait: int
     rwd_bonus: float

@@ -79,7 +79,7 @@ class Adventure(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command(
+    @commands.hybrid_command(
         aliases=["ad", "adv"],
         description="Go on an adventure!"
     )
