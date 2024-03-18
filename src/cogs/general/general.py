@@ -36,8 +36,10 @@ class General(commands.Cog):
         embed = discord.Embed(title="Official Links", description=None, color=discord.Color.green())
         embed.add_field(
             name="Bot Invite",
-            value=f"[Link](https://discordapp.com/oauth2/authorize?&client_id={os.environ['APP_ID']}"
-                  f"&scope=bot+applications.commands&permissions={os.environ['APP_PERMS']})",
+            value=(
+                f"[Link](https://discordapp.com/oauth2/authorize?&client_id={os.environ['APP_ID']}"
+                f"&scope=bot+applications.commands&permissions={os.environ['APP_PERMS']})"
+            ),
         )
         embed.add_field(name="Official Server", value="[Link](https://discord.gg/w2CkRtkj57)")
         embed.add_field(

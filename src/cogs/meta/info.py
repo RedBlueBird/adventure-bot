@@ -148,9 +148,7 @@ class Info(commands.Cog):
         embed.set_thumbnail(url=user.avatar.url)
         next_quest = dm.get_user_next_quest(user.id)
         if next_quest is not None:
-            time_left = u.time_converter(
-                int((next_quest - dt.datetime.now()).total_seconds())
-            )
+            time_left = u.time_converter(int((next_quest - dt.datetime.now()).total_seconds()))
             if time_left != "Right now":
                 embed.set_footer(text=f"{time_left} left till a new quest")
         else:
