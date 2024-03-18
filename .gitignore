@@ -147,7 +147,4 @@ adventure-bot.code-workspace
 # SQLITE database
 *.db
 
-# Secret file
-config.json
-
 bot_log.txt

@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 from ast import literal_eval
 import datetime as dt
@@ -9,13 +8,6 @@ from helpers import util as u
 import mysql.connector
 import mysql.connector.cursor_cext
 from mysql.connector import errorcode
-
-config_path = f"{os.path.realpath(os.path.dirname(__file__))}/../config.json"
-if not os.path.isfile(config_path):
-    sys.exit("'config.json' not found! Please add it and try again.")
-else:
-    with open(config_path) as config_file:
-        config = json.load(config_file)
 
 db: mysql.connector.connection_cext.CMySQLConnection | None = None
 cur: mysql.connector.cursor_cext.CMySQLCursor | None = None
@@ -27,10 +19,10 @@ def init():
 
     try:
         db = mysql.connector.connect(
-            host=config["db_host"],
-            user=config["db_user"],
-            passwd=config["db_pw"],
-            database=config["db_db"],
+            host=os.environ["DB_HOST"],
+            user=os.environ["DB_USER"],
+            passwd=os.environ["DB_PW"],
+            database=os.environ["DB_DB"],
         )
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:

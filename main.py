@@ -1,12 +1,11 @@
-import json
 import os
 import platform
-import sys
 import pkgutil
 import importlib
 import typing as t
 from types import ModuleType
 
+from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -35,12 +34,7 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
             yield importlib.import_module(module.name)
 
 
-config_path = dirname = os.path.join(os.path.dirname(__file__), "config.json")
-if not os.path.isfile(config_path):
-    sys.exit("'config.json' not found! Please add it and try again.")
-else:
-    with open(config_path) as config_file:
-        config = json.load(config_file)
+load_dotenv()
 
 
 class AdventurerBot(commands.Bot):
@@ -53,7 +47,7 @@ class AdventurerBot(commands.Bot):
         print(f"Python version: {platform.python_version()}")
         print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
         print("-------------------")
-        if config["sync_commands_globally"]:
+        if int(os.environ["SYNC_CMD_GLOBALLY"]) == 1:
             print("Syncing commands globally...")
             await self.tree.sync()
             print("Finished syncing!")
@@ -150,8 +144,7 @@ bot = AdventurerBot(
     help_command=None,
     case_insensitive=True,
 )
-bot.config = config
 
 if __name__ == "__main__":
     dm.init()
-    bot.run(config["token"])
+    bot.run(os.environ["BOT_TOKEN"])
