@@ -107,7 +107,7 @@ def add_quest(uid: int, quests: list[tuple[int, int, int, int, int]]):
 
 
 def add_quests(uid: int, quests: list[tuple[int, int, int, int, int]]):
-    now = datetime.now(timezone.utc)
+    now = datetime.now()
     is_premium = dm.get_user_premium(uid) > now
     next_quest = dm.get_user_next_quest(uid)
     if next_quest is None:
@@ -119,6 +119,6 @@ def add_quests(uid: int, quests: list[tuple[int, int, int, int, int]]):
         added += 1
     if added:
         if len(quests) == 4 + is_premium:
-            next_quest = None
+            return
         dm.add_user_quests(quests[-added:])
         dm.set_user_next_quest(uid, next_quest)

@@ -138,8 +138,9 @@ class Info(commands.Cog):
                     name=f"**{quest_info['rarity']} {quest_info['description']}**",
                     value=(
                         f"Finished {quest[4]}/{quest_info['requirement']}\n"
-                        f"Reward: **{quest_info['reward']['exp']} {r.ICONS['exp']}"
-                        f" {quest_info['reward']['other']} {r.ICONS[quest_info['reward']['type']]}**"
+                        f"Reward: **{quest_info['reward']['exp']} {r.ICONS['exp'].emoji()}"
+                        f" {quest_info['reward']['other']}"
+                        f" {r.ICONS[quest_info['reward']['type']].emoji()}**"
                     ),
                     inline=False,
                 )
@@ -148,9 +149,9 @@ class Info(commands.Cog):
         next_quest = dm.get_user_next_quest(user.id)
         if next_quest is not None:
             time_left = u.time_converter(
-                int((next_quest - dt.datetime.now(dt.timezone.utc)).total_seconds())
+                int((next_quest - dt.datetime.now()).total_seconds())
             )
-            if time_left != "Right Now":
+            if time_left != "Right now":
                 embed.set_footer(text=f"{time_left} left till a new quest")
         else:
             embed.set_footer(
