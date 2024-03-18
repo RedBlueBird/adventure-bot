@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, resources as r
+from helpers import resources as r
+from db import db_manager as dm
 
 
 class Leaderboard(discord.ui.View):
@@ -15,10 +16,7 @@ class Leaderboard(discord.ui.View):
     def change_select_default(self):
         select: discord.ui.Select = self.children[0]
         for index, option in enumerate(select.options):
-            if option.value.lower() == self.name:
-                select.options[index].default = True
-            else:
-                select.options[index].default = False
+            select.options[index].default = option.value.lower() == self.name
 
     async def leaderboard_embed(self):
         limit = 10

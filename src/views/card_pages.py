@@ -1,6 +1,7 @@
 import discord
 
-from helpers import db_manager as dm, util as u
+from helpers import util as u
+from db import db_manager as dm
 
 
 def chunks(lst: list, n: int):

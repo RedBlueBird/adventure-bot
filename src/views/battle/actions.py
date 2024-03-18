@@ -1,7 +1,7 @@
 import discord
 
 from helpers.battle import BattleData2
-from helpers import db_manager as dm
+from db import db_manager as dm
 
 
 class Actions(discord.ui.View):

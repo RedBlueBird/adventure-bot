@@ -4,7 +4,8 @@ from collections import abc
 import discord
 
 from exceptions import *
-from helpers import db_manager as dm, resources as r
+from helpers import resources as r
+from db import db_manager as dm
 
 T = t.TypeVar("T")
 

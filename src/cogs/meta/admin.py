@@ -6,7 +6,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm, util as u, resources as r, checks
+from helpers import util as u, resources as r, checks
+from db import db_manager as dm
 
 
 class Admin(commands.Cog):

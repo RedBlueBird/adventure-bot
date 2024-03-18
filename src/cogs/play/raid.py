@@ -6,7 +6,8 @@ import typing as t
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, util as u, resources as r, checks
+from helpers import util as u, resources as r, checks
+from db import db_manager as dm
 from helpers.battle import BattleData
 from views.battle import RaidInvite, Select
 

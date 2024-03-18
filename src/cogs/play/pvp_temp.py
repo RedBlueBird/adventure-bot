@@ -4,7 +4,8 @@ import math
 import discord
 from discord.ext import commands
 
-from helpers import db_manager as dm, resources as r, checks
+from helpers import resources as r, checks
+from db import db_manager as dm
 from helpers.battle import BattleData2, Player, Card
 from views.battle import PvpInvite, Select, Actions
 

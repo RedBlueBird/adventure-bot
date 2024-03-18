@@ -5,7 +5,7 @@ import datetime as dt
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm
+from db import db_manager as dm
 from ..template import InteractionCheckMixin, Exit
 
 BAIT_COST = 50

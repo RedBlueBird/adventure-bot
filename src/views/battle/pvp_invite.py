@@ -1,6 +1,6 @@
 import discord
 
-from helpers import db_manager as dm
+from db import db_manager as dm
 
 
 class TeamButton(discord.ui.Button["PvpInvite"]):
