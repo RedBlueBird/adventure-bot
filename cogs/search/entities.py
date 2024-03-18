@@ -17,7 +17,7 @@ RARITIES = {
 }
 
 
-def fill_args(card: dict, level: int, type: str):
+def fill_args(card: dict, level: int, type_: str):
     param = [
         "block",
         "absorb",
@@ -57,7 +57,7 @@ def fill_args(card: dict, level: int, type: str):
                     del curr_dir[-1]
                 del curr_dir[-1]
 
-    return Template(card[type]).safe_substitute(args)
+    return Template(card[type_]).safe_substitute(args)
 
 
 class EntitySearch(commands.Cog):
@@ -98,9 +98,9 @@ class EntitySearch(commands.Cog):
         ]
 
         if card["rarity"] == "M":
-            info_str.insert(len(info_str), "**[Monster Card]** - Unobtainable")
+            info_str.append("**[Monster Card]** - Unobtainable")
         if card["rarity"] == "EX":
-            info_str.insert(len(info_str), "**[Exclusive Card]** - Obtainable in events")
+            info_str.append("**[Exclusive Card]** - Obtainable in events")
 
         embed = discord.Embed(title="Card's info:", color=discord.Color.green())
         embed.add_field(name="Description:", value="\n".join(info_str), inline=False)
@@ -112,46 +112,46 @@ class EntitySearch(commands.Cog):
 
     @info.command()
     async def monster(self, ctx: Context, name: str, level: int = 1):
-        mob_info = r.mob(" ".join(name.lower().split("_")), level)
-        if mob_info is None:
+        mob = r.mob(" ".join(name.lower().split("_")), level)
+        if mob is None:
             await ctx.reply("The requested item was not found!")
 
         info = [
             f"**Level:** {level}",
-            f"**Rarity:** {RARITIES[mob_info.rarity]}",
-            f"**Energy Lag:** {mob_info.energy_lag} turns",
-            f"**Health:** {mob_info.health}",
-            f"**Stamina:** {mob_info.stamina}",
+            f"**Rarity:** {RARITIES[mob.rarity]}",
+            f"**Energy Lag:** {mob.energy_lag} turns",
+            f"**Health:** {mob.health}",
+            f"**Stamina:** {mob.stamina}",
         ]
 
-        embed = discord.Embed(title=f"{mob_info.name}:", color=discord.Color.green())
+        embed = discord.Embed(title=f"{mob.name}:", color=discord.Color.green())
         embed.add_field(name="Description:", value="\n".join(info), inline=False)
-        embed.add_field(name="Brief:", value=f"*{mob_info.brief}*", inline=False)
+        embed.add_field(name="Brief:", value=f"*{mob.brief}*", inline=False)
 
         await ctx.send(embed=embed)
 
     @info.command()
     async def item(self, ctx: Context, name: str):
-        item_info = r.item(name)
-        if item_info is None:
+        item = r.item(name)
+        if item is None:
             await ctx.reply("The requested item was not found!")
 
-        name = item_info.name
+        name = item.name
         info_str = [
-            f"**Weight:** {item_info.weight}",
-            f"**Rarity:** {RARITIES[item_info.rarity]}",
-            f"**Accuracy:** {item_info.acc}%",
-            f"**Critical Chance:** {item_info.crit}%",
-            f"**One Use:** {item_info.one_use}",
-            f"**Use In Battle:** {item_info.in_battle}",
-            f"**Sell Price:** {item_info.sell}gc",
-            f"**Abbreviation:** {item_info.abb}",
+            f"**Weight:** {item.weight}",
+            f"**Rarity:** {RARITIES[item.rarity]}",
+            f"**Accuracy:** {item.acc}%",
+            f"**Critical Chance:** {item.crit}%",
+            f"**One Use:** {item.one_use}",
+            f"**Use In Battle:** {item.in_battle}",
+            f"**Sell Price:** {item.sell}gc",
+            f"**Abbreviation:** {item.abb}",
         ]
 
         embed = discord.Embed(title=f"{name}:", description=None, color=discord.Color.green())
         embed.add_field(name="Description: ", value="\n".join(info_str), inline=False)
-        embed.add_field(name="Uses: ", value=item_info.description, inline=False)
-        embed.add_field(name="Brief: ", value=f"*{item_info.brief}*", inline=False)
+        embed.add_field(name="Uses: ", value=item.description, inline=False)
+        embed.add_field(name="Brief: ", value=f"*{item.brief}*", inline=False)
 
         """
         if "journal" in item_info:  
@@ -170,11 +170,11 @@ class EntitySearch(commands.Cog):
         if name not in r.EFFX:
             await ctx.reply("The requested effect was not found!")
 
-        fx_info = r.EFFX[name]
+        eff = r.EFFX[name]
         embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
-        embed.add_field(name="Description: ", value=f"**Name:** {fx_info.name}", inline=False)
-        embed.add_field(name="Uses: ", value=fx_info.description, inline=False)
-        embed.set_image(url=f"https://cdn.discordapp.com/emojis/{r.ICONS[fx_info.name].id}.png")
+        embed.add_field(name="Description: ", value=f"**Name:** {eff.name}", inline=False)
+        embed.add_field(name="Uses: ", value=eff.description, inline=False)
+        embed.set_image(url=f"https://cdn.discordapp.com/emojis/{r.ICONS[eff.name].id}.png")
         await ctx.send(embed=embed)
 
 

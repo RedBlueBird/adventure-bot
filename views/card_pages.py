@@ -6,17 +6,17 @@ from helpers import db_manager as dm, util as u
 def chunks(lst: list, n: int):
     """https://stackoverflow.com/questions/312443"""
     for i in range(0, len(lst), n):
-        yield lst[i : i + n]
+        yield lst[i: i + n]
 
 
 class CardPages(discord.ui.View):
     def __init__(
-        self,
-        author: discord.Member,
-        user: discord.Member,
-        cards: list | None = None,
-        per_page: int = 15,
-        page: int = 0,
+            self,
+            author: discord.Member,
+            user: discord.Member,
+            cards: list | None = None,
+            per_page: int = 15,
+            page: int = 0,
     ):
         super().__init__()
 

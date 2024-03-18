@@ -47,7 +47,7 @@ class Card(commands.Cog):
         msg += (
             "You sure you want to discard:\n"
             + "\n".join(discard_msg)
-            + f"\n{r.ICONS['berserk']} *(Discarded cards can't be retrieved!)*"
+            + f"\n{r.ICONS['berserk'].emoji()} *(Discarded cards can't be retrieved!)*"
         )
 
         view = Confirm()
@@ -62,11 +62,11 @@ class Card(commands.Cog):
             return
 
         dm.delete_user_cards(to_discard)
-        s = "s" if len(to_discard) > 1 else ""
-        await msg.edit(content=f"{len(to_discard)} card{s} discarded.", view=None)
+        s = "s" if len(to_discard) > 1 else ""  # lol
+        await msg.edit(content=f"{len(to_discard)} card{s} successfully discarded.", view=None)
 
     @commands.hybrid_command(
-        aliases=["upg"], description="Upgrade a card by merging it with another."
+        aliases=["up"], description="Upgrade a card by merging it with another."
     )
     @checks.not_preoccupied("upgrading card")
     @checks.is_registered()
@@ -74,7 +74,7 @@ class Card(commands.Cog):
         """Upgrade a card by merging it with another."""
 
         if card_id == other_card_id:
-            await ctx.reply(f"You cannot upgrade a card using itself!")
+            await ctx.reply(f"You cannot upgrade a card with itself!")
             return
 
         a = ctx.author
@@ -132,7 +132,7 @@ class Card(commands.Cog):
             await msg.edit(content="Upgrading canceled.", view=None)
             return
 
-        await u.update_quest(ctx, a.id, 7, 1)
+        # await u.update_quest(ctx, a.id, 7, 1)
         dm.set_user_coin(a.id, coins - upgrade_cost)
         dm.delete_user_cards([(other_card_id, a.id)])
         dm.set_card_level(card_id, card[1] + 1)

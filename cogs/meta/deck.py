@@ -51,7 +51,7 @@ class Deck(commands.Cog):
             return
 
         if dm.get_user_level(a.id) < r.DECK_LVL_REQ[slot]:
-            await ctx.reply(f"Deck #{slot} is unlocked at {r.DECK_LVL_REQ[slot]}!")
+            await ctx.reply(f"Deck #{slot} is unlocked at level {r.DECK_LVL_REQ[slot]}!")
             return
 
         dm.set_user_deck_slot(a.id, slot)

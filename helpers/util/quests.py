@@ -50,7 +50,7 @@ async def update_quest(ctx: Context, uid: int, quest_type: int, change: int):
     quests = dm.get_user_quests(uid, quest_type)
     if not quests:
         return
-    quest = quests[0]
+    quest = list(quests[0])
     quest[4] += change
 
     qi = quest_info(quest[1], quest[2], quest[3])
@@ -66,7 +66,6 @@ async def update_quest(ctx: Context, uid: int, quest_type: int, change: int):
                 f"**+{qi['reward']['exp']} {ICONS['exp'].emoji()}"
                 f" +{qi['reward']['other']} {ICONS[qi['reward']['type']]}**"
             ),
-            # " +1{ICON['token']}**",
             inline=False,
         )
         embed.set_thumbnail(url=ctx.author.avatar.url)

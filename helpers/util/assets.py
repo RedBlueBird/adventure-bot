@@ -11,7 +11,6 @@ def cards_dict(lvl: str | int, name: str):
 
     name = name.lower()
     if name not in CARDS:
-        print(name, CARDS)
         return None
 
     card = copy.deepcopy(CARDS[name])
