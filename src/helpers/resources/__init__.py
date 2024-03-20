@@ -4,7 +4,7 @@ from .hometown import HTOWN
 from .items import ITEMS, ITEM_ABB, item
 from .mobs import mob
 from .card import card
-from .effects import EFFX
+from .effects import effect
 from .perks import PERKS
 from .fish import FISH
 from .icons import ICONS

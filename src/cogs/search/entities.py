@@ -115,6 +115,7 @@ class EntitySearch(commands.Cog):
         mob = r.mob(name, level)
         if mob is None:
             await ctx.reply("The requested item was not found!")
+            return
 
         info = [
             f"**Level:** {level}",
@@ -135,6 +136,7 @@ class EntitySearch(commands.Cog):
         item = r.item(name)
         if item is None:
             await ctx.reply("The requested item was not found!")
+            return
 
         name = item.name
         info_str = [
@@ -166,11 +168,11 @@ class EntitySearch(commands.Cog):
 
     @info.command()
     async def effect(self, ctx: Context, name: str):
-        name = " ".join(name.lower().split("_"))
-        if name not in r.EFFX:
+        eff = r.effect(name)
+        if eff is None:
             await ctx.reply("The requested effect was not found!")
+            return
 
-        eff = r.EFFX[name]
         embed = discord.Embed(title="Effect's info:", description=None, color=discord.Color.green())
         embed.add_field(name="Description: ", value=f"**Name:** {eff.name}", inline=False)
         embed.add_field(name="Uses: ", value=eff.description, inline=False)

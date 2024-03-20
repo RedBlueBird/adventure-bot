@@ -8,6 +8,11 @@ class Effect(BaseModel):
     description: str
 
 
+def effect(name: str) -> Effect | None:
+    name = " ".join(name.lower().replace("_", " ").split())
+    return EFFX.get(name, None)
+
+
 raw_effx = load_json("effects")
 EFFX: dict[str, Effect] = {}
 for n, eff in raw_effx.items():
