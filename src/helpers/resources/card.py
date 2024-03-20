@@ -6,6 +6,7 @@ from helpers.json_loader import load_json
 
 
 class Card(BaseModel):
+    id: str
     name: str
     cost: int
     rarity: t.Literal["NA", "M", "EX", "C", "R", "E", "L"]
@@ -21,5 +22,5 @@ def card(name: str) -> Card | None:
 
 raw_cards = load_json("cards")
 CARDS: dict[str, Card] = {}
-for name, node in raw_cards.items():
-    CARDS[name] = Card(**node)
+for id_, node in raw_cards.items():
+    CARDS[id_] = Card(**node, id=id_)

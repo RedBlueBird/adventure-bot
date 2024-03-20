@@ -49,7 +49,11 @@ class Admin(commands.Cog):
             return
 
         card = r.card(card)
-        db.Card.create(owner=recipient.id, name=card.name, level=level)
+        if card is None:
+            await ctx.reply("That card doesn't exist!")
+            return
+
+        db.Card.create(owner=recipient.id, name=card.id, level=level)
         await ctx.send(
             f"{recipient.mention}, you received a **[{card.rarity}/{card.cost}] "
             f"{card.name} lv: {level}** from {ctx.author.mention}!"
@@ -63,28 +67,23 @@ class Admin(commands.Cog):
             await ctx.reply("You can't redeem a nonpositive amount of items!")
             return
 
-        item = r.item(item.replace("_", " "))
-        name = item.name
-        inv = dm.get_user_inventory(recipient.id)
+        item = r.item(item)
+        if item is None:
+            await ctx.reply("That item doesn't exist!")
+            return
 
-        if amt > 0 and name not in inv:
-            inv[name] = amt
-        else:
-            inv[name] += amt
+        player = db.Player.select().where(db.Player.uid == recipient.id).get()
+        inv = player.inventory
+        if item.id not in inv:
+            inv[item.id] = 0
+        inv[item.id] += amt
+        player.save()
 
-        inv_delete = []
-        for i in inv:
-            if inv[i] != "x" and inv[i] <= 0:
-                inv_delete.append(i)
-        for i in inv_delete:
-            del inv[i]
-
-        dm.set_user_inventory(recipient.id, json.dumps(inv))
         await ctx.reply(
             f"{recipient.mention}, you received "
             f"**[{item.rarity}/{item.weight}] "
-            f"{name.title()}** x{math.floor(int(amt))} "
-            f"from {ctx.author.mention}"
+            f"{item.name}** x{amt} "
+            f"from {ctx.author.mention}!"
         )
 
     @commands.hybrid_command(

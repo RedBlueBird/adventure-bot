@@ -10,6 +10,7 @@ from .constants import SCALE
 class Item(BaseModel):
     model_config = ConfigDict(extra=Extra.allow)
 
+    id: str
     name: str
     abb: str
     description: str
@@ -29,14 +30,9 @@ class Item(BaseModel):
     sell: int
     buy: int | None = None
 
-    @field_validator("name")
-    @classmethod
-    def name_lower(cls, v: str):
-        return v.lower()
-
     @model_validator(mode="after")
     def abb_matches(self):
-        assert ITEM_ABB.get(self.abb, self.name) == self.name
+        assert ITEM_ABB.get(self.abb, self.id) == self.id
         return self
 
 
@@ -67,5 +63,5 @@ def item(name: str, max_stat=100 * SCALE[0]) -> Item | None:
 ITEM_ABB: dict[str, str] = load_json("item_abbreviations")
 raw_items = load_json("items")
 ITEMS: dict[str, Item] = {}
-for n, i in raw_items.items():
-    ITEMS[n] = Item(**i)
+for id_, i in raw_items.items():
+    ITEMS[id_] = Item(**i, id=id_)
