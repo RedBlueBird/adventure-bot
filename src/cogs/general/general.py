@@ -46,19 +46,7 @@ class General(commands.Cog):
             name="Official Wiki",
             value="[Link](https://discord-adventurers-bot.fandom.com)",
         )
-        await ctx.send(embed=embed)
-
-    @commands.hybrid_command(
-        name="ping",
-        description="Check if the bot is alive.",
-    )
-    async def ping(self, ctx: Context) -> None:
-        """Check if the bot is alive."""
-        embed = discord.Embed(
-            title="🏓 Pong!",
-            description=f"The bot latency is {round(self.bot.latency * 1000)}ms.",
-            color=0x9C84EF,
-        )
+        embed.set_footer(text=f"Bot latency: {round(self.bot.latency * 1e3)} ms")
         await ctx.send(embed=embed)
 
 
