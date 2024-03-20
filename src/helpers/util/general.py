@@ -65,7 +65,8 @@ def clamp(i: int, lo: int, hi: int) -> int:
 
 
 def randint_log(a: int, b: int) -> int:
-    """Selects a random number in the range [a, b]
+    """
+    Selects a random number in the range [a, b]
     with successive numbers having half the chance of the previous to be selected.
     :param a: The minimum number that can be selected.
     :param b: The maximum number that can be selected.

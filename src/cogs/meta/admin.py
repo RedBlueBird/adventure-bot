@@ -71,7 +71,7 @@ class Admin(commands.Cog):
             await ctx.reply("That item doesn't exist!")
             return
 
-        player = db.Player.select().where(db.Player.uid == recipient.id).get()
+        player = db.Player.get_by_id(recipient.id)
         inv = player.inventory
         if item.id not in inv:
             inv[item.id] = 0
@@ -103,9 +103,9 @@ class Admin(commands.Cog):
             new_medals = (p.medals - cap) // 2 + cap if p.medals > cap else p.medals
 
             msg = (
-                "The season ended!"
-                f"You now have {new_medals} {r.ICONS['medal'].emoji()} (initially {p.medals}) "
-                f"\n+{earned_coins} {r.ICONS['coin'].emoji()}!"
+                "The season ended!You now have"
+                f" {new_medals} {r.ICONS['medal'].emoji()} (initially {p.medals})"
+                f" \n+{earned_coins} {r.ICONS['coin'].emoji()}!"
             )
             if earned_gems > 0:
                 msg += f"\n+{earned_gems} {r.ICONS['gem'].emoji()}"

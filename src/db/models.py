@@ -11,6 +11,8 @@ db = MySQLDatabase(
     user=os.environ["DB_USER"],
     password=os.environ["DB_PW"],
     host=os.environ["DB_HOST"],
+    # https://stackoverflow.com/a/55617654/12128483
+    ssl={"fake_flag_to_enable_tls": True},
 )
 
 

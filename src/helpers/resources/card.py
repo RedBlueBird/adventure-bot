@@ -14,6 +14,9 @@ class Card(BaseModel):
     description: str
     brief: str
 
+    def __str__(self):
+        return f"[{self.rarity}/{self.cost}] {self.name}"
+
 
 def card(name: str) -> Card | None:
     name = " ".join(name.lower().replace("_", " ").split())

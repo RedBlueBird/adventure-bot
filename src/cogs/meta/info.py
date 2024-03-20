@@ -137,7 +137,8 @@ class Info(commands.Cog):
                     name=f"**{quest_info['rarity']} {quest_info['description']}**",
                     value=(
                         f"Finished {quest[4]}/{quest_info['requirement']}\n"
-                        f"Reward: **{quest_info['reward']['exp']} {r.ICONS['exp'].emoji()}"
+                        "Reward:"
+                        f" **{quest_info['reward']['exp']} {r.ICONS['exp'].emoji()}"
                         f" {quest_info['reward']['other']}"
                         f" {r.ICONS[quest_info['reward']['type']].emoji()}**"
                     ),

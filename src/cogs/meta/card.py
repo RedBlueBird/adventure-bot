@@ -3,7 +3,8 @@ import math
 import discord
 from discord.ext import commands
 
-from helpers import util as u, resources as r, checks, db_manager as dm
+import db
+from helpers import resources as r, checks
 from views import Confirm
 
 
@@ -21,34 +22,27 @@ class Card(commands.Cog):
             await ctx.reply("You haven't provided any cards to discard!")
             return
 
+        cards = set(cards)
         a = ctx.author
-        to_discard = []
-        discard_msg = []
-        error_msg = []
-        for c in cards:
-            name = dm.get_card_name(a.id, c)
-            lvl = dm.get_card_level(a.id, c)
-
-            if not name:
-                error_msg.append(f"You don't have a card with ID #`{c}`!")
-            elif (c, a.id) in to_discard:
-                error_msg.append(f"You've already chosen Card `#{c}` for disposal!")
-            else:
-                to_discard.append((c, a.id))
-                discard_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
-
-        msg = "\n".join(error_msg) + "\n"
-        if not to_discard:
-            await ctx.reply(msg)
+        db_cards = list(db.Card.select().where(db.Card.id.in_(cards)).where(db.Card.owner == a.id))
+        if not db_cards:
+            await ctx.reply("You don't have any of the specified cards!")
             return
-        msg += (
-            "Are you sure you want to discard:\n"
-            + "\n".join(discard_msg)
-            + f"\n{r.ICONS['berserk'].emoji()} *(These can't be retrieved!)*"
-        )
+
+        to_discard = []
+        for c in db_cards:
+            card = r.card(c.name)
+            to_discard.append(
+                f"**[{card.rarity}/{card.cost}] {card.name} lv: {c.level}** #`{c.id}`"
+            )
 
         view = Confirm()
-        msg = await ctx.reply(msg, view=view)
+        confirm_msg = (
+            "Are you sure you want to discard:\n"
+            + "\n".join(to_discard)
+            + f"\n{r.ICONS['berserk'].emoji()} *(These can't be retrieved!)*"
+        )
+        msg = await ctx.reply(confirm_msg, view=view)
         await view.wait()
 
         if view.value is None:
@@ -58,7 +52,7 @@ class Card(commands.Cog):
             await msg.edit(content="Discarding canceled.", view=None)
             return
 
-        dm.delete_user_cards(to_discard)
+        db.Card.delete().where(db.Card.id.in_([c.id for c in db_cards])).execute()
         s = "s" if len(to_discard) > 1 else ""  # lol
         await msg.edit(content=f"{len(to_discard)} card{s} successfully discarded.", view=None)
 
@@ -67,57 +61,46 @@ class Card(commands.Cog):
     )
     @checks.not_preoccupied("upgrading card")
     @checks.is_registered()
-    async def upgrade(self, ctx: commands.Context, card_id: int, other_card_id: int):
+    async def upgrade(self, ctx: commands.Context, to_upgrade: int, to_destroy: int):
         """Upgrade a card by merging it with another."""
 
-        if card_id == other_card_id:
-            await ctx.reply(f"You cannot upgrade a card with itself!")
+        if to_upgrade == to_destroy:
+            await ctx.reply(f"You can't upgrade a card with itself!")
             return
 
         a = ctx.author
-        card = dm.get_card_name(a.id, card_id), dm.get_card_level(a.id, card_id)
-        other_card = dm.get_card_name(a.id, other_card_id), dm.get_card_level(a.id, other_card_id)
+        upgraded = db.Card.get_or_none((db.Card.id == to_upgrade) & (db.Card.owner_id == a.id))
+        destroyed = db.Card.get_or_none((db.Card.id == to_destroy) & (db.Card.owner_id == a.id))
 
-        if card[0] is None and other_card[0] is None:
-            await ctx.reply(f"You have neither card `#{card_id}` nor `#{other_card_id}`!")
+        if upgraded is None:
+            await ctx.reply(f"You don't own a card #`{to_upgrade}`!")
             return
 
-        if card[0] is None or other_card[0] is None:
-            missing = card_id if card[0] is None else other_card_id
-            await ctx.reply(f"You don't have card `#{missing}`!")
+        if destroyed is None:
+            await ctx.reply(f"You don't own a card #`{to_destroy}`!")
             return
 
-        if card[1] != other_card[1]:
-            await ctx.reply("Both cards need to be the same level!")
+        if upgraded.level >= 15:
+            await ctx.reply("The card to upgrade is maxed out already!")
+
+        upgr_card = r.card(upgraded.name)
+        destr_card = r.card(destroyed.name)
+        print(upgr_card, destr_card, upgraded.level, destroyed.level)
+        if upgr_card.rarity != destr_card.rarity or upgraded.level != destroyed.level:
+            await ctx.reply("Both cards have to be the same level and rarity!")
             return
 
-        if u.cards_dict(1, card[0])["rarity"] != u.cards_dict(1, other_card[0])["rarity"]:
-            await ctx.reply("Both cards need to be the same rarity!")
-            return
-
-        if card[1] >= 15:
-            await ctx.reply("The card to upgrade is maxed out!")
-            return
-
-        if any(dm.get_card_decks(other_card_id)):
-            await ctx.reply(
-                "The sacrificial card you chose "
-                "is currently in one of your deck slots-\n"
-                f"Do `{r.PREF}remove {other_card_id}` first before you sacrifice it!"
-            )
-            return
-
-        upgrade_cost = math.floor(((card[1] + 1) ** 2) * 10)
-        coins = dm.get_user_coin(a.id)
-        if coins < upgrade_cost:
+        player = db.Player.get_by_id(a.id)
+        upgrade_cost = math.floor(((upgraded.level + 1) ** 2) * 10)
+        if player.coins < upgrade_cost:
             await ctx.reply(f"You don't have enough coins to upgrade! ({upgrade_cost} coins)")
             return
 
         view = Confirm()
         msg = await ctx.reply(
-            f"**[{u.rarity_cost(card[0])}] {card[0]} lv:"
-            f" {card[1]}**\n**[{u.rarity_cost(other_card[0])}] {other_card[0]} lv:"
-            f" {other_card[1]}**\nUpgrading cost {upgrade_cost} {r.ICONS['coin'].emoji()}.",
+            f"**{upgr_card} lv: {upgraded.level}**\n"
+            f"**{destr_card} lv: {destroyed.level}**\n"
+            f"Upgrading cost {upgrade_cost} {r.ICONS['coin'].emoji()}.",
             view=view,
         )
         await view.wait()
@@ -130,24 +113,25 @@ class Card(commands.Cog):
             return
 
         # await u.update_quest(ctx, a.id, 7, 1)
-        dm.set_user_coin(a.id, coins - upgrade_cost)
-        dm.delete_user_cards([(other_card_id, a.id)])
-        dm.set_card_level(card_id, card[1] + 1)
+        gained_xp = (upgraded.level + 1) * 10
+        player.xp += gained_xp
+        player.coins -= upgrade_cost
+        player.save()
+        upgraded.level += 1
+        upgraded.save()
+        destroyed.delete_instance()
 
         embed = discord.Embed(
             title="Card upgraded successfully!",
             description=(
                 f"-{upgrade_cost} {r.ICONS['coin'].emoji()} "
-                f"+{(card[1] + 1) * 10} {r.ICONS['exp'].emoji()}"
+                f"+{gained_xp} {r.ICONS['exp'].emoji()}"
             ),
             color=discord.Color.green(),
         )
         embed.add_field(
-            name=f"You got a [{u.rarity_cost(card[0])}] {card[0]} lv: {card[1] + 1} from:",
-            value=(
-                f"[{u.rarity_cost(card[0])}] {card[0]} lv: {card[1]}\n"
-                f"[{u.rarity_cost(other_card[0])}] {other_card[0]} lv: {other_card[1]}"
-            ),
+            name=f"You got a {upgr_card } lv: {upgraded.level} from:",
+            value=f"{upgr_card} lv: {upgraded.level}\n{destr_card} lv: {destroyed.level}",
         )
         embed.set_thumbnail(url=ctx.author.avatar.url)
         await msg.edit(content=None, embed=embed, view=None)
