@@ -40,7 +40,7 @@ class Card(commands.Cog):
         confirm_msg = (
             "Are you sure you want to discard:\n"
             + "\n".join(to_discard)
-            + f"\n{r.ICONS['berserk'].emoji()} *(These can't be retrieved!)*"
+            + f"\n{r.ICONS['berserk']} *(These can't be retrieved!)*"
         )
         msg = await ctx.reply(confirm_msg, view=view)
         await view.wait()
@@ -100,7 +100,7 @@ class Card(commands.Cog):
         msg = await ctx.reply(
             f"**{upgr_card} lv: {upgraded.level}**\n"
             f"**{destr_card} lv: {destroyed.level}**\n"
-            f"Upgrading cost {upgrade_cost} {r.ICONS['coin'].emoji()}.",
+            f"Upgrading cost {upgrade_cost} {r.ICONS['coin']}.",
             view=view,
         )
         await view.wait()
@@ -124,8 +124,8 @@ class Card(commands.Cog):
         embed = discord.Embed(
             title="Card upgraded successfully!",
             description=(
-                f"-{upgrade_cost} {r.ICONS['coin'].emoji()} "
-                f"+{gained_xp} {r.ICONS['exp'].emoji()}"
+                f"-{upgrade_cost} {r.ICONS['coin']} "
+                f"+{gained_xp} {r.ICONS['exp']}"
             ),
             color=discord.Color.green(),
         )

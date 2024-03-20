@@ -63,7 +63,7 @@ async def update_quest(ctx: Context, uid: int, quest_type: int, change: int):
         embed.add_field(
             name=f"**{qi['rarity']} {qi['description']}**",
             value=(
-                f"**+{qi['reward']['exp']} {ICONS['exp'].emoji()}"
+                f"**+{qi['reward']['exp']} {ICONS['exp']}"
                 f" +{qi['reward']['other']} {ICONS[qi['reward']['type']]}**"
             ),
             inline=False,

@@ -72,7 +72,7 @@ class Card:
     ):
         icon_name = icon_attr
         if is_icon:
-            icon_name = r.ICONS[icon_attr].emoji()
+            icon_name = r.ICONS[icon_attr]
 
         self.owner.dialogue.append(
             f"{'•' if is_dotted else ' '} {card_attr} "

@@ -90,7 +90,7 @@ class Adventure(commands.Cog):
         adventure = False
         raid_lvl = None
         # region hometown exploration
-        loading = discord.Embed(title="Loading...", description=r.ICONS["load"].emoji())
+        loading = discord.Embed(title="Loading...", description=r.ICONS["load"])
         adv_msg = await ctx.reply(embed=loading, mention_author=False)
         while True:
             embed = discord.Embed(

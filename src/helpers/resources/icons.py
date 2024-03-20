@@ -8,7 +8,7 @@ class Icon(BaseModel):
     id: int
     animated: bool
 
-    def emoji(self):
+    def __str__(self):
         return f"<{'a' if self.animated else ''}:{self.name}:{self.id}>"
 
 

@@ -54,7 +54,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
         await i.response.send_message(
             "You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
-            f"for {item.buy * amt} {r.ICONS['coin'].emoji()}!",
+            f"for {item.buy * amt} {r.ICONS['coin']}!",
             ephemeral=True,
         )
 

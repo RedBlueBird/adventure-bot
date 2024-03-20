@@ -104,11 +104,11 @@ class Admin(commands.Cog):
 
             msg = (
                 "The season ended!You now have"
-                f" {new_medals} {r.ICONS['medal'].emoji()} (initially {p.medals})"
-                f" \n+{earned_coins} {r.ICONS['coin'].emoji()}!"
+                f" {new_medals} {r.ICONS['medal']} (initially {p.medals})"
+                f" \n+{earned_coins} {r.ICONS['coin']}!"
             )
             if earned_gems > 0:
-                msg += f"\n+{earned_gems} {r.ICONS['gem'].emoji()}"
+                msg += f"\n+{earned_gems} {r.ICONS['gem']}"
 
             user = await self.bot.fetch_user(p.uid)
             await user.send(msg)

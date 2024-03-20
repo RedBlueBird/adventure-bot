@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
+import db
 from helpers import util as u, resources as r, checks, db_manager as dm
 from views import Shop, CardPages, Decks, Leaderboard
 
@@ -21,14 +22,15 @@ class Info(commands.Cog):
     async def profile(self, ctx: Context, user: discord.Member = commands.Author):
         """Check a player's general information."""
 
-        if not dm.is_registered(user.id):
-            await ctx.send(f"{ctx.author.mention}, that user isn't registered!")
+        player = db.Player.get_or_none(db.Player.uid == user.id)
+        if player is None:
+            await ctx.reply(f"That user isn't registered!")
             return
 
-        user_premium = dm.get_user_premium(user.id)
-        now = dt.datetime.now(dt.timezone.utc)
-        if user_premium > now:
-            days_left = (user_premium - now).days
+        prem_expiration = player.premium_acc
+        now = dt.date.today()
+        if prem_expiration > now:
+            days_left = (prem_expiration - now).days
             description_msg = f"14\n{r.ICONS['timer']}**ᴘʀᴇᴍɪᴜᴍ**: {days_left} days remaining\n"
             tickets = 10
         else:
@@ -36,10 +38,10 @@ class Info(commands.Cog):
             tickets = 5
 
         tick_msg = ""
-        lvl = dm.get_user_level(user.id)
+        lvl = player.level
         if lvl >= 4:
             tick_msg = (
-                f"{r.ICONS['ticket']}**Raid Tickets: **{dm.get_user_ticket(user.id)}/{tickets}"
+                f"{r.ICONS['ticket']}**Raid Tickets: **{player.raid_tickets}/{tickets}"
             )
 
         descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
@@ -51,57 +53,56 @@ class Info(commands.Cog):
         embed.set_thumbnail(url=user.avatar.url)
 
         hp = u.level_hp(lvl)
-        xp = dm.get_user_exp(user.id)
         if lvl < 30:
             embed.add_field(
                 name=f"Current Level: {lvl}",
-                value=f"{r.ICONS['exp']} {xp}/{u.level_xp(lvl)}\n{r.ICONS['hp']} {hp}",
+                value=f"{r.ICONS['exp']} {player.xp}/{u.level_xp(lvl)}\n{r.ICONS['hp']} {hp}",
                 inline=False,
             )
         else:
             embed.add_field(
                 name=f"Max Level: {lvl}",
-                value=f"{r.ICONS['exp']} {xp}\n{r.ICONS['hp']} {hp}",
+                value=f"{r.ICONS['exp']} {player.xp}\n{r.ICONS['hp']} {hp}",
                 inline=False,
             )
 
         user_daily = dm.get_user_daily(user.id)
-        dts = "Right now!" if user_daily.date() != dt.date.today() else u.time_til_midnight()
+        dts = "Right now!" if user_daily.date() != now else u.time_til_midnight()
         embed.add_field(
             name="Currency",
             value=(
-                f"{r.ICONS['coin']}**Golden Coins: **{dm.get_user_coin(user.id)}\n"
-                f"{r.ICONS['gem']}**Shiny Gems: **{dm.get_user_gem(user.id)}\n"
-                f"{r.ICONS['token']}**Confetti: **{dm.get_user_token(user.id)}\n"
-                f"{r.ICONS['medal']}**Medals: **{dm.get_user_gem(user.id)}\n"
+                f"{r.ICONS['coin']} **Golden Coins: **{player.coins}\n"
+                f"{r.ICONS['gem']} **Shiny Gems: **{player.gems}\n"
+                f"{r.ICONS['token']} **Confetti: **{player.event_tokens}\n"
+                f"{r.ICONS['medal']} **Medals: **{player.medals}\n"
                 f"{tick_msg}"
             ),
             inline=False,
         )
 
-        next_quest = dm.get_user_next_quest(user.id).timestamp()
-        nq = u.time_converter(int(next_quest - now)) if next_quest is not None else "--"
-        embed.add_field(
-            name="Tasks",
-            value=f"{r.ICONS['streak']}**Daily streak: **{dm.get_user_streak(user.id)}/"
-            + description_msg
-            + f"{r.ICONS['timer']}**Next daily: **{dts}\n{r.ICONS['timer']}**Next quest: **{nq}",
-            inline=False,
-        )
+        # next_quest = dm.get_user_next_quest(user.id).timestamp()
+        # nq = u.time_converter(int(next_quest - now)) if next_quest is not None else "--"
+        # embed.add_field(
+        #     name="Tasks",
+        #     value=f"{r.ICONS['streak']}**Daily streak: **{player.streak}/"
+        #     + description_msg
+        #     + f"{r.ICONS['timer']}**Next daily: **{dts}\n{r.ICONS['timer']}**Next quest: **{nq}",
+        #     inline=False,
+        # )
 
-        badges = dm.get_user_badge(user.id)
-        if badges != 2**30:
+        if player.badges != 0:
             icons = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
             owned_badges = []
+            print(player.badges)
             for i in range(len(icons)):
-                if badges & (1 << i):  # Checks if the ith bit is set
-                    owned_badges.append(r.ICONS[icons[i]])
-            embed.add_field(name="Badges: ", value=" ".join(owned_badges))
+                if player.badges & (1 << i):  # Checks if the ith bit is set
+                    owned_badges.append(str(r.ICONS[icons[i]]))
+            embed.add_field(name="Badges", value=" ".join(owned_badges))
 
         embed.set_footer(
             text=(
-                f"Player ID: {dm.get_id(user.id)}; "
-                f"Register Date: {dm.get_user_register_date(user.id)}"
+                f"Player ID: {player.uid}; "
+                f"Register Date: {player.creation_date}"
             )
         )
         await ctx.send(embed=embed)
@@ -138,9 +139,9 @@ class Info(commands.Cog):
                     value=(
                         f"Finished {quest[4]}/{quest_info['requirement']}\n"
                         "Reward:"
-                        f" **{quest_info['reward']['exp']} {r.ICONS['exp'].emoji()}"
+                        f" **{quest_info['reward']['exp']} {r.ICONS['exp']}"
                         f" {quest_info['reward']['other']}"
-                        f" {r.ICONS[quest_info['reward']['type']].emoji()}**"
+                        f" {r.ICONS[quest_info['reward']['type']]}**"
                     ),
                     inline=False,
                 )

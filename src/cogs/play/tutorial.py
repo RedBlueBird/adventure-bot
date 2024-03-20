@@ -195,7 +195,7 @@ class Tutorial(commands.Cog):
                     if dd.hand_sizes.info[1] != 6:
                         dd.hand_sizes.info[1] += 1
                     dd.descriptions.info[1].append(
-                        f"{r.ICONS['ski'].emoji()}{r.ICONS['kip'].emoji()}\n"
+                        f"{r.ICONS['ski']}{r.ICONS['kip']}\n"
                     )
                     is_turn_over = True
                 elif action == "flee":
@@ -218,11 +218,11 @@ class Tutorial(commands.Cog):
                         dd.hand_sizes.info[1] += 1
                     if random.randint(1, 100) > 0:
                         dd.descriptions.info[1].append(
-                            f"{r.ICONS['fle'].emoji()}{r.ICONS['lee'].emoji()} {r.ICONS['mi'].emoji()}{r.ICONS['ss'].emoji()}\n"
+                            f"{r.ICONS['fle']}{r.ICONS['lee']} {r.ICONS['mi']}{r.ICONS['ss']}\n"
                         )
                     else:
                         dd.descriptions.info[1].append(
-                            f"{r.ICONS['fle'].emoji()}{r.ICONS['lee'].emoji()}\n"
+                            f"{r.ICONS['fle']}{r.ICONS['lee']}\n"
                         )
                         dd.afk = 8
                     if step == 20:
@@ -376,7 +376,7 @@ class Tutorial(commands.Cog):
                             dd.hand_sizes.info[enemy] += 1
                         dd.descriptions.info[enemy].insert(
                             len(dd.descriptions.info[enemy]),
-                            f"{r.ICONS['ski'].emoji()}{r.ICONS['kip'].emoji()}\n",
+                            f"{r.ICONS['ski']}{r.ICONS['kip']}\n",
                         )
                     elif enemy_action == "flee":
                         dd.afk = len(dd.players.info) + enemy
@@ -498,7 +498,7 @@ class Tutorial(commands.Cog):
                         dd.hand_sizes.info[enemy] -= len(dd.move_numbers.info[enemy]) - z - 1
                 # dd.decke_index.insert(dd.move_numbere_index - 1, dd.decke_index.pop(dd.hand_size[1]-1))
                 elif dd.hps.info[enemy][0] <= 0 or dd.staminas.info[enemy] <= 0:
-                    dd.descriptions.info[enemy].append(f"•{r.ICONS['dead'].emoji()}")
+                    dd.descriptions.info[enemy].append(f"•{r.ICONS['dead']}")
                     dd.effects.info[enemy] = {}
 
             if dd.afk == 0:

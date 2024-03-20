@@ -58,11 +58,11 @@ class Leaderboard(discord.ui.View):
 
     @discord.ui.select(
         options=[
-            discord.SelectOption(label="Level", emoji=r.ICONS["exp"].emoji()),
-            discord.SelectOption(label="Coins", emoji=r.ICONS["coin"].emoji()),
-            discord.SelectOption(label="Gems", emoji=r.ICONS["gem"].emoji()),
-            discord.SelectOption(label="Medals", emoji=r.ICONS["medal"].emoji()),
-            discord.SelectOption(label="Tokens", emoji=r.ICONS["token"].emoji()),
+            discord.SelectOption(label="Level", emoji=str(r.ICONS["exp"])),
+            discord.SelectOption(label="Coins", emoji=str(r.ICONS["coin"])),
+            discord.SelectOption(label="Gems", emoji=str(r.ICONS["gem"])),
+            discord.SelectOption(label="Medals", emoji=str(r.ICONS["medal"])),
+            discord.SelectOption(label="Tokens", emoji=str(r.ICONS["token"])),
         ]
     )
     async def select_leaderboard(self, i: discord.Interaction, select: discord.ui.Select):

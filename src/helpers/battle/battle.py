@@ -92,7 +92,7 @@ class BattleData:
         self.descriptions.info[caster].append(" \n")
 
     def eff_to_icon(self, effect: str):
-        return r.ICONS[effect].emoji()
+        return r.ICONS[effect]
 
     def apply_effects(self, effect, result, caster, target, extra_msg=None):
         if extra_msg is None:

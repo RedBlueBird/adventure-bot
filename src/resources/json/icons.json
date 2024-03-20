@@ -274,26 +274,32 @@
   },
   "programmerbadge": {
     "animated": false,
-    "id": 695068845118849108
+    "id": 695068845118849108,
+    "abb": "pro b"
   },
   "weebbadge": {
     "animated": false,
-    "id": 695068845282689024
+    "id": 695068845282689024,
+    "abb": "fbi b"
   },
   "eastereggbadge": {
     "animated": false,
-    "id": 695068845303398420
+    "id": 695068845303398420,
+    "abb": "egg b"
   },
   "betatesterbadge": {
     "animated": false,
-    "id": 695068845408387132
+    "id": 695068845408387132,
+    "abb": "beta b"
   },
   "artistbadge": {
     "animated": false,
-    "id": 695068845467238410
+    "id": 695068845467238410,
+    "abb": "art b"
   },
   "enchantedbadge": {
     "animated": false,
-    "id": 766924465300701215
+    "id": 766924465300701215,
+    "abb": "for b"
   }
 }

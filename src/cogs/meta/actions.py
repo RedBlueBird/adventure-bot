@@ -73,8 +73,8 @@ class Actions(commands.Cog):
 
         await ctx.reply(
             ("***JACKPOT!!!***\n" if jackpot else "")
-            + f"**+{coin_amt} {r.ICONS['coin'].emoji()} +{xp_amt} {r.ICONS['exp'].emoji()}"
-            f" +{medal_amt}{r.ICONS['medal'].emoji()} {tick_msg}\nDaily"
+            + f"**+{coin_amt} {r.ICONS['coin']} +{xp_amt} {r.ICONS['exp']}"
+            f" +{medal_amt}{r.ICONS['medal']} {tick_msg}\nDaily"
             f" streak {streak}/{max_streak} {r.ICONS['streak']}**\n{card_msg}"
         )
 
