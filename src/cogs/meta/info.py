@@ -115,7 +115,7 @@ class Info(commands.Cog):
         """Displays all current quests of a user."""
 
         if not dm.is_registered(user.id):
-            await ctx.send(f"{ctx.author.mention}, that user isn't registered yet!")
+            await ctx.reply(f"That user isn't registered yet!")
             return
 
         quests = dm.get_user_quests(user.id)

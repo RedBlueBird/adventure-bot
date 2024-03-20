@@ -95,14 +95,15 @@ class Raid(commands.Cog):
 
         levels = [1, 15, 20, 30, 45][difficulty]
         enemies = ["Lich Lord"]
+        enemy_stats = [r.mob(e).lvl(levels) for e in enemies]
         ad_decks = [
             random.sample(
-                [f"{levels}.{x}" for x in r.mob(e, levels).deck],
-                len(r.mob(e, levels).deck),
+                [f"{levels}.{x}" for x in e.deck],
+                len(e.deck),
             )
-            for e in enemies
+            for e in enemy_stats
         ]
-        ad_hps = [[r.mob(e, levels).health, 0, r.mob(e, levels).health, 0, 0] for e in enemies]
+        ad_hps = [[e.health, 0, e.health, 0, 0] for e in enemy_stats]
 
         # Initialize the battlefield
         teams = {
@@ -116,7 +117,7 @@ class Raid(commands.Cog):
             decks=decks + ad_decks,
             backpacks=bps + [{} for _ in range(len(enemies))],
             hps=hps + ad_hps,
-            stamina=[35 for _ in range(members)] + [r.mob(i, levels).stamina for i in enemies],
+            stamina=[35 for _ in range(members)] + [e.stamina for e in enemy_stats],
             counts=len(enemies) + members,
         )
 
@@ -548,7 +549,7 @@ class Raid(commands.Cog):
                 for i in range(1, len(dd.used_cards.info) + 1):
                     dd.used_cards.info[i] = []
                 for i in range(1, len(dd.players.info) + 1):
-                    energy_lags = r.mob(dd.players.info[i], 1).energy_lag if i > members else 4
+                    energy_lags = r.mob(dd.players.info[i]).lvl(1).energy_lag if i > members else 4
                     if dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags) > 12:
                         dd.stored_energies.info[i] = 12
                     else:
@@ -577,14 +578,14 @@ class Raid(commands.Cog):
                 await hands_msg.edit(embed=dd.show_hand())
 
                 coin_loot = loot_factor * sum(
-                    [random.randint(*r.mob(e, levels).death_rwd.coins) for e in enemies]
+                    [random.randint(*e.death_rwd.coins) for e in enemy_stats]
                 )
                 exp_loot = loot_factor * sum(
-                    [random.randint(*r.mob(e, levels).death_rwd.exps) for e in enemies]
+                    [random.randint(*e.death_rwd.exps) for e in enemy_stats]
                 )
                 gem_loot = (
                     loot_factor
-                    * sum([random.randint(*r.mob(e, levels).death_rwd.gems) for e in enemies])
+                    * sum([random.randint(*e.death_rwd.gems) for e in enemy_stats])
                     // 100
                 )
 

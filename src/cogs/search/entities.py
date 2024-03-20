@@ -112,9 +112,10 @@ class EntitySearch(commands.Cog):
 
     @info.command()
     async def monster(self, ctx: Context, name: str, level: int = 1):
-        mob = r.mob(" ".join(name.lower().split("_")), level)
+        mob = r.mob(name)
         if mob is None:
             await ctx.reply("The requested item was not found!")
+        mob = mob.lvl(level)
 
         info = [
             f"**Level:** {level}",

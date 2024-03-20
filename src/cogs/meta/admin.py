@@ -43,9 +43,13 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
+        if level <= 0:
+            await ctx.reply("You can't redeem a card with a nonpositive level!")
+            return
+
         card = card.replace("_", " ").title()
 
-        dm.add_user_cards([(recipient.id, card, math.floor(int(level)))])
+        dm.add_user_cards([(recipient.id, card, level)])
         await ctx.send(
             f"{recipient.mention}, you received a **[{u.rarity_cost(card)}] "
             f"{card} lv: {math.floor(int(level))}** from {ctx.author.mention}"
@@ -55,6 +59,10 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
+        if amt <= 0:
+            await ctx.reply("You can't redeem a nonpositive amount of items!")
+            return
+
         item = r.item(item.replace("_", " "))
         name = item.name
         inv = dm.get_user_inventory(recipient.id)
