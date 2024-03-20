@@ -14,7 +14,7 @@ class Card(BaseModel):
     brief: str
 
 
-def card(name: str) -> Card:
+def card(name: str) -> Card | None:
     name = " ".join(name.lower().replace("_", " ").split())
     return CARDS.get(name, None)
 
