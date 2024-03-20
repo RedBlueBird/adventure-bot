@@ -178,24 +178,23 @@ class Info(commands.Cog):
         name="deck", description="Displays the user's currently equipped deck."
     )
     async def deck(
-        self, ctx: Context, slot: int = 0, user: discord.Member = commands.Author
+        self, ctx: Context, deck: int = 0, user: discord.Member = commands.Author
     ) -> None:
-        if not dm.is_registered(user.id):
+        player = db.Player.get_or_none(db.Player.uid == user.id)
+        if player is None:
             await ctx.reply(f"That user isn't registered yet!")
             return
 
-        if slot != 0:
-            if not 1 <= slot <= 6:
-                await ctx.reply("The deck slot number must between 1-6!")
-                return
+        deck = player.deck if deck == 0 else deck
+        if not 1 <= deck <= 6:
+            await ctx.reply("The deck number must between 1-6!")
+            return
 
-            if dm.get_user_level(user.id) < r.DECK_LVL_REQ[slot]:
-                await ctx.reply(
-                    f"You need to reach level {r.DECK_LVL_REQ[slot]} to get that deck slot!"
-                )
-                return
+        if dm.get_user_level(user.id) < r.DECK_LVL_REQ[deck]:
+            await ctx.reply(f"You need to reach level {r.DECK_LVL_REQ[deck]} to get that deck!")
+            return
 
-        view = Decks(user, slot)
+        view = Decks(user, deck)
         await ctx.send(embed=view.deck_embed(), view=view)
 
     @commands.hybrid_command(name="decks", description="Displays an overview of a user's decks.")

@@ -26,18 +26,10 @@ class CardPages(discord.ui.View):
         self.author = author
         self.user = user
         # TODO: order by user preference
-        cards = (
-            cards if cards is not None else db.Card.select().where(db.Card.owner == player.uid)
-        )
+        cards = cards if cards is not None else db.Card.select().where(db.Card.owner == player.uid)
         self.num_cards = len(cards)
 
-        self.deck_ids = {
-            c.id
-            for c in db.Card.select()
-            .join(db.DeckCard)
-            .join(db.Deck)
-            .where((db.Deck.owner == player.uid) & (db.Deck.slot == player.deck))
-        }
+        self.deck_ids = {c.id for c in db.get_deck(player.uid)}
 
         self.per_page = per_page
         self.pages = list(chunks(cards, per_page))

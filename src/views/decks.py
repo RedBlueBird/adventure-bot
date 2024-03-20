@@ -1,6 +1,7 @@
 import discord
 
-from helpers import util as u, resources as r, db_manager as dm
+import db
+from helpers import resources as r
 
 
 class DeckButton(discord.ui.Button["Decks"]):
@@ -30,13 +31,13 @@ class Decks(discord.ui.View):
 
         assert 0 <= slot <= 6
         self.user = user
-        self.user_slot = dm.get_user_deck_slot(user.id)
+        player = db.Player.get_by_id(user.id)
+        self.user_slot = player.deck
         self.slot = self.user_slot if slot == 0 else slot
 
         self.unlocked = 0
-        level = dm.get_user_level(user.id)
         for s in range(1, 6 + 1):
-            if level >= r.DECK_LVL_REQ[s]:
+            if player.level >= r.DECK_LVL_REQ[s]:
                 self.unlocked += 1
                 self.add_item(DeckButton(s))
         self.add_item(OverviewButton((self.unlocked + 2) // 3))
@@ -56,8 +57,7 @@ class Decks(discord.ui.View):
             if s > self.unlocked:
                 value = f"Unlocked at level {r.DECK_LVL_REQ[s]}"
             else:
-                deck_count = dm.get_user_deck_count(self.user.id, s)
-                value = f"{deck_count}/12 cards"
+                value = f"{len(db.get_deck(self.user.id, s))}/12 cards"
 
             embed.add_field(name=name, value=value, inline=False)
 
@@ -65,15 +65,13 @@ class Decks(discord.ui.View):
         return embed
 
     def deck_embed(self) -> discord.Embed:
-        deck = dm.get_user_deck(self.user.id, self.slot)
+        deck = db.get_deck(self.user.id, self.slot)
         cards = []
         total_energy = 0
         for card in deck:
-            card_str = (
-                f"[{u.rarity_cost(card[1])}] **{card[1]}**, lv: **{card[2]}**, id: `{card[0]}` "
-            )
-            cards.append(card_str)
-            total_energy += u.cards_dict(card[2], card[1])["cost"]
+            c_info = r.card(card.name)
+            cards.append(f"{c_info}, lv: **{card.level}**, id: `{card.id}`")
+            total_energy += c_info.cost
 
         if self.slot == self.user_slot:
             select_msg = ""

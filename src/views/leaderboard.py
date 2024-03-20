@@ -8,7 +8,12 @@ from helpers import resources as r
 
 
 class Leaderboard(discord.ui.View):
-    def __init__(self, name: t.Literal["level", "coins", "gems", "medals", "tokens"], user_id: int, bot: commands.Bot):
+    def __init__(
+        self,
+        name: t.Literal["level", "coins", "gems", "medals", "tokens"],
+        user_id: int,
+        bot: commands.Bot,
+    ):
         super().__init__()
         self.name = name
         self.user_id = user_id
