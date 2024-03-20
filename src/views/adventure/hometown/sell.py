@@ -1,8 +1,7 @@
 import discord
 import discord.ui as ui
 
-from helpers import util as u, resources as r
-from db import db_manager as dm
+from helpers import util as u, resources as r, db_manager as dm
 from views.adventure.template import Exit, InteractionCheckMixin
 
 

@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
 
-from helpers import resources as r
-from db import db_manager as dm
+from helpers import resources as r, db_manager as dm
 
 
 class Leaderboard(discord.ui.View):

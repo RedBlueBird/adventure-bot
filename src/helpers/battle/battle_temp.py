@@ -3,8 +3,7 @@ import math
 
 import discord
 
-from helpers import resources as r
-from db import db_manager as dm
+from helpers import resources as r, db_manager as dm
 from .player import Player
 
 

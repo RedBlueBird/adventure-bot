@@ -1,8 +1,7 @@
 import discord
 import discord.ui as ui
 
-from helpers import util as u
-from db import db_manager as dm
+from helpers import util as u, db_manager as dm
 
 
 class Exit(ui.Button):

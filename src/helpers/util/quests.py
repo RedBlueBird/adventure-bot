@@ -6,7 +6,7 @@ from discord.ext.commands import Context
 
 from ..resources import ICONS
 from ..util import randint_log
-from db import db_manager as dm
+from .. import db_manager as dm
 
 
 def quest_info(quest_type: int, reward_type: int, rarity: int):

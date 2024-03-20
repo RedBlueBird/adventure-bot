@@ -4,7 +4,7 @@ from enum import Enum
 import discord
 import discord.ui as ui
 
-from db import db_manager as dm
+from helpers import db_manager as dm
 from ..template import InteractionCheckMixin, Exit
 
 

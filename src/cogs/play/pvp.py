@@ -5,8 +5,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from helpers import util as u, resources as r, checks
-from db import db_manager as dm
+from helpers import util as u, resources as r, checks, db_manager as dm
 from helpers.battle import BattleData
 from views.battle import PvpInvite, Select
 

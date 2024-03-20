@@ -1,6 +1,6 @@
 import discord
 
-from db import db_manager as dm
+from helpers import db_manager as dm
 
 
 class RaidInvite(discord.ui.View):

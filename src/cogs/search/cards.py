@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from db import db_manager as dm
+from helpers import db_manager as dm
 from views import CardPages
 
 

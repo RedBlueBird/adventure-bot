@@ -1,7 +1,7 @@
 import discord
 from discord.ui import UserSelect
 
-from db import db_manager as dm
+from helpers import db_manager as dm
 
 
 class SelectMenu(UserSelect["Select"]):

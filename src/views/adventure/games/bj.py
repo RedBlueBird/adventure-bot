@@ -1,7 +1,7 @@
 import discord
 import discord.ui as ui
 
-import db.db_manager as dm
+import helpers.db_manager as dm
 from helpers.util.poker import Value, Deck, Card
 from ..template import InteractionCheckMixin
 
