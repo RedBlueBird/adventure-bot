@@ -1,4 +1,5 @@
 import os
+import datetime as dt
 
 from playhouse.mysql_ext import *
 
@@ -46,6 +47,9 @@ class Player(BaseModel):
     daily_date = DateField()
     premium_acc = DateField()
     streak = IntegerField()
+
+    def has_premium(self):
+        return self.premium_acc >= dt.datetime.now().date()
 
 
 class Deck(BaseModel):

@@ -93,31 +93,31 @@ class Admin(commands.Cog):
     @commands.is_owner()
     async def end_season(self, ctx: Context):
         """Resets the PVP season and gives each player their medals."""
-        for d in dm.get_all_uid():
-            medals = dm.get_user_medal(d)
-
-            earned_coins = medals * 5
-            earned_gems = math.floor(medals / 100)
-            if dm.has_premium(d):
+        for p in db.Player.select():
+            earned_coins = p.medals * 5
+            earned_gems = math.floor(p.medals / 100)
+            if p.has_premium():
                 earned_coins *= 2
                 earned_gems *= 2
 
             cap = 500  # "tax" medals above this limit at 50%
-            new_medals = (medals - cap) // 2 + cap if medals > cap else medals
+            new_medals = (p.medals - cap) // 2 + cap if p.medals > cap else p.medals
 
             msg = (
                 "The season ended!"
-                f"You now have {new_medals} {r.ICONS['medal']} (from {medals}) "
-                f"\n+{earned_coins} {r.ICONS['coin']}!"
+                f"You now have {new_medals} {r.ICONS['medal'].emoji()} (initially {p.medals}) "
+                f"\n+{earned_coins} {r.ICONS['coin'].emoji()}!"
             )
             if earned_gems > 0:
-                msg += f"\n + {earned_gems} {r.ICONS['gem']}"
+                msg += f"\n+{earned_gems} {r.ICONS['gem'].emoji()}"
 
-            user = await self.bot.fetch_user(d)
+            user = await self.bot.fetch_user(p.uid)
             await user.send(msg)
-            dm.set_user_coin(d, dm.get_user_coin(d) + earned_coins)
-            dm.set_user_gem(d, dm.get_user_gem(d) + earned_gems)
-            dm.set_user_medal(d, new_medals)
+
+            p.coins += earned_coins
+            p.gems += earned_gems
+            p.medals = new_medals
+            p.save()
 
         await ctx.reply("Season Ended!")
 
