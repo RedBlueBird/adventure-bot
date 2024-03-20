@@ -427,7 +427,7 @@ def get_leaderboard(
 
 
 def get_user_quests(uid: int, quest_type: int = -1) -> list[tuple[int, int, int, int, int]]:
-    operation = "SELECT id, quest_type, reward_type, rarity, progress FROM quest WHERE uid = %s"
+    operation = "SELECT id, quest_type, reward_type, rarity, progress FROM quests WHERE uid = %s"
     params = (uid,)
     if quest_type != -1:
         operation += " AND quest_type = %s"
@@ -437,14 +437,14 @@ def get_user_quests(uid: int, quest_type: int = -1) -> list[tuple[int, int, int,
 
 
 def get_user_quests_count(uid: int) -> int:
-    operation = "SELECT COUNT(*) FROM quest WHERE uid = %s"
+    operation = "SELECT COUNT(*) FROM quests WHERE uid = %s"
     cur.execute(operation, (uid,))
     return cur.fetchall()[0][0]
 
 
 def add_user_quests(quests: list[tuple[int, int, int, int, int]]):
     operation = (
-        "INSERT INTO quest "
+        "INSERT INTO quests "
         "(uid, quest_type, reward_type, rarity, progress) "
         "VALUES (%s, %s, %s, %s, %s)"
     )
@@ -453,7 +453,7 @@ def add_user_quests(quests: list[tuple[int, int, int, int, int]]):
 
 
 def delete_user_quest(quest_id: int):
-    cur.execute(f"DELETE FROM quest WHERE id = {quest_id}")
+    cur.execute(f"DELETE FROM quests WHERE id = {quest_id}")
     db.commit()
 
 

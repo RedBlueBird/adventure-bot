@@ -15,7 +15,7 @@ def quest_info(quest_type: int, reward_type: int, rarity: int):
         "Accumulate items of weight over {amount} while adventuring",
         "Adventure {amount} meters",
         "Win {amount} non-friendly PvP battles",
-        "Earn {amount} golden coins while adventuring",
+        "Earn {amount} coins adventuring",
         "Earn {amount} medals in PvP battles",
         "Merge {amount} pairs of cards",
         "Catch {amount} fish in the public boat",
