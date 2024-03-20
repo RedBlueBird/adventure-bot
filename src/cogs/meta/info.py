@@ -80,15 +80,13 @@ class Info(commands.Cog):
             inline=False,
         )
 
-        # next_quest = dm.get_user_next_quest(user.id).timestamp()
-        # nq = u.time_converter(int(next_quest - now)) if next_quest is not None else "--"
-        # embed.add_field(
-        #     name="Tasks",
-        #     value=f"{r.ICONS['streak']}**Daily streak: **{player.streak}/"
-        #     + description_msg
-        #     + f"{r.ICONS['timer']}**Next daily: **{dts}\n{r.ICONS['timer']}**Next quest: **{nq}",
-        #     inline=False,
-        # )
+        embed.add_field(
+            name="Tasks",
+            value=f"{r.ICONS['streak']}**Daily streak: **{player.streak}/"
+            + description_msg
+            + f"{r.ICONS['timer']}**Next daily: **{dts}",
+            inline=False,
+        )
 
         if player.badges != 0:
             icons = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
