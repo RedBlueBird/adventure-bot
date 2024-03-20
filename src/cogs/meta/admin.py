@@ -1,4 +1,3 @@
-import json
 import math
 import datetime
 
@@ -6,7 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import resources as r, checks, db_manager as dm
+from helpers import resources as r, checks
 import db
 
 
