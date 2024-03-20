@@ -194,9 +194,7 @@ class Tutorial(commands.Cog):
                                 )
                     if dd.hand_sizes.info[1] != 6:
                         dd.hand_sizes.info[1] += 1
-                    dd.descriptions.info[1].append(
-                        f"{r.ICONS['ski']}{r.ICONS['kip']}\n"
-                    )
+                    dd.descriptions.info[1].append(f"{r.ICONS['ski']}{r.ICONS['kip']}\n")
                     is_turn_over = True
                 elif action == "flee":
                     for y in range(dd.hand_sizes.info[1]):
@@ -221,9 +219,7 @@ class Tutorial(commands.Cog):
                             f"{r.ICONS['fle']}{r.ICONS['lee']} {r.ICONS['mi']}{r.ICONS['ss']}\n"
                         )
                     else:
-                        dd.descriptions.info[1].append(
-                            f"{r.ICONS['fle']}{r.ICONS['lee']}\n"
-                        )
+                        dd.descriptions.info[1].append(f"{r.ICONS['fle']}{r.ICONS['lee']}\n")
                         dd.afk = 8
                     if step == 20:
                         try:

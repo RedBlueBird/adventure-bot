@@ -1,14 +1,19 @@
+from enum import Enum
+import typing as t
+
 from peewee import *
 
+ET = t.Type[Enum]
 
-class EnumField(IntegerField):
+
+class EnumField[ET](IntegerField):
     """https://github.com/coleifer/peewee/issues/630#issuecomment-459404401"""
 
-    def __init__(self, choices, *args, **kwargs):
+    def __init__(self, choices: ET, *args, **kwargs):
         super(IntegerField, self).__init__(*args, **kwargs)
         self.choices = choices
 
-    def db_value(self, value):
+    def db_value(self, value: ET):
         return value.value
 
     def python_value(self, value):

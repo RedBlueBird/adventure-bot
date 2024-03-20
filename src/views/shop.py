@@ -5,11 +5,7 @@ from helpers import util as u, resources as r, db_manager as dm
 PACKS = [
     {
         "name": "**Basic Pack**",
-        "value": (
-            f"Cost: **3** {r.ICONS['gem']}\n"
-            "• contains 3 (lv 4-10) cards\n"
-            f"`{r.PREF}buy basic`"
-        ),
+        "value": f"Cost: **3** {r.ICONS['gem']}\n• contains 3 (lv 4-10) cards\n`{r.PREF}buy basic`",
     },
     {
         "name": "**Fire Pack**",
@@ -45,11 +41,7 @@ PACKS = [
     },
     {
         "name": "**Pro Pack**",
-        "value": (
-            f"Cost: **24** {r.ICONS['gem']}\n"
-            "• contains 6 (lv 7-10) cards\n"
-            f"`{r.PREF}buy pro`"
-        ),
+        "value": f"Cost: **24** {r.ICONS['gem']}\n• contains 6 (lv 7-10) cards\n`{r.PREF}buy pro`",
     },
     # {
     #     "name": "**Anniversary Pack**",
@@ -100,10 +92,7 @@ class Shop(discord.ui.View):
         user_deals = dm.get_user_deals(self.uid).split(",")
         embed = discord.Embed(
             title="Shop - Daily Deals:",
-            description=(
-                f"{r.ICONS['coin']} **{self.coins}** "
-                f"{r.ICONS['gem']} **{self.gems}**"
-            ),
+            description=f"{r.ICONS['coin']} **{self.coins}** {r.ICONS['gem']} **{self.gems}**",
             color=discord.Color.gold(),
         )
 
@@ -148,10 +137,7 @@ class Shop(discord.ui.View):
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Currencies:",
-            description=(
-                f"{r.ICONS['coin']} **{self.coins}**"
-                f" {r.ICONS['gem']} **{self.gems}**"
-            ),
+            description=f"{r.ICONS['coin']} **{self.coins}** {r.ICONS['gem']} **{self.gems}**",
             color=discord.Color.green(),
         )
         for field in CURRENCY:

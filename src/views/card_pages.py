@@ -1,6 +1,7 @@
 import discord
 
-from helpers import util as u, db_manager as dm
+import db
+from helpers import util as u, resources as r
 
 
 def chunks(lst: list, n: int):
@@ -14,17 +15,29 @@ class CardPages(discord.ui.View):
         self,
         author: discord.Member,
         user: discord.Member,
-        cards: list | None = None,
+        cards: list[db.Card] | None = None,
         per_page: int = 15,
         page: int = 0,
     ):
         super().__init__()
 
+        player = db.Player.get_by_id(user.id)
+
         self.author = author
         self.user = user
-        self.deck_ids = {card[0] for card in dm.get_user_deck(user.id)}
-        cards = cards if cards is not None else dm.get_user_cards(user.id)
+        # TODO: order by user preference
+        cards = (
+            cards if cards is not None else db.Card.select().where(db.Card.owner == player.uid)
+        )
         self.num_cards = len(cards)
+
+        self.deck_ids = {
+            c.id
+            for c in db.Card.select()
+            .join(db.DeckCard)
+            .join(db.Deck)
+            .where((db.Deck.owner == player.uid) & (db.Deck.slot == player.deck))
+        }
 
         self.per_page = per_page
         self.pages = list(chunks(cards, per_page))
@@ -49,10 +62,10 @@ class CardPages(discord.ui.View):
     def page_embed(self) -> discord.Embed:
         all_cards = []
         for card in self.pages[self.page]:
+            c_info = r.card(card.name)
             c_str = (
-                f"{'**>**' if card[0] in self.deck_ids else ''}"
-                f"[{u.rarity_cost(card[1])}] **{card[1]}**, "
-                f"lv: **{card[2]}**, id: `{card[0]}`"
+                f"{'**>**' if card.id in self.deck_ids else ''}"
+                f"{c_info}, lv: {card.level}, id: `{card.id}`"
             )
             all_cards.append(c_str)
 

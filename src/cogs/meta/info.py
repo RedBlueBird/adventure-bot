@@ -40,9 +40,7 @@ class Info(commands.Cog):
         tick_msg = ""
         lvl = player.level
         if lvl >= 4:
-            tick_msg = (
-                f"{r.ICONS['ticket']}**Raid Tickets: **{player.raid_tickets}/{tickets}"
-            )
+            tick_msg = f"{r.ICONS['ticket']}**Raid Tickets: **{player.raid_tickets}/{tickets}"
 
         descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
         embed = discord.Embed(
@@ -97,12 +95,7 @@ class Info(commands.Cog):
                     owned_badges.append(str(r.ICONS[icons[i]]))
             embed.add_field(name="Badges", value=" ".join(owned_badges))
 
-        embed.set_footer(
-            text=(
-                f"Player ID: {player.uid}; "
-                f"Register Date: {player.creation_date}"
-            )
-        )
+        embed.set_footer(text=f"Player ID: {player.uid}; Register Date: {player.creation_date}")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
@@ -161,8 +154,8 @@ class Info(commands.Cog):
         aliases=["card", "i", "inv"],
     )
     async def cards(self, ctx: Context, page: int = 1, user: discord.Member = commands.Author):
-        if not dm.is_registered(user.id):
-            await ctx.reply("That user isn't registered yet!")
+        if not db.Player.select(db.Player.uid == user.id).exists():
+            await ctx.reply(f"That user isn't registered!")
             return
 
         view = CardPages(ctx.author, user, page=page - 1)

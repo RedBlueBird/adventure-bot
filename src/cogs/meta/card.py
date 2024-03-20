@@ -69,8 +69,8 @@ class Card(commands.Cog):
             return
 
         a = ctx.author
-        upgraded = db.Card.get_or_none((db.Card.id == to_upgrade) & (db.Card.owner_id == a.id))
-        destroyed = db.Card.get_or_none((db.Card.id == to_destroy) & (db.Card.owner_id == a.id))
+        upgraded = db.Card.get_or_none((db.Card.id == to_upgrade) & (db.Card.owner == a.id))
+        destroyed = db.Card.get_or_none((db.Card.id == to_destroy) & (db.Card.owner == a.id))
 
         if upgraded is None:
             await ctx.reply(f"You don't own a card #`{to_upgrade}`!")
@@ -85,7 +85,6 @@ class Card(commands.Cog):
 
         upgr_card = r.card(upgraded.name)
         destr_card = r.card(destroyed.name)
-        print(upgr_card, destr_card, upgraded.level, destroyed.level)
         if upgr_card.rarity != destr_card.rarity or upgraded.level != destroyed.level:
             await ctx.reply("Both cards have to be the same level and rarity!")
             return
@@ -98,8 +97,8 @@ class Card(commands.Cog):
 
         view = Confirm()
         msg = await ctx.reply(
-            f"**{upgr_card} lv: {upgraded.level}**\n"
-            f"**{destr_card} lv: {destroyed.level}**\n"
+            f"{upgr_card} lv: {upgraded.level}\n"
+            f"{destr_card} lv: {destroyed.level}\n"
             f"Upgrading cost {upgrade_cost} {r.ICONS['coin']}.",
             view=view,
         )
@@ -123,10 +122,7 @@ class Card(commands.Cog):
 
         embed = discord.Embed(
             title="Card upgraded successfully!",
-            description=(
-                f"-{upgrade_cost} {r.ICONS['coin']} "
-                f"+{gained_xp} {r.ICONS['exp']}"
-            ),
+            description=f"-{upgrade_cost} {r.ICONS['coin']} +{gained_xp} {r.ICONS['exp']}",
             color=discord.Color.green(),
         )
         embed.add_field(

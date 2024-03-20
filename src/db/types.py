@@ -1,19 +1,17 @@
-from enum import Enum
+from enum import Enum, auto
 
 
-QuestType = Enum(
-    "QuestType",
-    [
-        "KILL_ENEMIES",
-        "GET_ITEMS",
-        "TRAVEL_DIST",
-        "WIN_PVP",
-        "EARN_COINS",
-        "EARN_MEDALS",
-        "MERGE_CARDS",
-        "CATCH_FISH",
-    ],
-    start=0,
-)
+class QuestType(Enum):
+    KILL_ENEMIES = 0
+    GET_ITEMS = auto()
+    TRAVEL_DIST = auto()
+    WIN_PVP = auto()
+    EARN_COINS = auto()
+    EARN_MEDALS = auto()
+    MERGE_CARDS = auto()
+    CATCH_FISH = auto()
 
-RewardType = Enum("RewardType", ["COINS", "GEMS"], start=0)
+
+class RewardType(Enum):
+    COINS = 0
+    GEMS = auto()
