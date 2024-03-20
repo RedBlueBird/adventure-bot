@@ -1,11 +1,14 @@
+import typing as t
+
 import discord
 from discord.ext import commands
 
-from helpers import resources as r, db_manager as dm
+import db
+from helpers import resources as r
 
 
 class Leaderboard(discord.ui.View):
-    def __init__(self, name: str, user_id: int, bot: commands.Bot):
+    def __init__(self, name: t.Literal["level", "coins", "gems", "medals", "tokens"], user_id: int, bot: commands.Bot):
         super().__init__()
         self.name = name
         self.user_id = user_id
@@ -18,39 +21,37 @@ class Leaderboard(discord.ui.View):
             select.options[index].default = option.value.lower() == self.name
 
     async def leaderboard_embed(self):
-        limit = 10
         order_by = None
         desc_fmt = None
         match self.name:
             case "level":
-                order_by = "XP"
-                desc_fmt = "• Level: {}, Exp: {}"
+                order_by = db.Player.xp
+                desc_fmt = lambda p: f"• Level: {p.level}, Exp: {p.xp}"
             case "coins":
-                order_by = "Golden Coins"
-                desc_fmt = "• Golden Coins: {}, Shiny Gems: {}"
+                order_by = db.Player.coins
+                desc_fmt = lambda p: f"• Golden Coins: {p.coins}, Shiny Gems: {p.gems}"
             case "gems":
-                order_by = "Shiny Gems"
-                desc_fmt = "• Shiny Gems: {}, Golden Coins: {}"
+                order_by = db.Player.gems
+                desc_fmt = lambda p: f"• Shiny Gems: {p.gems}, Golden Coins: {p.coins}"
             case "medals":
-                order_by = "Medals"
-                desc_fmt = "• Medals: {}"
+                order_by = db.Player.medals
+                desc_fmt = lambda p: f"• Medals: {p.medals}"
             case "tokens":
-                order_by = "Tokens"
-                desc_fmt = "• Tokens: {}"
-        assert order_by is not None and desc_fmt is not None
+                order_by = db.Player.event_tokens
+                desc_fmt = lambda p: f"• Tokens: {p.event_tokens}"
 
         top_players = []
-        all_players = dm.get_leaderboard(order_by, limit)
-        for index, (_, user_id, *data) in enumerate(all_players):
-            user = await self.bot.fetch_user(user_id)
+        all_players = db.Player.select().order_by(order_by.desc()).limit(10)
+        for index, p in enumerate(all_players):
+            user = await self.bot.fetch_user(p.uid)
             username = f"**[{index + 1}] {user}**"
-            description = desc_fmt.format(*data)
-            if user_id == self.user_id:
+            description = desc_fmt(p)
+            if p.uid == self.user_id:
                 description = f"__{description}__"
-            top_players.append(username + "\n" + description + "\n")
+            top_players.append(f"{username}\n{description}\n")
 
         embed = discord.Embed(
-            title=f"Leaderboard - most {order_by}",
+            title=f"Leaderboard - most {self.name}",
             description="".join(top_players),
             color=discord.Color.gold(),
         )
