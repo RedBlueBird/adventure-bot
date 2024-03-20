@@ -121,30 +121,6 @@ class Admin(commands.Cog):
 
         await ctx.reply("Season Ended!")
 
-    @commands.hybrid_command(description="Prints some debugging info for the devs.")
-    @commands.is_owner()
-    async def test(self, ctx: Context):
-        """Prints some debugging info for the devs."""
-        loading = await ctx.reply(r.ICONS["load"])
-
-        def print_all(table: str) -> None:
-            dm.cur.execute(f"SELECT * FROM {table}")
-            result = dm.cur.fetchall()
-            for i in result:
-                print(i)
-
-        print_all("temp")
-        print_all("temp_cards")
-        print(r.ADMINS)
-        print(dm.queues)
-
-        guilds = list(self.bot.guilds)
-        print(f"Connected on {len(guilds)} guilds:")
-        for g in guilds:
-            print(f"\t{g.name}")
-
-        await loading.edit(content="Database printed!")
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Admin(bot))
