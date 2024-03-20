@@ -5,7 +5,7 @@ from functools import reduce
 import discord
 
 from helpers import resources as r
-from helpers.util import cards_dict, items_dict, rarity_cost
+from helpers.util import cards_dict, rarity_cost
 
 
 class Classify:
@@ -381,7 +381,7 @@ class BattleData:
         result = cards_dict(c_level, c_name)
         if result["name"] == "Glitched":
             self.staminas.info[caster] -= 1
-            result = items_dict(c_name, self.hps.info[target][2])
+            result = r.item(c_name, self.hps.info[target][2])
         if activation is not None:
             result = result[activation]
         def_factor = 1 + self.multipliers.info[caster][1]
@@ -515,7 +515,7 @@ class BattleData:
 
         result = cards_dict(c_level, c_name)
         if result["name"] == "Glitched":
-            result = items_dict(c_name, self.hps.info[target][2])
+            result = r.item(c_name, self.hps.info[target][2])
         if activation is not None:
             result = result[activation]
             self.descriptions.info[caster].append(f"**{c_name}** lv: {c_level} ")
@@ -1229,7 +1229,7 @@ class BattleData:
 
         result = cards_dict(c_level, c_name)
         if result["name"] == "Glitched":
-            result = items_dict(c_name, self.hps.info[target][2])
+            result = r.item(c_name, self.hps.info[target][2])
 
         if "spawn" in result:
             if result["spawn"][2] == "target" or result["spawn"][2] == "all":
@@ -1472,12 +1472,12 @@ class BattleData:
         try:
             for i in msg:
                 if (
-                    items_dict(" ".join(i[:-1].lower().split("_")[:]))["name"].lower()
+                    r.item(" ".join(i[:-1].lower().split("_")[:]))["name"].lower()
                     in self.backpacks.info[user]
                 ):
-                    if items_dict(" ".join(i[:-1].lower().split("_")[:]))["in_battle"]:
+                    if r.item(" ".join(i[:-1].lower().split("_")[:]))["in_battle"]:
                         self.item_used.info[user] = [
-                            items_dict(" ".join(i[:-1].lower().split("_")[:]))["name"].lower(),
+                            r.item(" ".join(i[:-1].lower().split("_")[:]))["name"].lower(),
                             int(i[-1]),
                         ]
                         msg.remove(i)
@@ -1559,7 +1559,7 @@ class BattleData:
             else:
                 if (
                     self.item_used.info[user][0] != "None"
-                    and items_dict(self.item_used.info[user][0])["one_use"]
+                    and r.item(self.item_used.info[user][0])["one_use"]
                 ):
 
                     def backpack_clear():

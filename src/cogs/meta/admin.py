@@ -6,7 +6,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import util as u, resources as r, checks, db_manager as dm
+from helpers import resources as r, checks, db_manager as dm
+import db
 
 
 class Admin(commands.Cog):
@@ -47,12 +48,11 @@ class Admin(commands.Cog):
             await ctx.reply("You can't redeem a card with a nonpositive level!")
             return
 
-        card = card.replace("_", " ").title()
-
-        dm.add_user_cards([(recipient.id, card, level)])
+        card = r.card(card)
+        db.Card.create(owner=recipient.id, name=card.name, level=level)
         await ctx.send(
-            f"{recipient.mention}, you received a **[{u.rarity_cost(card)}] "
-            f"{card} lv: {math.floor(int(level))}** from {ctx.author.mention}"
+            f"{recipient.mention}, you received a **[{card.rarity}/{card.cost}] "
+            f"{card.name} lv: {level}** from {ctx.author.mention}!"
         )
 
     @redeem.command()

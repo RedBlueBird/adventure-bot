@@ -1,4 +1,4 @@
-from .assets import cards_dict, cards_dict_temp, items_dict
+from .assets import cards_dict, cards_dict_temp
 from .backpack import bp_weight, chest_storage, container_embed, container_str
 from .cards import (
     deal_card,

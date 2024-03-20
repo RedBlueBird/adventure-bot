@@ -1,6 +1,5 @@
 import copy
 
-from ..resources import ITEMS, ITEM_ABB
 from ..resources import SCALE, CARDS, CARDS_TEMP
 
 
@@ -68,22 +67,3 @@ def cards_dict_temp(lvl: int, name: str):
         if attribute in card:
             card[attribute] = card[attribute] * lvl
     return card
-
-
-def items_dict(name: str, max_stat=100 * SCALE[0]):
-    name = ITEM_ABB.get(name.lower(), name.lower())
-    item = copy.deepcopy(ITEMS[name])
-    for i in item:
-        if i in [
-            "block",
-            "absorb",
-            "heal",
-            "tramp",
-            "damage",
-            "self_damage",
-            "crush",
-            "revenge",
-            "lich_revenge",
-        ]:
-            item[i] = round(item[i] * max_stat / 100)
-    return item

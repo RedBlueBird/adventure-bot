@@ -2,7 +2,7 @@ import os
 
 from playhouse.mysql_ext import *
 
-from fields import *
+from .fields import *
 from .types import *
 
 db = MySQLDatabase(

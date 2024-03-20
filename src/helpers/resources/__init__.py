@@ -1,7 +1,7 @@
 from .adventure import ADVENTURES
 from .minigames import MINIGAMES
 from .hometown import HTOWN
-from .items import ITEMS, ITEM_ABB, item
+from .items import item
 from .mobs import mob
 from .card import card
 from .effects import effect
