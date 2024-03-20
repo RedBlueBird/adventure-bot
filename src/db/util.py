@@ -8,5 +8,5 @@ def get_deck(uid: int, slot: int = 0) -> list[Card]:
         Card.select()
         .join(DeckCard)
         .join(Deck)
-        .where((Deck.owner == player.uid) & (Deck.slot == slot))
+        .where((Deck.owner == player.id) & (Deck.slot == slot))
     )

@@ -22,7 +22,7 @@ class BaseModel(Model):
 
 
 class Player(BaseModel):
-    uid = BigIntegerField(primary_key=True)
+    id = BigIntegerField(primary_key=True)
 
     level = IntegerField()
     xp = IntegerField()

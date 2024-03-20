@@ -110,7 +110,7 @@ class Admin(commands.Cog):
             if earned_gems > 0:
                 msg += f"\n+{earned_gems} {r.ICONS['gem']}"
 
-            user = await self.bot.fetch_user(p.uid)
+            user = await self.bot.fetch_user(p.id)
             await user.send(msg)
 
             p.coins += earned_coins

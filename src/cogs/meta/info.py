@@ -22,7 +22,7 @@ class Info(commands.Cog):
     async def profile(self, ctx: Context, user: discord.Member = commands.Author):
         """Check a player's general information."""
 
-        player = db.Player.get_or_none(db.Player.uid == user.id)
+        player = db.Player.get_or_none(db.Player.id == user.id)
         if player is None:
             await ctx.reply(f"That user isn't registered!")
             return
@@ -95,7 +95,7 @@ class Info(commands.Cog):
                     owned_badges.append(str(r.ICONS[icons[i]]))
             embed.add_field(name="Badges", value=" ".join(owned_badges))
 
-        embed.set_footer(text=f"Player ID: {player.uid}; Register Date: {player.creation_date}")
+        embed.set_footer(text=f"Player ID: {player.id}; Register Date: {player.creation_date}")
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
@@ -154,7 +154,7 @@ class Info(commands.Cog):
         aliases=["card", "i", "inv"],
     )
     async def cards(self, ctx: Context, page: int = 1, user: discord.Member = commands.Author):
-        if not db.Player.select(db.Player.uid == user.id).exists():
+        if not db.Player.select(db.Player.id == user.id).exists():
             await ctx.reply(f"That user isn't registered!")
             return
 
@@ -180,7 +180,7 @@ class Info(commands.Cog):
     async def deck(
         self, ctx: Context, deck: int = 0, user: discord.Member = commands.Author
     ) -> None:
-        player = db.Player.get_or_none(db.Player.uid == user.id)
+        player = db.Player.get_or_none(db.Player.id == user.id)
         if player is None:
             await ctx.reply(f"That user isn't registered yet!")
             return

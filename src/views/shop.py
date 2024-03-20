@@ -82,14 +82,14 @@ CURRENCY = [
 class Shop(discord.ui.View):
     def __init__(self, uid: int):
         super().__init__()
-        self.uid = uid
+        self.id = uid
         self.coins = dm.get_user_coin(uid)
         self.gems = dm.get_user_gem(uid)
         self.tokens = dm.get_user_token(uid)
 
     @discord.ui.button(label="Daily Deals", style=discord.ButtonStyle.blurple)
     async def daily_deals(self, i: discord.Interaction, button: discord.ui.Button):
-        user_deals = dm.get_user_deals(self.uid).split(",")
+        user_deals = dm.get_user_deals(self.id).split(",")
         embed = discord.Embed(
             title="Shop - Daily Deals:",
             description=f"{r.ICONS['coin']} **{self.coins}** {r.ICONS['gem']} **{self.gems}**",

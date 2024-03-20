@@ -48,10 +48,10 @@ class Leaderboard(discord.ui.View):
         top_players = []
         all_players = db.Player.select().order_by(order_by.desc()).limit(10)
         for index, p in enumerate(all_players):
-            user = await self.bot.fetch_user(p.uid)
+            user = await self.bot.fetch_user(p.id)
             username = f"**[{index + 1}] {user}**"
             description = desc_fmt(p)
-            if p.uid == self.user_id:
+            if p.id == self.user_id:
                 description = f"__{description}__"
             top_players.append(f"{username}\n{description}\n")
 
