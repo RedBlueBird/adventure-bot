@@ -28,14 +28,11 @@ class Card(commands.Cog):
         for c in cards:
             name = dm.get_card_name(a.id, c)
             lvl = dm.get_card_level(a.id, c)
-            decks = dm.get_card_decks(c)
 
             if not name:
-                error_msg.append(f"You don't have a Card `#{c}`!")
+                error_msg.append(f"You don't have a card with ID #`{c}`!")
             elif (c, a.id) in to_discard:
-                error_msg.append(f"You have already chosen Card `#{c}` for disposal!")
-            elif any(decks):
-                error_msg.append(f"Card #`{c}` is in one of your decks!")
+                error_msg.append(f"You've already chosen Card `#{c}` for disposal!")
             else:
                 to_discard.append((c, a.id))
                 discard_msg.append(f"**[{u.rarity_cost(name)}] {name} lv: {lvl}** #`{c}`")
@@ -45,9 +42,9 @@ class Card(commands.Cog):
             await ctx.reply(msg)
             return
         msg += (
-            "You sure you want to discard:\n"
+            "Are you sure you want to discard:\n"
             + "\n".join(discard_msg)
-            + f"\n{r.ICONS['berserk'].emoji()} *(Discarded cards can't be retrieved!)*"
+            + f"\n{r.ICONS['berserk'].emoji()} *(These can't be retrieved!)*"
         )
 
         view = Confirm()

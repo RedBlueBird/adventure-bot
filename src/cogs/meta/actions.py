@@ -16,7 +16,6 @@ class Actions(commands.Cog):
     @commands.hybrid_command(aliases=["d"], description="Get your daily rewards!")
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
-        """Get your daily rewards!"""
         a = ctx.author
         last_d = dm.get_user_daily(a.id)
         if last_d.date() == dt.date.today():
