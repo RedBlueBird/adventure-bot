@@ -14,6 +14,11 @@ class Card(BaseModel):
     brief: str
 
 
+def card(name: str) -> Card:
+    name = " ".join(name.lower().replace("_", " ").split())
+    return CARDS.get(name, None)
+
+
 raw_cards = load_json("cards")
 CARDS: dict[str, Card] = {}
 for name, node in raw_cards.items():

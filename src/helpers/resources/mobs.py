@@ -43,16 +43,17 @@ class Mob(BaseModel):
     trades: dict[str, Trade] | None = None
     dialogue: str = ""  # default arguments have to follow so
 
-    def lvl(self, lvl: int = 1) -> t.Self:
-        mob = deepcopy(self)
-        hp_scale = SCALE[1] ** (lvl - 1) * SCALE[0]
-        mob.health = round(mob.health * hp_scale)
-        return mob
 
-
-def mob(name: str) -> Mob | None:
+def mob(name: str, lvl: int = 1) -> Mob | None:
     name = " ".join(name.lower().replace("_", " ").split())
-    return MOBS.get(name, None)
+    if name not in MOBS:
+        return None
+
+    mob = deepcopy(MOBS[name])
+    hp_scale = SCALE[1] ** (lvl - 1) * SCALE[0]
+    mob.health = round(mob.health * hp_scale)
+
+    return mob
 
 
 raw_mobs = load_json("mobs")

@@ -95,7 +95,7 @@ class Raid(commands.Cog):
 
         levels = [1, 15, 20, 30, 45][difficulty]
         enemies = ["Lich Lord"]
-        enemy_stats = [r.mob(e).lvl(levels) for e in enemies]
+        enemy_stats = [r.mob(e, levels) for e in enemies]
         ad_decks = [
             random.sample(
                 [f"{levels}.{x}" for x in e.deck],
@@ -549,7 +549,7 @@ class Raid(commands.Cog):
                 for i in range(1, len(dd.used_cards.info) + 1):
                     dd.used_cards.info[i] = []
                 for i in range(1, len(dd.players.info) + 1):
-                    energy_lags = r.mob(dd.players.info[i]).lvl(1).energy_lag if i > members else 4
+                    energy_lags = r.mob(dd.players.info[i]).energy_lag if i > members else 4
                     if dd.stored_energies.info[i] + math.ceil(dd.turns / energy_lags) > 12:
                         dd.stored_energies.info[i] = 12
                     else:
