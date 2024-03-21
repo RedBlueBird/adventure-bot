@@ -8,10 +8,10 @@ from .general import log_level_gen
 
 def deal_card(lvl: int):
     """Generates a random card for the shop based on the player level."""
-    cost = log_level_gen(
+    level = log_level_gen(
         random.randint(2 ** (max(0, 5 - (lvl // 4))), 2 ** (10 - math.floor(lvl / 10)))
     )
-    return f"{cost}.{random_card(cost, 'normal')}"
+    return {"level": level, "card": random_card(level, "normal")}
 
 
 def random_card(energy: int, type_: str) -> str:

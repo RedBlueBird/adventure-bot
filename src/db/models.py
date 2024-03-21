@@ -32,7 +32,6 @@ class Player(BaseModel):
     medals = IntegerField(default=0)
     raid_tickets = IntegerField(default=0)
 
-    deals = CharField(default="")
     card_order = IntegerField(default=1)
     deck = IntegerField(default=1)
 
@@ -80,3 +79,10 @@ class Quest(BaseModel):
     reward_type = EnumField(RewardType)
     level = IntegerField()
     progress = IntegerField()
+
+
+class Deal(BaseModel):
+    player = ForeignKeyField(Player, backref="deals", on_delete="CASCADE")
+    sold = BooleanField(default=False)
+    c_name = CharField()
+    c_level = IntegerField()

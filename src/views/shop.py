@@ -90,23 +90,21 @@ class Shop(discord.ui.View):
     async def daily_deals(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Daily Deals:",
-            description=f"{r.ICONS['coin']} **{self.player.coins}** {r.ICONS['gem']} **{self.player.gems}**",
+            description=(
+                f"{r.ICONS['coin']} **{self.player.coins}** {r.ICONS['gem']} **{self.player.gems}**"
+            ),
             color=discord.Color.gold(),
         )
 
-        for v, d in enumerate(self.player.deals.split(",")):
-            level, card = d.split(".")
-            level = int(level)
-            card = r.card(card)
-            if level > 0:
-                cost = round(1.6 ** level * 50 * u.price_factor(card.id))
-                embed.add_field(
-                    name=f"**{card} lv: {level}**",
-                    value=f"Cost: **{cost}** {r.ICONS['coin']}\n`{r.PREF}buy card {v + 1}`",
-                )
+        for v, d in enumerate(self.player.deals):
+            card = r.card(d.c_name)
+            if d.sold:
+                embed.add_field(name=f"**{card} lv: {d.c_level}**", value="Sold out")
             else:
+                cost = round(1.6**d.c_level * 50 * u.price_factor(card.id))
                 embed.add_field(
-                    name=f"**{card} lv: {-level}**", value="Sold out"
+                    name=f"**{card} lv: {d.c_level}**",
+                    value=f"Cost: **{cost}** {r.ICONS['coin']}\n`{r.PREF}buy card {v + 1}`",
                 )
 
         embed.set_footer(
@@ -137,8 +135,9 @@ class Shop(discord.ui.View):
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Currencies:",
-            description=f"{r.ICONS['coin']} **{self.player.coins}** "
-                        f"{r.ICONS['gem']} **{self.player.gems}**",
+            description=(
+                f"{r.ICONS['coin']} **{self.player.coins}** {r.ICONS['gem']} **{self.player.gems}**"
+            ),
             color=discord.Color.green(),
         )
         for field in CURRENCY:

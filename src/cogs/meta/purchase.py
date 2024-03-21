@@ -224,10 +224,13 @@ class Purchase(commands.Cog):
 
         # 200 coins isn't that big of a cost, idt we need a confirm view here ~ sans
         card_amt = 9 if player.has_premium() else 6
-        new_deals = [u.deal_card(dm.get_user_level(a.id)) for _ in range(card_amt)]
+        db.Deal.delete().where(db.Deal.player == player).execute()
+        new_deals = [u.deal_card(player.level) for _ in range(card_amt)]
+        db.Deal.insert_many(
+            [{"player": player, "c_name": d["card"], "c_level": d["level"]} for d in new_deals]
+        ).execute()
 
         player.coins -= cost
-        player.deals = ",".join(new_deals)
         player.save()
 
         await ctx.reply(f"You refreshed your shop for {cost} {r.ICONS['coin']}!")
