@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
+import db
 from helpers import util as u, resources as r, db_manager as dm
 
 
@@ -22,43 +23,32 @@ class Sys(commands.Cog):
         """Registers the author of the message."""
         a = ctx.author
 
-        if dm.is_registered(a.id):
+        if db.Player.select().where(db.Player.id == a.id).exists():
             await ctx.send("You are already registered!")
             return
 
-        await ctx.send(f"*registering {ctx.author.mention}...*")
+        await ctx.send("*Registering...*")
+
+        player = db.Player.create(id=a.id, premium_acc=dt.date.today() + dt.timedelta(days=14))
+        deck = db.Deck.create(owner=player.id, slot=1)
 
         card_names = [
-            "Stab",
-            "Stab",
-            "Shield",
-            "Shield",
-            "Strike",
-            "Strike",
-            "Punch",
-            "Punch",
-            "Heal",
-            "Slash",
-            "Explode",
-            "Aim",
+            "stab",
+            "stab",
+            "shield",
+            "shield",
+            "strike",
+            "strike",
+            "punch",
+            "punch",
+            "heal",
+            "slash",
+            "explode",
+            "aim",
         ]
-        owned_user = [a.id for _ in range(len(card_names))]
-        card_levels = [4 for _ in range(len(card_names))]
-        dm.add_user_cards(list(zip(owned_user, card_names, card_levels)))
-
-        dm.add_user(a.id)
-        dm.set_user_coin(a.id, 250)
-        dm.set_user_gem(a.id, 5)
-        now = dt.datetime.now(dt.UTC)
-        dm.set_user_premium(a.id, now + dt.timedelta(days=7))
-        dm.set_user_register_date(a.id, now)
-        dm.set_user_position(a.id, "home")
-        dm.set_user_inventory(a.id, "{}")
-        dm.set_user_storage(a.id, "{}")
-
-        user_cards = dm.get_user_cards(a.id, 1)
-        for card in user_cards:
-            dm.set_user_card_deck(a.id, 1, 1, card[0])
+        for c in card_names:
+            card = db.Card.create(owner=player.id, name=c, level=4)
+            db.DeckCard.create(card=card.id, deck=deck.id)
 
         deals_cards = []
         for _ in range(9):

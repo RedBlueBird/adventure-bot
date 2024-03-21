@@ -154,7 +154,7 @@ class Info(commands.Cog):
         aliases=["card", "i", "inv"],
     )
     async def cards(self, ctx: Context, page: int = 1, user: discord.Member = commands.Author):
-        if not db.Player.select(db.Player.id == user.id).exists():
+        if not db.Player.select().where(db.Player.id == user.id).exists():
             await ctx.reply(f"That user isn't registered!")
             return
 

@@ -24,31 +24,29 @@ class BaseModel(Model):
 class Player(BaseModel):
     id = BigIntegerField(primary_key=True)
 
-    level = IntegerField()
-    xp = IntegerField()
-    coins = IntegerField()
-    gems = IntegerField()
-    event_tokens = IntegerField()
-    medals = IntegerField()
-    raid_tickets = IntegerField()
+    level = IntegerField(default=1)
+    xp = IntegerField(default=0)
+    coins = IntegerField(default=250)
+    gems = IntegerField(default=5)
+    event_tokens = IntegerField(default=0)
+    medals = IntegerField(default=0)
+    raid_tickets = IntegerField(default=0)
 
-    deals = CharField()
-    quests = CharField()
+    deals = CharField(default="")
+    card_order = IntegerField(default=1)
+    deck = IntegerField(default=1)
 
-    card_order = IntegerField()
-    deck = IntegerField()
+    position = CharField(default="enchanted forest")
+    display_map = BooleanField(default=True)
+    inventory = JSONField(default=dict)
+    storage = JSONField(default=dict)
 
-    position = CharField()
-    display_map = BooleanField()
-    inventory = JSONField()
-    storage = JSONField()
+    badges = IntegerField(default=0)
 
-    badges = IntegerField()
-
-    creation_date = DateField()
-    daily_date = DateField()
-    premium_acc = DateField()
-    streak = IntegerField()
+    creation_date = DateField(default=dt.date.today)
+    daily_date = DateField(default=lambda: dt.date.today() - dt.timedelta(days=1))
+    premium_acc = DateField(default=dt.date.today)
+    streak = IntegerField(default=0)
 
     def has_premium(self):
         return self.premium_acc >= dt.datetime.now().date()
