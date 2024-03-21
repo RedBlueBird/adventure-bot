@@ -29,7 +29,10 @@ class Sys(commands.Cog):
 
         await ctx.send("*Registering...*")
 
-        player = db.Player.create(id=a.id, premium_acc=dt.date.today() + dt.timedelta(days=14))
+        deals = ",".join([u.deal_card(1) for _ in range(9)])
+        player = db.Player.create(
+            id=a.id, deals=deals, premium_acc=dt.date.today() + dt.timedelta(days=14)
+        )
         deck = db.Deck.create(owner=player.id, slot=1)
 
         card_names = [
@@ -49,11 +52,6 @@ class Sys(commands.Cog):
         for c in card_names:
             card = db.Card.create(owner=player.id, name=c, level=4)
             db.DeckCard.create(card=card.id, deck=deck.id)
-
-        deals_cards = []
-        for _ in range(9):
-            deals_cards.append(u.deal_card(1))
-        dm.set_user_deals(a.id, ",".join(deals_cards))
 
         await ctx.send(
             "**FREE PREMIUM MEMBERSHIP** for 2 weeks obtained!\n"
