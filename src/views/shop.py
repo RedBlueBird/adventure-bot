@@ -1,6 +1,7 @@
 import discord
 
-from helpers import util as u, resources as r, db_manager as dm
+import db
+from helpers import util as u, resources as r
 
 PACKS = [
     {
@@ -83,31 +84,29 @@ class Shop(discord.ui.View):
     def __init__(self, uid: int):
         super().__init__()
         self.id = uid
-        self.coins = dm.get_user_coin(uid)
-        self.gems = dm.get_user_gem(uid)
-        self.tokens = dm.get_user_token(uid)
+        self.player = db.Player.get_by_id(uid)
 
     @discord.ui.button(label="Daily Deals", style=discord.ButtonStyle.blurple)
     async def daily_deals(self, i: discord.Interaction, button: discord.ui.Button):
-        user_deals = dm.get_user_deals(self.id).split(",")
         embed = discord.Embed(
             title="Shop - Daily Deals:",
-            description=f"{r.ICONS['coin']} **{self.coins}** {r.ICONS['gem']} **{self.gems}**",
+            description=f"{r.ICONS['coin']} **{self.player.coins}** {r.ICONS['gem']} **{self.player.gems}**",
             color=discord.Color.gold(),
         )
 
-        for v, d in enumerate(user_deals):
-            card = d.split(".")
-            rarity = u.rarity_cost(card[1])
-            if d[0] != "-":
-                cost = round(1.6 ** int(card[0]) * 50 * u.price_factor(card[1]))
+        for v, d in enumerate(self.player.deals.split(",")):
+            level, card = d.split(".")
+            level = int(level)
+            card = r.card(card)
+            if level > 0:
+                cost = round(1.6 ** level * 50 * u.price_factor(card.id))
                 embed.add_field(
-                    name=f"**[{rarity}] {card[1]} lv: {card[0]}**",
+                    name=f"**{card} lv: {level}**",
                     value=f"Cost: **{cost}** {r.ICONS['coin']}\n`{r.PREF}buy card {v + 1}`",
                 )
             else:
                 embed.add_field(
-                    name=f"**[{rarity}] {card[1]} lv: {card[0][1:]}**", value="Sold out"
+                    name=f"**{card} lv: {-level}**", value="Sold out"
                 )
 
         embed.set_footer(
@@ -121,8 +120,9 @@ class Shop(discord.ui.View):
         embed = discord.Embed(
             title="Shop - Card Packs:",
             description=(
-                f"{r.ICONS['coin']} **{self.coins}** {r.ICONS['gem']} "
-                f"**{self.gems}** {r.ICONS['token']} **{self.tokens}**"
+                f"{r.ICONS['coin']} **{self.player.coins}** "
+                f"{r.ICONS['gem']} **{self.player.gems}** "
+                f"{r.ICONS['token']} **{self.player.event_tokens}**"
             ),
             color=discord.Color.green(),
         )
@@ -137,7 +137,8 @@ class Shop(discord.ui.View):
     async def currency(self, i: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
             title="Shop - Currencies:",
-            description=f"{r.ICONS['coin']} **{self.coins}** {r.ICONS['gem']} **{self.gems}**",
+            description=f"{r.ICONS['coin']} **{self.player.coins}** "
+                        f"{r.ICONS['gem']} **{self.player.gems}**",
             color=discord.Color.green(),
         )
         for field in CURRENCY:

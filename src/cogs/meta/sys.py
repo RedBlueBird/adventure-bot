@@ -112,8 +112,8 @@ class Sys(commands.Cog):
         embed.add_field(
             name=f"You're now level {lvl + 1}!",
             value=f"+{coin_gain} {r.ICONS['coin']} \n+{gem_gain} {r.ICONS['gem']} \n```» "
-                  + "\n\n» ".join(level_msg)
-                  + "```",
+            + "\n\n» ".join(level_msg)
+            + "```",
         )
         embed.set_thumbnail(url=a.avatar.url)
         await ctx.reply(embed=embed)

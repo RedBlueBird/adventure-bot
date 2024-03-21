@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
+import db
 from helpers import util as u, resources as r, checks, db_manager as dm
 from views import Confirm
 
@@ -132,12 +133,12 @@ class Purchase(commands.Cog):
         deals = {"gc1": [3, 1000], "gc2": [6, 2250], "gc3": [24, 11000]}
 
         a = ctx.author
-        gems = dm.get_user_gem(a.id)
+        player = db.Player.get_by_id(a.id)
 
         gem_cost = deals[deal][0]
         coin_gain = deals[deal][1]
 
-        if gems < gem_cost:
+        if player.gems < gem_cost:
             await ctx.reply("You don't have enough gems!")
             return
 
@@ -156,15 +157,16 @@ class Purchase(commands.Cog):
             await msg.edit(content="Purchase canceled.", view=None)
             return
 
-        dm.set_user_gem(a.id, gems - gem_cost)
-        dm.set_user_coin(a.id, dm.get_user_coin(a.id) + coin_gain)
+        player.gems -= gem_cost
+        player.coins += coin_gain
+        player.save()
 
         embed = discord.Embed(
             title="You got:",
             description=f"**{coin_gain}** {r.ICONS['coin']}!",
             color=discord.Color.gold(),
         )
-        embed.set_footer(text=f"Gems left: {gems - gem_cost}")
+        embed.set_footer(text=f"Gems left: {player.gems}")
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command()
@@ -175,17 +177,16 @@ class Purchase(commands.Cog):
         deals = {"rt1": [2, 1], "rt2": [4, 3], "rt3": [6, 5]}
 
         a = ctx.author
-        gems = dm.get_user_gem(a.id)
+        player = db.Player.get_by_id(a.id)
 
         gem_cost = deals[deal][0]
         ticket_gain = deals[deal][1]
-        tickets = dm.get_user_ticket(a.id)
-        max_tickets = 10 if dm.has_premium(a.id) else 5
+        max_tickets = 10 if player.has_premium() else 5
 
-        if gems < gem_cost:
+        if player.gems < gem_cost:
             await ctx.reply("You don't have enough gems!")
             return
-        if tickets + ticket_gain > max_tickets:
+        if player.raid_tickets + ticket_gain > max_tickets:
             await ctx.reply("You can't store that many tickets!")
             return
 
@@ -197,15 +198,16 @@ class Purchase(commands.Cog):
         if not confirm:
             return
 
-        dm.set_user_gem(a.id, gems - gem_cost)
-        dm.set_user_ticket(a.id, tickets + ticket_gain)
+        player.gems -= gem_cost
+        player.raid_tickets += ticket_gain
+        player.save()
 
         embed = discord.Embed(
             title="You got:",
             description=f"**{ticket_gain}** {r.ICONS['tick']}!",
             color=discord.Color.gold(),
         )
-        embed.set_footer(text=f"Gems left: {gems - gem_cost}")
+        embed.set_footer(text=f"Gems left: {player.gems}")
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command(aliases=["r"])
@@ -214,20 +216,20 @@ class Purchase(commands.Cog):
     @checks.is_registered()
     async def refresh(self, ctx: Context):
         a = ctx.author
-        coins = dm.get_user_coin(a.id)
+        player = db.Player.get_by_id(a.id)
         cost = 200
-        if coins < cost:
+        if player.coins < cost:
             await ctx.reply("You don't have enough coins!")
             return
 
         # 200 coins isn't that big of a cost, idt we need a confirm view here ~ sans
-        gained_cards = [
-            u.deal_card(dm.get_user_level(a.id)) for _ in range(9 if dm.has_premium(a.id) else 6)
-        ]
-        dm.set_user_coin(a.id, coins - cost)
-        dm.set_user_deals(a.id, ",".join(gained_cards))
+        card_amt = 9 if player.has_premium() else 6
+        new_deals = [u.deal_card(dm.get_user_level(a.id)) for _ in range(card_amt)]
 
-        dm.set_user_coin(a.id, coins - cost)
+        player.coins -= cost
+        player.deals = ",".join(new_deals)
+        player.save()
+
         await ctx.reply(f"You refreshed your shop for {cost} {r.ICONS['coin']}!")
 
     @buy.command()
