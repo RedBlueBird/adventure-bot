@@ -71,7 +71,7 @@ class Sys(commands.Cog):
         #     await u.update_quest(ctx, a.id, quest[1], 0)
         # endregion
 
-        if random.randint(1, 25) != 1:
+        if random.randint(1, 25) == 1:
             await self.spawn_coin(ctx)
 
     async def check_levels(self, ctx: Context):
