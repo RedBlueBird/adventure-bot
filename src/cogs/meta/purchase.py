@@ -241,21 +241,22 @@ class Purchase(commands.Cog):
     @checks.is_registered()
     async def all(self, ctx: Context):
         a = ctx.author
-        coins = dm.get_user_coin(a.id)
-        deals = [i.split(".") for i in dm.get_user_deals(a.id).split(",")]
+        player = db.Player.get_by_id(a.id)
 
-        cost = sum(
-            [u.card_coin_cost(card, int(lvl)) if lvl[0] != "-" else 0 for lvl, card in deals]
-        )
+        cost = 0
+        count = 0
+        for d in player.deals:
+            if not d.sold:
+                cost += u.card_coin_cost(d.c_name, d.c_level)
+                count += 1
 
-        count = sum([lvl[0] != "-" for lvl, _ in deals])
-        if count + dm.get_user_cards_count(a.id) > r.MAX_CARDS:
+        if count + len(player.cards) > r.MAX_CARDS:
             await ctx.reply("You don't have enough space to buy everything!")
             return
         if count == 0:
             await ctx.reply("You've already bought everything!")
             return
-        if coins < cost:
+        if player.coins < cost:
             await ctx.reply(f"You need {cost} {r.ICONS['coin']} to buy everything!")
             return
 
@@ -269,20 +270,19 @@ class Purchase(commands.Cog):
 
         gained_cards = []
         cards_msg = []
-        for lvl, name in deals:
-            if lvl[0] == "-":
-                continue
-
-            lvl = int(lvl)
-            gained_cards.append((a.id, name, lvl))
+        for d in player.deals:
+            card = r.card(d.c_name)
+            gained_cards.append({"owner": player, "name": card.id, "level": d.c_level})
             cards_msg.append(
-                f"[{u.rarity_cost(name)}] **{name}** lv: **{lvl}** - "
-                f"**{u.card_coin_cost(name, lvl)}** {r.ICONS['coin']}"
+                f"{card} lv: {d.c_level} - "
+                f"**{u.card_coin_cost(d.c_name, d.c_level)}** {r.ICONS['coin']}"
             )
+            d.sold = True
+            d.save()  # not sure how bad this is?
 
-        dm.add_user_cards(gained_cards)
-        dm.set_user_coin(a.id, coins - cost)
-        dm.set_user_deals(a.id, ",".join(["-." + i[1] for i in deals]))
+        db.Card.insert_many(gained_cards).execute()
+        player.coins -= cost
+        player.save()
 
         embed = discord.Embed(
             title="You Bought:",
@@ -290,7 +290,7 @@ class Purchase(commands.Cog):
             color=discord.Color.gold(),
         )
         embed.add_field(name="Total Cost", value=f"{cost} {r.ICONS['coin']}")
-        embed.set_footer(text=f"You have {coins - cost} golden coins left")
+        embed.set_footer(text=f"You have {player.coins} golden coins left")
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command()
@@ -299,48 +299,49 @@ class Purchase(commands.Cog):
     @checks.is_registered()
     async def card(self, ctx: Context, card: int):
         a = ctx.author
-        coins = dm.get_user_coin(a.id)
-        deals = [i.split(".") for i in dm.get_user_deals(a.id).split(",")]
+        player = db.Player.get_by_id(a.id)
+        card -= 1  # 0-index it
 
-        if not 1 <= card < len(deals):
-            await ctx.reply(f"The card number must be between 1 and {len(deals)}!")
+        if not 0 <= card < len(player.deals):
+            await ctx.reply(f"The card number must be between 1 and {len(player.deals)}!")
             return
 
-        card -= 1
-        lvl, name = deals[card]
-        if lvl[0] == "-":
+        deal = player.deals[card]
+        if deal.sold:
             await ctx.reply("You already bought this card!")
             return
-        if dm.get_user_cards_count(a.id) == r.MAX_CARDS:
+
+        # please tell me this doesn't fetch all the cards (it probably does but :cope:)
+        if len(player.cards) == r.MAX_CARDS:
             await ctx.reply("You don't have space for this card!")
             return
 
-        card_cost = u.card_coin_cost(name, int(lvl))
-        if coins < card_cost:
+        card = r.card(deal.c_name)
+        card_cost = u.card_coin_cost(deal.c_name, deal.c_level)
+        if player.coins < card_cost:
             await ctx.reply("You don't have enough golden coins to buy that card!")
             return
 
         msg, confirm = await confirm_purchase(
             ctx,
-            f"Are you sure you want to purchase **[{u.rarity_cost(name)}] {name} lv: {lvl}**?",
+            f"Are you sure you want to purchase a level {deal.c_level} {card}?",
         )
         if not confirm:
             return
 
         await msg.edit(
             content=(
-                "You successfully bought a "
-                f"**[{u.rarity_cost(name)}] {name} "
-                f"lv: {lvl}** with "
+                f"You successfully bought a level {deal.c_level} {card} with "
                 f"{card_cost} {r.ICONS['coin']}!"
             ),
             view=None,
         )
 
-        dm.add_user_cards([(a.id, deals[card][1], int(lvl))])
-        dm.set_user_coin(a.id, coins - card_cost)
-        deals[card][0] = f"-{lvl}"
-        dm.set_user_deals(a.id, ",".join([".".join(i) for i in deals]))
+        db.Card.create(owner=player, name=deal.c_name, level=deal.c_level)
+        player.coins -= card_cost
+        player.save()
+        deal.sold = True
+        deal.save()
 
 
 async def setup(bot):
