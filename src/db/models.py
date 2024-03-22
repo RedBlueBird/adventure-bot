@@ -1,10 +1,13 @@
 import os
 import datetime as dt
+from dotenv import load_dotenv
 
 from playhouse.mysql_ext import *
 
 from .fields import *
 from .types import *
+
+load_dotenv()
 
 db = MySQLDatabase(
     os.environ["DB_DB"],

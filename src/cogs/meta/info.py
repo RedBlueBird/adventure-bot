@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import db
-from helpers import util as u, resources as r, checks, db_manager as dm
+from helpers import util as u, resources as r, checks
 from views import Shop, CardPages, Decks, Leaderboard
 
 
@@ -42,7 +42,7 @@ class Info(commands.Cog):
         if lvl >= 4:
             tick_msg = f"{r.ICONS['ticket']}**Raid Tickets: **{player.raid_tickets}/{tickets}"
 
-        descr = f"```{dm.queues[user.id]}```\n" if user.id in dm.queues else None
+        descr = f"```{db.actions[user.id]}```\n" if user.id in db.actions else None
         embed = discord.Embed(
             title=f"{user.display_name}'s profile:",
             description=descr,

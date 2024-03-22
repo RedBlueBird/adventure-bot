@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import db_manager as dm
+import db
 import cogs
 
 import exceptions
@@ -68,7 +68,7 @@ class AdventurerBot(commands.Bot):
             print(
                 f"Executed {executed_command} command by {ctx.author} (ID: {ctx.author.id}) in DMs"
             )
-        dm.queues.pop(ctx.author.id, None)
+        db.actions.pop(ctx.author.id, None)
 
     async def on_command_error(self, ctx: Context, error) -> None:
         """Executed every time a normal valid command catches an error."""
@@ -120,7 +120,8 @@ class AdventurerBot(commands.Bot):
         else:
             embed.description = f"{type(error).__name__}: {error}"
 
-        dm.queues.pop(ctx.author.id, None)
+        if not isinstance(error, exceptions.UserPreoccupied):
+            db.actions.pop(ctx.author.id, None)
         await ctx.send(embed=embed)
         raise error
 
@@ -146,5 +147,4 @@ bot = AdventurerBot(
 )
 
 if __name__ == "__main__":
-    dm.init()
     bot.run(os.environ["BOT_TOKEN"])

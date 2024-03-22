@@ -59,7 +59,7 @@ class Card(commands.Cog):
     @commands.hybrid_command(
         aliases=["up"], description="Upgrade a card by merging it with another."
     )
-    @checks.not_preoccupied("upgrading card")
+    @checks.not_preoccupied("upgrading cards")
     @checks.is_registered()
     async def upgrade(self, ctx: commands.Context, to_upgrade: int, to_destroy: int):
         """Upgrade a card by merging it with another."""
