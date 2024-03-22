@@ -4,7 +4,8 @@ import math
 import discord
 from discord.ext import commands
 
-from helpers import resources as r, checks, db_manager as dm
+import db
+from helpers import resources as r, checks
 from helpers.battle import BattleData2, Player, Card
 from views.battle import PvpInvite, Select, Actions
 
@@ -32,20 +33,21 @@ class Pvp2(commands.Cog):
         msg = await ctx.reply(view=view)
         while True:
             await view.wait()
-            people = view.selected
-            for p in people:
+            ppl = view.selected
+            for p in ppl:
                 id_ = p.id
-
+                player = db.Player.get_by_id(id_)
                 level_req = 1
-                if dm.get_user_level(id_) < level_req:
+                if player.level < level_req:
                     await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break
 
-                if dm.get_user_medal(id_) < gamble_medals:
+                if player.medals < gamble_medals:
                     await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
                     break
 
-                if dm.get_user_deck_count(id_) != 12:
+                sel_deck = db.Deck.get((db.Deck.owner == player.id) & (db.Deck.slot == player.deck))
+                if len(sel_deck.cards) != 12:
                     await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
                     break
             else:
@@ -54,15 +56,16 @@ class Pvp2(commands.Cog):
             view = Select(a)
             await msg.edit(view=view)
 
-        people = [ctx.author] + people
+        ppl = [ctx.author] + ppl
+        ppl_db = {p.id: db.Player.get_by_id(p.id) for p in ppl}
 
-        req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
+        req_msg = "Hey " + "\n".join(c.mention for c in ppl[1:]) + "!\n"
         if gamble_medals > 0:
             req_msg += f"{a.mention} wants to battle with {gamble_medals} {r.ICONS['medal']}!\n"
         else:
             req_msg += f"{a.mention} wants to have a friendly battle!\n"
 
-        view = PvpInvite(ctx.author, people, 6)
+        view = PvpInvite(ctx.author, ppl, 6)
         await msg.edit(content=req_msg, view=view)
         await view.wait()
 
@@ -77,15 +80,17 @@ class Pvp2(commands.Cog):
             for p in t:
                 if p not in view.user_team:
                     continue
+
+                p_db = ppl_db[p.id]
                 player_deck = [
-                    Card(name=i[1], lvl=i[2])
-                    for i in dm.get_user_deck(p.id, dm.get_user_deck_slot(p.id))
+                    Card(name=i.name, lvl=i.level)
+                    for i in db.get_deck(p.id)
                 ]
                 random.shuffle(player_deck)
                 player = Player(
-                    level=dm.get_user_level(p.id),
-                    hp=100 * math.floor(dm.get_user_level(p.id) / 2),
-                    max_hp=100 * math.floor(dm.get_user_level(p.id) / 2),
+                    level=p_db.level,
+                    hp=100 * math.floor(p_db.level / 2),
+                    max_hp=100 * math.floor(p_db.level / 2),
                     user=p,
                     team=t_id,
                     id=counter,
@@ -95,7 +100,7 @@ class Pvp2(commands.Cog):
                     card.owner = player
                 players.append(player)
                 counter += 1
-                dm.queues[p.id] = "in a pvp battle"
+                db.actions[p.id] = "in a PvP battle"
 
         if gamble_medals > 0:
             s = "s" if gamble_medals > 1 else ""
@@ -115,13 +120,12 @@ class Pvp2(commands.Cog):
         await stats_msg.edit(embed=dd.show_stats(), view=battle_buttons)
 
         for player in players:
-            if int(player.user.id) in dm.queues:
-                del dm.queues[int(player.user.id)]
+            db.actions.pop(player.user.id, None)
 
     @commands.hybrid_command(aliases=["m"], description="Make a move.")
     @checks.is_registered()
     async def move(self, ctx: commands.Context, moves: commands.Greedy[int]):
-        dm.set_user_battle_command(ctx.author.id, " ".join([str(i) for i in moves]))
+        # dm.set_user_battle_command(ctx.author.id, " ".join([str(i) for i in moves]))
         try:
             await ctx.message.delete()
         except:
