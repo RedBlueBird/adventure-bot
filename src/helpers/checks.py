@@ -4,7 +4,8 @@ from collections import abc
 import discord
 
 from exceptions import *
-from helpers import resources as r, db_manager as dm
+import db
+from helpers import resources as r
 
 T = t.TypeVar("T")
 
@@ -23,17 +24,19 @@ def is_admin() -> abc.Callable[[T], T]:
 def not_preoccupied(action: str = "doing something"):
     async def predicate(ctx: commands.Context) -> bool:
         a_id = ctx.author.id
-        if a_id in dm.queues:
-            raise UserPreoccupied(dm.queues[a_id])
-        dm.queues[a_id] = action
+        if a_id in db.actions:
+            raise UserPreoccupied(db.actions[a_id])
+        db.actions[a_id] = action
         return True
 
     return commands.check(predicate)
 
 
 def is_registered():
+    """Check if the user is registered in the bot."""
+
     async def predicate(ctx: commands.Context) -> bool:
-        if not dm.is_registered(ctx.author.id):
+        if not db.Player.select().where(db.Player.id == ctx.author.id).exists():
             raise UserNotRegistered
         return True
 
@@ -41,8 +44,11 @@ def is_registered():
 
 
 def level_check(lvl: int):
+    """Check if the user is of the given level. Must be followed by an is_registered() decorator."""
+
     async def predicate(ctx: commands.Context) -> bool:
-        if dm.get_user_level(ctx.author.id) < lvl:
+        player = db.Player.get_by_id(ctx.author.id)
+        if player.level < lvl:
             raise UserSkillIssue(lvl)
         return True
 

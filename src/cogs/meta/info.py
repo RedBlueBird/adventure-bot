@@ -198,6 +198,7 @@ class Info(commands.Cog):
 
     @commands.hybrid_command(name="shop", description="Display the shop.")
     @checks.level_check(3)
+    @checks.is_registered()
     async def shop(self, ctx: Context) -> None:
         embed = discord.Embed(
             title="Welcome to the card shop!",

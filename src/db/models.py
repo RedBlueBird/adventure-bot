@@ -113,7 +113,6 @@ class Quest(BaseModel):
                 reward_arr = [0, 1, 2, 4]
         return reward_arr[self.rarity.value]
 
-
     def xp_reward(self):
         return [25, 50, 100, 200, 250][self.rarity.value]
 
