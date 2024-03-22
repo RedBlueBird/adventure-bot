@@ -109,43 +109,35 @@ class Info(commands.Cog):
             await ctx.reply(f"That user isn't registered yet!")
             return
 
-        quests = dm.get_user_quests(user.id)
-        u.add_quests(user.id, quests)
-
+        quests = list(player.quests)
+        embed = discord.Embed(
+            title=f"{user.display_name}'s Quests:",
+            color=discord.Color.green(),
+        )
         if not quests:
-            embed = discord.Embed(
-                title=f"{user.display_name}'s Quests:",
-                description="You don't have any quests.\nCome back later for more!",
-                color=discord.Color.green(),
-            )
+            embed.description = "You don't have any quests.\nCome back later for more!"
         else:
-            embed = discord.Embed(
-                title=f"{user.display_name}'s Quests:", color=discord.Color.gold()
-            )
             for quest in quests:
-                quest_info = u.quest_info(quest[1], quest[2], quest[3])
                 embed.add_field(
-                    name=f"**{quest_info['rarity']} {quest_info['description']}**",
+                    name=f"**{quest.rarity.name}. {quest.description()}**",
                     value=(
-                        f"Finished {quest[4]}/{quest_info['requirement']}\n"
-                        "Reward:"
-                        f" **{quest_info['reward']['exp']} {r.ICONS['exp']}"
-                        f" {quest_info['reward']['other']}"
-                        f" {r.ICONS[quest_info['reward']['type']]}**"
+                        f"Finished {quest.progress}/{quest.requirement()}\n"
+                        f"Reward: **{quest.xp_reward()} {r.ICONS['exp']}"
+                        f" {quest.reward()} {quest.reward_type.emoji()}**"
                     ),
                     inline=False,
                 )
 
         embed.set_thumbnail(url=user.avatar.url)
-        next_quest = dm.get_user_next_quest(user.id)
-        if next_quest is not None:
-            time_left = u.time_converter(int((next_quest - dt.datetime.now()).total_seconds()))
-            if time_left != "Right now":
-                embed.set_footer(text=f"{time_left} left till a new quest")
-        else:
-            embed.set_footer(
-                text="You have reached the maximum number of quests. Finish some to get more!"
-            )
+        # next_quest = dm.get_user_next_quest(user.id)
+        # if next_quest is not None:
+        #     time_left = u.time_converter(int((next_quest - dt.datetime.now()).total_seconds()))
+        #     if time_left != "Right now":
+        #         embed.set_footer(text=f"{time_left} left till a new quest")
+        # else:
+        #     embed.set_footer(
+        #         text="You have reached the maximum number of quests. Finish some to get more!"
+        #     )
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(
@@ -189,7 +181,7 @@ class Info(commands.Cog):
             await ctx.reply("The deck number must between 1-6!")
             return
 
-        if dm.get_user_level(user.id) < r.DECK_LVL_REQ[deck]:
+        if player.level < r.DECK_LVL_REQ[deck]:
             await ctx.reply(f"You need to reach level {r.DECK_LVL_REQ[deck]} to get that deck!")
             return
 
@@ -198,10 +190,9 @@ class Info(commands.Cog):
 
     @commands.hybrid_command(name="decks", description="Displays an overview of a user's decks.")
     async def decks(self, ctx: Context, user: discord.Member = commands.Author):
-        if not dm.is_registered(user.id):
+        if not db.Player.select().where(db.Player.id == user.id).exists():
             await ctx.reply(f"That user isn't registered yet!")
             return
-
         view = Decks(user)
         await ctx.send(embed=view.overview_embed(), view=view)
 

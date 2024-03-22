@@ -77,8 +77,45 @@ class Quest(BaseModel):
     player = ForeignKeyField(Player, backref="quests", on_delete="CASCADE")
     quest_type = EnumField(QuestType)
     reward_type = EnumField(RewardType)
-    level = IntegerField()
+    rarity = EnumField(QuestRarity)
     progress = IntegerField()
+
+    def description(self):
+        return [
+            "Kill {amount} opponents while adventuring",
+            "Accumulate items of weight over {amount} while adventuring",
+            "Adventure {amount} meters",
+            "Win {amount} non-friendly PvP battles",
+            "Earn {amount} coins adventuring",
+            "Earn {amount} medals in PvP battles",
+            "Merge {amount} pairs of cards",
+            "Catch {amount} fish in the public boat",
+        ][self.quest_type.value].format(amount=self.requirement())
+
+    def requirement(self):
+        return [
+            [5, 10, 20, 50],  # Kill mobs
+            [10, 20, 40, 60],  # Collect items
+            [500, 1000, 2000, 5000],  # Travel a certain distance
+            [1, 3, 5, 10],  # Battle
+            [100, 200, 500, 1000],  # Collect coins
+            [5, 10, 25, 50],  # Collect medals
+            [1, 2, 5, 10],  # Merge cards
+            [3, 5, 10, 20],  # Catch fish
+        ][self.quest_type.value][self.rarity.value]
+
+    def reward(self):
+        reward_arr = None
+        match self.reward_type:
+            case RewardType.COINS:
+                reward_arr = [200, 500, 1000, 2500]
+            case RewardType.GEMS:
+                reward_arr = [0, 1, 2, 4]
+        return reward_arr[self.rarity.value]
+
+
+    def xp_reward(self):
+        return [25, 50, 100, 200, 250][self.rarity.value]
 
 
 class Deal(BaseModel):
