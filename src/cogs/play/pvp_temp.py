@@ -82,10 +82,7 @@ class Pvp2(commands.Cog):
                     continue
 
                 p_db = ppl_db[p.id]
-                player_deck = [
-                    Card(name=i.name, lvl=i.level)
-                    for i in db.get_deck(p.id)
-                ]
+                player_deck = [Card(name=i.name, lvl=i.level) for i in db.get_deck(p.id)]
                 random.shuffle(player_deck)
                 player = Player(
                     level=p_db.level,

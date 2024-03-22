@@ -19,7 +19,7 @@ def sort_cards(cards: list[Card], order: int):
         lambda c: c.name,
         lambda c: c.id,
         lambda c: r.card(c.name).cost,
-        lambda c: r.card(c.name).rarity
+        lambda c: r.card(c.name).rarity,
     ]
     descending = order % 2 == 1
     cards.sort(key=keys[order // 2], reverse=descending)

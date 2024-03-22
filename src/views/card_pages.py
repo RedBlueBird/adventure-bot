@@ -25,7 +25,9 @@ class CardPages(discord.ui.View):
 
         self.author = author
         self.user = user
-        cards = list(cards if cards is not None else db.Card.select().where(db.Card.owner == db_user.id))
+        cards = list(
+            cards if cards is not None else db.Card.select().where(db.Card.owner == db_user.id)
+        )
         db.sort_cards(cards, db_user.card_order)
         self.num_cards = len(cards)
 
