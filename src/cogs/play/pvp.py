@@ -5,6 +5,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
+import db
 from helpers import util as u, resources as r, checks, db_manager as dm
 from helpers.battle import BattleData
 from views.battle import PvpInvite, Select
@@ -41,15 +42,17 @@ class Pvp(commands.Cog):
                 id_ = p.id
 
                 level_req = 1
-                if dm.get_user_level(id_) < level_req:
+                player = db.Player.get_by_id(id_)
+                if player.level < level_req:
                     await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break
 
-                if dm.get_user_medal(id_) < gamble_medals:
+                if player.medals < gamble_medals:
                     await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
                     break
 
-                if dm.get_user_deck_count(id_) != 12:
+                sel_deck = db.Deck.get((db.Deck.owner == player.id) & (db.Deck.slot == player.deck))
+                if len(sel_deck.cards) != 12:
                     await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
                     break
             else:
@@ -123,8 +126,8 @@ class Pvp(commands.Cog):
         )
 
         for u_ in set(dd.p_ids.info.values()):
-            if u_ in dm.queues:
-                dm.queues[u_] = "in a friendly battle"
+            if u_ in db.actions:
+                db.actions[u_] = "in a friendly battle"
         loading_embed_message = discord.Embed(title="Loading...", description=r.ICONS["load"])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hands_msg = await ctx.send(embed=loading_embed_message)
@@ -415,17 +418,19 @@ class Pvp(commands.Cog):
             xp_amt = dd.turns * 2
             for p in dd.p_ids.info:
                 id_ = dd.p_ids.info[p]
+                player = db.Player.get_by_id(id_)
                 if p in winner:
                     if dd.turns >= 10:
                         if gamble_medals > 0:
                             await u.update_quest(ctx, id_, 4, 1)
                         await u.update_quest(ctx, id_, 6, gamble_medals)
 
-                    dm.set_user_medal(id_, dm.get_user_medal(id_) + medal_amt)
-                    dm.set_user_exp(id_, dm.get_user_exp(id_) + xp_amt)
+                    player.medals += medal_amt
+                    player.xp += xp_amt
                 else:
-                    dm.set_user_medal(id_, dm.get_user_medal(id_) - gamble_medals)
-                dm.set_user_exp(id_, dm.get_user_exp(id_) + xp_amt)
+                    player.medals -= gamble_medals
+                player.xp += xp_amt
+                player.save()
 
             if gamble_medals != 0:
                 embed = discord.Embed(
@@ -457,8 +462,9 @@ class Pvp(commands.Cog):
 
             xp_amt = dd.turns * 2
             for p in dd.p_ids.info:
-                id_ = dd.p_ids.info[p]
-                dm.set_user_exp(id_, dm.get_user_exp(id_) + xp_amt)
+                player = db.Player.get_by_id(dd.p_ids.info[p])
+                player.xp += xp_amt
+                player.save()
 
             embed = discord.Embed(
                 title="Battle Ended!",
@@ -473,8 +479,8 @@ class Pvp(commands.Cog):
             await ctx.send(embed=embed)
 
         for u_ in set(dd.p_ids.info.values()):
-            if u_ in dm.queues:
-                del dm.queues[u_]
+            if u_ in db.actions:
+                del db.actions[u_]
 
 
 async def setup(bot):

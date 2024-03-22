@@ -34,7 +34,7 @@ class Fun(commands.Cog):
             off = round(abs(wait_time - recorded) * 1000) / 1000
             await ctx.reply(
                 f"You replied in {recorded} seconds, which "
-                f"is {off} seconds off from {wait_time} seconds"
+                f"is {off} seconds off from {wait_time} seconds."
             )
 
     @commands.hybrid_command(description="Have Crispy agree with anything!")
