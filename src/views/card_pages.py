@@ -21,15 +21,15 @@ class CardPages(discord.ui.View):
     ):
         super().__init__()
 
-        player = db.Player.get_by_id(user.id)
+        db_user = db.Player.get_by_id(user.id)
 
         self.author = author
         self.user = user
-        # TODO: order by user preference
-        cards = cards if cards is not None else db.Card.select().where(db.Card.owner == player.id)
+        cards = list(cards if cards is not None else db.Card.select().where(db.Card.owner == db_user.id))
+        db.sort_cards(cards, db_user.card_order)
         self.num_cards = len(cards)
 
-        self.deck_ids = {c.id for c in db.get_deck(player.id)}
+        self.deck_ids = {c.id for c in db.get_deck(db_user.id)}
 
         self.per_page = per_page
         self.pages = list(chunks(cards, per_page))

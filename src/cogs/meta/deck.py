@@ -23,7 +23,7 @@ class Deck(commands.Cog):
         o_num = None
         for v, p in enumerate(["level", "name", "id", "energy", "rarity"]):
             if p == card_property:
-                o_num = 2 * v + 1
+                o_num = 2 * v
         assert o_num is not None
 
         o_num += order == "descending"

@@ -31,13 +31,13 @@ class Decks(discord.ui.View):
 
         assert 0 <= slot <= 6
         self.user = user
-        player = db.Player.get_by_id(user.id)
-        self.user_slot = player.deck
+        self.db_user = db.Player.get_by_id(user.id)
+        self.user_slot = self.db_user.deck
         self.slot = self.user_slot if slot == 0 else slot
 
         self.unlocked = 0
         for s in range(1, 6 + 1):
-            if player.level >= r.DECK_LVL_REQ[s]:
+            if self.db_user.level >= r.DECK_LVL_REQ[s]:
                 self.unlocked += 1
                 self.add_item(DeckButton(s))
         self.add_item(OverviewButton((self.unlocked + 2) // 3))
@@ -66,6 +66,7 @@ class Decks(discord.ui.View):
 
     def deck_embed(self) -> discord.Embed:
         deck = db.get_deck(self.user.id, self.slot)
+        db.sort_cards(deck, self.db_user.card_order)
         cards = []
         total_energy = 0
         for card in deck:
