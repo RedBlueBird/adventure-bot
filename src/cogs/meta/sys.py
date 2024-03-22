@@ -29,9 +29,7 @@ class Sys(commands.Cog):
 
         await ctx.send("*Registering...*")
 
-        player = db.Player.create(
-            id=a.id, premium_acc=dt.date.today() + dt.timedelta(days=14)
-        )
+        player = db.Player.create(id=a.id, premium_acc=dt.date.today() + dt.timedelta(days=14))
         deals = [u.deal_card(player.level) for _ in range(9)]
         db.Deal.insert_many(
             [{"player": player, "c_name": d["card"], "c_level": d["level"]} for d in deals]
