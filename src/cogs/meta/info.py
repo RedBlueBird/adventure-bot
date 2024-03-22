@@ -24,7 +24,7 @@ class Info(commands.Cog):
 
         player = db.Player.get_or_none(db.Player.id == user.id)
         if player is None:
-            await ctx.reply(f"That user isn't registered!")
+            await ctx.reply(f"That user isn't registered yet!")
             return
 
         prem_expiration = player.premium_acc
@@ -64,8 +64,7 @@ class Info(commands.Cog):
                 inline=False,
             )
 
-        user_daily = dm.get_user_daily(user.id)
-        dts = "Right now!" if user_daily.date() != now else u.time_til_midnight()
+        dts = "Right now!" if player.daily_date != now else u.time_til_midnight()
         embed.add_field(
             name="Currency",
             value=(
@@ -105,8 +104,8 @@ class Info(commands.Cog):
     )
     async def quests(self, ctx: Context, user: discord.Member = commands.Author):
         """Displays all current quests of a user."""
-
-        if not dm.is_registered(user.id):
+        player = db.Player.get_or_none(db.Player.id == user.id)
+        if player is None:
             await ctx.reply(f"That user isn't registered yet!")
             return
 
@@ -155,7 +154,7 @@ class Info(commands.Cog):
     )
     async def cards(self, ctx: Context, page: int = 1, user: discord.Member = commands.Author):
         if not db.Player.select().where(db.Player.id == user.id).exists():
-            await ctx.reply(f"That user isn't registered!")
+            await ctx.reply(f"That user isn't registered yet!")
             return
 
         view = CardPages(ctx.author, user, page=page - 1)
@@ -200,7 +199,7 @@ class Info(commands.Cog):
     @commands.hybrid_command(name="decks", description="Displays an overview of a user's decks.")
     async def decks(self, ctx: Context, user: discord.Member = commands.Author):
         if not dm.is_registered(user.id):
-            await ctx.reply(f"That user isn't registered!")
+            await ctx.reply(f"That user isn't registered yet!")
             return
 
         view = Decks(user)

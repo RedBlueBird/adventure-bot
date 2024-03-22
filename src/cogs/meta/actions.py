@@ -6,6 +6,7 @@ import asyncio
 import discord
 from discord.ext import commands
 
+import db
 from helpers import util as u, resources as r, checks, db_manager as dm
 
 
@@ -16,74 +17,63 @@ class Actions(commands.Cog):
     @commands.hybrid_command(aliases=["d"], description="Get your daily rewards!")
     @checks.is_registered()
     async def daily(self, ctx: commands.Context):
-        a = ctx.author
-        last_d = dm.get_user_daily(a.id)
-        if last_d.date() == dt.date.today():
+        player = db.Player.get_by_id(ctx.author.id)
+        if player.daily_date == dt.date.today():
             dts = u.time_til_midnight()
             await ctx.reply(f"Your next daily is in {dts}!")
             return
 
-        streak = dm.get_user_streak(a.id) + 1
         max_streak = 7
         max_tickets = 5
-        if dm.has_premium(a.id):
+        if player.has_premium():
             max_streak = 14
             max_tickets = 10
 
-        if last_d.date() < dt.date.today() - dt.timedelta(days=1):
+        streak = player.streak + 1
+        if player.daily_date < dt.date.today() - dt.timedelta(days=1):
             streak = 1
         elif streak >= max_streak:
             streak = max_streak
+        player.daily_date = dt.date.today()
 
-        tickets = dm.get_user_ticket(a.id)
-        lvl = dm.get_user_level(a.id)
-        if tickets >= max_tickets or lvl < 4:
+        if player.raid_tickets >= max_tickets or player.level < 4:
             ticket_reward = 0
             tick_msg = ""
         else:
             ticket_reward = 1
             tick_msg = f"+{ticket_reward} {r.ICONS['ticket']}"
+        player.raid_tickets += ticket_reward
 
-        coins = dm.get_user_coin(a.id)
         # Give the user a card or 250 coins, depending on how many they already have
-        if dm.get_user_cards_count(a.id) < r.MAX_CARDS:
+        if len(player.cards) < r.MAX_CARDS:
             card_level = u.log_level_gen(
-                random.randint(2 ** (max(0, 5 - (lvl // 4))), 2 ** (10 - math.floor(lvl / 10)))
+                random.randint(
+                    2 ** (max(0, 5 - (player.level // 4))),
+                    2 ** (10 - math.floor(player.level / 10)),
+                )
             )
-            card = u.random_card(card_level, "normal")
-            dm.add_user_cards([(a.id, card, card_level)])
-            card_msg = f"Obtained **[{u.rarity_cost(card)}] {card} lv: {card_level}**!"
+            card = r.card(u.random_card(card_level, "normal"))
+            db.Card.create(owner=player.id, name=card.id, level=card_level)
+            card_msg = f"Obtained {card} lv: {card_level}!"
         else:
             card_val = 250
-            coins += card_val
+            player.coins += card_val
             card_msg = f"Obtained {card_val} {r.ICONS['coin']}!"
 
-        xp = dm.get_user_exp(a.id)
-        medals = dm.get_user_medal(a.id)
-        medal_base = 1 if streak < 7 else 2
-        # 1/7 change to get a jackpot daily, with greatly increased rewards
+        # 1/7 change to get a jackpot daily
         if jackpot := random.randint(1, 7) == 1:
-            coins += (coin_amt := 400 + math.floor(lvl / 5) * 20 + streak * 80)
-            xp += (xp_amt := 200)
-            medals += (medal_amt := medal_base * 4)
+            player.coins += (coin_amt := 400 + math.floor(player.level / 5) * 20 + streak * 80)
+            player.xp += (xp_amt := 200)
         else:
-            coins += (coin_amt := 100 + math.floor(lvl / 5) * 5 + streak * 20)
-            xp += (xp_amt := 50)
-            medals += (medal_amt := medal_base)
+            player.coins += (coin_amt := 100 + math.floor(player.level / 5) * 5 + streak * 20)
+            player.xp += (xp_amt := 50)
 
+        player.save()
         await ctx.reply(
             ("***JACKPOT!!!***\n" if jackpot else "")
-            + f"**+{coin_amt} {r.ICONS['coin']} +{xp_amt} {r.ICONS['exp']}"
-            f" +{medal_amt}{r.ICONS['medal']} {tick_msg}\nDaily"
-            f" streak {streak}/{max_streak} {r.ICONS['streak']}**\n{card_msg}"
+            + f"**+{coin_amt} {r.ICONS['coin']} +{xp_amt} {r.ICONS['exp']} {tick_msg}\n"
+            f"Daily streak {streak}/{max_streak} {r.ICONS['streak']}**\n{card_msg}"
         )
-
-        dm.set_user_coin(a.id, coins)
-        dm.set_user_exp(a.id, xp)
-        dm.set_user_medal(a.id, medals)
-        dm.set_user_ticket(a.id, tickets + ticket_reward)
-        dm.set_user_daily(a.id, dt.date.today())
-        dm.set_user_streak(a.id, streak)
 
     @commands.hybrid_command(description="Trade with other players!")
     @checks.not_preoccupied("trading")
