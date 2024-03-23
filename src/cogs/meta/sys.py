@@ -4,11 +4,22 @@ import datetime as dt
 import asyncio
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.ext.commands import Context
 
 import db
 from helpers import util as u, resources as r
+
+
+def fill_quests(player: db.Player):
+    max_quests = 4 + player.has_premium()
+    for _ in range(max_quests - len(player.quests)):
+        q_type = random.choice(list(db.QuestType))
+        rwd_type = db.RewardType.COINS
+        if random.randint(1, 4) == 1:
+            rwd_type = db.RewardType.GEMS
+        rarity = db.QuestRarity(u.randint_log(0, 3))
+        db.Quest.create(player=player, quest_type=q_type, reward_type=rwd_type, rarity=rarity)
 
 
 class Sys(commands.Cog):
@@ -34,6 +45,7 @@ class Sys(commands.Cog):
         db.Deal.insert_many(
             [{"player": player, "c_name": d["card"], "c_level": d["level"]} for d in deals]
         ).execute()
+        fill_quests(player)
 
         deck = db.Deck.create(owner=player.id, slot=1)
 
@@ -60,21 +72,23 @@ class Sys(commands.Cog):
             f"Welcome to Adventure Bot! Do `{r.PREF}tutorial` to get started!"
         )
 
+    @tasks.loop(time=dt.time.min)
+    async def fill_quests(self):
+        map(fill_quests, db.Player.select())
+
     @commands.Cog.listener()
     async def on_command(self, ctx: Context):
         if ctx.author.bot:
             return
 
-        await self.check_levels(ctx)
-
-        # region Quest Completion Check (temporary)
-        # quests = dm.get_user_quests(a.id)
-        # for quest in quests:
-        #     await u.update_quest(ctx, a.id, quest[1], 0)
-        # endregion
-
         if random.randint(1, 25) == 1:
             await self.spawn_coin(ctx)
+
+    @commands.Cog.listener()
+    async def on_command_completion(self, ctx: Context):
+        if ctx.author.bot:
+            return
+        await self.check_levels(ctx)
 
     async def check_levels(self, ctx: Context):
         a = ctx.author

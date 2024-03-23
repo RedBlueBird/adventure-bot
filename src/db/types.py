@@ -18,7 +18,6 @@ class QuestRarity(Enum):
     R = auto()
     E = auto()
     L = auto()
-    EX = auto()
 
 
 class RewardType(Enum):

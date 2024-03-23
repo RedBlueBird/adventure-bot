@@ -88,7 +88,6 @@ class Info(commands.Cog):
         if player.badges != 0:
             icons = ["beta b", "pro b", "art b", "egg b", "fbi b", "for b"]
             owned_badges = []
-            print(player.badges)
             for i in range(len(icons)):
                 if player.badges & (1 << i):  # Checks if the ith bit is set
                     owned_badges.append(str(r.ICONS[icons[i]]))
@@ -129,15 +128,6 @@ class Info(commands.Cog):
                 )
 
         embed.set_thumbnail(url=user.avatar.url)
-        # next_quest = dm.get_user_next_quest(user.id)
-        # if next_quest is not None:
-        #     time_left = u.time_converter(int((next_quest - dt.datetime.now()).total_seconds()))
-        #     if time_left != "Right now":
-        #         embed.set_footer(text=f"{time_left} left till a new quest")
-        # else:
-        #     embed.set_footer(
-        #         text="You have reached the maximum number of quests. Finish some to get more!"
-        #     )
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(

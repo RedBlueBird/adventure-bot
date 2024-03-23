@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 import db
-from helpers import resources as r, checks
+from helpers import resources as r, util as u, checks
 from views import Confirm
 
 
@@ -57,7 +57,7 @@ class Card(commands.Cog):
         await msg.edit(content=f"{len(to_discard)} card{s} successfully discarded.", view=None)
 
     @commands.hybrid_command(
-        aliases=["up"], description="Upgrade a card by merging it with another."
+        aliases=["up", "merge"], description="Upgrade a card by merging it with another."
     )
     @checks.not_preoccupied("upgrading cards")
     @checks.is_registered()
@@ -111,11 +111,12 @@ class Card(commands.Cog):
             await msg.edit(content="Upgrading canceled.", view=None)
             return
 
-        # await u.update_quest(ctx, a.id, 7, 1)
         gained_xp = (upgraded.level + 1) * 10
         player.xp += gained_xp
         player.coins -= upgrade_cost
         player.save()
+        await u.update_quest(db.QuestType.MERGE_CARDS, 1, ctx)
+
         upgraded.level += 1
         upgraded.save()
         destroyed.delete_instance()

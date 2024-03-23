@@ -81,7 +81,7 @@ class Quest(BaseModel):
     quest_type = EnumField(QuestType)
     reward_type = EnumField(RewardType)
     rarity = EnumField(QuestRarity)
-    progress = IntegerField()
+    progress = IntegerField(default=0)
 
     def description(self):
         return [
