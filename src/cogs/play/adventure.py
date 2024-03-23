@@ -186,7 +186,7 @@ class Adventure(commands.Cog):
                     await view.wait()
 
                 case "minigame":
-                    db.actions[a.id] = "playing a minigame"
+                    db.change_user_action(a.id, "playing a minigame")
                     if state.pos == "coin flip":
                         view = g.CoinFlip(a)
                     elif state.pos == "fishing":
@@ -201,7 +201,7 @@ class Adventure(commands.Cog):
                         embed=embed, attachments=[] if img is None else [img], view=view
                     )
                     await view.wait()
-                    db.actions[a.id] = "wandering around town"
+                    db.change_user_action(a.id, "wandering around town")
 
                 case "adventure":
                     if len(db.get_deck(a.id)) != 12:

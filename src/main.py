@@ -56,19 +56,20 @@ class AdventurerBot(commands.Bot):
 
     async def on_command_completion(self, ctx: Context) -> None:
         """Executed every time a normal command has been *successfully* executed"""
-        full_command_name = ctx.command.qualified_name
-        split = full_command_name.split(" ")
-        executed_command = str(split[0])
+        cmd_name = ctx.command.qualified_name
+        executed_command = cmd_name.split(" ")[0]
+        a = ctx.author
         if ctx.guild is not None:
             print(
                 f"Executed {executed_command} command in {ctx.guild.name} "
-                f"(ID: {ctx.guild.id}) by {ctx.author} (ID: {ctx.author.id})"
+                f"(ID: {ctx.guild.id}) by {a} (ID: {a.id})"
             )
         else:
             print(
-                f"Executed {executed_command} command by {ctx.author} (ID: {ctx.author.id}) in DMs"
+                f"Executed {executed_command} command by {a} (ID: {a.id}) in DMs"
             )
-        db.actions.pop(ctx.author.id, None)
+
+        db.unlock_user(a.id, cmd_name)
 
     async def on_command_error(self, ctx: Context, error) -> None:
         """Executed every time a normal valid command catches an error."""
@@ -121,7 +122,7 @@ class AdventurerBot(commands.Bot):
             embed.description = f"{type(error).__name__}: {error}"
 
         if not isinstance(error, exceptions.UserPreoccupied):
-            db.actions.pop(ctx.author.id, None)
+            db.unlock_user(ctx.author.id, ctx.command.qualified_name)
         await ctx.send(embed=embed)
         raise error
 

@@ -23,10 +23,7 @@ def is_admin() -> abc.Callable[[T], T]:
 
 def not_preoccupied(action: str = "doing something"):
     async def predicate(ctx: commands.Context) -> bool:
-        a_id = ctx.author.id
-        if a_id in db.actions:
-            raise UserPreoccupied(db.actions[a_id])
-        db.actions[a_id] = action
+        db.lock_user(ctx.author.id, ctx.command.qualified_name, action)
         return True
 
     return commands.check(predicate)

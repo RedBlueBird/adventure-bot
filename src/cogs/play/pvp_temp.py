@@ -97,7 +97,7 @@ class Pvp2(commands.Cog):
                     card.owner = player
                 players.append(player)
                 counter += 1
-                db.actions[p.id] = "in a PvP battle"
+                db.lock_user(p.id, "pvp", "in a PvP battle")
 
         if gamble_medals > 0:
             s = "s" if gamble_medals > 1 else ""
@@ -117,7 +117,7 @@ class Pvp2(commands.Cog):
         await stats_msg.edit(embed=dd.show_stats(), view=battle_buttons)
 
         for player in players:
-            db.actions.pop(player.user.id, None)
+            db.unlock_user(player.user.id, "pvp")
 
     @commands.hybrid_command(aliases=["m"], description="Make a move.")
     @checks.is_registered()

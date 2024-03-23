@@ -17,9 +17,10 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
 
         id_ = i.user.id
         not_host = id_ != self.view.host.id
-        if not_host and id_ in db.actions and i.user not in self.view.rejected:
+        action = db.get_user_action(id_)
+        if not_host and action is not None and i.user not in self.view.rejected:
             await i.response.send_message(
-                f"You can't accept the request- you're still {db.actions[id_]}!",
+                f"You can't accept the request- you're still {action}!",
                 ephemeral=True,
             )
             return

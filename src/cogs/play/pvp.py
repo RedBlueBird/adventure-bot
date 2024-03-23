@@ -126,8 +126,7 @@ class Pvp(commands.Cog):
         )
 
         for u_ in set(dd.p_ids.info.values()):
-            if u_ in db.actions:
-                db.actions[u_] = "in a friendly battle"
+            db.lock_user(u_, "pvp", "in a friendly battle")
         loading_embed_message = discord.Embed(title="Loading...", description=r.ICONS["load"])
         stats_msg = await ctx.send(embed=loading_embed_message)
         hands_msg = await ctx.send(embed=loading_embed_message)
@@ -479,8 +478,7 @@ class Pvp(commands.Cog):
             await ctx.send(embed=embed)
 
         for u_ in set(dd.p_ids.info.values()):
-            if u_ in db.actions:
-                del db.actions[u_]
+            db.unlock_user(u_, "pvp")
 
 
 async def setup(bot):

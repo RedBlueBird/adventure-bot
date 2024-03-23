@@ -42,10 +42,10 @@ class Info(commands.Cog):
         if lvl >= 4:
             tick_msg = f"{r.ICONS['ticket']}**Raid Tickets: **{player.raid_tickets}/{tickets}"
 
-        descr = f"```{db.actions[user.id]}```\n" if user.id in db.actions else None
+        action = db.get_user_action(user.id)
         embed = discord.Embed(
             title=f"{user.display_name}'s profile:",
-            description=descr,
+            description=f"```{action}```\n" if action is not None else None,
             color=discord.Color.gold(),
         )
         embed.set_thumbnail(url=user.avatar.url)
