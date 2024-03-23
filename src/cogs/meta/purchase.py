@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import db
-from helpers import util as u, resources as r, checks, db_manager as dm
+from helpers import util as u, resources as r, checks
 from views import Confirm
 
 
@@ -63,19 +63,15 @@ class Purchase(commands.Cog):
         }
 
         a = ctx.author
-        gems = dm.get_user_gem(a.id)
-        tokens = dm.get_user_token(a.id)
+        player = db.Player.get_by_id(a.id)
 
-        gem_cost = card_packs[pack][0]
-        token_cost = card_packs[pack][1]
-        amt = card_packs[pack][2]
-        lvls = card_packs[pack][3]
+        gem_cost, token_cost, amt, lvls = card_packs[pack]
 
-        if amt + dm.get_user_cards_count(a.id) > r.MAX_CARDS:
+        if amt + len(player.cards) > r.MAX_CARDS:
             await ctx.reply("You don't have enough space for this card pack!")
             return
 
-        if gems < gem_cost or tokens < token_cost:
+        if player.gems < gem_cost or player.event_tokens < token_cost:
             cost = "Nothing"  # should never happen
             if gem_cost > 0 and token_cost > 0:
                 cost = f"{gem_cost} {r.ICONS['gem']} and {token_cost} {r.ICONS['token']}"
@@ -92,18 +88,23 @@ class Purchase(commands.Cog):
         if not confirm:
             return
 
-        dm.set_user_gem(a.id, gems - gem_cost)
-        dm.set_user_token(a.id, tokens - token_cost)
+        player.gems -= gem_cost
+        player.event_tokens -= token_cost
+        player.save()
         if pack != "confetti":
             gained_cards = []
             cards_msg = []
             for _ in range(amt):
                 lvl = u.log_level_gen(random.randint(1, lvls))
-                name = u.random_card(lvl, pack)
-                gained_cards.append((a.id, name, lvl))
-                cards_msg.append(f"[{u.rarity_cost(name)}] **{name}** lv: **{lvl}** \n")
+                card = r.card(u.random_card(lvl, pack))
+                gained_cards.append({
+                    "owner": player,
+                    "name": card.id,
+                    "level": lvl
+                })
+                cards_msg.append(f"{card} lv: **{lvl}**\n")
 
-            dm.add_user_cards(gained_cards)
+            db.Card.insert_many(gained_cards).execute()
 
             cards_msg.append("=======================\n")
             cards_msg.append(f"**From the {pack.title()} Pack**")
@@ -113,15 +114,17 @@ class Purchase(commands.Cog):
                 color=discord.Color.gold(),
             )
         else:
-            dm.add_user_cards([(a.id, "Confetti Cannon", 10)])
+            lvl = 10
+            name = "confetti cannon"
+            db.Card.create(owner=player, name=name, level=lvl)
             embed = discord.Embed(
                 title=f"**From the Anniversary Pack!!**",
-                description="You got\n[Ex/7] Confetti Cannon lv: 10",
+                description=f"You got\n{r.card(name)} lv: {lvl}",
                 color=discord.Color.green(),
             )
 
         embed.set_thumbnail(url=ctx.author.avatar.url)
-        embed.set_footer(text=f"Gems left: {gems - gem_cost}")
+        embed.set_footer(text=f"Gems left: {player.gems}")
         await msg.edit(content=None, embed=embed, view=None)
 
     @buy.command()
