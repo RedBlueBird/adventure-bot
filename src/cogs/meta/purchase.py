@@ -97,11 +97,7 @@ class Purchase(commands.Cog):
             for _ in range(amt):
                 lvl = u.log_level_gen(random.randint(1, lvls))
                 card = r.card(u.random_card(lvl, pack))
-                gained_cards.append({
-                    "owner": player,
-                    "name": card.id,
-                    "level": lvl
-                })
+                gained_cards.append({"owner": player, "name": card.id, "level": lvl})
                 cards_msg.append(f"{card} lv: **{lvl}**\n")
 
             db.Card.insert_many(gained_cards).execute()

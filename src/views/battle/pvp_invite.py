@@ -2,6 +2,7 @@ import discord
 
 import db
 
+
 class TeamButton(discord.ui.Button["PvpInvite"]):
     def __init__(self, team: int):
         super().__init__(
