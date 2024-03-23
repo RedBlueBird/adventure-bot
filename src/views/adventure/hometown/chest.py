@@ -3,7 +3,8 @@ import typing as t
 import discord
 import discord.ui as ui
 
-from helpers import util as u, resources as r, db_manager as dm
+import db
+from helpers import util as u, resources as r
 from views.adventure.template import Exit, InteractionCheckMixin
 
 
@@ -47,25 +48,22 @@ async def submit_chest_form(
         return
     amt = int(amt)
 
-    uid = i.user.id
-    inv = dm.get_user_inventory(uid)
-    chest = dm.get_user_storage(uid)
-    lvl = dm.get_user_level(uid)
+    player = db.Player.get_by_id(i.user.id)
+    inv = player.inventory
+    chest = player.storage
     try:
         if action == "take":
             transfer(item, amt, chest, "chest", inv, "backpack", r.BP_CAP)
-        else:
-            transfer(item, amt, inv, "backpack", chest, "chest", u.chest_storage(lvl))
+        elif action == "deposit":
+            transfer(item, amt, inv, "backpack", chest, "chest", u.chest_storage(player.level))
     except ValueError as e:
         await i.response.send_message(e, ephemeral=True)
 
-    embed = u.container_embed(chest, "Chest", lvl).add_field(
+    embed = u.container_embed(chest, "Chest", player.level).add_field(
         name="Your Backpack", value=f"```{u.container_str(inv)}```"
     )
     await i.response.edit_message(embed=embed)
-
-    dm.set_user_inventory(uid, inv)
-    dm.set_user_storage(uid, chest)
+    player.save()
 
 
 class TakeForm(ui.Modal, title="Take something!"):

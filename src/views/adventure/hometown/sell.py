@@ -1,7 +1,8 @@
 import discord
 import discord.ui as ui
 
-from helpers import util as u, resources as r, db_manager as dm
+import db
+from helpers import util as u, resources as r
 from views.adventure.template import Exit, InteractionCheckMixin
 
 
@@ -12,6 +13,7 @@ class SellForm(ui.Modal, title="Sell something!"):
     def __init__(self, user: discord.Member, sell_msg: discord.Message):
         super().__init__()
         self.user = user
+        self.db_user = db.Player.get_by_id(user.id)
         self.sell_msg = sell_msg
 
     async def on_submit(self, i: discord.Interaction):
@@ -24,15 +26,14 @@ class SellForm(ui.Modal, title="Sell something!"):
         item = r.item(self.item.value.lower())
         name = item.name
 
-        inv = dm.get_user_inventory(self.user.id)
-
+        inv = self.db_user.inventory
         if inv.get(name, 0) < amt:
             await i.response.send_message(
                 "You don't have enough of those items in your backpack!", ephemeral=True
             )
             return
 
-        dm.set_user_coin(self.user.id, dm.get_user_coin(self.user.id) + item.sell * amt)
+        self.db_user.coins += item.sell * amt
         inv[name] -= amt
         if inv[name] == 0:
             del inv[name]
@@ -43,7 +44,8 @@ class SellForm(ui.Modal, title="Sell something!"):
             f"for {item.sell * amt} {r.ICONS['coin']}!",
             ephemeral=True,
         )
-        dm.set_user_inventory(self.user.id, inv)
+
+        self.db_user.save()
         await self.sell_msg.edit(embed=u.container_embed(inv))
 
 

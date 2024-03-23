@@ -1,6 +1,6 @@
 import discord
 
-from helpers import db_manager as dm
+import db
 
 
 class RaidInvite(discord.ui.View):
@@ -37,9 +37,9 @@ class RaidInvite(discord.ui.View):
 
         id_ = i.user.id
         not_host = id_ != self.host.id
-        if not_host and id_ in dm.queues and i.user not in self.rejected:
+        if not_host and id_ in db.actions and i.user not in self.rejected:
             await i.response.send_message(
-                f"You can't accept the request- you're still {dm.queues[id_]}!",
+                f"You can't accept the request- you're still {db.actions[id_]}!",
                 ephemeral=True,
             )
             return

@@ -1,7 +1,8 @@
 import discord
 import discord.ui as ui
 
-from helpers import util as u, db_manager as dm
+import db
+from helpers import util as u
 
 
 class Exit(ui.Button):
@@ -19,8 +20,10 @@ class Backpack(ui.Button):
         super().__init__(label=label, row=row, style=discord.ButtonStyle.blurple)
 
     async def callback(self, i: discord.Interaction):
-        inv = dm.get_user_inventory(self.view.user.id)
-        await i.response.send_message(embed=u.container_embed(inv, "Backpack"), ephemeral=True)
+        player = db.Player.get_by_id(i.user.id)
+        await i.response.send_message(
+            embed=u.container_embed(player.inventory, "Backpack"), ephemeral=True
+        )
 
 
 class InteractionCheckMixin:

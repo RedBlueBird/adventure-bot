@@ -1,7 +1,6 @@
 import discord
 
-from helpers import db_manager as dm
-
+import db
 
 class TeamButton(discord.ui.Button["PvpInvite"]):
     def __init__(self, team: int):
@@ -17,9 +16,9 @@ class TeamButton(discord.ui.Button["PvpInvite"]):
 
         id_ = i.user.id
         not_host = id_ != self.view.host.id
-        if not_host and id_ in dm.queues and i.user not in self.view.rejected:
+        if not_host and id_ in db.actions and i.user not in self.view.rejected:
             await i.response.send_message(
-                f"You can't accept the request- you're still {dm.queues[id_]}!",
+                f"You can't accept the request- you're still {db.actions[id_]}!",
                 ephemeral=True,
             )
             return

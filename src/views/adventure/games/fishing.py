@@ -5,7 +5,7 @@ import datetime as dt
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm
+import db
 from ..template import InteractionCheckMixin, Exit
 
 BAIT_COST = 50
@@ -75,8 +75,10 @@ class Bait(ui.View):
             color = discord.Color.red()
 
         uid = self.user.id
-        dm.set_user_coin(uid, dm.get_user_coin(uid) + coin_rwd)
-        dm.set_user_exp(uid, dm.get_user_exp(uid) + xp_rwd)
+        player = db.Player.get_by_id(uid)
+        player.coins += coin_rwd
+        player.xp += xp_rwd
+        player.save()
 
         delay = 10
         embed = discord.Embed(title=title, description=descr, color=color)
@@ -94,8 +96,7 @@ class Fishing(ui.View, InteractionCheckMixin):
 
     @ui.button(label="Start fishing!", style=discord.ButtonStyle.blurple)
     async def bait(self, i: discord.Interaction, button: ui.Button):
-        coins = dm.get_user_coin(self.user.id)
-        if coins < BAIT_COST:
+        if db.Player.get_by_id(self.user.id).coins < BAIT_COST:
             await i.response.send_message(
                 f"You need at least {BAIT_COST} to buy bait!", ephemeral=True
             )

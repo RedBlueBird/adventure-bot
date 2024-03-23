@@ -46,13 +46,16 @@ class Decision(ui.View, InteractionCheckMixin):
     @ui.button(label="Toggle Map", row=1, style=discord.ButtonStyle.blurple)
     async def toggle_map(self, i: discord.Interaction, button: ui.Button):
         msg = i.message
+        self.show_map = not self.show_map
+        embed = msg.embeds[0]
         await i.response.defer()
-        if msg.attachments:
-            msg = await msg.remove_attachments(*msg.attachments)
-        else:
+        if self.show_map:
             self.loc_img.fp.seek(0)
-            msg = await msg.edit(attachments=[self.loc_img])
-        self.show_map = bool(msg.attachments)
+            embed.set_image(url=f"attachment://{self.loc_img.filename}")
+            await msg.edit(embed=embed, attachments=[self.loc_img])
+        else:
+            embed.set_image(url=None)
+            await msg.edit(embed=embed, attachments=[])
 
     @ui.button(label="Exit", row=1, style=discord.ButtonStyle.red)
     async def exit(self, i: discord.Interaction, button: ui.Button):

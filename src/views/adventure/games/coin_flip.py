@@ -4,7 +4,7 @@ from enum import Enum
 import discord
 import discord.ui as ui
 
-from helpers import db_manager as dm
+import db
 from ..template import InteractionCheckMixin, Exit
 
 
@@ -38,8 +38,8 @@ async def bet(
     bet_amt: int,
     edge_factor: int = 1000,
 ):
-    coins = dm.get_user_coin(user.id)
-    if coins < bet_amt:
+    player = db.Player.get_by_id(user.id)
+    if player.coins < bet_amt:
         await i.response.send_message("You don't have enough coins to place a bet!", ephemeral=True)
 
     flip = Bet.flip(edge_factor)
@@ -68,7 +68,8 @@ async def bet(
         embeds[1] = embed
 
     await i.response.edit_message(embeds=embeds)
-    dm.set_user_coin(user.id, coins + inc)
+    player.coins += inc
+    player.save()
 
 
 class CoinFlip(ui.View, InteractionCheckMixin):

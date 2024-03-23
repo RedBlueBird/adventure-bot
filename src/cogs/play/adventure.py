@@ -8,7 +8,8 @@ from PIL import Image, ImageDraw, ImageFont
 import discord
 from discord.ext import commands
 
-from helpers import util as u, resources as r, checks, db_manager as dm
+import db
+from helpers import util as u, resources as r, checks
 
 from views.adventure import Decision
 from views.adventure import games as g, hometown as ht, wild as w
@@ -82,10 +83,7 @@ class Adventure(commands.Cog):
     async def adventure(self, ctx: commands.Context):
         a = ctx.author
 
-        lvl = dm.get_user_level(a.id)
-        inv = dm.get_user_inventory(a.id)
-        pos = dm.get_user_position(a.id)
-        show_map = dm.get_user_map(a.id)
+        player = db.Player.get_by_id(a.id)
 
         adventure = False
         raid_lvl = None
@@ -95,25 +93,26 @@ class Adventure(commands.Cog):
         while True:
             embed = discord.Embed(
                 title=f"{a.display_name}'s Adventure",
-                description=f"{r.HTOWN[pos].description}",
+                description=f"{r.HTOWN[player.position].description}",
                 color=discord.Color.gold(),
             )
 
             file = discord.File(
-                mark_location("hometown_map", *r.HTOWN[pos].coordinate),
+                mark_location("hometown_map", *r.HTOWN[player.position].coordinate),
                 filename="hometown_map.png",
             )
 
-            view = Decision(a, r.HTOWN[pos].choices, file)
+            view = Decision(a, r.HTOWN[player.position].choices, file)
             attach = []
-            if show_map:
+            if player.display_map:
                 embed.set_image(url=f"attachment://{file.filename}")
                 attach = [file]
             await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
 
             if view.show_map is not None:
-                show_map = view.show_map
+                player.display_map = view.show_map
+                player.save()
             choice = view.decision
 
             if choice is None:
@@ -134,11 +133,12 @@ class Adventure(commands.Cog):
                 )
                 break
 
-            state = r.HTOWN[pos].choices[choice]
+            state = r.HTOWN[player.position].choices[choice]
             match state.action:
                 case "self":
                     if state.pos in r.HTOWN:
-                        pos = state.pos
+                        player.position = state.pos
+                        player.save()
                     else:
                         await ctx.reply("Sorry, this route is still in development!")
 
@@ -147,9 +147,10 @@ class Adventure(commands.Cog):
                     embed.set_footer(
                         text="You can use `a.info item (name)` to check the sell price of an item!"
                     )
-                    await adv_msg.edit(content=None, embed=u.container_embed(inv), view=view)
+                    await adv_msg.edit(
+                        content=None, embed=u.container_embed(player.inventory), view=view
+                    )
                     await view.wait()
-                    inv = dm.get_user_inventory(a.id)
 
                 case "buying":
                     offers = [
@@ -180,21 +181,17 @@ class Adventure(commands.Cog):
                     await adv_msg.edit(embed=embed, view=view)
                     await view.wait()
 
-                    inv = dm.get_user_inventory(a.id)
-
                 case "chest":
-                    inv_str = u.container_str(inv)
-                    embed = u.container_embed(dm.get_user_storage(a.id), "Chest", lvl).add_field(
+                    inv_str = u.container_str(player.inventory)
+                    embed = u.container_embed(player.storage, "Chest", player.level).add_field(
                         name="Your Backpack", value=f"```{inv_str}```"
                     )
                     view = ht.Chest(a)
                     await adv_msg.edit(content=None, embed=embed, view=view)
                     await view.wait()
 
-                    inv = dm.get_user_inventory(a.id)
-
                 case "minigame":
-                    dm.queues[a.id] = "playing a minigame"
+                    db.actions[a.id] = "playing a minigame"
                     if state.pos == "coin flip":
                         view = g.CoinFlip(a)
                     elif state.pos == "fishing":
@@ -202,27 +199,29 @@ class Adventure(commands.Cog):
                     elif state.pos == "blackjack":
                         view = g.Blackjack(a)
 
-                    embed, img = setup_minigame(r.HTOWN[pos].choices[choice].pos, show_map)
+                    embed, img = setup_minigame(
+                        r.HTOWN[player.position].choices[choice].pos, player.display_map
+                    )
                     await adv_msg.edit(
                         embed=embed, attachments=[] if img is None else [img], view=view
                     )
                     await view.wait()
-                    dm.queues[a.id] = "wandering around town"
+                    db.actions[a.id] = "wandering around town"
 
                 case "adventure":
-                    if dm.get_user_deck_count(a.id) != 12:
+                    if len(db.get_deck(a.id)) != 12:
                         await ctx.reply("You need 12 cards in your deck first!")
                         continue
 
                     if state.pos == "boss raid":
                         lvl_req = 9
-                        if lvl < lvl_req:
+                        if player.level < lvl_req:
                             await ctx.reply(
                                 f"You need to be at least level {lvl_req} to fight a boss!",
                                 ephemeral=True,
                             )
                             continue
-                        if dm.get_user_ticket(a.id) < 1:
+                        if player.raid_tickets < 1:
                             await ctx.reply("You need a raid ticket first!", ephemeral=True)
                             continue
 
@@ -237,21 +236,19 @@ class Adventure(commands.Cog):
 
                         if view.level is not None:
                             raid_lvl = view.level
-                            dm.set_user_ticket(a.id, dm.get_user_ticket(a.id) - 1)
+                            player.raid_tickets -= 1
+                            player.save()
                             adventure = True
                     else:
                         adventure = True
 
                     break  # out of the exploration loop
 
-        # save their current state before setting them on an adventure
-        dm.set_user_map(a.id, show_map)
-        dm.set_user_inventory(a.id, inv)
-        dm.set_user_position(a.id, pos)
+            player = db.Player.get_by_id(a.id)  # refresh the player record
         # endregion
 
         if adventure:
-            await self.explore(ctx, adv_msg, pos, raid_lvl)
+            await self.explore(ctx, adv_msg, player.position, raid_lvl)
 
     async def explore(
         self,
@@ -261,16 +258,11 @@ class Adventure(commands.Cog):
         raid_lvl: int | None,
     ):
         a = ctx.author
-
-        lvl = dm.get_user_level(a.id)
-        max_hp = u.level_hp(lvl)
+        player = db.Player.get_by_id(a.id)
+        inv = player.inventory
+        max_hp = u.level_hp(player.level)
         hp = max_hp
         dist = 0
-
-        coins = dm.get_user_coin(a.id)
-        gems = dm.get_user_gem(a.id)
-        xp = dm.get_user_exp(a.id)
-        inv = dm.get_user_inventory(a.id)
 
         adv = r.ADVENTURES[journey]
         start = "main", "start", 0
@@ -371,7 +363,7 @@ class Adventure(commands.Cog):
                     if inv[req.name] == 0:
                         del inv[req.name]
 
-                dm.set_user_inventory(a.id, inv)
+                player.save()
             else:
                 choice = curr_op.to
 
@@ -412,8 +404,8 @@ class Adventure(commands.Cog):
                 case "exit":
                     end_cause = "win"
                     if journey == "enchanted forest":
-                        badges = dm.get_user_badge(a.id)
-                        dm.set_user_badge(a.id, badges | (1 << 5))
+                        player.badges = player.badges | (1 << 5)
+                        player.save()
                     break
 
                 case "fight":
@@ -437,7 +429,7 @@ class Adventure(commands.Cog):
 
             curr_op = random.choices(valid_ops, weights)[0]
 
-        dm.set_user_inventory(a.id, inv)
+        player.save()
         await adv_msg.edit(
             content=f"adventure finished. end cause: {end_cause}", embed=None, view=None
         )

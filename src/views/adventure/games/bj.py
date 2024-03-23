@@ -1,7 +1,7 @@
 import discord
 import discord.ui as ui
 
-import helpers.db_manager as dm
+import db
 from helpers.util.poker import Value, Deck, Card
 from ..template import InteractionCheckMixin
 
@@ -28,6 +28,7 @@ class BlackjackBoard(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member):
         super().__init__()
         self.user = user
+        self.db_user = db.Player.get_by_id(user.id)
         self.deck = Deck()
         self.deck.shuffle()
 
@@ -48,14 +49,16 @@ class BlackjackBoard(ui.View, InteractionCheckMixin):
         embed = i.message.embeds[0]
         embed.colour = discord.Colour.green()
         embed.add_field(name="Result", value=f"You won {BET} coins!", inline=False)
-        dm.set_user_coin(self.user.id, dm.get_user_coin(self.user.id) + BET)
+        self.db_user.coins += BET
+        self.db_user.save()
         await self.send_result(i, embed)
 
     async def lose(self, i: discord.Interaction):
         embed = i.message.embeds[0]
         embed.colour = discord.Colour.red()
         embed.add_field(name="Result", value=f"You lost {BET} coins...", inline=False)
-        dm.set_user_coin(self.user.id, dm.get_user_coin(self.user.id) - BET)
+        self.db_user.coins += BET
+        self.db_user.save()
         await self.send_result(i, embed)
 
     async def draw(self, i: discord.Interaction):
@@ -139,8 +142,7 @@ class Blackjack(ui.View, InteractionCheckMixin):
 
     @ui.button(label="Play a round!", style=discord.ButtonStyle.blurple)
     async def play(self, i: discord.Interaction, button: ui.Button):
-        coins = dm.get_user_coin(self.user.id)
-        if coins < BET:
+        if db.Player.get_by_id(self.user.id).coins < BET:
             await i.response.send_message(f"You need at least {BET} to buy bait!", ephemeral=True)
             return
 

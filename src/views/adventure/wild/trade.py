@@ -1,7 +1,8 @@
 import discord
 import discord.ui as ui
 
-from helpers import util as u, resources as r, db_manager as dm
+import db
+from helpers import util as u, resources as r
 from views.adventure.template import Exit, Backpack, InteractionCheckMixin
 from ...confirm import Confirm
 
@@ -37,7 +38,8 @@ class TradeSelect(ui.Select["Trade"]):
             await msg.delete()
             return
 
-        inv = dm.get_user_inventory(i.user.id)
+        player = db.Player.get_by_id(i.user.id)
+        inv = player.inventory
         if u.bp_weight(inv) + r.item(product).weight > r.BP_CAP:
             await msg.edit(
                 content="Hey, your pack's too full. I couldn't fit it in if I tried.",
@@ -62,7 +64,7 @@ class TradeSelect(ui.Select["Trade"]):
                 inv[item] -= amt
             inv[product] = inv.get(product, 0) + 1
 
-            dm.set_user_inventory(i.user.id, inv)
+            player.save()
 
             await msg.edit(
                 content=f"Alright man. Here's your {product.title()}.",

@@ -1,7 +1,7 @@
 import discord
 from discord.ui import UserSelect
 
-from helpers import db_manager as dm
+import db
 
 
 class SelectMenu(UserSelect["Select"]):
@@ -20,15 +20,15 @@ class SelectMenu(UserSelect["Select"]):
             return
 
         for u in self.values:
-            if not dm.is_registered(u.id):
+            if not db.Player.select().where(db.Player.id == u.id).exists():
                 await i.response.send_message(
                     "That user doesn't exist in the bot yet!", ephemeral=True
                 )
                 return
 
-            if u.id in dm.queues and u.id != self.view.host.id:
+            if u.id in db.actions and u.id != self.view.host.id:
                 await i.response.send_message(
-                    f"{u.mention} is still {dm.queues[u.id]}!", ephemeral=True
+                    f"{u.mention} is still {db.actions[u.id]}!", ephemeral=True
                 )
                 return
 

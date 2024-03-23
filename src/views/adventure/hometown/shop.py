@@ -3,7 +3,8 @@ import typing as t
 import discord
 import discord.ui as ui
 
-from helpers import util as u, resources as r, db_manager as dm
+import db
+from helpers import util as u, resources as r
 from views.adventure.template import Exit, InteractionCheckMixin
 
 
@@ -14,6 +15,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
         super().__init__()
         self.user = user
+        self.db_user = db.Player.get_by_id(user.id)
         self.offers = {o.lower() for o in offers}
 
     async def on_submit(self, i: discord.Interaction):
@@ -29,7 +31,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
             await i.response.send_message("Sorry, I don't have that item!", ephemeral=True)
             return
 
-        inv = dm.get_user_inventory(self.user.id)
+        inv = self.db_user.inventory
         if item.weight * amt > r.BP_CAP - u.bp_weight(inv):
             await i.response.send_message(
                 "You don't have enough space in your backpack for these items!",
@@ -37,20 +39,17 @@ class BuyForm(ui.Modal, title="Buy something!"):
             )
             return
 
-        coins = dm.get_user_coin(self.user.id)
-        if item.buy * amt > coins:
+        if item.buy * amt > self.db_user.coins:
             await i.response.send_message("You can't afford that much stuff!", ephemeral=True)
             return
 
-        coins -= item.buy * amt
+        self.db_user.coins -= item.buy * amt
         if name in inv:
             inv[name] += amt
         else:
             inv[name] = {"items": amt}
 
-        dm.set_user_inventory(self.user.id, inv)
-        dm.set_user_coin(self.user.id, coins)
-
+        self.db_user.save()
         await i.response.send_message(
             "You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
@@ -63,6 +62,7 @@ class Shop(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
         super().__init__()
         self.user = user
+        self.db_user = db.Player.get_by_id(user.id)
         self.add_item(Exit())
         self.items = offers
 
@@ -72,5 +72,6 @@ class Shop(ui.View, InteractionCheckMixin):
 
     @ui.button(label="Backpack", style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):
-        inv = dm.get_user_inventory(self.user.id)
-        await i.response.send_message(embed=u.container_embed(inv, "Backpack"), ephemeral=True)
+        await i.response.send_message(
+            embed=u.container_embed(self.db_user.inventory, "Backpack"), ephemeral=True
+        )
