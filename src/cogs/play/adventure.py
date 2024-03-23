@@ -97,21 +97,18 @@ class Adventure(commands.Cog):
                 color=discord.Color.gold(),
             )
 
-            map_ = discord.File(
-                mark_location("hometown_map", *r.HTOWN[player.position].coordinate),
-                filename="hometown_map.png",
-            )
-
+            map_ = mark_location("hometown_map", *r.HTOWN[player.position].coordinate)
             view = Decision(a, r.HTOWN[player.position].choices, map_)
             attach = []
-            if player.display_map:
-                embed.set_image(url=f"attachment://{map_.filename}")
-                attach = [map_]
+            if player.show_map:
+                attach = discord.File(map_, filename="map.png")
+                embed.set_image(url=f"attachment://{attach.filename}")
+                attach = [attach]
             await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
 
             if view.show_map is not None:
-                player.display_map = view.show_map
+                player.show_map = view.show_map
                 player.save()
             choice = view.decision
 
@@ -200,7 +197,7 @@ class Adventure(commands.Cog):
                         view = g.Blackjack(a)
 
                     embed, img = setup_minigame(
-                        r.HTOWN[player.position].choices[choice].pos, player.display_map
+                        r.HTOWN[player.position].choices[choice].pos, player.show_map
                     )
                     await adv_msg.edit(
                         embed=embed, attachments=[] if img is None else [img], view=view

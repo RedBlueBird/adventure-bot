@@ -1,4 +1,5 @@
 import typing as t
+import io
 
 import discord
 import discord.ui as ui
@@ -23,7 +24,7 @@ class Decision(ui.View, InteractionCheckMixin):
         self,
         user: discord.Member,
         choices: t.Iterable[str],
-        loc_file: discord.File | None = None,
+        loc_file: io.BytesIO | None = None,
     ):
         super().__init__()
 
@@ -46,14 +47,16 @@ class Decision(ui.View, InteractionCheckMixin):
     @ui.button(label="Toggle Map", row=1, style=discord.ButtonStyle.blurple)
     async def toggle_map(self, i: discord.Interaction, button: ui.Button):
         msg = i.message
-        self.show_map = not self.show_map
         embed = msg.embeds[0]
         await i.response.defer()
-        if self.show_map:
-            self.loc_img.fp.seek(0)
-            embed.set_image(url=f"attachment://{self.loc_img.filename}")
-            await msg.edit(embed=embed, attachments=[self.loc_img])
+        if embed.image.url is None:
+            self.show_map = True
+            self.loc_img.seek(0)
+            attach = discord.File(self.loc_img, filename="map.png")
+            embed.set_image(url=f"attachment://{attach.filename}")
+            await msg.edit(embed=embed, attachments=[attach])
         else:
+            self.show_map = False
             embed.set_image(url=None)
             await msg.edit(embed=embed, attachments=[])
 

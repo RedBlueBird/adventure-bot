@@ -39,7 +39,7 @@ class Player(BaseModel):
     deck = IntegerField(default=1)
 
     position = CharField(default="enchanted forest")
-    display_map = BooleanField(default=True)
+    show_map = BooleanField(default=True)
     inventory = JSONField(default=dict)
     storage = JSONField(default=dict)
 
