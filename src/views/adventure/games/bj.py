@@ -3,7 +3,7 @@ import discord.ui as ui
 
 import db
 from helpers.util.poker import Value, Deck, Card
-from ..template import InteractionCheckMixin
+from ..template import InteractionCheckMixin, Exit
 
 BJ = 21
 BET = 50
@@ -139,6 +139,7 @@ class Blackjack(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member):
         super().__init__()
         self.user = user
+        self.add_item(Exit())
 
     @ui.button(label="Play a round!", style=discord.ButtonStyle.blurple)
     async def play(self, i: discord.Interaction, button: ui.Button):

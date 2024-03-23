@@ -31,8 +31,6 @@ def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, disco
 
     logs = [f"• {rule}" for rule in r.MINIGAMES[game_name].rules]
     embed.add_field(name="Rules", value="\n".join(logs))
-
-    embed.set_footer(text=f"{r.PREF}exit -quit minigame")
     if show_map:
         if r.MINIGAMES[game_name].img is not None:
             return embed, discord.File(r.MINIGAMES[game_name].img)
