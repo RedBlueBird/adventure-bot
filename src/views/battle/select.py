@@ -28,9 +28,7 @@ class SelectMenu(UserSelect["Select"]):
 
             action = db.get_user_action(u.id)
             if action is not None and u.id != self.view.host.id:
-                await i.response.send_message(
-                    f"{u.mention} is still {action}!", ephemeral=True
-                )
+                await i.response.send_message(f"{u.mention} is still {action}!", ephemeral=True)
                 return
 
         self.view.selected = self.values

@@ -65,9 +65,7 @@ class AdventurerBot(commands.Bot):
                 f"(ID: {ctx.guild.id}) by {a} (ID: {a.id})"
             )
         else:
-            print(
-                f"Executed {executed_command} command by {a} (ID: {a.id}) in DMs"
-            )
+            print(f"Executed {executed_command} command by {a} (ID: {a.id}) in DMs")
 
         db.unlock_user(a.id, cmd_name)
 
