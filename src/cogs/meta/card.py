@@ -32,9 +32,7 @@ class Card(commands.Cog):
         to_discard = []
         for c in db_cards:
             card = r.card(c.name)
-            to_discard.append(
-                f"**[{card.rarity}/{card.cost}] {card.name} lv: {c.level}** #`{c.id}`"
-            )
+            to_discard.append(f"{card} lv: {c.level} #`{c.id}`")
 
         view = Confirm()
         confirm_msg = (
@@ -128,7 +126,7 @@ class Card(commands.Cog):
         )
         embed.add_field(
             name=f"You got a {upgr_card } lv: {upgraded.level} from:",
-            value=f"{upgr_card} lv: {upgraded.level}\n{destr_card} lv: {destroyed.level}",
+            value=f"{upgr_card} lv: {upgraded.level - 1}\n{destr_card} lv: {destroyed.level}",
         )
         embed.set_thumbnail(url=ctx.author.avatar.url)
         await msg.edit(content=None, embed=embed, view=None)
