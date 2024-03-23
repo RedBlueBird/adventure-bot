@@ -97,16 +97,16 @@ class Adventure(commands.Cog):
                 color=discord.Color.gold(),
             )
 
-            file = discord.File(
+            map_ = discord.File(
                 mark_location("hometown_map", *r.HTOWN[player.position].coordinate),
                 filename="hometown_map.png",
             )
 
-            view = Decision(a, r.HTOWN[player.position].choices, file)
+            view = Decision(a, r.HTOWN[player.position].choices, map_)
             attach = []
             if player.display_map:
-                embed.set_image(url=f"attachment://{file.filename}")
-                attach = [file]
+                embed.set_image(url=f"attachment://{map_.filename}")
+                attach = [map_]
             await adv_msg.edit(embed=embed, attachments=attach, view=view)
             await view.wait()
 
@@ -168,7 +168,7 @@ class Adventure(commands.Cog):
                     ]
                     offer_str = []
                     for o in map(r.item, offers):
-                        offer_str.append(f"[{o.rarity}/{o.weight}] {o.name} - {o.buy} gc")
+                        offer_str.append(f"{o} - {o.buy} gc")
 
                     embed = discord.Embed(
                         title="Jessie's Shop:",

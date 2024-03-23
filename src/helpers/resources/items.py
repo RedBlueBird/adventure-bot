@@ -35,6 +35,9 @@ class Item(BaseModel):
         assert ITEM_ABB.get(self.abb, self.id) == self.id
         return self
 
+    def __str__(self):
+        return f"[{self.rarity}/{self.weight}] {self.name}"
+
 
 def item(name: str, max_stat=100 * SCALE[0]) -> Item | None:
     name = ITEM_ABB.get(name.lower(), name.lower())
