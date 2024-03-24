@@ -151,9 +151,7 @@ class Actions(commands.Cog):
             ).execute()
 
             embed = view.trade_embed()
-            embed.title = (
-                f"Trade between {a.display_name} and {target.display_name} - **DONE!**"
-            )
+            embed.title = f"Trade between {a.display_name} and {target.display_name} - **DONE!**"
             await deal_msg.edit(embed=embed, view=None)
 
         db.unlock_user(target.id, "trade")
