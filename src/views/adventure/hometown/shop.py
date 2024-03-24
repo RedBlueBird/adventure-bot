@@ -12,10 +12,8 @@ class BuyForm(ui.Modal, title="Buy something!"):
     item = ui.TextInput(label="Item", placeholder="What do you want to buy?")
     amt = ui.TextInput(label="Amount", placeholder="How much do you want to buy?")
 
-    def __init__(self, user: discord.Member, offers: t.Collection[str]):
+    def __init__(self, offers: t.Collection[str]):
         super().__init__()
-        self.user = user
-        self.db_user = db.Player.get_by_id(user.id)
         self.offers = {o.lower() for o in offers}
 
     async def on_submit(self, i: discord.Interaction):
@@ -31,7 +29,8 @@ class BuyForm(ui.Modal, title="Buy something!"):
             await i.response.send_message("Sorry, I don't have that item!", ephemeral=True)
             return
 
-        inv = self.db_user.inventory
+        player = db.Player.get_by_id(i.user.id)
+        inv = player.inventory
         if item.weight * amt > r.BP_CAP - u.bp_weight(inv):
             await i.response.send_message(
                 "You don't have enough space in your backpack for these items!",
@@ -39,17 +38,17 @@ class BuyForm(ui.Modal, title="Buy something!"):
             )
             return
 
-        if item.buy * amt > self.db_user.coins:
+        if item.buy * amt > player.coins:
             await i.response.send_message("You can't afford that much stuff!", ephemeral=True)
             return
 
-        self.db_user.coins -= item.buy * amt
+        player.coins -= item.buy * amt
         if name in inv:
             inv[name] += amt
         else:
             inv[name] = {"items": amt}
 
-        self.db_user.save()
+        player.save()
         await i.response.send_message(
             "You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
@@ -61,14 +60,13 @@ class BuyForm(ui.Modal, title="Buy something!"):
 class Shop(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
         super().__init__()
-        self.user = user
         self.db_user = db.Player.get_by_id(user.id)
         self.add_item(Exit())
         self.items = offers
 
     @ui.button(label="Purchase", style=discord.ButtonStyle.blurple)
     async def purchase(self, i: discord.Interaction, button: ui.Button):
-        await i.response.send_modal(BuyForm(self.user, self.items))
+        await i.response.send_modal(BuyForm(self.items))
 
     @ui.button(label="Backpack", style=discord.ButtonStyle.blurple)
     async def backpack(self, i: discord.Interaction, button: ui.Button):
