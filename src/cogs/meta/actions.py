@@ -88,10 +88,6 @@ class Actions(commands.Cog):
         if target.id == a.id:
             await ctx.reply("Are you *really* trying to trade with yourself?")
             return
-        action = db.get_user_action(target.id)
-        if action is not None:
-            await ctx.reply(f"{target.mention} is currently {action}!")
-            return
 
         db_target = db.Player.get_or_none(db.Player.id == target.id)
         if db_target is None:
@@ -118,6 +114,10 @@ class Actions(commands.Cog):
             )
             return
 
+        action = db.get_user_action(target.id)
+        if action is not None:
+            await ctx.reply(f"{target.mention} is currently {action}!")
+            return
         db.lock_user(target.id, "trade", "trading")
 
         view = UserTrade(a, target)
