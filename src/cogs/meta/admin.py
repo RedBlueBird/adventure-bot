@@ -54,8 +54,7 @@ class Admin(commands.Cog):
 
         db.Card.create(owner=recipient.id, name=card.id, level=level)
         await ctx.send(
-            f"{recipient.mention}, you received a **[{card.rarity}/{card.cost}] "
-            f"{card.name} lv: {level}** from {ctx.author.mention}!"
+            f"{recipient.mention}, you received a {card} lv: {level} from {ctx.author.mention}!"
         )
 
     @redeem.command()
