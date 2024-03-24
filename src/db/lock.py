@@ -1,5 +1,6 @@
 from exceptions import UserPreoccupied
 
+# not worth interacting with the db for something like this
 _actions: dict[int, tuple[str, str]] = {}
 
 

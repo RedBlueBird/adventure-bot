@@ -3,7 +3,8 @@ import math
 
 import discord
 
-from helpers import resources as r, db_manager as dm
+import db
+from helpers import resources as r
 from .player import Player
 
 
@@ -31,7 +32,7 @@ class BattleData2:
 
     def set_up(self) -> discord.Embed:
         for player in self.players:
-            dm.set_user_battle_command(player.user.id, "")
+            db.set_bat_cmd(player.user.id, "")
 
         embed = discord.Embed(title="Loading...", description=r.ICONS["load"])
         return embed
@@ -52,7 +53,6 @@ class BattleData2:
         p.skip = False
         p.stored_energy = min(12, p.stored_energy + math.ceil(self.round / 2))
 
-        turn_msg = ""
         if self.turn > len(self.players):
             turn_msg = "Everyone is dead!"
         else:
@@ -119,8 +119,8 @@ class BattleData2:
 
         del p.dialogue[2:]
         error_msg = ""
-        moves = dm.get_user_battle_command(p.user.id).split(" ")
-        dm.set_user_battle_command(p.user.id, "")
+        moves = db.get_bat_cmd(p.user.id).split(" ")
+        db.set_bat_cmd(p.user.id, "")
         energy_cost = 0
 
         # region processing non-card move responses

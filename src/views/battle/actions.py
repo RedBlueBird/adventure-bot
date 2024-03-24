@@ -1,7 +1,7 @@
 import discord
 
+import db
 from helpers.battle import BattleData2
-from helpers import db_manager as dm
 
 
 class Actions(discord.ui.View):
@@ -63,6 +63,6 @@ class Actions(discord.ui.View):
             name = self.battledata.players[self.battledata.turn - 1].user.name
             flee_message = f"{player.user.mention} It's {name}'s turn!"
         else:
-            dm.set_user_battle_command(i.user.id, "flee")
+            db.set_bat_cmd(i.user.id, "flee")
             flee_message = f"{i.user.mention} Press `Finish` to confirm fleeing."
         await i.response.send_message(content=flee_message, ephemeral=True)
