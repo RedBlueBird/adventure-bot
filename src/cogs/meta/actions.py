@@ -82,7 +82,8 @@ class Actions(commands.Cog):
     async def trade(self, ctx: commands.Context, target: discord.Member):
         """Trade with other players!"""
 
-        if target.id == ctx.author.id:
+        a = ctx.author
+        if target.id == a.id:
             await ctx.reply("Are you *really* trying to trade with yourself?")
             return
         action = db.get_user_action(target.id)
@@ -100,28 +101,28 @@ class Actions(commands.Cog):
 
         view = Confirm(target)
         deal_msg = await ctx.send(
-            f"Hey {target.mention}! Wanna do a trade with {ctx.author.mention}?", view=view
+            f"Hey {target.mention}! Wanna do a trade with {a.mention}?", view=view
         )
         await view.wait()
         if view.value is None:
             await deal_msg.edit(
-                content=f"{ctx.author.mention}, your trade partner didn't respond in time...",
+                content=f"{a.mention}, your trade partner didn't respond in time...",
                 view=None,
             )
             return
         elif not view.value:
             await deal_msg.edit(
-                content=f"{ctx.author.mention}, your trade partner declined the offer...", view=None
+                content=f"{a.mention}, your trade partner declined the offer...", view=None
             )
             return
 
         db.lock_user(target.id, "trade", "trading")
 
-        view = UserTrade(ctx.author, target)
+        view = UserTrade(a, target)
         deal_msg = await deal_msg.edit(content="", embed=view.trade_embed(), view=view)
         await view.wait()
 
-        init_title = f"Trade between {ctx.author.display_name} and {target.display_name}"
+        init_title = f"Trade between {a.display_name} and {target.display_name}"
         if view.went_through is None:
             embed = view.trade_embed()
             embed.title = f"{init_title} - timed out"
@@ -131,7 +132,7 @@ class Actions(commands.Cog):
             embed.title = f"{init_title} - rejected"
             await deal_msg.edit(embed=embed, view=None)
         else:
-            db_user1 = db.Player.get_by_id(ctx.author.id)
+            db_user1 = db.Player.get_by_id(a.id)
             db_user2 = db.Player.get_by_id(target.id)
             db_user1.coins += view.user2_coins - view.user1_coins
             db_user2.coins += view.user1_coins - view.user2_coins
@@ -151,7 +152,7 @@ class Actions(commands.Cog):
 
             embed = view.trade_embed()
             embed.title = (
-                f"Trade between {ctx.author.display_name} and {target.display_name} - **DONE!**"
+                f"Trade between {a.display_name} and {target.display_name} - **DONE!**"
             )
             await deal_msg.edit(embed=embed, view=None)
 
