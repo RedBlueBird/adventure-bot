@@ -33,9 +33,8 @@ class SellForm(ui.Modal, title="Sell something!"):
             del inv[name]
         player.save()
 
-        descr = f"[{item.rarity}/{item.weight}]"
         await i.response.send_message(
-            f"You just sold **{descr} {name.title()} x{amt}** "
+            f"You just sold **{item} x{amt}** "
             f"for {item.sell * amt} {r.ICONS['coin']}!",
             ephemeral=True,
         )
