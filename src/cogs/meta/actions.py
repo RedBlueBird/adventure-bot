@@ -9,6 +9,8 @@ import db
 from helpers import util as u, resources as r, checks
 from views import Confirm, UserTrade
 
+trading_level = 7
+
 
 class Actions(commands.Cog):
     def __init__(self, bot):
@@ -77,7 +79,7 @@ class Actions(commands.Cog):
 
     @commands.hybrid_command(description="Trade with other players!")
     @checks.not_preoccupied("trading")
-    @checks.level_check(7)
+    @checks.level_check(trading_level)
     @checks.is_registered()
     async def trade(self, ctx: commands.Context, target: discord.Member):
         """Trade with other players!"""
@@ -95,8 +97,8 @@ class Actions(commands.Cog):
         if db_target is None:
             await ctx.reply("That user isn't registered in the bot yet!")
             return
-        if db_target.level < 1:
-            await ctx.reply("The target user needs to be at least level 7 to trade!")
+        if db_target.level < trading_level:
+            await ctx.reply(f"The target user needs to be at least level {trading_level} to trade!")
             return
 
         view = Confirm(target)

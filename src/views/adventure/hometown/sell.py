@@ -34,8 +34,7 @@ class SellForm(ui.Modal, title="Sell something!"):
         player.save()
 
         await i.response.send_message(
-            f"You just sold **{item} x{amt}** "
-            f"for {item.sell * amt} {r.ICONS['coin']}!",
+            f"You just sold **{item} x{amt}** for {item.sell * amt} {r.ICONS['coin']}!",
             ephemeral=True,
         )
 
