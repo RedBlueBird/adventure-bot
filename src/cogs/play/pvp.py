@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 import db
-from helpers import util as u, resources as r, checks, db_manager as dm
+from helpers import util as u, resources as r, checks
 from helpers.battle import BattleData
 from views.battle import PvpInvite, Select
 
@@ -95,14 +95,15 @@ class Pvp(commands.Cog):
                 ids.append(p.id)
                 names.append(p.name)
 
-                deck = [f"{c[2]}.{c[1]}" for c in dm.get_user_deck(p.id)]
+                deck = [f"{c.name}.{c.level}" for c in db.get_deck(p.id)]
                 random.shuffle(deck)
                 decks.append(deck)
 
-                hp = u.level_hp(dm.get_user_level(p.id))
+                player = db.Player.get_by_id(p.id)
+                hp = u.level_hp(player.level)
                 hps.append([hp, 0, hp, 0, 0])
 
-                bps.append(dm.get_user_inventory(p.id))
+                bps.append(player.inventory)
 
         if gamble_medals > 0:
             s = "s" if gamble_medals > 1 else ""
@@ -421,8 +422,8 @@ class Pvp(commands.Cog):
                 if p in winner:
                     if dd.turns >= 10:
                         if gamble_medals > 0:
-                            await u.update_quest(ctx, id_, 4, 1)
-                        await u.update_quest(ctx, id_, 6, gamble_medals)
+                            await u.update_quest(db.QuestType.WIN_PVP, 1, ctx)
+                        await u.update_quest(db.QuestType.EARN_MEDALS, gamble_medals, ctx)
 
                     player.medals += medal_amt
                     player.xp += xp_amt
