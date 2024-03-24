@@ -10,11 +10,10 @@ class SellForm(ui.Modal, title="Sell something!"):
     item = ui.TextInput(label="Item", placeholder="What do you want to sell?")
     amt = ui.TextInput(label="Amount", placeholder="How much do you want to sell?")
 
-    def __init__(self, user: discord.Member, sell_msg: discord.Message):
+    def __init__(self, user: discord.Member):
         super().__init__()
         self.user = user
         self.db_user = db.Player.get_by_id(user.id)
-        self.sell_msg = sell_msg
 
     async def on_submit(self, i: discord.Interaction):
         amt = self.amt.value
@@ -24,8 +23,7 @@ class SellForm(ui.Modal, title="Sell something!"):
         amt = int(amt)
 
         item = r.item(self.item.value.lower())
-        name = item.name
-
+        name = item.id
         inv = self.db_user.inventory
         if inv.get(name, 0) < amt:
             await i.response.send_message(
@@ -46,7 +44,6 @@ class SellForm(ui.Modal, title="Sell something!"):
         )
 
         self.db_user.save()
-        await self.sell_msg.edit(embed=u.container_embed(inv))
 
 
 class Sell(ui.View, InteractionCheckMixin):
@@ -57,4 +54,9 @@ class Sell(ui.View, InteractionCheckMixin):
 
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)
     async def sell(self, i: discord.Interaction, button: ui.Button):
-        await i.response.send_modal(SellForm(self.user, i.message))
+        modal = SellForm(self.user)
+        await i.response.send_modal(modal)
+        await modal.wait()
+
+        inv = db.Player.get_by_id(i.user.id).inventory
+        await i.message.edit(embed=u.container_embed(inv))
