@@ -14,7 +14,7 @@ import db
 import cogs
 
 import exceptions
-from helpers.resources import PREF
+from helpers import util as u, resources as r
 
 
 def walk_modules(start: str) -> t.Iterator[ModuleType]:
@@ -73,16 +73,10 @@ class AdventurerBot(commands.Bot):
         """Executed every time a normal valid command catches an error."""
         embed = discord.Embed(title="Error!", color=0xE02B2B)
         if isinstance(error, commands.CommandOnCooldown):
-            minutes, seconds = divmod(error.retry_after, 60)
-            hours, minutes = divmod(minutes, 60)
-            hours = hours % 24
             embed = discord.Embed(
                 title="Hey, please slow down!",
                 description=(
-                    "You can use this command again in "
-                    f"{f'{round(hours)} hours' if round(hours) > 0 else ''} "
-                    f"{f'{round(minutes)} minutes' if round(minutes) > 0 else ''} "
-                    f"{f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
+                    f"You can use this command again in {u.time_converter(int(error.retry_after))}."
                 ),
                 color=0xE02B2B,
             )
@@ -139,7 +133,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = AdventurerBot(
-    command_prefix=commands.when_mentioned_or(PREF),
+    command_prefix=commands.when_mentioned_or(r.PREF),
     intents=intents,
     help_command=None,
     case_insensitive=True,

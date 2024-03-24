@@ -6,7 +6,6 @@ from .cards import (
     rarity_cost,
     price_factor,
     card_coin_cost,
-    sort_cards,
 )
 from .general import (
     time_converter,

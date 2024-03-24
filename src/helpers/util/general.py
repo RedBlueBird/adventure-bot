@@ -11,20 +11,21 @@ def time_converter(seconds: int) -> str:
     :param seconds: The amount of seconds to convert.
     :return: A string representation of how many days, hours, etc. that is.
     """
+
     if seconds <= 0:
         return "Right now"
+
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
 
-    if days > 0:
-        return f"{days}d, {hours}h, {minutes}m, and {seconds}s"
-    if hours > 0:
-        return f"{hours}h, {minutes}m, and {seconds}s"
-    if minutes > 0:
-        return f"{minutes}m, and {seconds}s"
-    if seconds > 0:
-        return f"{seconds}s"
+    times = [
+        f"{round(days)} days" if round(days) > 0 else "",
+        f"{round(hours)} hours" if round(hours) > 0 else "",
+        f"{round(minutes)} minutes" if round(minutes) > 0 else "",
+        f"{round(seconds)} seconds" if round(seconds) > 0 else "",
+    ]
+    return " ".join(t for t in times if t)
 
 
 def time_til_midnight() -> str:

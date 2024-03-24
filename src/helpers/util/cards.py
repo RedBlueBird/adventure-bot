@@ -57,28 +57,3 @@ def price_factor(name: str) -> int:
 
 def card_coin_cost(name: str, lvl: int) -> int:
     return int(1.6**lvl * 50 * price_factor(name))
-
-
-def sort_cards(cards: list[tuple[int, str, int]], order: int):
-    # Default order is card level descending, then alphabetical order
-    cards.sort(key=lambda c: (-c[2], c[1]))
-
-    if order in [1, 2]:  # Sort by card level
-        cards.sort(key=lambda c: (c[2], c[1]))
-
-    elif order in [3, 4]:  # Card name (alphabetical order)
-        cards.sort(key=lambda c: c[1])
-
-    elif order in [5, 6]:  # Card ID
-        cards.sort(key=lambda c: c[0])
-
-    elif order in [7, 8]:  # Energy cost
-        cards.sort(key=lambda c: cards_dict(c[2], c[1])["cost"])
-
-    elif order in [9, 10]:  # Rarity
-        rarities = ["NA", "M", "C", "R", "E", "L", "EX"]
-        weights = {r: i for i, r in enumerate(rarities)}
-        cards.sort(key=lambda c: weights[cards_dict(c[2], c[1])["rarity"]])
-
-    if order % 2 == 0:
-        cards.reverse()
