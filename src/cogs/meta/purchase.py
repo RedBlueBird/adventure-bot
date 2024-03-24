@@ -11,7 +11,7 @@ from views import Confirm
 
 
 async def confirm_purchase(ctx: commands.Context, msg: str) -> tuple[discord.Message, bool]:
-    view = Confirm()
+    view = Confirm(ctx.author)
     msg = await ctx.reply(content=msg, view=view)
     await view.wait()
 
@@ -141,7 +141,7 @@ class Purchase(commands.Cog):
             await ctx.reply("You don't have enough gems!")
             return
 
-        view = Confirm()
+        view = Confirm(ctx.author)
         msg = await ctx.reply(
             f"Are you sure you want to buy {coin_gain} {r.ICONS['coin']} "
             f"with {gem_cost} {r.ICONS['gem']}?",

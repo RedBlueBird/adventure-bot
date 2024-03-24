@@ -2,9 +2,10 @@ import discord
 
 
 class Confirm(discord.ui.View):
-    def __init__(self, confirm: str = "Confirm", cancel: str = "Cancel"):
+    def __init__(self, user: discord.Member, confirm: str = "Confirm", cancel: str = "Cancel"):
         super().__init__()
         self.value = None
+        self.user = user
         self.children[0].label = confirm
         self.children[1].label = cancel
 
@@ -23,3 +24,9 @@ class Confirm(discord.ui.View):
         self.value = False
         await i.response.defer()
         self.stop()
+
+    async def interaction_check(self, i: discord.Interaction) -> bool:
+        if i.user.id != self.user.id:
+            await i.response.send_message("You can't interact with this!", ephemeral=True)
+            return False
+        return True

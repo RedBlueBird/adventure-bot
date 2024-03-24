@@ -8,7 +8,8 @@ from ...confirm import Confirm
 
 
 class TradeSelect(ui.Select["Trade"]):
-    def __init__(self, trades: dict[str, list[tuple[str, int]]]):
+    def __init__(self, user: discord.Member, trades: dict[str, list[tuple[str, int]]]):
+        self.user = user
         self.trades = {
             c.lower(): [(r_[0].lower(), r_[1]) for r_ in req] for c, req in trades.items()
         }
@@ -29,7 +30,7 @@ class TradeSelect(ui.Select["Trade"]):
             description.append(f"• {amt} {item}")
         embed.description = "\n".join(description)
 
-        view = Confirm()
+        view = Confirm(self.user)
         await i.response.send_message(embed=embed, view=view)
         msg = await i.original_response()
         await view.wait()
@@ -79,6 +80,6 @@ class Trade(ui.View, InteractionCheckMixin):
         super().__init__()
         self.user = user
         self.trades = trades
-        self.add_item(TradeSelect(trades))
+        self.add_item(TradeSelect(user, trades))
         self.add_item(Backpack())
         self.add_item(Exit())

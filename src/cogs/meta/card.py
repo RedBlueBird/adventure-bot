@@ -34,7 +34,7 @@ class Card(commands.Cog):
             card = r.card(c.name)
             to_discard.append(f"{card} lv: {c.level} #`{c.id}`")
 
-        view = Confirm()
+        view = Confirm(ctx.author)
         confirm_msg = (
             "Are you sure you want to discard:\n"
             + "\n".join(to_discard)
@@ -93,7 +93,7 @@ class Card(commands.Cog):
             await ctx.reply(f"You don't have enough coins to upgrade! ({upgrade_cost} coins)")
             return
 
-        view = Confirm()
+        view = Confirm(ctx.author)
         msg = await ctx.reply(
             f"{upgr_card} lv: {upgraded.level}\n"
             f"{destr_card} lv: {destroyed.level}\n"

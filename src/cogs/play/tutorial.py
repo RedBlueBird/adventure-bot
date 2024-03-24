@@ -25,7 +25,7 @@ class Tutorial(commands.Cog):
         mention = author.mention
         a_id = author.id
 
-        view = Confirm("Yeah!", "No thanks.")
+        view = Confirm(ctx.author, "Yeah!", "No thanks.")
         start_msg = await ctx.reply(
             "Hello!\nYou want to learn the basics of fighting in this bot? :smiley:",
             view=view,
@@ -76,7 +76,7 @@ class Tutorial(commands.Cog):
         await stats_msg.edit(embed=dd.show_stats())
         await hand_msg.edit(embed=dd.show_hand())
 
-        view = Confirm("Continue", "Exit tutorial")
+        view = Confirm(ctx.author, "Continue", "Exit tutorial")
         msg = await ctx.reply(procedure[step], view=view)
         while step < 4:
             await view.wait()
@@ -88,7 +88,7 @@ class Tutorial(commands.Cog):
                 return
 
             step += 1
-            view = Confirm("Continue", "Exit tutorial")
+            view = Confirm(ctx.author, "Continue", "Exit tutorial")
             await msg.edit(content=procedure[step], view=view)
 
         def check_status():
@@ -619,7 +619,7 @@ class Tutorial(commands.Cog):
             final_step = 34
 
         await msg.delete()
-        view = Confirm("Continue", "Exit")
+        view = Confirm(ctx.author, "Continue", "Exit")
         msg = await ctx.send(procedure[step], view=view)
         while step < final_step:
             await view.wait()
@@ -629,7 +629,7 @@ class Tutorial(commands.Cog):
                 await msg.edit(content="You exited the tutorial!", view=None)
 
             step += 1
-            view = Confirm("Continue", "Exit")
+            view = Confirm(ctx.author, "Continue", "Exit")
             await msg.edit(content=procedure[step], embed=None, view=view)
 
 

@@ -201,7 +201,7 @@ class Deck(commands.Cog):
             await ctx.reply(f"Your deck's already empty!")
             return
 
-        view = Confirm()
+        view = Confirm(ctx.author)
         msg = await ctx.reply(f"Do you really want to clear deck #{player.deck}?", view=view)
         await view.wait()
 
