@@ -20,7 +20,7 @@ async def update_quest(quest_type: db.QuestType, progress: int, ctx: Context):
             continue
 
         embed = discord.Embed(
-            title=f"QUEST COMPLETE {ctx.author.name}!",
+            title=f"**QUEST COMPLETE {ctx.author.name}!**",
             description=None,
             color=discord.Color.green(),
         )
