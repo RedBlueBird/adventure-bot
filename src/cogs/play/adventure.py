@@ -143,7 +143,10 @@ class Adventure(commands.Cog):
                         text="You can use `a.info item (name)` to check the sell price of an item!"
                     )
                     await adv_msg.edit(
-                        content=None, embed=u.container_embed(player.inventory), view=view
+                        content=None,
+                        embed=u.container_embed(player.inventory),
+                        view=view,
+                        attachments=[],
                     )
                     await view.wait()
 
@@ -173,7 +176,7 @@ class Adventure(commands.Cog):
                         color=discord.Color.gold(),
                     )
                     view = ht.Shop(a, offers)
-                    await adv_msg.edit(embed=embed, view=view)
+                    await adv_msg.edit(embed=embed, view=view, attachments=[])
                     await view.wait()
 
                 case "chest":
