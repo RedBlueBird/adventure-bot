@@ -10,11 +10,6 @@ class SellForm(ui.Modal, title="Sell something!"):
     item = ui.TextInput(label="Item", placeholder="What do you want to sell?")
     amt = ui.TextInput(label="Amount", placeholder="How much do you want to sell?")
 
-    def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
-        self.db_user = db.Player.get_by_id(user.id)
-
     async def on_submit(self, i: discord.Interaction):
         amt = self.amt.value
         if not amt.isdigit() or int(amt) <= 0:
@@ -24,17 +19,19 @@ class SellForm(ui.Modal, title="Sell something!"):
 
         item = r.item(self.item.value.lower())
         name = item.id
-        inv = self.db_user.inventory
+        player = db.Player.get_by_id(i.user.id)
+        inv = player.inventory
         if inv.get(name, 0) < amt:
             await i.response.send_message(
                 "You don't have enough of those items in your backpack!", ephemeral=True
             )
             return
 
-        self.db_user.coins += item.sell * amt
+        player.coins += item.sell * amt
         inv[name] -= amt
         if inv[name] == 0:
             del inv[name]
+        player.save()
 
         descr = f"[{item.rarity}/{item.weight}]"
         await i.response.send_message(
@@ -42,8 +39,6 @@ class SellForm(ui.Modal, title="Sell something!"):
             f"for {item.sell * amt} {r.ICONS['coin']}!",
             ephemeral=True,
         )
-
-        self.db_user.save()
 
 
 class Sell(ui.View, InteractionCheckMixin):
@@ -54,7 +49,7 @@ class Sell(ui.View, InteractionCheckMixin):
 
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)
     async def sell(self, i: discord.Interaction, button: ui.Button):
-        modal = SellForm(self.user)
+        modal = SellForm()
         await i.response.send_modal(modal)
         await modal.wait()
 
