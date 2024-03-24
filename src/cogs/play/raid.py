@@ -6,7 +6,8 @@ import typing as t
 import discord
 from discord.ext import commands
 
-from helpers import util as u, resources as r, checks, db_manager as dm
+import db
+from helpers import util as u, resources as r, checks
 from helpers.battle import BattleData
 from views.battle import RaidInvite, Select
 
@@ -30,18 +31,18 @@ class Raid(commands.Cog):
             await view.wait()
             people = view.selected
             for p in people:
-                id_ = p.id
+                db_p = db.Player.get_by_id(p.id)
 
                 level_req = 4
-                if dm.get_user_level(id_) < level_req:
+                if db_p.level < level_req:
                     await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break
 
-                if dm.get_user_ticket(id_) == 0:
+                if db_p.raid_tickets == 0:
                     await ctx.reply(f"{p.mention} doesn't have any raid tickets!")
                     break
 
-                if dm.get_user_deck_count(id_) != 12:
+                if len(db.get_deck(db_p.id)) != 12:
                     await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
                     break
             else:
@@ -50,7 +51,7 @@ class Raid(commands.Cog):
             view = Select(a)
             await msg.edit(view=view)
 
-        people = [ctx.author] + people
+        people: list[discord.Member] = [ctx.author] + people
         req_msg = (
             "Hey "
             + "\n".join(c.mention for c in people[1:])
@@ -70,21 +71,24 @@ class Raid(commands.Cog):
         decks = []
         hps = []
         bps = []
+        db_vals = {}
         for p in people:
             ids.append(p.id)
             names.append(p.name)
+            db_vals[p.id] = db.Player.get_by_id(p.id)
 
-            deck = [f"{c[2]}.{c[1]}" for c in dm.get_user_deck(p.id)]
+            deck = [f"{c.name}.{c.level}" for c in db.get_deck(p.id)]
             random.shuffle(deck)
             decks.append(deck)
 
-            hp = u.level_hp(dm.get_user_level(p.id))
+            hp = u.level_hp(db_vals[p.id].level)
             hps.append([hp, 0, hp, 0, 0])
 
-            bps.append(dm.get_user_inventory(p.id))
+            bps.append(db_vals[p.id].inventory)
 
         for i in ids:
-            dm.queues[i] = "raiding a boss"
+            if i != ctx.author.id:
+                db.lock_user(i, "raid", "raiding a boss")
 
         embed = discord.Embed(
             title="A Raid Has Begun!",
@@ -595,11 +599,12 @@ class Raid(commands.Cog):
                     f"+{gem_loot} shiny gems!",
                 ]
 
-                for i in ids:
-                    dm.set_user_coin(i, dm.get_user_coin(i) + coin_loot)
-                    dm.set_user_exp(i, dm.get_user_exp(i) + exp_loot)
-                    dm.set_user_gem(i, dm.get_user_gem(i) + gem_loot)
-                    dm.set_user_ticket(i, dm.get_user_ticket(i) - 1)
+                for player in db_vals.values():
+                    player.coins += coin_loot
+                    player.xp += exp_loot
+                    player.gems += gem_loot
+                    player.raid_tickets -= 1
+                    player.save()
 
                 embed = discord.Embed(
                     title="Battle Ended!",
@@ -617,8 +622,10 @@ class Raid(commands.Cog):
 
                 exp_loot = dd.turns * 2
                 for i in dd.p_ids.info:
-                    dm.set_user_exp(i, dm.get_user_exp(i) + exp_loot)
-                    dm.set_user_ticket(i, dm.get_user_ticket(i) - 1)
+                    player = db_vals[i]
+                    player.xp += exp_loot
+                    player.raid_tickets -= 1
+                    player.save()
 
                 embed = discord.Embed(
                     title="Battle Ended!",
@@ -631,8 +638,10 @@ class Raid(commands.Cog):
 
             exp_loot = dd.turns * 2
             for i in dd.p_ids.info:
-                dm.set_user_exp(i, dm.get_user_exp(i) + exp_loot)
-                dm.set_user_ticket(i, dm.get_user_ticket(i) - 1)
+                player = db_vals[i]
+                player.xp += exp_loot
+                player.raid_tickets -= 1
+                player.save()
 
             embed = discord.Embed(
                 title="Battle Ended!",
@@ -644,7 +653,8 @@ class Raid(commands.Cog):
         await ctx.send(embed=embed)
 
         for i in ids:
-            del dm.queues[i]
+            if i != ctx.author.id:
+                db.lock_user(i, "raid", "raiding a boss")
 
 
 async def setup(bot: commands.Bot):
