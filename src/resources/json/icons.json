@@ -48,11 +48,13 @@
   },
   "stamina": {
     "animated": false,
-    "id": 606677247784517632
+    "id": 606677247784517632,
+    "abb": "sta"
   },
   "energy": {
     "animated": false,
-    "id": 606677171590791170
+    "id": 606677171590791170,
+    "abb": "engy"
   },
   "eventtoken": {
     "animated": false,
