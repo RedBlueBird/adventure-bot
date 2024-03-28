@@ -39,10 +39,9 @@ class SellForm(ui.Modal, title="Sell something!"):
         )
 
 
-class Sell(ui.View, InteractionCheckMixin):
+class Sell(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.add_item(Exit())
 
     @ui.button(label="Sell", style=discord.ButtonStyle.blurple)

@@ -4,10 +4,9 @@ import discord.ui as ui
 from views.adventure.template import Exit, InteractionCheckMixin
 
 
-class LevelSelect(ui.View, InteractionCheckMixin):
+class LevelSelect(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.level = None
         self.add_item(Exit())
 

@@ -88,10 +88,9 @@ class Bait(ui.View):
         self.stop()
 
 
-class Fishing(ui.View, InteractionCheckMixin):
+class Fishing(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.add_item(Exit())
 
     @ui.button(label="Start fishing!", style=discord.ButtonStyle.blurple)

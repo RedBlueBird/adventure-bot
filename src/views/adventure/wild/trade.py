@@ -75,10 +75,9 @@ class TradeSelect(ui.Select["Trade"]):
         await msg.delete(delay=5)
 
 
-class Trade(ui.View, InteractionCheckMixin):
+class Trade(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member, trades: dict[str, list[tuple[str, int]]]):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.trades = trades
         self.add_item(TradeSelect(user, trades))
         self.add_item(Backpack())

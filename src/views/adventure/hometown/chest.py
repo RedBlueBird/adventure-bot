@@ -100,10 +100,9 @@ class DepositForm(ui.Modal, title="Deposit something!"):
         await submit_chest_form(i, "deposit", self.item.value, self.amt.value)
 
 
-class Chest(ui.View, InteractionCheckMixin):
+class Chest(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.add_item(Exit("Close Chest"))
 
     @ui.button(label="Take", style=discord.ButtonStyle.blurple)

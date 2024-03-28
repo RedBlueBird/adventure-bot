@@ -24,10 +24,9 @@ def bj_val(cards: list[Card]) -> int:
     return total
 
 
-class BlackjackBoard(ui.View, InteractionCheckMixin):
+class BlackjackBoard(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.db_user = db.Player.get_by_id(user.id)
         self.deck = Deck()
         self.deck.shuffle()
@@ -135,10 +134,9 @@ class BlackjackBoard(ui.View, InteractionCheckMixin):
         return board
 
 
-class Blackjack(ui.View, InteractionCheckMixin):
+class Blackjack(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.add_item(Exit())
 
     @ui.button(label="Play a round!", style=discord.ButtonStyle.blurple)

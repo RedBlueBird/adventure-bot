@@ -72,10 +72,9 @@ async def bet(
     player.save()
 
 
-class CoinFlip(ui.View, InteractionCheckMixin):
+class CoinFlip(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member, bet_amt: int = 50, edge_factor: int = 1000):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.bet_amt = bet_amt
         self.edge_factor = edge_factor
         self.add_item(Exit())

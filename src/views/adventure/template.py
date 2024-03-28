@@ -27,7 +27,9 @@ class Backpack(ui.Button):
 
 
 class InteractionCheckMixin:
-    user: discord.Member
+    def __init__(self, user: discord.Member, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
         if i.user != self.user:

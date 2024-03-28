@@ -19,16 +19,14 @@ class DecisionSelect(ui.Select["Decision"]):
         self.view.stop()
 
 
-class Decision(ui.View, InteractionCheckMixin):
+class Decision(InteractionCheckMixin, ui.View):
     def __init__(
         self,
         user: discord.Member,
         choices: t.Iterable[str],
         loc_file: io.BytesIO | None = None,
     ):
-        super().__init__()
-
-        self.user = user
+        super().__init__(user)
 
         self.decision = None
         self.show_map = None

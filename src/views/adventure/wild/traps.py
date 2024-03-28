@@ -6,10 +6,9 @@ import discord.ui as ui
 from views.adventure.template import InteractionCheckMixin
 
 
-class Reaction(ui.View, InteractionCheckMixin):
+class Reaction(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member):
-        super().__init__(timeout=5)
-        self.user = user
+        super().__init__(user, timeout=5)
         self.click_time = None
 
     @ui.button(label="Now!", style=discord.ButtonStyle.green)

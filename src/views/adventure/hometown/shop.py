@@ -48,7 +48,6 @@ class BuyForm(ui.Modal, title="Buy something!"):
         inv[name] += amt
 
         player.save()
-        print(player.inventory, "alright!")
         await i.response.send_message(
             "You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
@@ -57,10 +56,9 @@ class BuyForm(ui.Modal, title="Buy something!"):
         )
 
 
-class Shop(ui.View, InteractionCheckMixin):
+class Shop(InteractionCheckMixin, ui.View):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
-        super().__init__()
-        self.user = user
+        super().__init__(user)
         self.db_user = db.Player.get_by_id(user.id)
         self.add_item(Backpack())
         self.add_item(Exit())
