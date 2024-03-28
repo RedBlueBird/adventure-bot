@@ -113,7 +113,7 @@ class AdventurerBot(commands.Bot):
         elif isinstance(error, commands.CommandNotFound):
             return
         else:
-            embed.description = f"{type(error).__name__}: {error}"
+            embed.description = f"{type(error).__name__}:\n```{error}```"
 
         if not isinstance(error, exceptions.UserPreoccupied):
             db.unlock_user(ctx.author.id, ctx.command.qualified_name)
