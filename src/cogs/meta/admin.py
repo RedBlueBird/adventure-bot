@@ -79,7 +79,7 @@ class Admin(commands.Cog):
 
     @commands.hybrid_command(
         aliases=["endseason"],
-        description="Resets the PVP season and gives each player their medals.",
+        description="Resets the PVP season and gives each player their medals. (Admin only)",
     )
     @commands.is_owner()
     async def end_season(self, ctx: Context):
