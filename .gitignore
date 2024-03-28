@@ -147,4 +147,4 @@ adventure-bot.code-workspace
 # SQLITE database
 *.db
 
-bot_log.txt
+src/logs/*.txt
