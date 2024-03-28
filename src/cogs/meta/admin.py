@@ -35,6 +35,9 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def card(self, ctx: Context, card: str, level: int, recipient: discord.Member):
+        if not db.Player.select().where(db.Player.id == recipient.id).exists():
+            await ctx.reply(f"{recipient.mention} isn't registered in the bot yet!")
+
         if level <= 0:
             await ctx.reply("You can't redeem a card with a nonpositive level!")
             return
@@ -54,6 +57,9 @@ class Admin(commands.Cog):
     @checks.is_admin()
     @checks.is_registered()
     async def item(self, ctx: Context, item: str, amt: int, recipient: discord.Member):
+        if not db.Player.select().where(db.Player.id == recipient.id).exists():
+            await ctx.reply(f"{recipient.mention} isn't registered in the bot yet!")
+
         if amt <= 0:
             await ctx.reply("You can't redeem a nonpositive amount of items!")
             return
