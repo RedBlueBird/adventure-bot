@@ -55,7 +55,15 @@ async def submit_chest_form(
         if action == "take":
             transfer(item, amt, chest, "chest", inv, "backpack", r.BP_CAP)
         elif action == "deposit":
-            transfer(item, amt, inv, "backpack", chest, "chest", u.chest_storage(player.level))
+            transfer(
+                item,
+                amt,
+                inv,
+                "backpack",
+                chest,
+                "chest",
+                u.chest_storage(player.level),
+            )
     except ValueError as e:
         await i.response.send_message(e, ephemeral=True)
 

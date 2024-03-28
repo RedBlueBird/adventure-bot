@@ -124,10 +124,12 @@ class UserTrade(ui.View):
                 color=discord.Color.gold(),
             )
             .add_field(
-                name=self.user1.display_name + (" ✅" if self.user1_acc else ""), value=user1_offer
+                name=self.user1.display_name + (" ✅" if self.user1_acc else ""),
+                value=user1_offer,
             )
             .add_field(
-                name=self.user2.display_name + (" ✅" if self.user2_acc else ""), value=user2_offer
+                name=self.user2.display_name + (" ✅" if self.user2_acc else ""),
+                value=user2_offer,
             )
             .set_footer(text="Both users must accept the offer for the trade to go through.")
         )

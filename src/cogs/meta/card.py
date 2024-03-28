@@ -55,7 +55,8 @@ class Card(commands.Cog):
         await msg.edit(content=f"{len(to_discard)} card{s} successfully discarded.", view=None)
 
     @commands.hybrid_command(
-        aliases=["up", "merge"], description="Upgrade a card by merging it with another."
+        aliases=["up", "merge"],
+        description="Upgrade a card by merging it with another.",
     )
     @checks.not_preoccupied("upgrading cards")
     @checks.is_registered()

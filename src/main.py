@@ -1,8 +1,10 @@
+import datetime
 import os
 import platform
 import pkgutil
 import importlib
 import typing as t
+import logging
 from types import ModuleType
 
 from dotenv import load_dotenv
@@ -42,15 +44,15 @@ class AdventurerBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
     async def on_ready(self) -> None:
-        print(f"Logged in as {self.user.name}")
-        print(f"discord.py API version: {discord.__version__}")
-        print(f"Python version: {platform.python_version()}")
-        print(f"Running on: {platform.system()} {platform.release()} ({os.name})")
-        print("-------------------")
+        logging.info(f"Logged in as {self.user.name}")
+        logging.info(f"discord.py API version: {discord.__version__}")
+        logging.info(f"Python version: {platform.python_version()}")
+        logging.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
+        logging.info("-------------------")
         if int(os.environ["SYNC_CMD_GLOBALLY"]) == 1:
-            print("Syncing commands globally...")
+            logging.info("Syncing commands globally...")
             await self.tree.sync()
-            print("Finished syncing!")
+            logging.info("Finished syncing!")
         game = discord.Game(f"{len(self.guilds)} Servers")
         await self.change_presence(status=discord.Status.online, activity=game)
 
@@ -60,12 +62,12 @@ class AdventurerBot(commands.Bot):
         executed_command = cmd_name.split(" ")[0]
         a = ctx.author
         if ctx.guild is not None:
-            print(
+            logging.info(
                 f"Executed {executed_command} command in {ctx.guild.name} "
                 f"(ID: {ctx.guild.id}) by {a} (ID: {a.id})"
             )
         else:
-            print(f"Executed {executed_command} command by {a} (ID: {a.id}) in DMs")
+            logging.info(f"Executed {executed_command} command by {a} (ID: {a.id}) in DMs")
 
         db.unlock_user(a.id, cmd_name)
 
@@ -123,10 +125,10 @@ class AdventurerBot(commands.Bot):
             name = ext.__name__
             try:
                 await bot.load_extension(name)
-                print(f"Loaded extension '{name}'")
+                logging.info(f"Loaded extension '{name}'")
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"
-                print(f"Failed to load extension {name}\n{exception}")
+                logging.error(f"Failed to load extension {name}\n{exception}")
 
 
 intents = discord.Intents.default()
@@ -140,4 +142,7 @@ bot = AdventurerBot(
 )
 
 if __name__ == "__main__":
+    fh = logging.FileHandler(f"logs/{datetime.date.today().strftime('%d_%m_%Y.txt')}")
+    sh = logging.StreamHandler()
+    logging.basicConfig(handlers=[fh, sh], level=logging.INFO)
     bot.run(os.environ["BOT_TOKEN"])

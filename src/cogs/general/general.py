@@ -21,9 +21,9 @@ class General(commands.Cog):
             data = []
             for cmd in cog.get_commands():
                 description = cmd.description.partition("\n")[0]
-                data.append(f"{PREF}{cmd.name} - {description}")
+                data.append(f"* {PREF}{cmd.name} - {description}")
             help_text = "\n".join(data)
-            embed.add_field(name=i.capitalize(), value=f"```{help_text}```", inline=False)
+            embed.add_field(name=i.capitalize(), value=help_text, inline=False)
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(

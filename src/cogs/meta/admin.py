@@ -1,5 +1,5 @@
 import math
-import datetime
+import logging
 
 import discord
 from discord.ext import commands
@@ -11,15 +11,7 @@ import db
 
 class Admin(commands.Cog):
     def __init__(self, bot: commands.Bot):
-        self.log_to = open("bot_log.txt", "a")
-        print(f"Cog started on {datetime.datetime.now()}", file=self.log_to, flush=True)
         self.bot = bot
-
-    async def cog_before_invoke(self, ctx: Context):
-        msg = ctx.message.content
-        insert = f"\n{msg}\n" if msg else ""
-        to_print = f"{ctx.author}:{insert}{ctx.command}"
-        print(to_print, file=self.log_to, flush=True)
 
     @commands.hybrid_group(description="Redeem something! (Admin only)")
     @checks.is_admin()
@@ -53,6 +45,7 @@ class Admin(commands.Cog):
             return
 
         db.Card.create(owner=recipient.id, name=card.id, level=level)
+        logging.info(f"{ctx.author} gave a {card} lv: {level} to {recipient}")
         await ctx.send(
             f"{recipient.mention}, you received a {card} lv: {level} from {ctx.author.mention}!"
         )
@@ -77,10 +70,10 @@ class Admin(commands.Cog):
         inv[item.id] += amt
         player.save()
 
+        logging.info(f"{ctx.author} gave {item} x{amt} to {recipient}")
         await ctx.reply(
             f"{recipient.mention}, you received "
-            f"**[{item.rarity}/{item.weight}] "
-            f"{item.name}** x{amt} "
+            f"**{item}** x{amt} "
             f"from {ctx.author.mention}!"
         )
 
@@ -117,6 +110,7 @@ class Admin(commands.Cog):
             p.medals = new_medals
             p.save()
 
+        logging.info(f"{ctx.author} ended the season")
         await ctx.reply("Season Ended!")
 
 

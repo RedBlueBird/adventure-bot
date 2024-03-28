@@ -110,7 +110,8 @@ class Actions(commands.Cog):
             return
         elif not view.value:
             await deal_msg.edit(
-                content=f"{a.mention}, your trade partner declined the offer...", view=None
+                content=f"{a.mention}, your trade partner declined the offer...",
+                view=None,
             )
             return
 
