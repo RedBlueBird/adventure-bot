@@ -5,7 +5,7 @@ import discord.ui as ui
 
 import db
 from helpers import util as u, resources as r
-from views.adventure.template import Exit, InteractionCheckMixin
+from views.adventure.template import Exit, Backpack, InteractionCheckMixin
 
 
 class BuyForm(ui.Modal, title="Buy something!"):
@@ -24,7 +24,7 @@ class BuyForm(ui.Modal, title="Buy something!"):
         amt = int(amt)
 
         item = r.item(self.item.value.lower())
-        name = item.name.lower()
+        name = item.name.lower() if item is not None else None
         if name not in self.offers:
             await i.response.send_message("Sorry, I don't have that item!", ephemeral=True)
             return
@@ -43,12 +43,12 @@ class BuyForm(ui.Modal, title="Buy something!"):
             return
 
         player.coins -= item.buy * amt
-        if name in inv:
-            inv[name] += amt
-        else:
-            inv[name] = {"items": amt}
+        if name not in inv:
+            inv[name] = 0
+        inv[name] += amt
 
         player.save()
+        print(player.inventory, "alright!")
         await i.response.send_message(
             "You just bought "
             f"**[{item.rarity}/{item.weight}] {name.title()} x{amt}** "
@@ -60,16 +60,12 @@ class BuyForm(ui.Modal, title="Buy something!"):
 class Shop(ui.View, InteractionCheckMixin):
     def __init__(self, user: discord.Member, offers: t.Collection[str]):
         super().__init__()
+        self.user = user
         self.db_user = db.Player.get_by_id(user.id)
+        self.add_item(Backpack())
         self.add_item(Exit())
         self.items = offers
 
     @ui.button(label="Purchase", style=discord.ButtonStyle.blurple)
     async def purchase(self, i: discord.Interaction, button: ui.Button):
         await i.response.send_modal(BuyForm(self.items))
-
-    @ui.button(label="Backpack", style=discord.ButtonStyle.blurple)
-    async def backpack(self, i: discord.Interaction, button: ui.Button):
-        await i.response.send_message(
-            embed=u.container_embed(self.db_user.inventory, "Backpack"), ephemeral=True
-        )
