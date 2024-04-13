@@ -9,6 +9,10 @@ from discord.ext import commands
 from helpers import resources as r, checks
 
 
+def get_font(size: int) -> ImageFont.FreeTypeFont:
+    return ImageFont.truetype("resources/fonts/gg_sans.ttf", size)
+
+
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -42,7 +46,7 @@ class Fun(commands.Cog):
         """Have Crispy agree with anything!"""
         img = Image.open("resources/img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 24)
+        font = get_font(24)
         draw.text((323, 82), statement, (170, 172, 171), font=font)
         with io.BytesIO() as out:
             img.save(out, format="png")
@@ -50,24 +54,24 @@ class Fun(commands.Cog):
             await ctx.send(file=discord.File(fp=out, filename="crispy_reply.png"))
 
     @commands.hybrid_command(description="Mock the bot's creator.")
-    async def birb(self, ctx: commands.Context, stuff: str = "1 + 1 = 3"):
+    async def birb(self, ctx: commands.Context, statement: str = "1 + 1 = 3"):
         """Mock the bot's creator."""
         img = Image.open("resources/img/birb_logic.png")
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 12)
-        draw.text((64, 28), stuff, (200, 200, 200), font=font)
+        font = get_font(12)
+        draw.text((64, 28), statement, (200, 200, 200), font=font)
         with io.BytesIO() as out:
             img.save(out, format="png")
             out.seek(0)
             await ctx.send(file=discord.File(fp=out, filename="birb_logic.png"))
 
     @commands.hybrid_command(description="This is fine.")
-    async def dead(self, ctx: commands.Context, msg: str = "Should I be scared?"):
+    async def dead(self, ctx: commands.Context, message: str = "Should I be scared?"):
         """Kind of like the 'this is fine' meme, except you can make the dog say whatever you want."""
         img = Image.open("resources/img/pandemic.png")
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 14)
-        draw.text((62, 290), msg, (200, 200, 200), font=font)
+        font = get_font(14)
+        draw.text((62, 290), message, (200, 200, 200), font=font)
         with io.BytesIO() as out:
             img.save(out, format="png")
             out.seek(0)
@@ -83,7 +87,7 @@ class Fun(commands.Cog):
         """A adventurers themed meme generator."""
         img = Image.open("resources/img/meme_template.png")
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("resources/fonts/whitneysemibold.ttf", 17)
+        font = get_font(17)
         draw.text((80, 25), kickee, (256, 256, 256), font=font)
         draw.text((330, 25), kicker, (256, 256, 256), font=font)
         with io.BytesIO() as out:
