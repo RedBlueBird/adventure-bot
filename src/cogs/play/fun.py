@@ -9,7 +9,7 @@ from discord.ext import commands
 from helpers import resources as r, checks
 
 
-def get_font(size: int) -> ImageFont.FreeTypeFont:
+def get_font(size: int):
     return ImageFont.truetype("resources/fonts/gg_sans.ttf", size)
 
 

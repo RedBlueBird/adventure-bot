@@ -1,9 +1,8 @@
-import os
-
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
+import env
 from helpers.resources import PREF
 
 
@@ -37,8 +36,8 @@ class General(commands.Cog):
         embed.add_field(
             name="Bot Invite",
             value=(
-                f"[Link](https://discordapp.com/oauth2/authorize?&client_id={os.environ['APP_ID']}"
-                f"&scope=bot+applications.commands&permissions={os.environ['APP_PERMS']})"
+                f"[Link](https://discordapp.com/oauth2/authorize?&client_id={env.APP_ID}"
+                f"&scope=bot+applications.commands&permissions={env.APP_PERMS})"
             ),
         )
         embed.add_field(name="Official Server", value="[Link](https://discord.gg/w2CkRtkj57)")

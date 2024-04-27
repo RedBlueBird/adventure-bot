@@ -1,19 +1,16 @@
-import os
 import datetime as dt
-from dotenv import load_dotenv
 
 from playhouse.mysql_ext import *
 
+import env
 from .fields import *
 from .types import *
 
-load_dotenv()
-
 db = MySQLDatabase(
-    os.environ["DB_DB"],
-    user=os.environ["DB_USER"],
-    password=os.environ["DB_PW"],
-    host=os.environ["DB_HOST"],
+    env.DB_DB,
+    user=env.DB_USER,
+    password=env.DB_PW,
+    host=env.DB_HOST,
     # https://stackoverflow.com/a/55617654/12128483
     ssl={"fake_flag_to_enable_tls": True},
 )

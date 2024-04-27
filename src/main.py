@@ -7,11 +7,11 @@ import typing as t
 import logging
 from types import ModuleType
 
-from dotenv import load_dotenv
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
+import env
 import db
 import cogs
 
@@ -36,9 +36,6 @@ def walk_modules(start: str) -> t.Iterator[ModuleType]:
             yield importlib.import_module(module.name)
 
 
-load_dotenv()
-
-
 class AdventurerBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -49,7 +46,7 @@ class AdventurerBot(commands.Bot):
         logging.info(f"Python version: {platform.python_version()}")
         logging.info(f"Running on: {platform.system()} {platform.release()} ({os.name})")
         logging.info("-------------------")
-        if int(os.environ["SYNC_CMD_GLOBALLY"]) == 1:
+        if env.SYNC_CMD_GLOBALLY:
             logging.info("Syncing commands globally...")
             await self.tree.sync()
             logging.info("Finished syncing!")
@@ -145,4 +142,4 @@ if __name__ == "__main__":
     fh = logging.FileHandler(f"logs/{datetime.date.today().strftime('%d_%m_%Y.txt')}")
     sh = logging.StreamHandler()
     logging.basicConfig(handlers=[fh, sh], level=logging.INFO)
-    bot.run(os.environ["BOT_TOKEN"])
+    bot.run(env.BOT_TOKEN)

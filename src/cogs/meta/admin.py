@@ -78,9 +78,7 @@ class Admin(commands.Cog):
 
         logging.info(f"{ctx.author} gave {item} x{amt} to {recipient}")
         await ctx.reply(
-            f"{recipient.mention}, you received "
-            f"**{item}** x{amt} "
-            f"from {ctx.author.mention}!"
+            f"{recipient.mention}, you received **{item}** x{amt} from {ctx.author.mention}!"
         )
 
     @commands.hybrid_command(

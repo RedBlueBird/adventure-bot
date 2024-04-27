@@ -135,7 +135,9 @@ class Adventure(commands.Cog):
                         player.position = state.pos
                         player.save()
                     else:
-                        await ctx.reply("Sorry, this route is still in development!", ephemeral=True)
+                        await ctx.reply(
+                            "Sorry, this route is still in development!", ephemeral=True
+                        )
 
                 case "selling":
                     view = ht.Sell(a)

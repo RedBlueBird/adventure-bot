@@ -6,7 +6,7 @@ from peewee import *
 ET = t.Type[Enum]
 
 
-class EnumField[ET](IntegerField):
+class EnumField(IntegerField):
     """https://github.com/coleifer/peewee/issues/630#issuecomment-459404401"""
 
     def __init__(self, choices: ET, *args, **kwargs):
