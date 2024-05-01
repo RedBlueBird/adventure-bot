@@ -5,7 +5,7 @@ import dotenv
 dotenv.load_dotenv()
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-APP_ID = os.environ["APP_ID"]
+APP_ID = int(os.environ["APP_ID"])
 APP_PERMS = int(os.environ["APP_PERMS"])
 
 DB_HOST = os.environ["DB_HOST"]
