@@ -39,10 +39,8 @@ class Pvp(commands.Cog):
             await view.wait()
             people = view.selected
             for p in people:
-                id_ = p.id
-
                 level_req = 1
-                player = db.Player.get_by_id(id_)
+                player = db.Player.get_by_id(p.id)
                 if player.level < level_req:
                     await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
                     break

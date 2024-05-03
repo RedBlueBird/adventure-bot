@@ -22,7 +22,7 @@ class SelectMenu(UserSelect["Select"]):
         for u in self.values:
             if not db.Player.select().where(db.Player.id == u.id).exists():
                 await i.response.send_message(
-                    "That user doesn't exist in the bot yet!", ephemeral=True
+                    f"{u.mention} doesn't exist in the bot yet!", ephemeral=True
                 )
                 return
 
