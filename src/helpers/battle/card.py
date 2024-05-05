@@ -1,5 +1,5 @@
 import random
-from helpers import resources as r
+import resources as r
 from helpers.battle import Player
 from helpers.util import cards_dict, rarity_cost
 

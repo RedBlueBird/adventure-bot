@@ -5,7 +5,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from helpers import resources as r, checks
+from helpers import checks
+import resources as r
 import db
 
 

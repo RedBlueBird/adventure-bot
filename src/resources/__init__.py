@@ -1,3 +1,6 @@
+from .constants import *
+from .fonts import get_font
+
 from .adventure import ADVENTURES
 from .minigames import MINIGAMES
 from .hometown import HTOWN
@@ -9,4 +12,3 @@ from .perks import PERKS
 from .fish import FISH
 from .icons import ICONS
 from .misc_json import ADMINS, LEVELS, TUTORIAL, CARDS, CARDS_TEMP, CARD_LIST
-from .constants import *

@@ -6,7 +6,8 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import db
-from helpers import util as u, resources as r, checks
+from helpers import util as u, checks
+import resources as r
 from views import Shop, CardPages, Decks, Leaderboard
 
 

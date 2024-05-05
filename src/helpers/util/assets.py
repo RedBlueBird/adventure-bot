@@ -1,6 +1,6 @@
 import copy
 
-from ..resources import SCALE, CARDS, CARDS_TEMP
+from resources import SCALE, CARDS, CARDS_TEMP
 
 
 def cards_dict(lvl: str | int, name: str):

@@ -5,7 +5,7 @@ import discord
 
 from exceptions import *
 import db
-from helpers import resources as r
+import resources as r
 
 T = t.TypeVar("T")
 

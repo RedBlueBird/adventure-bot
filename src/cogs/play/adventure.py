@@ -9,7 +9,8 @@ import discord
 from discord.ext import commands
 
 import db
-from helpers import util as u, resources as r, checks
+from helpers import util as u, checks
+import resources as r
 
 from views.adventure import Decision
 from views.adventure import games as g, hometown as ht, wild as w

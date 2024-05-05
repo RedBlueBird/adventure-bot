@@ -16,7 +16,8 @@ import db
 import cogs
 
 import exceptions
-from helpers import util as u, resources as r
+from helpers import util as u
+import resources as r
 
 
 def walk_modules(start: str) -> t.Iterator[ModuleType]:

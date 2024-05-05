@@ -3,7 +3,7 @@ import discord.ui as ui
 from discord import Interaction
 
 import db
-from helpers import resources as r
+import resources as r
 
 
 class CoinModal(ui.Modal, title="Offer some coins!"):

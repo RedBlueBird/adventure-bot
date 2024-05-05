@@ -2,7 +2,7 @@ import math
 import random
 import datetime as dt
 
-from ..resources import SCALE
+from resources import SCALE
 
 
 def time_converter(seconds: int) -> str:

@@ -4,7 +4,8 @@ import discord
 from discord.ext import commands
 
 import db
-from helpers import resources as r, util as u, checks
+from helpers import util as u, checks
+import resources as r
 from views import Confirm
 
 

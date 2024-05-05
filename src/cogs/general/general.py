@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import env
-from helpers.resources import PREF
+from resources import PREF
 
 
 class General(commands.Cog):

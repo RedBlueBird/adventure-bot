@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from helpers.json_loader import load_json
+from resources.json_loader import load_json
 
 
 class Perk(BaseModel):

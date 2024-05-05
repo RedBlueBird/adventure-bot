@@ -1,7 +1,7 @@
 import json
 import os
 
-dirname = os.path.join(os.path.dirname(__file__), "..", "resources/json")
+dirname = os.path.join(os.path.dirname(__file__), "json")
 
 
 def load_json(name: str, num_keys: bool = False) -> dict | list:

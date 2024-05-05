@@ -8,7 +8,8 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Context
 
 import db
-from helpers import util as u, resources as r
+from helpers import util as u
+import resources as r
 
 
 def fill_quests(player: db.Player):

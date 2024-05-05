@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from pydantic import model_validator, ConfigDict, Extra, BaseModel
 
-from helpers.json_loader import load_json
+from resources.json_loader import load_json
 from .constants import SCALE
 
 

@@ -4,7 +4,8 @@ import discord
 import discord.ui as ui
 
 import db
-from helpers import util as u, resources as r
+from helpers import util as u
+import resources as r
 from views.adventure.template import Exit, Backpack, InteractionCheckMixin
 
 

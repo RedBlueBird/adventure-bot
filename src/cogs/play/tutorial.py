@@ -6,7 +6,8 @@ from copy import deepcopy
 import discord
 from discord.ext import commands
 
-from helpers import util as u, resources as r, checks
+from helpers import util as u, checks
+import resources as r
 from helpers.battle import BattleData
 from views import Confirm
 

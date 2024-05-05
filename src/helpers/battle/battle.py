@@ -4,7 +4,7 @@ from functools import reduce
 
 import discord
 
-from helpers import resources as r
+import resources as r
 from helpers.util import cards_dict, rarity_cost
 
 

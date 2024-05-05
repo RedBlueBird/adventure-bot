@@ -7,7 +7,8 @@ import discord
 from discord.ext import commands
 
 import db
-from helpers import util as u, resources as r, checks
+from helpers import util as u, checks
+import resources as r
 from helpers.battle import BattleData
 from views.battle import RaidInvite, Select
 

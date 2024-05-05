@@ -1,5 +1,5 @@
 from enum import Enum, auto
-import helpers.resources as r
+import resources as r
 
 
 class QuestType(Enum):

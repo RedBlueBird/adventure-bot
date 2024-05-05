@@ -1,7 +1,7 @@
 import discord
 
 import db
-from helpers import resources as r
+import resources as r
 
 
 class DeckButton(discord.ui.Button["Decks"]):

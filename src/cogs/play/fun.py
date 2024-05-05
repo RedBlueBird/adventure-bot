@@ -2,15 +2,12 @@ import random
 import asyncio
 import io
 
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageDraw
 import discord
 from discord.ext import commands
 
-from helpers import resources as r, checks
-
-
-def get_font(size: int):
-    return ImageFont.truetype("resources/fonts/gg_sans.ttf", size)
+from helpers import checks
+import resources as r
 
 
 class Fun(commands.Cog):
@@ -46,7 +43,7 @@ class Fun(commands.Cog):
         """Have Crispy agree with anything!"""
         img = Image.open("resources/img/crispy_reply.png")
         draw = ImageDraw.Draw(img)
-        font = get_font(24)
+        font = r.get_font(24)
         draw.text((323, 82), statement, (170, 172, 171), font=font)
         with io.BytesIO() as out:
             img.save(out, format="png")
@@ -58,7 +55,7 @@ class Fun(commands.Cog):
         """Mock the bot's creator."""
         img = Image.open("resources/img/birb_logic.png")
         draw = ImageDraw.Draw(img)
-        font = get_font(12)
+        font = r.get_font(12)
         draw.text((64, 28), statement, (200, 200, 200), font=font)
         with io.BytesIO() as out:
             img.save(out, format="png")
@@ -70,7 +67,7 @@ class Fun(commands.Cog):
         """Kind of like the 'this is fine' meme, except you can make the dog say whatever you want."""
         img = Image.open("resources/img/pandemic.png")
         draw = ImageDraw.Draw(img)
-        font = get_font(14)
+        font = r.get_font(14)
         draw.text((62, 290), message, (200, 200, 200), font=font)
         with io.BytesIO() as out:
             img.save(out, format="png")
@@ -87,7 +84,7 @@ class Fun(commands.Cog):
         """A adventurers themed meme generator."""
         img = Image.open("resources/img/meme_template.png")
         draw = ImageDraw.Draw(img)
-        font = get_font(17)
+        font = r.get_font(17)
         draw.text((80, 25), kickee, (256, 256, 256), font=font)
         draw.text((330, 25), kicker, (256, 256, 256), font=font)
         with io.BytesIO() as out:

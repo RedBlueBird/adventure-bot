@@ -4,7 +4,7 @@ import math
 import discord
 
 import db
-from helpers import resources as r
+import resources as r
 from .player import Player
 
 

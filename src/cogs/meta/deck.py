@@ -3,7 +3,8 @@ import typing as t
 from discord.ext import commands
 
 import db
-from helpers import resources as r, checks
+from helpers import checks
+import resources as r
 from views import Confirm
 
 

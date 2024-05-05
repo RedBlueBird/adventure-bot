@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 import db
-from helpers import resources as r
+import resources as r
 
 
 class Leaderboard(discord.ui.View):

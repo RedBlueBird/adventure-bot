@@ -2,7 +2,7 @@ import discord
 from discord.ext.commands import Context
 
 import db
-from ..resources import ICONS
+from resources import ICONS
 
 
 # this function modifies the player instance so be sure to save or wahtever
