@@ -34,7 +34,9 @@ def setup_minigame(game_name: str, show_map: bool) -> tuple[discord.Embed, disco
     embed.add_field(name="Rules", value="\n".join(logs))
     if show_map:
         if r.MINIGAMES[game_name].img is not None:
-            return embed, discord.File(r.MINIGAMES[game_name].img)
+            img = discord.File(r.MINIGAMES[game_name].img)
+            embed.set_image(url=f"attachment://{img.filename}")
+            return embed, img
         else:
             return embed, None
     else:
@@ -276,6 +278,7 @@ class Adventure(commands.Cog):
                 color=discord.Color.green(),
             )
             decision_view = Decision(a, curr_op.choices or ["Continue"])
+
             if curr_op.instant is not None:
                 if curr_op.instant.trap == "reaction":
                     addon = "Press the button as soon as you see it!"
@@ -331,11 +334,12 @@ class Adventure(commands.Cog):
                             f"and lost {hp_loss} HP!"
                         )
                         hp -= hp_loss
-                        if hp <= 0:
-                            end_cause = "death"
-                            break
                     else:
                         embed.description = "**Awesome!**\nYou got the letters right!"
+
+                if hp <= 0:
+                    end_cause = "death"
+                    break
 
             await adv_msg.edit(embed=embed, view=decision_view, attachments=[])
             await decision_view.wait()
