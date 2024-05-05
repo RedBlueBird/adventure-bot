@@ -39,14 +39,10 @@ class Pvp(commands.Cog):
             await view.wait()
             people = view.selected
             for p in people:
-                level_req = 1
                 player = db.Player.get_by_id(p.id)
-                if player.level < level_req:
-                    await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
-                    break
 
                 if player.medals < gamble_medals:
-                    await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
+                    await ctx.reply(f"{p.mention} doesn't have {gamble_medals} {r.ICONS['medal']}!")
                     break
 
                 sel_deck = db.Deck.get((db.Deck.owner == player.id) & (db.Deck.slot == player.deck))
