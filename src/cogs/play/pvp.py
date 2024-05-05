@@ -37,33 +37,41 @@ class Pvp(commands.Cog):
         msg = await ctx.reply(view=view)
         while True:
             await view.wait()
-            people = view.selected
-            for p in people:
+            if view.quit:
+                await msg.edit(content="Battle quit.", view=None)
+                return
+            elif view.selected is None:
+                await msg.edit(content="Selection timed out.", view=None)
+                return
+
+            ppl = view.selected
+            for p in ppl:
                 player = db.Player.get_by_id(p.id)
 
                 if player.medals < gamble_medals:
-                    await ctx.reply(f"{p.mention} doesn't have {gamble_medals} {r.ICONS['medal']}!")
+                    await ctx.reply(f"{p.display_name} doesn't have {gamble_medals} {r.ICONS['medal']}!")
                     break
 
                 sel_deck = db.Deck.get((db.Deck.owner == player.id) & (db.Deck.slot == player.deck))
                 if len(sel_deck.cards) != 12:
-                    await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
+                    await ctx.reply(f"{p.display_name} doesn't have 12 cards in their deck!")
                     break
             else:
                 break
 
+            # restart the view
             view = Select(a)
             await msg.edit(view=view)
 
-        people = [ctx.author] + people
+        ppl = [ctx.author] + ppl
 
-        req_msg = "Hey " + "\n".join(c.mention for c in people[1:]) + "!\n"
+        req_msg = "Hey " + "\n".join(c.mention for c in ppl[1:]) + "!\n"
         if gamble_medals > 0:
             req_msg += f"{a.mention} wants to battle with {gamble_medals} {r.ICONS['medal']}!\n"
         else:
             req_msg += f"{a.mention} wants to have a friendly battle!\n"
 
-        view = PvpInvite(ctx.author, people, 6)
+        view = PvpInvite(ctx.author, ppl, 6)
         await msg.edit(content=req_msg, view=view)
         await view.wait()
 

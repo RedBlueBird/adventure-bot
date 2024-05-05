@@ -33,26 +33,29 @@ class Pvp2(commands.Cog):
         msg = await ctx.reply(view=view)
         while True:
             await view.wait()
+            if view.quit:
+                await msg.edit(content="Battle quit.", view=None)
+                return
+            elif view.selected is None:
+                await msg.edit(content="Selection timed out.", view=None)
+                return
+
             ppl = view.selected
             for p in ppl:
-                id_ = p.id
-                player = db.Player.get_by_id(id_)
-                level_req = 1
-                if player.level < level_req:
-                    await ctx.reply(f"{p.mention} isn't level {level_req} yet!")
-                    break
+                player = db.Player.get_by_id(p.id)
 
                 if player.medals < gamble_medals:
-                    await ctx.reply(f"{p.mention} doesn't have {gamble_medals}!")
+                    await ctx.reply(f"{p.display_name} doesn't have {gamble_medals} {r.ICONS['medal']}!")
                     break
 
                 sel_deck = db.Deck.get((db.Deck.owner == player.id) & (db.Deck.slot == player.deck))
                 if len(sel_deck.cards) != 12:
-                    await ctx.reply(f"{p.mention} doesn't have 12 cards in their deck!")
+                    await ctx.reply(f"{p.display_name} doesn't have 12 cards in their deck!")
                     break
             else:
                 break
 
+            # restart the view
             view = Select(a)
             await msg.edit(view=view)
 

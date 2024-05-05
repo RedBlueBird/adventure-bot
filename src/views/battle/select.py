@@ -32,6 +32,7 @@ class SelectMenu(UserSelect["Select"]):
                 return
 
         self.view.selected = self.values
+        self.view.quit = False
         await i.response.defer()
         self.view.stop()
 
@@ -40,8 +41,14 @@ class Select(discord.ui.View):
     def __init__(self, host: discord.Member, min_players: int = 1, max_players: int = 5):
         super().__init__()
         self.host = host
+
+        quit_select = self.quit_select
+        self.remove_item(quit_select)
         self.add_item(SelectMenu(min_players, max_players))
-        self.selected = None
+        self.add_item(quit_select)
+
+        self.selected: list[discord.Member] | None = None
+        self.quit: bool | None = None
 
     async def interaction_check(self, i: discord.Interaction) -> bool:
         if i.user != self.host:
@@ -50,3 +57,8 @@ class Select(discord.ui.View):
             )
             return False
         return True
+
+    @discord.ui.button(label="Quit", style=discord.ButtonStyle.red)
+    async def quit_select(self, i: discord.Interaction, button: discord.ui.Button):
+        self.quit = True
+        self.stop()
