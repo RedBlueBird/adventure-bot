@@ -1,6 +1,6 @@
 {
   "home": {
-    "description": "Home sweet home! No matter what life throws at you, you know that at least your house is there for you- even though it's an inanimate object.",
+    "description": "Home sweet home! No matter what life throws at you, you know that at least your house is there for you.",
     "coordinate": [
       5,
       4
@@ -42,7 +42,7 @@
     }
   },
   "explore home": {
-    "description": "Your home is a giant eyesore. Items are scattered chaotically around the floor, and last time you checked there was an anthill next to the door. Maybe this is why you have no friends.",
+    "description": "Your home is a giant eyesore. Items are scattered all around the floor, and last time you checked there was an anthill next to the door. Maybe this is why you don't pull.",
     "coordinate": [
       5,
       4
@@ -59,7 +59,7 @@
     }
   },
   "south street": {
-    "description": "You look around and see the houses of various townspeople and adventurers.\nTo the west lies a bridge leading to the Enchanted Forest.\nTo the southwest is a passage way leading out of the town.\nTo the southeast is a locked gate blocking the entrance to an open plateau.\nTo the east is the bar famous for its games and cocktails.\nYou can also go to the north side of the town.",
+    "description": "You look around and see the houses of all your neighbors.\nTo the west lies a bridge leading to the Enchanted Forest.\nTo the southwest is a passage way leading out of the town.\nTo the southeast is a locked gate blocking the entrance to an open plateau.\nTo the east is the bar famous for its games and cocktails.\nYou can also go to the north side of the town.",
     "coordinate": [
       5,
       5

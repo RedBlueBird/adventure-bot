@@ -1,7 +1,7 @@
-discord.py~=2.3
-mysql-connector-python~=8.3
-Pillow~=10.2
-pydantic~=2.6
+discord.py~=2.4
+mysql-connector-python~=8.4
+Pillow~=10.4
+pydantic~=2.20
 python-dotenv~=1.0
 peewee~=3.17
 pymysql~=1.1
