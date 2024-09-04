@@ -1,4 +1,4 @@
-from pydantic import model_validator, BaseModel
+from pydantic import BaseModel, model_validator
 
 from resources.json_loader import load_json
 

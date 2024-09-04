@@ -1,6 +1,6 @@
+import datetime as dt
 import math
 import random
-import datetime as dt
 
 from resources import SCALE
 

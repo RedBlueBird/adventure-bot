@@ -1,6 +1,6 @@
 import discord
 
-from resources import item, BP_CAP
+from resources import BP_CAP, item
 
 
 def bp_weight(bp: dict[str, int]):

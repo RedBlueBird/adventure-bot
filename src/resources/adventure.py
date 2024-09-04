@@ -1,6 +1,6 @@
 from dataclasses import field
 
-from pydantic import field_validator, model_validator, PositiveInt, BaseModel
+from pydantic import BaseModel, PositiveInt, field_validator, model_validator
 
 from resources.json_loader import load_json
 

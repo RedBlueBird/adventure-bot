@@ -1,6 +1,6 @@
 from enum import Enum, unique
-from typing import NamedTuple
 from random import shuffle
+from typing import NamedTuple
 
 
 @unique

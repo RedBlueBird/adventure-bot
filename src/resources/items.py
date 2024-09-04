@@ -1,9 +1,10 @@
 import typing as t
 from copy import deepcopy
 
-from pydantic import model_validator, ConfigDict, Extra, BaseModel
+from pydantic import BaseModel, ConfigDict, Extra, model_validator
 
 from resources.json_loader import load_json
+
 from .constants import SCALE
 
 

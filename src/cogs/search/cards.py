@@ -5,8 +5,8 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 import db
-from helpers import checks
 import resources as r
+from helpers import checks
 from views import CardPages
 
 

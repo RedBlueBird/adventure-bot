@@ -1,23 +1,22 @@
 import datetime
-import os
-import platform
-import pkgutil
 import importlib
-import typing as t
 import logging
+import os
+import pkgutil
+import platform
+import typing as t
 from types import ModuleType
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-import env
-import db
 import cogs
-
+import db
+import env
 import exceptions
-from helpers import util as u
 import resources as r
+from helpers import util as u
 
 
 def walk_modules(start: str) -> t.Iterator[ModuleType]:

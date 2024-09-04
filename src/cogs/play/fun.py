@@ -1,13 +1,13 @@
-import random
 import asyncio
 import io
+import random
 
-from PIL import Image, ImageDraw
 import discord
 from discord.ext import commands
+from PIL import Image, ImageDraw
 
-from helpers import checks
 import resources as r
+from helpers import checks
 
 
 class Fun(commands.Cog):

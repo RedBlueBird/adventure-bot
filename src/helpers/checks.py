@@ -3,9 +3,9 @@ from collections import abc
 
 import discord
 
-from exceptions import *
 import db
 import resources as r
+from exceptions import *
 
 T = t.TypeVar("T")
 

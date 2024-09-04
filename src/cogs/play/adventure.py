@@ -4,16 +4,18 @@ import random
 import time
 from string import ascii_lowercase
 
-from PIL import Image, ImageDraw, ImageFont
 import discord
 from discord.ext import commands
+from PIL import Image, ImageDraw, ImageFont
 
 import db
-from helpers import util as u, checks
 import resources as r
-
+from helpers import checks
+from helpers import util as u
 from views.adventure import Decision
-from views.adventure import games as g, hometown as ht, wild as w
+from views.adventure import games as g
+from views.adventure import hometown as ht
+from views.adventure import wild as w
 
 
 def mark_location(bg_pic: str, x: int | float, y: int | float) -> io.BytesIO:

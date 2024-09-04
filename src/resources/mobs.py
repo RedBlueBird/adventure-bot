@@ -1,10 +1,11 @@
 import typing as t
-from dataclasses import field
 from copy import deepcopy
+from dataclasses import field
 
-from pydantic import field_validator, ConfigDict, Extra, BaseModel
+from pydantic import BaseModel, ConfigDict, Extra, field_validator
 
 from resources.json_loader import load_json
+
 from .constants import SCALE
 
 
