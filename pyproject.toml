@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "adventure-bot"
+version = "0.1.0"
+description = "it's adventurin' time!"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+discord-py = ">=2.4,<3.0"
+mysql-connector-python = ">=8.4,<9.0"
+pillow = ">=10.4,<11.0"
+pydantic = ">=2.8,<3.0"
+python-dotenv = ">=1.0,<2.0"
+peewee = ">=3.17,<4.0"
+pymysql = ">=1.1,<2.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+isort = "^5.13.2"
