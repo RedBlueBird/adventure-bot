@@ -2,8 +2,9 @@ import discord
 import discord.ui as ui
 
 import db
-from helpers.util.poker import Value, Deck, Card
-from ..template import InteractionCheckMixin, Exit
+from helpers.util.poker import Card, Deck, Value
+
+from ..template import Exit, InteractionCheckMixin
 
 BJ = 21
 BET = 50

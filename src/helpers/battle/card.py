@@ -1,7 +1,9 @@
 import random
+
 import resources as r
-from helpers.battle import Player
-from helpers.util import cards_dict, rarity_cost
+
+from ..util import cards_dict, rarity_cost
+from .player import Player
 
 BASIC_ATTRS = [
     ["block", "block"],

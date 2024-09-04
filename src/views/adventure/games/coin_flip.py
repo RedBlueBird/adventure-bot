@@ -5,7 +5,8 @@ import discord
 import discord.ui as ui
 
 import db
-from ..template import InteractionCheckMixin, Exit
+
+from ..template import Exit, InteractionCheckMixin
 
 
 class Bet(Enum):

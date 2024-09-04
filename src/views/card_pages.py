@@ -1,8 +1,8 @@
 import discord
 
 import db
-from helpers import util as u
 import resources as r
+from helpers import util as u
 
 
 def chunks(lst: list, n: int):

@@ -1,10 +1,10 @@
-import typing as t
 import io
+import typing as t
 
 import discord
 import discord.ui as ui
 
-from views.adventure.template import InteractionCheckMixin, Backpack
+from views.adventure.template import Backpack, InteractionCheckMixin
 
 
 class DecisionSelect(ui.Select["Decision"]):

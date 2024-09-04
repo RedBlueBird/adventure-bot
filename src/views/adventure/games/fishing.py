@@ -1,12 +1,13 @@
-import random
-import json
 import datetime as dt
+import json
+import random
 
 import discord
 import discord.ui as ui
 
 import db
-from ..template import InteractionCheckMixin, Exit
+
+from ..template import Exit, InteractionCheckMixin
 
 BAIT_COST = 50
 

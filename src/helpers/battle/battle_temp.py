@@ -1,10 +1,11 @@
-import random
 import math
+import random
 
 import discord
 
 import db
 import resources as r
+
 from .player import Player
 
 

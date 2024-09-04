@@ -1,5 +1,6 @@
-from .models import *
 import resources as r
+
+from .models import *
 
 
 def get_deck(uid: int, slot: int = 0) -> list[Card]:
